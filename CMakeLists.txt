@@ -12,10 +12,10 @@ file(GLOB_RECURSE SOURCE_FILES
 file(GLOB_RECURSE HEADER_FILES
         ${CMAKE_SOURCE_DIR}/include/*.hpp)
 
+include_directories(${CMAKE_SOURCE_DIR}/include/)
+
 # Define executable
-#add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
-#add_executable(ptk main.cpp)
 
 # OpenGL
 find_package(OpenGL REQUIRED)
