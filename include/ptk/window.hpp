@@ -5,6 +5,9 @@
 //  Created by Robin Gustafsson on 2019-06-12.
 //
 
+#ifndef PTK_WINDOW_HPP
+#define PTK_WINDOW_HPP
+
 // GLEW Headers
 #include <GL/glew.h>
 
@@ -13,6 +16,9 @@
 
 // C++ Headers
 #include <string>
+#include <queue>
+
+#include "ptk/events/event.hpp"
 
 namespace pTK
 {
@@ -32,14 +38,21 @@ namespace pTK
         void update();
         void swap_buffers();
         bool should_close();
+        void push_event(Event* t_event) { m_events.push(t_event); }
+        void resize(unsigned int t_width, unsigned int t_height);
 
     private:
         GLFWwindow* m_window;
         WindowData m_data;
 
-        void process_input();
-    };
+        std::queue<Event*> m_events;
+        void process_events();
 
-    // GLFW Callbacks.
-    void framebuffer_size_callback(GLFWwindow*, int t_width, int t_height);
-};
+        // Event processing
+        void key_event(Event* t_event);
+        void mouse_event(Event* t_event);
+        void window_event(Event* t_event);
+    };
+}
+
+#endif // PTK_WINDOW_HPP
