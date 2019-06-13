@@ -19,7 +19,7 @@
 namespace pTK
 {
     Window::Window(const std::string& t_name, unsigned int t_width, unsigned int t_height)
-        : m_window{nullptr}, m_data{t_name, t_width, t_height}
+        : EventHandler(), m_window{nullptr}, m_data{t_name, t_width, t_height}
     {
         // Initialize and configure of glfw.
         glfwInit();
@@ -53,6 +53,7 @@ namespace pTK
             auto window = static_cast<Window*>( glfwGetWindowUserPointer( t_window ) );
             window->push_event(new ResizeEvent((unsigned int)t_width, (unsigned int)t_height));
         });
+        // key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
         glfwSetKeyCallback(m_window, [](GLFWwindow* t_window, int t_key, int, int t_action, int){
             auto window = static_cast<Window*>( glfwGetWindowUserPointer( t_window ) );
             if (t_action == GLFW_PRESS)
@@ -60,8 +61,9 @@ namespace pTK
             else if (t_action == GLFW_RELEASE)
                 window->push_event(new KeyEvent(EventType::KeyReleased, t_key));
         });
+        // void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
         glfwSetCursorPosCallback(m_window, [](GLFWwindow* t_window, double t_xpos, double t_ypos){
-            auto window = static_cast<Window*>( glfwGetWindowUserPointer( t_window ) );
+            auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
             window->push_event(new MotionEvent((int)t_xpos, (int)t_ypos));
         });
         // void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
@@ -113,10 +115,9 @@ namespace pTK
 
     void Window::process_events()
     {
-        while (!m_events.empty())
+        while (!m_event_queue.empty())
         {
-            Event* event = m_events.front();
-            m_events.pop();
+            Event* event = pop_event();
 
             if (event->get_category() == EventCategory::Mouse)
                 mouse_event(event);
