@@ -14,8 +14,13 @@
 // C++ Headers
 #include <string>
 
-// GLEW Headers
-#include <GL/glew.h>
+// OpenGL Headers
+#include <OpenGL/gl.h>
+
+// Skia
+#include "include/gpu/GrContext.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkSurface.h"
 
 // GLFW Headers
 #include <GLFW/glfw3.h>
@@ -41,8 +46,14 @@ namespace pTK
         void resize(unsigned int t_width, unsigned int t_height);
 
     private:
+        // Window
         GLFWwindow* m_window;
         WindowData m_data;
+
+        // Skia
+        GrContext* m_context;
+        SkSurface* m_surface;
+        SkCanvas* m_canvas;
 
         void process_events();
 

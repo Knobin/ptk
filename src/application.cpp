@@ -10,23 +10,28 @@
 
 // C++ Headers
 #include <thread>
+#include <iostream>
 
 namespace pTK
 {
     Application::Application(int argc, char *argv[])
     {
-
+        std::cout << "Arguments:\n";
+        for (int i = 0; i < argc; i++)
+        {
+            std::cout << i << ": " << argv[i] << "\n";
+        }
     }
 
-    int Application::exec(Window* window)
+    int Application::exec(pTK::Window* window)
     {
-        // Render loop
+        // Render loop.
         while (!window->should_close())
         {
             // Clear.
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-            // Poll Events
+            // Poll Events.
             window->update();
 
             // Sleep.

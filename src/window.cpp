@@ -16,16 +16,24 @@
 #include <sstream>
 #include <iostream>
 
+// Skia
+#include "include/gpu/GrBackendSurface.h"
+#include "include/gpu/gl/GrGLInterface.h"
+#include "include/gpu/GrRenderTarget.h"
+
 namespace pTK
 {
     Window::Window(const std::string& t_name, unsigned int t_width, unsigned int t_height)
-        : EventHandler(), m_window{nullptr}, m_data{t_name, t_width, t_height}
+        : EventHandler(), m_window{nullptr}, m_data{t_name, t_width, t_height}, m_context{nullptr}, m_surface{nullptr}, m_canvas{
+            nullptr}
     {
         // Initialize and configure of glfw.
         glfwInit();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_STENCIL_BITS, 0);
+        glfwWindowHint(GLFW_DEPTH_BITS, 0);
 
         // Create Window.
         m_window = glfwCreateWindow(t_width, t_height, t_name.c_str(), nullptr, nullptr);
@@ -36,16 +44,38 @@ namespace pTK
         }
         glfwMakeContextCurrent(m_window);
 
-        // Initialize GLEW.
-        GLenum err = glewInit();
-        if (GLEW_OK != err)
-        {
-            std::stringstream ss{"GLEW Error: "};
-            ss << glewGetErrorString(err);
-            glfwTerminate();
-            throw std::logic_error(ss.str());
-        }
+        glViewport(0, 0, t_width, t_height);
         glClearColor(0.3f, 0.2f, 0.2f, 1.0f);
+        glClearStencil(0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        // Init Skia
+        auto interface = GrGLMakeNativeInterface();
+        m_context = GrContext::MakeGL(interface).release();
+
+        GrGLint buffer;
+        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &buffer);
+        GrGLFramebufferInfo info;
+        info.fFBOID = (GrGLuint) buffer;
+        info.fFormat = GL_RGBA8;
+
+        SkColorType colorType;
+        if (kRGBA_8888_GrPixelConfig == kSkia8888_GrPixelConfig) {
+            colorType = kRGBA_8888_SkColorType;
+        }
+        else {
+            colorType = kBGRA_8888_SkColorType;
+        }
+
+        int width, height;
+        glfwGetFramebufferSize(m_window, &width, &height);
+        GrBackendRenderTarget backendRenderTarget(width, height, 0, 0, info);
+
+        m_surface = SkSurface::MakeFromBackendRenderTarget(m_context, backendRenderTarget, kBottomLeft_GrSurfaceOrigin, colorType, nullptr, nullptr).release();
+        if (m_surface == nullptr)
+            throw std::logic_error("Skia error");
+
+        m_canvas = m_surface->getCanvas();
 
         // Set Callbacks
         glfwSetWindowUserPointer(m_window, this);
@@ -88,6 +118,8 @@ namespace pTK
 
     Window::~Window()
     {
+        delete m_surface;
+        delete m_context;
         glfwTerminate();
     }
 

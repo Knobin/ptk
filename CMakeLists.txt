@@ -14,18 +14,20 @@ file(GLOB_RECURSE HEADER_FILES
 
 include_directories(${CMAKE_SOURCE_DIR}/include/)
 
+# Skia Path and include folder
+set(SKIA_SDK "${CMAKE_SOURCE_DIR}/vendor/skia")
+include_directories(${SKIA_SDK})
+
 # Define executable
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
+add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SKIA_HEADER_FILES} ${SOURCE_FILES})
+
+# Skia
+target_link_libraries(${PROJECT_NAME} ${SKIA_SDK}/out/Release/libskia.a)
 
 # OpenGL
 find_package(OpenGL REQUIRED)
 target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES})
-
-# GLEW
-find_package(GLEW 2.0 REQUIRED)
-target_include_directories(${PROJECT_NAME} PRIVATE ${GLEW_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${GLEW_LIBRARIES})
 
 # GLFW
 add_subdirectory(${CMAKE_SOURCE_DIR}/vendor/glfw)
