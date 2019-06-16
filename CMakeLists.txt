@@ -22,7 +22,11 @@ include_directories(${SKIA_SDK})
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SKIA_HEADER_FILES} ${SOURCE_FILES})
 
 # Skia
-target_link_libraries(${PROJECT_NAME} ${SKIA_SDK}/out/Release/libskia.a)
+if (CMAKE_BUILD_TYPE MATCHES Debug)
+    target_link_libraries(${PROJECT_NAME} ${SKIA_SDK}/out/Debug/libskia.a)
+elseif (CMAKE_BUILD_TYPE MATCHES Release)
+    target_link_libraries(${PROJECT_NAME} ${SKIA_SDK}/out/Release/libskia.a)
+endif()
 
 # OpenGL
 find_package(OpenGL REQUIRED)

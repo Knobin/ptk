@@ -1,3 +1,6 @@
 [submodule "vendor/GLFW"]
 	path = vendor/GLFW
 	url = https://github.com/glfw/glfw.git
+[submodule "vendor/skia"]
+	path = vendor/skia
+	url = https://github.com/google/skia.git
