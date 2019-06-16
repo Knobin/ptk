@@ -24,4 +24,4 @@ namespace pTK
     };
 }
 
-#endif //PTK_APPLICATION_HPP
+#endif // PTK_APPLICATION_HPP

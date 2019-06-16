@@ -1,0 +1,20 @@
+//
+//  log.hpp
+//  pTK
+//
+//  Created by Robin Gustafsson on 2019-06-16.
+//
+
+#ifndef PTK_LOG_HPP
+#define PTK_LOG_HPP
+
+// spdlog Headers
+#include "spdlog/spdlog.h"
+
+#define PTK_TRACE(...)  spdlog::info(__VA_ARGS__)
+#define PTK_INFO(...)   spdlog::info(__VA_ARGS__)
+#define PTK_WARN(...)   spdlog::warn(__VA_ARGS__)
+#define PTK_ERROR(...)  spdlog::error(__VA_ARGS__)
+#define PTK_FATAL(...)  spdlog::fatal(__VA_ARGS__)
+
+#endif // PTK_LOG_HPP
