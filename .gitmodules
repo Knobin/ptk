@@ -4,3 +4,6 @@
 [submodule "vendor/skia"]
 	path = vendor/skia
 	url = https://github.com/google/skia.git
+[submodule "vendor/spdlog"]
+	path = vendor/spdlog
+	url = https://github.com/gabime/spdlog.git
