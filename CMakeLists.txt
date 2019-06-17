@@ -19,7 +19,7 @@ set(SKIA_SDK "${CMAKE_SOURCE_DIR}/vendor/skia")
 include_directories(${SKIA_SDK})
 
 # Define executable
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
+add_library(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 # Skia
 if (CMAKE_BUILD_TYPE MATCHES Debug)
@@ -42,3 +42,5 @@ target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
 add_subdirectory(${CMAKE_SOURCE_DIR}/vendor/spdlog)
 spdlog_enable_warnings(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} spdlog spdlog::spdlog_header_only)
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/example)
