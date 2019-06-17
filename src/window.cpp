@@ -10,6 +10,7 @@
 #include "ptk/events/keyevent.hpp"
 #include "ptk/events/mouseevent.hpp"
 #include "ptk/events/windowevent.hpp"
+#include "ptk/log.hpp"
 
 // C++ Headers
 #include <exception>
@@ -24,8 +25,45 @@
 namespace pTK
 {
     Window::Window(const std::string& t_name, unsigned int t_width, unsigned int t_height)
-        : EventHandler(), m_window{nullptr}, m_data{t_name, t_width, t_height}, m_context{nullptr}, m_surface{nullptr}, m_canvas{
+        : EventHandling(), m_window{nullptr}, m_data{t_name, t_width, t_height}, m_context{nullptr}, m_surface{nullptr}, m_canvas{
             nullptr}
+    {
+        init_glfw();
+
+        // Create Window.
+        m_window = glfwCreateWindow((int)t_width, (int)t_height, t_name.c_str(), nullptr, nullptr);
+        if (m_window == nullptr)
+        {
+            glfwTerminate();
+            throw std::logic_error("Failed to create GLFW Window.");
+        }
+        
+        // Bind and clear context.
+        glfwMakeContextCurrent(m_window);
+        glViewport(0, 0, t_width, t_height);
+        glClearColor(0.3f, 0.2f, 0.2f, 1.0f);
+        glClearStencil(0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        init_skia();
+        if (m_surface == nullptr)
+            throw std::logic_error("Skia error");
+
+        // Save Canvas for rendering.
+        m_canvas = m_surface->getCanvas();
+
+        // Set pointer for use in callbacks;
+        glfwSetWindowUserPointer(m_window, this);
+        
+        set_window_callbacks();
+        set_mouse_callbacks();
+        set_key_callbacks();
+        
+        
+    }
+    
+    // Init Functions
+    void Window::init_glfw()
     {
         // Initialize and configure of glfw.
         glfwInit();
@@ -34,31 +72,20 @@ namespace pTK
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_STENCIL_BITS, 0);
         glfwWindowHint(GLFW_DEPTH_BITS, 0);
-
-        // Create Window.
-        m_window = glfwCreateWindow(t_width, t_height, t_name.c_str(), nullptr, nullptr);
-        if (m_window == nullptr)
-        {
-            glfwTerminate();
-            throw std::logic_error("Failed to create GLFW Window.");
-        }
-        glfwMakeContextCurrent(m_window);
-
-        glViewport(0, 0, t_width, t_height);
-        glClearColor(0.3f, 0.2f, 0.2f, 1.0f);
-        glClearStencil(0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
+    }
+    
+    void Window::init_skia()
+    {
         // Init Skia
         auto interface = GrGLMakeNativeInterface();
         m_context = GrContext::MakeGL(interface).release();
-
+        
         GrGLint buffer;
         glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &buffer);
         GrGLFramebufferInfo info;
         info.fFBOID = (GrGLuint) buffer;
         info.fFormat = GL_RGBA8;
-
+        
         SkColorType colorType;
         if (kRGBA_8888_GrPixelConfig == kSkia8888_GrPixelConfig) {
             colorType = kRGBA_8888_SkColorType;
@@ -66,39 +93,38 @@ namespace pTK
         else {
             colorType = kBGRA_8888_SkColorType;
         }
-
+        
         int width, height;
         glfwGetFramebufferSize(m_window, &width, &height);
         GrBackendRenderTarget backendRenderTarget(width, height, 0, 0, info);
-
+        
         m_surface = SkSurface::MakeFromBackendRenderTarget(m_context, backendRenderTarget, kBottomLeft_GrSurfaceOrigin, colorType, nullptr, nullptr).release();
-        if (m_surface == nullptr)
-            throw std::logic_error("Skia error");
-
-        m_canvas = m_surface->getCanvas();
-
-        // Set Callbacks
-        glfwSetWindowUserPointer(m_window, this);
-        glfwSetFramebufferSizeCallback(m_window, [](GLFWwindow* t_window, int t_width, int t_height){
-            auto window = static_cast<Window*>( glfwGetWindowUserPointer( t_window ) );
-            window->push_event(new ResizeEvent((unsigned int)t_width, (unsigned int)t_height));
+    }
+    
+    // Set Event Callbacks
+    void Window::set_window_callbacks()
+    {
+        // void window_size_callback(GLFWwindow* window, int width, int height)
+        glfwSetWindowSizeCallback(m_window, [](GLFWwindow* t_window, int t_width, int t_height){
+            auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
+            window->window_event(new ResizeEvent((unsigned int)t_width, (unsigned int)t_height));
         });
-        // key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-        glfwSetKeyCallback(m_window, [](GLFWwindow* t_window, int t_key, int, int t_action, int){
-            auto window = static_cast<Window*>( glfwGetWindowUserPointer( t_window ) );
-            if (t_action == GLFW_PRESS)
-                window->push_event(new KeyEvent(EventType::KeyPressed, t_key));
-            else if (t_action == GLFW_RELEASE)
-                window->push_event(new KeyEvent(EventType::KeyReleased, t_key));
-        });
+    }
+    
+    void Window::set_mouse_callbacks()
+    {
         // void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
         glfwSetCursorPosCallback(m_window, [](GLFWwindow* t_window, double t_xpos, double t_ypos){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
-            window->push_event(new MotionEvent((int)t_xpos, (int)t_ypos));
+            window->mouse_event(new MotionEvent((int)t_xpos, (int)t_ypos));
         });
         // void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
         glfwSetMouseButtonCallback(m_window, [](GLFWwindow* t_window, int t_button, int t_action, int){
-            auto window = static_cast<Window*>( glfwGetWindowUserPointer( t_window ) );
+            auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
+            
+            double xpos, ypos;
+            glfwGetCursorPos(t_window, &xpos, &ypos);
+            
             MouseButton button;
             if (t_button == GLFW_MOUSE_BUTTON_LEFT)
                 button = MouseButton::Left;
@@ -108,11 +134,23 @@ namespace pTK
                 button = MouseButton::Right;
             else
                 button = MouseButton::NONE;
-
+            
             if (t_action == GLFW_PRESS)
-                window->push_event(new ButtonEvent(EventType::MouseButtonPressed, button));
+                window->mouse_event(new ButtonEvent(EventType::MouseButtonPressed, button, (int)xpos, (int)ypos));
             else if (t_action == GLFW_RELEASE)
-                window->push_event(new ButtonEvent(EventType::MouseButtonReleased, button));
+                window->mouse_event(new ButtonEvent(EventType::MouseButtonReleased, button, (int)xpos, (int)ypos));
+        });
+    }
+    
+    void Window::set_key_callbacks()
+    {
+        // void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+        glfwSetKeyCallback(m_window, [](GLFWwindow* t_window, int t_key, int, int t_action, int){
+            auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
+            if (t_action == GLFW_PRESS)
+                window->key_event(new KeyEvent(EventType::KeyPressed, t_key));
+            else if (t_action == GLFW_RELEASE)
+                window->key_event(new KeyEvent(EventType::KeyReleased, t_key));
         });
     }
 
@@ -126,7 +164,6 @@ namespace pTK
     void Window::update()
     {
         glfwPollEvents();
-        process_events();
     }
 
     void Window::swap_buffers()
@@ -141,25 +178,16 @@ namespace pTK
 
     void Window::resize(unsigned int t_width, unsigned int t_height)
     {
-        glViewport(0, 0, t_width, t_height);
-        std::cout << "Window Resized to: " << t_width << "x" << t_height << "\n";
-    }
-
-    void Window::process_events()
-    {
-        while (!m_event_queue.empty())
-        {
-            Event* event = pop_event();
-
-            if (event->get_category() == EventCategory::Mouse)
-                mouse_event(event);
-            else if (event->get_category() == EventCategory::Key)
-                key_event(event);
-            else if (event->get_category() == EventCategory::Window)
-                window_event(event);
-
-            delete event;
-        }
+        // Set Window Size.
+        m_data.width = t_width;
+        m_data.height = t_height;
+        
+        // Set Framebuffer Size.
+        int fb_width, fb_height;
+        glfwGetFramebufferSize(m_window, &fb_width, &fb_height);
+        glViewport(0, 0, fb_width, fb_height);
+        
+        PTK_INFO("ResizeEvent: W: {0:d}x{1:d}, FB: {2:d}x{3:d}", t_width, t_height, fb_width, fb_height);
     }
 
     // Event processing
@@ -178,14 +206,15 @@ namespace pTK
         if (type == EventType::MouseMoved)
         {
             MotionEvent* motion_event = (MotionEvent*)t_event;
-            std::cout << "Mouse moved to: " << motion_event->get_posx() << "x" << motion_event->get_posy() << "\n";
+            //std::cout << "Mouse moved to: " << motion_event->get_posx() << "x" << motion_event->get_posy() << "\n";
         } else if (type == EventType::MouseButtonPressed || type == EventType::MouseButtonReleased)
         {
             ButtonEvent* button_event = (ButtonEvent*)t_event;
             if (button_event->get_type() == EventType::MouseButtonPressed)
-                std::cout << "Mouse pressed: " << (int)button_event->get_button() << "\n";
+            PTK_INFO("ButtonEvent: Pressed: {0:d}, At: {1:d}x{2:d}", (int)button_event->get_button(), button_event->get_posx(), button_event->get_posy());
             else if (button_event->get_type() == EventType::MouseButtonReleased)
-                std::cout << "Mouse released: " << (int)button_event->get_button() << "\n";
+                PTK_INFO("ButtonEvent: Released: {0:d}, At: {1:d}x{2:d}", (int)button_event->get_button(), button_event->get_posx(), button_event->get_posy());
+            
         }
     }
 

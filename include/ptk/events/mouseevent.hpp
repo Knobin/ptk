@@ -28,7 +28,7 @@ namespace pTK
             : Event(EventCategory::Mouse, EventType::MouseMoved), m_posx{t_posx}, m_posy{t_posy}
         {
         }
-        ~MotionEvent() final = default;
+        virtual ~MotionEvent() = default;
 
         int get_posx() const { return m_posx; }
         int get_posy() const { return m_posy; }
@@ -44,7 +44,7 @@ namespace pTK
             : Event(EventCategory::Mouse, EventType::MouseScrolled), m_xoffset{t_xoffset}, m_yoffset{t_yoffset}
         {
         }
-        ~ScrollEvent() final = default;
+        virtual ~ScrollEvent() = default;
 
         int get_x_offset() const { return m_xoffset; }
         int get_y_offset() const { return m_yoffset; }
@@ -53,14 +53,15 @@ namespace pTK
         int m_yoffset;
     };
 
-    class ButtonEvent : public Event
+    class ButtonEvent : public MotionEvent
     {
     public:
-        ButtonEvent(EventType type, MouseButton t_button)
-            : Event(EventCategory::Mouse, type), m_button{t_button}
+        ButtonEvent(EventType type, MouseButton t_button, int t_posx, int t_posy)
+            : MotionEvent(t_posx, t_posy), m_button{t_button}
         {
+            m_type = type;
         }
-        ~ButtonEvent() final = default;
+        virtual ~ButtonEvent() final = default;
 
         MouseButton get_button() const { return m_button; }
     private:

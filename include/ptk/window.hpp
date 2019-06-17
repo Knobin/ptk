@@ -9,7 +9,7 @@
 #define PTK_WINDOW_HPP
 
 // Local Headers
-#include "ptk/eventhandler.hpp"
+#include "ptk/eventhandling.hpp"
 
 // C++ Headers
 #include <string>
@@ -34,7 +34,7 @@ namespace pTK
         unsigned int height;
     };
 
-    class Window : public EventHandler
+    class Window : public EventHandling
     {
     public:
         Window(const std::string& t_name, unsigned int t_width, unsigned int t_height);
@@ -44,6 +44,11 @@ namespace pTK
         void swap_buffers();
         bool should_close();
         void resize(unsigned int t_width, unsigned int t_height);
+        
+        // Event processing
+        void key_event(Event* t_event) override;
+        void mouse_event(Event* t_event) override;
+        void window_event(Event* t_event);
 
     private:
         // Window
@@ -54,13 +59,15 @@ namespace pTK
         GrContext* m_context;
         SkSurface* m_surface;
         SkCanvas* m_canvas;
-
-        void process_events();
-
-        // Event processing from EventHandler
-        void key_event(Event* t_event) override;
-        void mouse_event(Event* t_event) override;
-        void window_event(Event* t_event) override;
+        
+        // Init Functions
+        void init_glfw();
+        void init_skia();
+        
+        // Set Event Callbacks
+        void set_window_callbacks();
+        void set_mouse_callbacks();
+        void set_key_callbacks();
     };
 }
 
