@@ -39,6 +39,7 @@ include_directories(${CMAKE_SOURCE_DIR}/vendor/glfw/include)
 target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
 
 # spdlog
+set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
 add_subdirectory(${CMAKE_SOURCE_DIR}/vendor/spdlog)
 target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
 
