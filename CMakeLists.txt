@@ -40,7 +40,7 @@ target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
 
 # spdlog
 add_subdirectory(${CMAKE_SOURCE_DIR}/vendor/spdlog)
-spdlog_enable_warnings(${PROJECT_NAME})
-target_link_libraries(${PROJECT_NAME} spdlog spdlog::spdlog_header_only)
+target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
 
+# Example
 add_subdirectory(${CMAKE_SOURCE_DIR}/example)
