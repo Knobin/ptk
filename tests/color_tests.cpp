@@ -183,7 +183,7 @@ TEST_CASE ("Correct Color Constructors")
         REQUIRE(color.g == 0);
         REQUIRE(color.b == 0);
         REQUIRE(color.a == 255);
-        REQUIRE(color.get_raw() == 0x000000FF);
+        REQUIRE(color.to_int() == 0x000000FF);
     }
     
     for (const auto& p : data)
@@ -195,7 +195,7 @@ TEST_CASE ("Correct Color Constructors")
             REQUIRE(color.g == p.first.green);
             REQUIRE(color.b == p.first.blue);
             REQUIRE(color.a == p.first.alpha);
-            REQUIRE(color.get_raw() == p.first.all);
+            REQUIRE(color.to_int() == p.first.all);
         }
         
         SECTION("Color(uint8_t red, uint8_t green, uint8_t blue) " + p.second + " input: " + std::to_string(p.first.all))
@@ -207,7 +207,7 @@ TEST_CASE ("Correct Color Constructors")
             REQUIRE(color.a == 255);
             uint32_t new_all = p.first.all;
             new_all |= 0x000000FF;
-            REQUIRE(color.get_raw() == new_all);
+            REQUIRE(color.to_int() == new_all);
         }
         
         SECTION("Color(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) " + p.second + " input: " + std::to_string(p.first.all))
@@ -217,7 +217,7 @@ TEST_CASE ("Correct Color Constructors")
             REQUIRE(color.g == p.first.green);
             REQUIRE(color.b == p.first.blue);
             REQUIRE(color.a == p.first.alpha);
-            REQUIRE(color.get_raw() == p.first.all);
+            REQUIRE(color.to_int() == p.first.all);
         }
         
         SECTION("Color(const Color& rhs) " + p.second + " input: " + std::to_string(p.first.all))
@@ -228,7 +228,7 @@ TEST_CASE ("Correct Color Constructors")
             REQUIRE(copy.g == p.first.green);
             REQUIRE(copy.b == p.first.blue);
             REQUIRE(copy.a == p.first.alpha);
-            REQUIRE(copy.get_raw() == p.first.all);
+            REQUIRE(copy.to_int() == p.first.all);
         }
     }
 }
@@ -246,7 +246,7 @@ TEST_CASE ("Color Get")
             REQUIRE(color.g == p.first.green);
             REQUIRE(color.b == p.first.blue);
             REQUIRE(color.a == p.first.alpha);
-            REQUIRE(color.get_raw() == p.first.all);
+            REQUIRE(color.to_int() == p.first.all);
         }
         
         SECTION("get_color() " + p.second + " input: " + std::to_string(p.first.all))
@@ -257,7 +257,7 @@ TEST_CASE ("Color Get")
             REQUIRE(get.g == color.g);
             REQUIRE(get.b == color.b);
             REQUIRE(get.a == color.a);
-            REQUIRE(get.get_raw() == color.get_raw());
+            REQUIRE(get.to_int() == color.to_int());
         }
     }
 }
@@ -279,7 +279,7 @@ TEST_CASE ("Color Set")
             REQUIRE(color.g == p.first.green);
             REQUIRE(color.b == p.first.blue);
             REQUIRE(color.a == p.first.alpha);
-            REQUIRE(color.get_raw() == p.first.all);
+            REQUIRE(color.to_int() == p.first.all);
         }
         
         SECTION("set_rgb(uint8_t red, uint8_t green, uint8_t blue) " + p.second + " input: " + std::to_string(p.first.all))
@@ -292,7 +292,7 @@ TEST_CASE ("Color Set")
             REQUIRE(color.a == 255);
             uint32_t new_all = p.first.all;
             new_all |= 0x000000FF;
-            REQUIRE(color.get_raw() == new_all);
+            REQUIRE(color.to_int() == new_all);
         }
         
         SECTION("set_rgba(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) " + p.second + " input: " + std::to_string(p.first.all))
@@ -303,7 +303,7 @@ TEST_CASE ("Color Set")
             REQUIRE(color.g == p.first.green);
             REQUIRE(color.b == p.first.blue);
             REQUIRE(color.a == p.first.alpha);
-            REQUIRE(color.get_raw() == p.first.all);
+            REQUIRE(color.to_int() == p.first.all);
         }
         
         SECTION("set_color(const Color& value) " + p.second + " input: " + std::to_string(p.first.all))
@@ -315,7 +315,7 @@ TEST_CASE ("Color Set")
             REQUIRE(set.g == color.g);
             REQUIRE(set.b == color.b);
             REQUIRE(set.a == color.a);
-            REQUIRE(set.get_raw() == color.get_raw());
+            REQUIRE(set.to_int() == color.to_int());
         }
         
         SECTION("set_color(uint32_t color) " + p.second + " input: " + std::to_string(p.first.all))
@@ -326,7 +326,7 @@ TEST_CASE ("Color Set")
             REQUIRE(set_raw.g == p.first.green);
             REQUIRE(set_raw.b == p.first.blue);
             REQUIRE(set_raw.a == p.first.alpha);
-            REQUIRE(set_raw.get_raw() == p.first.all);
+            REQUIRE(set_raw.to_int() == p.first.all);
         }
     }
 }
@@ -346,7 +346,7 @@ TEST_CASE ("Color Operators")
             REQUIRE(copy.g == p.first.green);
             REQUIRE(copy.b == p.first.blue);
             REQUIRE(copy.a == p.first.alpha);
-            REQUIRE(copy.get_raw() == p.first.all);
+            REQUIRE(copy.to_int() == p.first.all);
         }
         
         SECTION("Operator+" + p.second + " input: " + std::to_string(p.first.all))
@@ -365,7 +365,7 @@ TEST_CASE ("Color Operators")
                 REQUIRE(copy.g == c_add.green);
                 REQUIRE(copy.b == c_add.blue);
                 REQUIRE(copy.a == c_add.alpha);
-                REQUIRE(copy.get_raw() == c_add.all);
+                REQUIRE(copy.to_int() == c_add.all);
             }
         }
         
@@ -385,7 +385,7 @@ TEST_CASE ("Color Operators")
                 REQUIRE(copy.g == c_sub.green);
                 REQUIRE(copy.b == c_sub.blue);
                 REQUIRE(copy.a == c_sub.alpha);
-                REQUIRE(copy.get_raw() == c_sub.all);
+                REQUIRE(copy.to_int() == c_sub.all);
             }
         }
         
@@ -405,7 +405,7 @@ TEST_CASE ("Color Operators")
                 REQUIRE(copy.g == c_add.green);
                 REQUIRE(copy.b == c_add.blue);
                 REQUIRE(copy.a == c_add.alpha);
-                REQUIRE(copy.get_raw() == c_add.all);
+                REQUIRE(copy.to_int() == c_add.all);
             }
         }
         
@@ -425,7 +425,7 @@ TEST_CASE ("Color Operators")
                 REQUIRE(copy.g == c_sub.green);
                 REQUIRE(copy.b == c_sub.blue);
                 REQUIRE(copy.a == c_sub.alpha);
-                REQUIRE(copy.get_raw() == c_sub.all);
+                REQUIRE(copy.to_int() == c_sub.all);
             }
         }
         
