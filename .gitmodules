@@ -8,5 +8,5 @@
 	path = vendor/spdlog
 	url = https://github.com/gabime/spdlog.git
 [submodule "tests/vendor/Catch2"]
-	path = tests/vendor/Catch2
+	path = vendor/Catch2
 	url = https://github.com/catchorg/Catch2.git
