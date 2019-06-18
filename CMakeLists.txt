@@ -4,6 +4,16 @@ project(ptk)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic")
 
+# Build Type
+if (CMAKE_BUILD_TYPE MATCHES Debug)
+    add_definitions(-DPTK_DEBUG)
+    set(PTK_BUILD_TYPE "Debug")
+elseif (CMAKE_BUILD_TYPE MATCHES Release)
+    set(PTK_BUILD_TYPE "Release")
+else()
+    set(PTK_BUILD_TYPE "Release")
+endif()
+
 # Source files
 file(GLOB_RECURSE SOURCE_FILES
         ${CMAKE_SOURCE_DIR}/src/*.cpp)
@@ -22,11 +32,7 @@ include_directories(${SKIA_SDK})
 add_library(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 # Skia
-if (CMAKE_BUILD_TYPE MATCHES Debug)
-    target_link_libraries(${PROJECT_NAME} ${SKIA_SDK}/out/Debug/libskia.a)
-elseif (CMAKE_BUILD_TYPE MATCHES Release)
-    target_link_libraries(${PROJECT_NAME} ${SKIA_SDK}/out/Release/libskia.a)
-endif()
+target_link_libraries(${PROJECT_NAME} ${SKIA_SDK}/out/${PTK_BUILD_TYPE}/libskia.a)
 
 # OpenGL
 find_package(OpenGL REQUIRED)
