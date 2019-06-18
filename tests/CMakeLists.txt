@@ -11,4 +11,4 @@ file(GLOB TEST_SOURCE_FILES
 add_executable(${PROJECT_NAME} ${TEST_SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} ptk)
 
-target_include_directories(${PROJECT_NAME} PUBLIC vendor/Catch2/single_include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/vendor/Catch2/single_include)
