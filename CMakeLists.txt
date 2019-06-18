@@ -45,3 +45,8 @@ target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
 
 # Example
 add_subdirectory(${CMAKE_SOURCE_DIR}/example)
+
+# Tests
+add_subdirectory(${CMAKE_SOURCE_DIR}/tests)
+enable_testing()
+add_test(NAME Tests COMMAND ptk_tests)

@@ -11,10 +11,18 @@
 // spdlog Headers
 #include "spdlog/spdlog.h"
 
-#define PTK_TRACE(...)  spdlog::info(__VA_ARGS__)
-#define PTK_INFO(...)   spdlog::info(__VA_ARGS__)
-#define PTK_WARN(...)   spdlog::warn(__VA_ARGS__)
-#define PTK_ERROR(...)  spdlog::error(__VA_ARGS__)
-#define PTK_FATAL(...)  spdlog::fatal(__VA_ARGS__)
+#ifdef NDEBUG
+    #define PTK_TRACE(...)  spdlog::trace(__VA_ARGS__)
+    #define PTK_INFO(...)   spdlog::info(__VA_ARGS__)
+    #define PTK_WARN(...)   spdlog::warn(__VA_ARGS__)
+    #define PTK_ERROR(...)  spdlog::error(__VA_ARGS__)
+    #define PTK_FATAL(...)  spdlog::fatal(__VA_ARGS__)
+#else
+    #define PTK_TRACE(...)
+    #define PTK_INFO(...)
+    #define PTK_WARN(...)
+    #define PTK_ERROR(...)
+    #define PTK_FATAL(...)
+#endif
 
 #endif // PTK_LOG_HPP

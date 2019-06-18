@@ -33,7 +33,7 @@ namespace pTK
     }
     
     Color::Color()
-        : m_color{u_color::s_color{0, 0, 0, 255}}
+        : m_color{u_color::s_color{255, 0, 0, 0}}
     {
     }
     
@@ -43,13 +43,13 @@ namespace pTK
     }
     
     Color::Color(uint8_t red, uint8_t green, uint8_t blue)
-        : m_color{u_color::s_color{red, green, blue, 255}}
+        : m_color{u_color::s_color{255, blue, green, red}}
     {
         
     }
     
     Color::Color(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
-        : m_color{u_color::s_color{red, green, blue, alpha}}
+        : m_color{u_color::s_color{alpha, blue, green, red}}
     {
         
     }
@@ -95,7 +95,13 @@ namespace pTK
     
     uint32_t Color::get_raw() const
     {
-        return m_color.data;
+        uint32_t r_value = 0;
+        r_value |= (get_r() << 24);
+        r_value |= (get_g() << 16);
+        r_value |= (get_b() << 8);
+        r_value |= get_a();
+        
+        return r_value;
     }
     
     // Set.
@@ -106,17 +112,32 @@ namespace pTK
     
     void Color::set_g(uint8_t green)
     {
-        m_color.rgba.r = green;
+        m_color.rgba.g = green;
     }
     
     void Color::set_b(uint8_t blue)
     {
-        m_color.rgba.r = blue;
+        m_color.rgba.b = blue;
     }
     
     void Color::set_a(uint8_t alpha)
     {
-        m_color.rgba.r = alpha;
+        m_color.rgba.a = alpha;
+    }
+    
+    void Color::set_rgb(uint8_t red, uint8_t green, uint8_t blue)
+    {
+        m_color.rgba.r = red;
+        m_color.rgba.g = green;
+        m_color.rgba.b = blue;
+    }
+    
+    void Color::set_rgba(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+    {
+        m_color.rgba.r = red;
+        m_color.rgba.g = green;
+        m_color.rgba.b = blue;
+        m_color.rgba.a = alpha;
     }
     
     void Color::set_color(const Color& value)
@@ -126,7 +147,10 @@ namespace pTK
     
     void Color::set_color(uint32_t color)
     {
-        m_color.data = color;
+        set_r( (uint8_t)((color >> 24) & 0xFF) );
+        set_g( (uint8_t)((color >> 16) & 0xFF) );
+        set_b( (uint8_t)((color >> 8) & 0xFF) );
+        set_a( (uint8_t)(color & 0xFF) );
     }
     
     // Binary arithmetic operators.
@@ -179,12 +203,12 @@ namespace pTK
     }
     
     // Comparison operators.
-    bool Color::operator==(const Color& rhs)
+    bool Color::operator==(const Color& rhs) const
     {
         return (get_raw() == rhs.get_raw());
     }
     
-    bool Color::operator!=(const Color& rhs)
+    bool Color::operator!=(const Color& rhs) const
     {
         return !(*this == rhs);
     }
