@@ -22,7 +22,7 @@ namespace pTK
     
     Color::Color(uint32_t color)
     {
-        set_color(color);
+        set_rgba(color);
     }
     
     Color::Color(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
@@ -56,6 +56,13 @@ namespace pTK
         b = blue;
     }
     
+    void Color::set_rgb(uint32_t color)
+    {
+        r = (uint8_t)((color >> 24) & 0xFF);
+        g = (uint8_t)((color >> 16) & 0xFF);
+        b = (uint8_t)((color >> 8) & 0xFF);
+    }
+    
     void Color::set_rgba(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
     {
         r = red;
@@ -64,17 +71,17 @@ namespace pTK
         a = alpha;
     }
     
-    void Color::set_color(const Color& value)
-    {
-        set_rgba(value.r, value.g, value.b, value.a);
-    }
-    
-    void Color::set_color(uint32_t color)
+    void Color::set_rgba(uint32_t color)
     {
         r = (uint8_t)((color >> 24) & 0xFF);
         g = (uint8_t)((color >> 16) & 0xFF);
         b = (uint8_t)((color >> 8) & 0xFF);
         a = (uint8_t)(color & 0xFF);
+    }
+    
+    void Color::set_color(const Color& color)
+    {
+        set_rgba(color.r, color.g, color.b, color.a);
     }
     
     // Comparison operators.

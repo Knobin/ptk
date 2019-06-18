@@ -295,6 +295,19 @@ TEST_CASE ("Color Set")
             REQUIRE(color.to_int() == new_all);
         }
         
+        SECTION("set_rgb(uint32_t color) " + p.second + " input: " + std::to_string(p.first.all))
+        {
+            pTK::Color color;
+            color.set_rgb(p.first.all);
+            REQUIRE(color.r == p.first.red);
+            REQUIRE(color.g == p.first.green);
+            REQUIRE(color.b == p.first.blue);
+            REQUIRE(color.a == 255);
+            uint32_t new_all = p.first.all;
+            new_all |= 0x000000FF;
+            REQUIRE(color.to_int() == new_all);
+        }
+        
         SECTION("set_rgba(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) " + p.second + " input: " + std::to_string(p.first.all))
         {
             pTK::Color color;
@@ -304,6 +317,17 @@ TEST_CASE ("Color Set")
             REQUIRE(color.b == p.first.blue);
             REQUIRE(color.a == p.first.alpha);
             REQUIRE(color.to_int() == p.first.all);
+        }
+        
+        SECTION("set_rgba(uint32_t color) " + p.second + " input: " + std::to_string(p.first.all))
+        {
+            pTK::Color set_raw;
+            set_raw.set_rgba(p.first.all);
+            REQUIRE(set_raw.r == p.first.red);
+            REQUIRE(set_raw.g == p.first.green);
+            REQUIRE(set_raw.b == p.first.blue);
+            REQUIRE(set_raw.a == p.first.alpha);
+            REQUIRE(set_raw.to_int() == p.first.all);
         }
         
         SECTION("set_color(const Color& value) " + p.second + " input: " + std::to_string(p.first.all))
@@ -316,17 +340,6 @@ TEST_CASE ("Color Set")
             REQUIRE(set.b == color.b);
             REQUIRE(set.a == color.a);
             REQUIRE(set.to_int() == color.to_int());
-        }
-        
-        SECTION("set_color(uint32_t color) " + p.second + " input: " + std::to_string(p.first.all))
-        {
-            pTK::Color set_raw;
-            set_raw.set_color(p.first.all);
-            REQUIRE(set_raw.r == p.first.red);
-            REQUIRE(set_raw.g == p.first.green);
-            REQUIRE(set_raw.b == p.first.blue);
-            REQUIRE(set_raw.a == p.first.alpha);
-            REQUIRE(set_raw.to_int() == p.first.all);
         }
     }
 }
