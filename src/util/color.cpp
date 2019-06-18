@@ -33,7 +33,7 @@ namespace pTK
     }
     
     Color::Color()
-        : m_color{u_color::s_color{255, 0, 0, 0}}
+        : r{0}, g{0}, b{0}, a{255}
     {
     }
     
@@ -43,13 +43,13 @@ namespace pTK
     }
     
     Color::Color(uint8_t red, uint8_t green, uint8_t blue)
-        : m_color{u_color::s_color{255, blue, green, red}}
+        : r{red}, g{green}, b{blue}, a{255}
     {
         
     }
     
     Color::Color(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
-        : m_color{u_color::s_color{alpha, blue, green, red}}
+        : r{red}, g{green}, b{blue}, a{alpha}
     {
         
     }
@@ -63,31 +63,15 @@ namespace pTK
     // Assignment.
     Color& Color::operator=(Color rhs)
     {
-        std::swap(m_color.data, rhs.m_color.data);
+        std::swap(r, rhs.r);
+        std::swap(g, rhs.g);
+        std::swap(b, rhs.b);
+        std::swap(a, rhs.a);
+        
         return *this;
     }
     
     // Get.
-    uint8_t Color::get_r() const
-    {
-        return m_color.rgba.r;
-    }
-    
-    uint8_t Color::get_g() const
-    {
-        return m_color.rgba.g;
-    }
-    
-    uint8_t Color::get_b() const
-    {
-        return m_color.rgba.b;
-    }
-    
-    uint8_t Color::get_a() const
-    {
-        return m_color.rgba.a;
-    }
-    
     Color Color::get_color() const
     {
         return *this;
@@ -96,61 +80,41 @@ namespace pTK
     uint32_t Color::get_raw() const
     {
         uint32_t r_value = 0;
-        r_value |= (get_r() << 24);
-        r_value |= (get_g() << 16);
-        r_value |= (get_b() << 8);
-        r_value |= get_a();
+        r_value |= (r << 24);
+        r_value |= (g << 16);
+        r_value |= (b << 8);
+        r_value |= a;
         
         return r_value;
     }
     
     // Set.
-    void Color::set_r(uint8_t red)
-    {
-        m_color.rgba.r = red;
-    }
-    
-    void Color::set_g(uint8_t green)
-    {
-        m_color.rgba.g = green;
-    }
-    
-    void Color::set_b(uint8_t blue)
-    {
-        m_color.rgba.b = blue;
-    }
-    
-    void Color::set_a(uint8_t alpha)
-    {
-        m_color.rgba.a = alpha;
-    }
-    
     void Color::set_rgb(uint8_t red, uint8_t green, uint8_t blue)
     {
-        m_color.rgba.r = red;
-        m_color.rgba.g = green;
-        m_color.rgba.b = blue;
+        r = red;
+        g = green;
+        b = blue;
     }
     
     void Color::set_rgba(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
     {
-        m_color.rgba.r = red;
-        m_color.rgba.g = green;
-        m_color.rgba.b = blue;
-        m_color.rgba.a = alpha;
+        r = red;
+        g = green;
+        b = blue;
+        a = alpha;
     }
     
     void Color::set_color(const Color& value)
     {
-        m_color.data = value.get_raw();
+        set_rgba(value.r, value.g, value.b, value.a);
     }
     
     void Color::set_color(uint32_t color)
     {
-        set_r( (uint8_t)((color >> 24) & 0xFF) );
-        set_g( (uint8_t)((color >> 16) & 0xFF) );
-        set_b( (uint8_t)((color >> 8) & 0xFF) );
-        set_a( (uint8_t)(color & 0xFF) );
+        r = (uint8_t)((color >> 24) & 0xFF);
+        g = (uint8_t)((color >> 16) & 0xFF);
+        b = (uint8_t)((color >> 8) & 0xFF);
+        a = (uint8_t)(color & 0xFF);
     }
     
     // Binary arithmetic operators.
@@ -159,10 +123,10 @@ namespace pTK
         Color new_Color{*this};
         
         // New Colors.
-        new_Color.m_color.rgba.r = add(new_Color.get_r(), rhs.get_r());
-        new_Color.m_color.rgba.g = add(new_Color.get_g(), rhs.get_g());
-        new_Color.m_color.rgba.b = add(new_Color.get_b(), rhs.get_b());
-        new_Color.m_color.rgba.a = add(new_Color.get_a(), rhs.get_a());
+        new_Color.r = add(new_Color.r, rhs.r);
+        new_Color.g = add(new_Color.g, rhs.g);
+        new_Color.b = add(new_Color.b, rhs.b);
+        new_Color.a = add(new_Color.a, rhs.a);
         
         return new_Color;
     }
@@ -170,10 +134,10 @@ namespace pTK
     Color& Color::operator+=(const Color& rhs)
     {
         // New Colors.
-        m_color.rgba.r = add(get_r(), rhs.get_r());
-        m_color.rgba.g = add(get_g(), rhs.get_g());
-        m_color.rgba.b = add(get_b(), rhs.get_b());
-        m_color.rgba.a = add(get_a(), rhs.get_a());
+        r = add(r, rhs.r);
+        g = add(g, rhs.g);
+        b = add(b, rhs.b);
+        a = add(a, rhs.a);
         
         return *this;
     }
@@ -183,10 +147,10 @@ namespace pTK
         Color new_Color{*this};
         
         // New Colors.
-        new_Color.m_color.rgba.r = sub(new_Color.get_r(), rhs.get_r());
-        new_Color.m_color.rgba.g = sub(new_Color.get_g(), rhs.get_g());
-        new_Color.m_color.rgba.b = sub(new_Color.get_b(), rhs.get_b());
-        new_Color.m_color.rgba.a = sub(new_Color.get_a(), rhs.get_a());
+        new_Color.r = sub(new_Color.r, rhs.r);
+        new_Color.g = sub(new_Color.g, rhs.g);
+        new_Color.b = sub(new_Color.b, rhs.b);
+        new_Color.a = sub(new_Color.a, rhs.a);
         
         return new_Color;
     }
@@ -194,10 +158,10 @@ namespace pTK
     Color& Color::operator-=(const Color& rhs)
     {
         // New Colors.
-        m_color.rgba.r = sub(get_r(), rhs.get_r());
-        m_color.rgba.g = sub(get_g(), rhs.get_g());
-        m_color.rgba.b = sub(get_b(), rhs.get_b());
-        m_color.rgba.a = sub(get_a(), rhs.get_a());
+        r = sub(r, rhs.r);
+        g = sub(g, rhs.g);
+        b = sub(b, rhs.b);
+        a = sub(a, rhs.a);
         
         return *this;
     }

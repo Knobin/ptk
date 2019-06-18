@@ -140,10 +140,10 @@ std::vector<std::pair<s_color, std::string>> data{
 s_color correct_add(const pTK::Color& lhs, const pTK::Color& rhs)
 {
     s_color new_s_color;
-    new_s_color.red     = ((lhs.get_r() + rhs.get_r()) < 256)  ?  (lhs.get_r() + rhs.get_r()) : 255;
-    new_s_color.green   = ((lhs.get_g() + rhs.get_g()) < 256)  ?  (lhs.get_g() + rhs.get_g()) : 255;
-    new_s_color.blue    = ((lhs.get_b() + rhs.get_b()) < 256)  ?  (lhs.get_b() + rhs.get_b()) : 255;
-    new_s_color.alpha   = ((lhs.get_a() + rhs.get_a()) < 256)  ?  (lhs.get_a() + rhs.get_a()) : 255;
+    new_s_color.red     = ((lhs.r + rhs.r) < 256)  ?  (lhs.r + rhs.r) : 255;
+    new_s_color.green   = ((lhs.g + rhs.g) < 256)  ?  (lhs.g + rhs.g) : 255;
+    new_s_color.blue    = ((lhs.b + rhs.b) < 256)  ?  (lhs.b + rhs.b) : 255;
+    new_s_color.alpha   = ((lhs.a + rhs.a) < 256)  ?  (lhs.a + rhs.a) : 255;
     
     new_s_color.all = 0;
     new_s_color.all |= (new_s_color.red << 24);
@@ -157,10 +157,10 @@ s_color correct_add(const pTK::Color& lhs, const pTK::Color& rhs)
 s_color correct_sub(const pTK::Color& lhs, const pTK::Color& rhs)
 {
     s_color new_s_color;
-    new_s_color.red     = ((lhs.get_r() - rhs.get_r()) > 0)  ?  (lhs.get_r() - rhs.get_r()) : 0;
-    new_s_color.green   = ((lhs.get_g() - rhs.get_g()) > 0)  ?  (lhs.get_g() - rhs.get_g()) : 0;
-    new_s_color.blue    = ((lhs.get_b() - rhs.get_b()) > 0)  ?  (lhs.get_b() - rhs.get_b()) : 0;
-    new_s_color.alpha   = ((lhs.get_a() - rhs.get_a()) > 0)  ?  (lhs.get_a() - rhs.get_a()) : 0;
+    new_s_color.red     = ((lhs.r - rhs.r) > 0)  ?  (lhs.r - rhs.r) : 0;
+    new_s_color.green   = ((lhs.g - rhs.g) > 0)  ?  (lhs.g - rhs.g) : 0;
+    new_s_color.blue    = ((lhs.b - rhs.b) > 0)  ?  (lhs.b - rhs.b) : 0;
+    new_s_color.alpha   = ((lhs.a - rhs.a) > 0)  ?  (lhs.a - rhs.a) : 0;
     
     new_s_color.all = 0;
     new_s_color.all |= (new_s_color.red << 24);
@@ -179,10 +179,10 @@ TEST_CASE ("Correct Color Constructors")
     {
         pTK::Color color;
         
-        REQUIRE(color.get_r() == 0);
-        REQUIRE(color.get_g() == 0);
-        REQUIRE(color.get_b() == 0);
-        REQUIRE(color.get_a() == 255);
+        REQUIRE(color.r == 0);
+        REQUIRE(color.g == 0);
+        REQUIRE(color.b == 0);
+        REQUIRE(color.a == 255);
         REQUIRE(color.get_raw() == 0x000000FF);
     }
     
@@ -191,20 +191,20 @@ TEST_CASE ("Correct Color Constructors")
         SECTION("Color(uint32_t color) " + p.second + " input: " + std::to_string(p.first.all))
         {
             pTK::Color color(p.first.all);
-            REQUIRE(color.get_r() == p.first.red);
-            REQUIRE(color.get_g() == p.first.green);
-            REQUIRE(color.get_b() == p.first.blue);
-            REQUIRE(color.get_a() == p.first.alpha);
+            REQUIRE(color.r == p.first.red);
+            REQUIRE(color.g == p.first.green);
+            REQUIRE(color.b == p.first.blue);
+            REQUIRE(color.a == p.first.alpha);
             REQUIRE(color.get_raw() == p.first.all);
         }
         
         SECTION("Color(uint8_t red, uint8_t green, uint8_t blue) " + p.second + " input: " + std::to_string(p.first.all))
         {
             pTK::Color color(p.first.red, p.first.green, p.first.blue);
-            REQUIRE(color.get_r() == p.first.red);
-            REQUIRE(color.get_g() == p.first.green);
-            REQUIRE(color.get_b() == p.first.blue);
-            REQUIRE(color.get_a() == 255);
+            REQUIRE(color.r == p.first.red);
+            REQUIRE(color.g == p.first.green);
+            REQUIRE(color.b == p.first.blue);
+            REQUIRE(color.a == 255);
             uint32_t new_all = p.first.all;
             new_all |= 0x000000FF;
             REQUIRE(color.get_raw() == new_all);
@@ -213,10 +213,10 @@ TEST_CASE ("Correct Color Constructors")
         SECTION("Color(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) " + p.second + " input: " + std::to_string(p.first.all))
         {
             pTK::Color color(p.first.red, p.first.green, p.first.blue, p.first.alpha);
-            REQUIRE(color.get_r() == p.first.red);
-            REQUIRE(color.get_g() == p.first.green);
-            REQUIRE(color.get_b() == p.first.blue);
-            REQUIRE(color.get_a() == p.first.alpha);
+            REQUIRE(color.r == p.first.red);
+            REQUIRE(color.g == p.first.green);
+            REQUIRE(color.b == p.first.blue);
+            REQUIRE(color.a == p.first.alpha);
             REQUIRE(color.get_raw() == p.first.all);
         }
         
@@ -224,10 +224,10 @@ TEST_CASE ("Correct Color Constructors")
         {
             pTK::Color color(p.first.red, p.first.green, p.first.blue, p.first.alpha);
             pTK::Color copy = color;
-            REQUIRE(copy.get_r() == p.first.red);
-            REQUIRE(copy.get_g() == p.first.green);
-            REQUIRE(copy.get_b() == p.first.blue);
-            REQUIRE(copy.get_a() == p.first.alpha);
+            REQUIRE(copy.r == p.first.red);
+            REQUIRE(copy.g == p.first.green);
+            REQUIRE(copy.b == p.first.blue);
+            REQUIRE(copy.a == p.first.alpha);
             REQUIRE(copy.get_raw() == p.first.all);
         }
     }
@@ -242,10 +242,10 @@ TEST_CASE ("Color Get")
         SECTION("get_*() " + p.second + " input: " + std::to_string(p.first.all))
         {
             pTK::Color color(p.first.red, p.first.green, p.first.blue, p.first.alpha);
-            REQUIRE(color.get_r() == p.first.red);
-            REQUIRE(color.get_g() == p.first.green);
-            REQUIRE(color.get_b() == p.first.blue);
-            REQUIRE(color.get_a() == p.first.alpha);
+            REQUIRE(color.r == p.first.red);
+            REQUIRE(color.g == p.first.green);
+            REQUIRE(color.b == p.first.blue);
+            REQUIRE(color.a == p.first.alpha);
             REQUIRE(color.get_raw() == p.first.all);
         }
         
@@ -253,10 +253,10 @@ TEST_CASE ("Color Get")
         {
             pTK::Color color(p.first.red, p.first.green, p.first.blue, p.first.alpha);
             pTK::Color get = color.get_color();
-            REQUIRE(get.get_r() == color.get_r());
-            REQUIRE(get.get_g() == color.get_g());
-            REQUIRE(get.get_b() == color.get_b());
-            REQUIRE(get.get_a() == color.get_a());
+            REQUIRE(get.r == color.r);
+            REQUIRE(get.g == color.g);
+            REQUIRE(get.b == color.b);
+            REQUIRE(get.a == color.a);
             REQUIRE(get.get_raw() == color.get_raw());
         }
     }
@@ -268,17 +268,17 @@ TEST_CASE ("Color Set")
     
     for (const auto& p : data)
     {
-        SECTION("set_*() " + p.second + " input: " + std::to_string(p.first.all))
+        SECTION("set variables " + p.second + " input: " + std::to_string(p.first.all))
         {
             pTK::Color color;
-            color.set_r(p.first.red);
-            color.set_g(p.first.green);
-            color.set_b(p.first.blue);
-            color.set_a(p.first.alpha);
-            REQUIRE(color.get_r() == p.first.red);
-            REQUIRE(color.get_g() == p.first.green);
-            REQUIRE(color.get_b() == p.first.blue);
-            REQUIRE(color.get_a() == p.first.alpha);
+            color.r = p.first.red;
+            color.g = p.first.green;
+            color.b = p.first.blue;
+            color.a = p.first.alpha;
+            REQUIRE(color.r == p.first.red);
+            REQUIRE(color.g == p.first.green);
+            REQUIRE(color.b == p.first.blue);
+            REQUIRE(color.a == p.first.alpha);
             REQUIRE(color.get_raw() == p.first.all);
         }
         
@@ -286,10 +286,10 @@ TEST_CASE ("Color Set")
         {
             pTK::Color color;
             color.set_rgb(p.first.red, p.first.green, p.first.blue);
-            REQUIRE(color.get_r() == p.first.red);
-            REQUIRE(color.get_g() == p.first.green);
-            REQUIRE(color.get_b() == p.first.blue);
-            REQUIRE(color.get_a() == 255);
+            REQUIRE(color.r == p.first.red);
+            REQUIRE(color.g == p.first.green);
+            REQUIRE(color.b == p.first.blue);
+            REQUIRE(color.a == 255);
             uint32_t new_all = p.first.all;
             new_all |= 0x000000FF;
             REQUIRE(color.get_raw() == new_all);
@@ -299,10 +299,10 @@ TEST_CASE ("Color Set")
         {
             pTK::Color color;
             color.set_rgba(p.first.red, p.first.green, p.first.blue, p.first.alpha);
-            REQUIRE(color.get_r() == p.first.red);
-            REQUIRE(color.get_g() == p.first.green);
-            REQUIRE(color.get_b() == p.first.blue);
-            REQUIRE(color.get_a() == p.first.alpha);
+            REQUIRE(color.r == p.first.red);
+            REQUIRE(color.g == p.first.green);
+            REQUIRE(color.b == p.first.blue);
+            REQUIRE(color.a == p.first.alpha);
             REQUIRE(color.get_raw() == p.first.all);
         }
         
@@ -311,10 +311,10 @@ TEST_CASE ("Color Set")
             pTK::Color color(p.first.red, p.first.green, p.first.blue, p.first.alpha);
             pTK::Color set;
             set.set_color(color);
-            REQUIRE(set.get_r() == color.get_r());
-            REQUIRE(set.get_g() == color.get_g());
-            REQUIRE(set.get_b() == color.get_b());
-            REQUIRE(set.get_a() == color.get_a());
+            REQUIRE(set.r == color.r);
+            REQUIRE(set.g == color.g);
+            REQUIRE(set.b == color.b);
+            REQUIRE(set.a == color.a);
             REQUIRE(set.get_raw() == color.get_raw());
         }
         
@@ -322,10 +322,10 @@ TEST_CASE ("Color Set")
         {
             pTK::Color set_raw;
             set_raw.set_color(p.first.all);
-            REQUIRE(set_raw.get_r() == p.first.red);
-            REQUIRE(set_raw.get_g() == p.first.green);
-            REQUIRE(set_raw.get_b() == p.first.blue);
-            REQUIRE(set_raw.get_a() == p.first.alpha);
+            REQUIRE(set_raw.r == p.first.red);
+            REQUIRE(set_raw.g == p.first.green);
+            REQUIRE(set_raw.b == p.first.blue);
+            REQUIRE(set_raw.a == p.first.alpha);
             REQUIRE(set_raw.get_raw() == p.first.all);
         }
     }
@@ -342,10 +342,10 @@ TEST_CASE ("Color Operators")
             pTK::Color color(p.first.red, p.first.green, p.first.blue, p.first.alpha);
             pTK::Color copy;
             copy = color;
-            REQUIRE(copy.get_r() == p.first.red);
-            REQUIRE(copy.get_g() == p.first.green);
-            REQUIRE(copy.get_b() == p.first.blue);
-            REQUIRE(copy.get_a() == p.first.alpha);
+            REQUIRE(copy.r == p.first.red);
+            REQUIRE(copy.g == p.first.green);
+            REQUIRE(copy.b == p.first.blue);
+            REQUIRE(copy.a == p.first.alpha);
             REQUIRE(copy.get_raw() == p.first.all);
         }
         
@@ -361,10 +361,10 @@ TEST_CASE ("Color Operators")
                 pTK::Color add(it->first.red, it->first.green, it->first.blue, it->first.alpha);
                 copy = color + add;
                 s_color c_add = correct_add(color, add);
-                REQUIRE(copy.get_r() == c_add.red);
-                REQUIRE(copy.get_g() == c_add.green);
-                REQUIRE(copy.get_b() == c_add.blue);
-                REQUIRE(copy.get_a() == c_add.alpha);
+                REQUIRE(copy.r == c_add.red);
+                REQUIRE(copy.g == c_add.green);
+                REQUIRE(copy.b == c_add.blue);
+                REQUIRE(copy.a == c_add.alpha);
                 REQUIRE(copy.get_raw() == c_add.all);
             }
         }
@@ -381,10 +381,10 @@ TEST_CASE ("Color Operators")
                 pTK::Color sub(it->first.red, it->first.green, it->first.blue, it->first.alpha);
                 copy = color - sub;
                 s_color c_sub = correct_sub(color, sub);
-                REQUIRE(copy.get_r() == c_sub.red);
-                REQUIRE(copy.get_g() == c_sub.green);
-                REQUIRE(copy.get_b() == c_sub.blue);
-                REQUIRE(copy.get_a() == c_sub.alpha);
+                REQUIRE(copy.r == c_sub.red);
+                REQUIRE(copy.g == c_sub.green);
+                REQUIRE(copy.b == c_sub.blue);
+                REQUIRE(copy.a == c_sub.alpha);
                 REQUIRE(copy.get_raw() == c_sub.all);
             }
         }
@@ -401,10 +401,10 @@ TEST_CASE ("Color Operators")
                 pTK::Color add(it->first.red, it->first.green, it->first.blue, it->first.alpha);
                 copy += add;
                 s_color c_add = correct_add(color, add);
-                REQUIRE(copy.get_r() == c_add.red);
-                REQUIRE(copy.get_g() == c_add.green);
-                REQUIRE(copy.get_b() == c_add.blue);
-                REQUIRE(copy.get_a() == c_add.alpha);
+                REQUIRE(copy.r == c_add.red);
+                REQUIRE(copy.g == c_add.green);
+                REQUIRE(copy.b == c_add.blue);
+                REQUIRE(copy.a == c_add.alpha);
                 REQUIRE(copy.get_raw() == c_add.all);
             }
         }
@@ -421,10 +421,10 @@ TEST_CASE ("Color Operators")
                 pTK::Color sub(it->first.red, it->first.green, it->first.blue, it->first.alpha);
                 copy -= sub;
                 s_color c_sub = correct_sub(color, sub);
-                REQUIRE(copy.get_r() == c_sub.red);
-                REQUIRE(copy.get_g() == c_sub.green);
-                REQUIRE(copy.get_b() == c_sub.blue);
-                REQUIRE(copy.get_a() == c_sub.alpha);
+                REQUIRE(copy.r == c_sub.red);
+                REQUIRE(copy.g == c_sub.green);
+                REQUIRE(copy.b == c_sub.blue);
+                REQUIRE(copy.a == c_sub.alpha);
                 REQUIRE(copy.get_raw() == c_sub.all);
             }
         }
