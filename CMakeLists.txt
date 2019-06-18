@@ -32,7 +32,12 @@ include_directories(${SKIA_SDK})
 add_library(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 # Skia
-target_link_libraries(${PROJECT_NAME} ${SKIA_SDK}/out/${PTK_BUILD_TYPE}/libskia.a)
+if (EXISTS ${SKIA_SDK}/out/${PTK_BUILD_TYPE}/libskia.a)
+    message(STATUS "Skia build type: ${PTK_BUILD_TYPE}")
+    target_link_libraries(${PROJECT_NAME} ${SKIA_SDK}/out/${PTK_BUILD_TYPE}/libskia.a)
+else()
+    message(FATAL_ERROR "Skia is not found for build type: ${PTK_BUILD_TYPE}")
+endif()
 
 # OpenGL
 find_package(OpenGL REQUIRED)
