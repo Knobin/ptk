@@ -1,12 +1,12 @@
 //
-//  eventshandler.hpp
+//  core/eventshandler.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2019-06-13.
 //
 
-#ifndef PTK_EVENTHANDLING_HPP
-#define PTK_EVENTHANDLING_HPP
+#ifndef PTK_CORE_EVENTHANDLING_HPP
+#define PTK_CORE_EVENTHANDLING_HPP
 
 // Local Headers
 #include "ptk/core/event.hpp"
@@ -25,4 +25,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_EVENTHANDLING_HPP
+#endif // PTK_CORE_EVENTHANDLING_HPP

@@ -1,12 +1,12 @@
 //
-//  events/event.hpp
+//  core/event.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2019-06-12.
 //
 
-#ifndef PTK_EVENTS_EVENT_HPP
-#define PTK_EVENTS_EVENT_HPP
+#ifndef PTK_CORE_EVENT_HPP
+#define PTK_CORE_EVENT_HPP
 
 namespace pTK
 {
@@ -77,4 +77,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_EVENTS_EVENT_HPP
+#endif // PTK_CORE_EVENT_HPP
