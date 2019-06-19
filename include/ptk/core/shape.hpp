@@ -1,0 +1,70 @@
+//
+//  core/shape.hpp
+//  pTK
+//
+//  Created by Robin Gustafsson on 2019-06-19.
+//
+
+// Local Headers
+#include "ptk/core/drawable.hpp"
+#include "ptk/core/transformable.hpp"
+#include "ptk/util/color.hpp"
+
+namespace pTK
+{
+    class Shape : public Drawable, public Transformable
+    {
+    public:
+        /** Constructs Shape with default values.
+         
+         @return    default initialized Shape
+         */
+        Shape();
+        virtual ~Shape() = default;
+        
+        /** Function for retrieving the Color of the Shape.
+         
+         @return    Current Color
+         */
+        const Color& get_color() const;
+        
+        /** Function for setting the Color of the Shape.
+         
+         @param Color   Shape Color
+         */
+        void set_color(const Color& color);
+        
+        /** Function for retrieving the Color of the Shape.
+         
+         @return    Current Color
+         */
+        const Color& get_outline_color() const;
+        
+        /** Function for setting the Color of the outline.
+         
+         @param outline_color   outline Color
+         */
+        void set_outline_color(const Color& outline_color);
+        
+        /** Function for retrieving the thickness of the outline.
+         
+         @return Current    outline thickness
+         */
+        uint32_t get_outline_thickness() const;
+        
+        /** Function for setting the thickness of the outline.
+         
+         @param outline_thickness   thickness of outline
+         */
+        void set_outline_thickness(uint32_t outline_thickness);
+        
+    private:
+        Color m_color;
+        Color m_outline_color;
+        uint32_t m_outline_thickness;
+    };
+    
+    // Comparison operators.
+    bool operator==(const Shape& lhs, const Shape& rhs);
+    bool operator!=(const Shape& lhs, const Shape& rhs);
+}
