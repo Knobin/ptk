@@ -9,7 +9,7 @@
 #define PTK_EVENTHANDLING_HPP
 
 // Local Headers
-#include "ptk/events/event.hpp"
+#include "ptk/core/event.hpp"
 
 namespace pTK
 {

@@ -9,7 +9,7 @@
 #define PTK_WINDOW_HPP
 
 // Local Headers
-#include "ptk/eventhandling.hpp"
+#include "ptk/core/eventhandling.hpp"
 
 // C++ Headers
 #include <string>
