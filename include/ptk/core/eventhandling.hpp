@@ -13,14 +13,28 @@
 
 namespace pTK
 {
+    /** EventHandling class implementation.
+     
+     This class is to handle the incoming events.
+     
+     Depending on the event category and type, one of
+     the defined functions below will be called.
+     */
     class EventHandling
     {
     public:
-        EventHandling() = default;
         virtual ~EventHandling() = default;
         
-        // Event processing
+        /** Function for handling KeyEvent.
+         
+         @param Event   KeyEvent to handle
+         */
         virtual void key_event(Event*) {}
+        
+        /** Function for handling MouseEvent.
+         
+         @param Event   MouseEvent to handle
+         */
         virtual void mouse_event(Event*) {}
     };
 }
