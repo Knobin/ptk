@@ -248,17 +248,6 @@ TEST_CASE ("Color Get")
             REQUIRE(color.a == p.first.alpha);
             REQUIRE(color.to_int() == p.first.all);
         }
-        
-        SECTION("get_color() " + p.second + " input: " + std::to_string(p.first.all))
-        {
-            pTK::Color color(p.first.red, p.first.green, p.first.blue, p.first.alpha);
-            pTK::Color get = color.get_color();
-            REQUIRE(get.r == color.r);
-            REQUIRE(get.g == color.g);
-            REQUIRE(get.b == color.b);
-            REQUIRE(get.a == color.a);
-            REQUIRE(get.to_int() == color.to_int());
-        }
     }
 }
 
