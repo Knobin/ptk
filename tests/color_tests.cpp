@@ -1,4 +1,6 @@
+#define CATCH_CONFIG_MAIN
 #include "catch2/catch.hpp"
+
 #include "ptk/util/color.hpp"
 
 #include <memory>
