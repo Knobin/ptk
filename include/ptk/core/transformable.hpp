@@ -35,39 +35,39 @@ namespace pTK
          
          @return    Current size
          */
-        const Vec2<uint32_t>& get_size() const;
+        const Vec2<float>& get_size() const;
         
         /** Function for setting size.
          
          @param width   new width
          @param height  new height
          */
-        void set_size(uint32_t width, uint32_t height);
+        void set_size(float width, float height);
         
         /** Function for setting size.
          
          @param size    new width and height
          */
-        void set_size(const Vec2<uint32_t>& size);
+        void set_size(const Vec2<float>& size);
         
         /** Function for retrieving the position.
          
          @return    Current position
          */
-        const Vec2<uint32_t>& get_position() const;
+        const Vec2<float>& get_position() const;
         
         /** Function for setting position.
          
          @param x   new x position
          @param y   new y position
          */
-        void set_position(uint32_t x, uint32_t y);
+        void set_position(float x, float y);
         
         /** Function for setting position.
          
          @param position    new x and y positions
          */
-        void set_position(const Vec2<uint32_t>& position);
+        void set_position(const Vec2<float>& position);
         
         /** Function for moving.
          Will set the position based on the current values and
@@ -76,7 +76,7 @@ namespace pTK
          @param offset_x    amount to move x
          @param offset_y    amount to move y
          */
-        void move(uint32_t offset_x, uint32_t offset_y);
+        void move(float offset_x, float offset_y);
         
         /** Function for moving.
          Will set the position based on the current values and
@@ -84,11 +84,11 @@ namespace pTK
          
          @param offset  amount to move x and y
          */
-        void move(const Vec2<uint32_t>& offset);
+        void move(const Vec2<float>& offset);
         
     private:
-        Vec2<uint32_t> m_size;
-        Vec2<uint32_t> m_position;
+        Vec2<float> m_size;
+        Vec2<float> m_position;
     };
     
     // Comparison operators.

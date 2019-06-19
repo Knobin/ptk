@@ -10,7 +10,7 @@ TEST_CASE("Transformable Constructors")
     SECTION("Transformable()")
     {
         pTK::Transformable t;
-        pTK::Vec2<uint32_t> correct{0, 0};
+        pTK::Vec2<float> correct{0, 0};
         REQUIRE(t.get_size() == correct);
     }
 }
@@ -18,30 +18,30 @@ TEST_CASE("Transformable Constructors")
 TEST_CASE("Transformable Setters")
 {
     // Testing Setters.
-    pTK::Vec2<uint32_t> correct{10, 20};
+    pTK::Vec2<float> correct{10, 20};
     
-    SECTION("set_size(uint32_t width, uint32_t height)")
+    SECTION("set_size(float width, float height)")
     {
         pTK::Transformable t;
         t.set_size(10, 20);
         REQUIRE(t.get_size() == correct);
     }
     
-    SECTION("set_size(const Vec2<uint32_t>& size)")
+    SECTION("set_size(const Vec2<float>& size)")
     {
         pTK::Transformable t;
         t.set_size(correct);
         REQUIRE(t.get_size() == correct);
     }
     
-    SECTION("set_position(uint32_t x, uint32_t y)")
+    SECTION("set_position(float x, float y)")
     {
         pTK::Transformable t;
         t.set_position(10, 20);
         REQUIRE(t.get_position() == correct);
     }
     
-    SECTION("set_size(const Vec2<uint32_t>& size)")
+    SECTION("set_size(const Vec2<float>& size)")
     {
         pTK::Transformable t;
         t.set_position(correct);
@@ -52,9 +52,9 @@ TEST_CASE("Transformable Setters")
 TEST_CASE("Transformable Getters")
 {
     // Testing Getters.
-    pTK::Vec2<uint32_t> correct{10, 20};
+    pTK::Vec2<float> correct{10, 20};
     
-    SECTION("const Vec2<uint32_t>& get_size() const")
+    SECTION("const Vec2<float>& get_size() const")
     {
         pTK::Transformable t;
         t.set_size(correct);
@@ -63,7 +63,7 @@ TEST_CASE("Transformable Getters")
         REQUIRE(t.get_size() == correct);
     }
     
-    SECTION("const Vec2<uint32_t>& get_position() const")
+    SECTION("const Vec2<float>& get_position() const")
     {
         pTK::Transformable t;
         t.set_position(correct);
@@ -76,8 +76,8 @@ TEST_CASE("Transformable Getters")
 TEST_CASE("Transformable Copy and Assignment")
 {
     // Testing Transformable Copy and Assignment.
-    pTK::Vec2<uint32_t> pos{10, 20};
-    pTK::Vec2<uint32_t> size{15, 45};
+    pTK::Vec2<float> pos{10, 20};
+    pTK::Vec2<float> size{15, 45};
     pTK::Transformable t;
     t.set_size(size);
     t.set_position(pos);
