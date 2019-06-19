@@ -32,11 +32,6 @@ namespace pTK
     }
     
     // Get.
-    Color Color::get_color() const
-    {
-        return *this;
-    }
-    
     uint32_t Color::to_int() const
     {
         uint32_t r_value = 0;
@@ -77,11 +72,6 @@ namespace pTK
         g = (uint8_t)((color >> 16) & 0xFF);
         b = (uint8_t)((color >> 8) & 0xFF);
         a = (uint8_t)(color & 0xFF);
-    }
-    
-    void Color::set_color(const Color& color)
-    {
-        set_rgba(color.r, color.g, color.b, color.a);
     }
     
     // Comparison operators.

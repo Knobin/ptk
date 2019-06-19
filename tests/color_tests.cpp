@@ -329,18 +329,6 @@ TEST_CASE ("Color Set")
             REQUIRE(set_raw.a == p.first.alpha);
             REQUIRE(set_raw.to_int() == p.first.all);
         }
-        
-        SECTION("set_color(const Color& value) " + p.second + " input: " + std::to_string(p.first.all))
-        {
-            pTK::Color color(p.first.red, p.first.green, p.first.blue, p.first.alpha);
-            pTK::Color set;
-            set.set_color(color);
-            REQUIRE(set.r == color.r);
-            REQUIRE(set.g == color.g);
-            REQUIRE(set.b == color.b);
-            REQUIRE(set.a == color.a);
-            REQUIRE(set.to_int() == color.to_int());
-        }
     }
 }
 

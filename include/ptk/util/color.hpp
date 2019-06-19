@@ -55,12 +55,6 @@ namespace pTK
         Color(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha = 255);
         virtual ~Color() = default;
         
-        /** Get function for retrieving copy of Color.
-         
-         @return    Copy of Color
-         */
-        Color get_color() const;
-        
         /** Get function for retrieving copy of Color in int form.
          
          @return    Copy of Color in int form
@@ -95,11 +89,6 @@ namespace pTK
             Takes color in uint32 form.
          */
         void set_rgba(uint32_t color);
-        
-        /** Set function for setting r, g, b and a.
-            Takes a single Color parameter.
-         */
-        void set_color(const Color& color);
         
         // Variables.
         uint8_t r;
