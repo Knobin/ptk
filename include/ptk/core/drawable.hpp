@@ -26,7 +26,7 @@ namespace pTK
         /** Draw function.
             Function is called when it is time to draw.
          */
-        virtual void draw() const {}
+        virtual void draw(const SkCanvas*) const {}
     };
 }
 
