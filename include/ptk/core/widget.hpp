@@ -1,14 +1,15 @@
 //
-//  core/transformable.hpp
+//  core/widget.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2019-06-19.
 //
 
-#ifndef PTK_CORE_TRANSFORMABLE_HPP
-#define PTK_CORE_TRANSFORMABLE_HPP
+#ifndef PTK_CORE_WIDGET_HPP
+#define PTK_CORE_WIDGET_HPP
 
 // Local Headers
+#include "ptk/core/drawable.hpp"
 #include "ptk/util/vec2.hpp"
 
 // C++ Headers
@@ -16,20 +17,20 @@
 
 namespace pTK
 {
-    /** Transformable class implementation.
+    /** Widget class implementation.
      
      This class is low level class for widget, that
      has the essential component for rendering.
      */
-    class Transformable
+    class Widget : public Drawable
     {
     public:
         /** Constructs Event with default values.
          
-         @return    default initialized Transformable
+         @return    default initialized Widget
          */
-        Transformable();
-        virtual ~Transformable() = default;
+        Widget();
+        virtual ~Widget() = default;
         
         /** Function for retrieving the size.
          
@@ -92,9 +93,9 @@ namespace pTK
     };
     
     // Comparison operators.
-    bool operator==(const Transformable& lhs, const Transformable& rhs);
-    bool operator!=(const Transformable& lhs, const Transformable& rhs);
+    bool operator==(const Widget& lhs, const Widget& rhs);
+    bool operator!=(const Widget& lhs, const Widget& rhs);
 }
 
-#endif // PTK_CORE_TRANSFORMABLE_HPP
+#endif // PTK_CORE_WIDGET_HPP
 

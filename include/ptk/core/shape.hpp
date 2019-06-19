@@ -6,13 +6,12 @@
 //
 
 // Local Headers
-#include "ptk/core/drawable.hpp"
-#include "ptk/core/transformable.hpp"
+#include "ptk/core/widget.hpp"
 #include "ptk/util/color.hpp"
 
 namespace pTK
 {
-    class Shape : public Drawable, public Transformable
+    class Shape : public Widget
     {
     public:
         /** Constructs Shape with default values.
@@ -48,7 +47,7 @@ namespace pTK
         
         /** Function for retrieving the thickness of the outline.
          
-         @return Current    outline thickness
+         @return    outline thickness
          */
         uint32_t get_outline_thickness() const;
         
