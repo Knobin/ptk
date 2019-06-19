@@ -1,7 +1,7 @@
 #include "catch2/catch.hpp"
 #include "ptk/util/vec2.hpp"
 
-TEMPLATE_TEST_CASE ("Vec2 Constructors", "[Vec2][template]", int, float, double)
+TEMPLATE_TEST_CASE ("Vec2 Constructors", "[Vec2][template]", int, uint8_t, uint16_t, uint32_t, float, double)
 {
     // Testing Vec2 Constructors.
 
@@ -20,7 +20,7 @@ TEMPLATE_TEST_CASE ("Vec2 Constructors", "[Vec2][template]", int, float, double)
     }
 }
 
-TEMPLATE_TEST_CASE ("Vec2 Copy and Assignment", "[Vec2][template]", int, float, double)
+TEMPLATE_TEST_CASE ("Vec2 Copy and Assignment", "[Vec2][template]", int, uint8_t, uint16_t, uint32_t, float, double)
 {
     // Testing Vec2 Copy and Assignment.
     pTK::Vec2<int> vec{10, 20};
@@ -47,7 +47,7 @@ TEMPLATE_TEST_CASE ("Vec2 Copy and Assignment", "[Vec2][template]", int, float, 
     }
 }
 
-TEMPLATE_TEST_CASE ("Vec2 Comparison", "[Vec2][template]", int, float, double)
+TEMPLATE_TEST_CASE ("Vec2 Comparison", "[Vec2][template]", int, uint8_t, uint16_t, uint32_t, float, double)
 {
     // Testing Vec2 Comparison.
     pTK::Vec2<int> vec;
@@ -67,7 +67,7 @@ TEMPLATE_TEST_CASE ("Vec2 Comparison", "[Vec2][template]", int, float, double)
     }
 }
 
-TEMPLATE_TEST_CASE ("Vec2 operators", "[Vec2][template]", int, float, double)
+TEMPLATE_TEST_CASE ("Vec2 operators", "[Vec2][template]", int, uint8_t, uint16_t, uint32_t, float, double)
 {
     // Testing Vec2 Operators.
     
