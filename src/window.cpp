@@ -25,7 +25,7 @@
 namespace pTK
 {
     Window::Window(const std::string& t_name, unsigned int t_width, unsigned int t_height)
-        : EventHandling(), m_window{nullptr}, m_data{t_name, t_width, t_height}, m_context{nullptr}, m_surface{nullptr}, m_canvas{
+        : EventHandling(), Container(), m_window{nullptr}, m_data{t_name, t_width, t_height}, m_context{nullptr}, m_surface{nullptr}, m_canvas{
             nullptr}
     {
         init_glfw();
@@ -161,6 +161,15 @@ namespace pTK
         glfwTerminate();
     }
 
+    void Window::draw()
+    {
+        for_each([&](const std::shared_ptr<Widget>& widget){
+            widget->draw(m_canvas);
+        });
+        
+        m_canvas->flush();
+    }
+    
     void Window::update()
     {
         glfwPollEvents();

@@ -10,6 +10,7 @@
 
 // Local Headers
 #include "ptk/core/eventhandling.hpp"
+#include "ptk/core/container.hpp"
 
 // C++ Headers
 #include <string>
@@ -34,12 +35,13 @@ namespace pTK
         unsigned int height;
     };
 
-    class Window : public EventHandling
+    class Window : public EventHandling, public Container
     {
     public:
         Window(const std::string& t_name, unsigned int t_width, unsigned int t_height);
-        ~Window() final;
+        virtual ~Window();
 
+        void draw();
         void update();
         void swap_buffers();
         bool should_close();

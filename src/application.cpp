@@ -33,12 +33,15 @@ namespace pTK
 
             // Poll Events.
             window->update();
+            
+            // Draw.
+            window->draw();
+            
+            // Swap buffers.
+            window->swap_buffers();
 
             // Sleep.
             std::this_thread::sleep_for(std::chrono::milliseconds(16));
-
-            // Swap buffers.
-            window->swap_buffers();
         }
 
         return 0;
