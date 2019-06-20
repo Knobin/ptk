@@ -59,18 +59,18 @@ TEST_CASE("Shape Copy and Assignment")
     SECTION("Copy")
     {
         pTK::Shape tmp = s;
-        REQUIRE(s.get_color() == color);
-        REQUIRE(s.get_outline_color() == outline_color);
-        REQUIRE(s.get_outline_thickness() == outline_thickness);
+        REQUIRE(tmp.get_color() == color);
+        REQUIRE(tmp.get_outline_color() == outline_color);
+        REQUIRE(tmp.get_outline_thickness() == outline_thickness);
     }
     
     SECTION("Assignment")
     {
         pTK::Shape tmp;
         tmp = s;
-        REQUIRE(s.get_color() == color);
-        REQUIRE(s.get_outline_color() == outline_color);
-        REQUIRE(s.get_outline_thickness() == outline_thickness);
+        REQUIRE(tmp.get_color() == color);
+        REQUIRE(tmp.get_outline_color() == outline_color);
+        REQUIRE(tmp.get_outline_thickness() == outline_thickness);
     }
 }
 
