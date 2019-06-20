@@ -35,12 +35,12 @@ namespace pTK
         m_outline_color = outline_color;
     }
     
-    uint32_t Shape::get_outline_thickness() const
+    float Shape::get_outline_thickness() const
     {
         return m_outline_thickness;
     }
     
-    void Shape::set_outline_thickness(uint32_t outline_thickness)
+    void Shape::set_outline_thickness(float outline_thickness)
     {
         m_outline_thickness = outline_thickness;
     }

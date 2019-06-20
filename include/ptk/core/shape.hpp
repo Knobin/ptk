@@ -52,18 +52,18 @@ namespace pTK
          
          @return    outline thickness
          */
-        uint32_t get_outline_thickness() const;
+        float get_outline_thickness() const;
         
         /** Function for setting the thickness of the outline.
          
          @param outline_thickness   thickness of outline
          */
-        void set_outline_thickness(uint32_t outline_thickness);
+        void set_outline_thickness(float outline_thickness);
         
     private:
         Color m_color;
         Color m_outline_color;
-        uint32_t m_outline_thickness;
+        float m_outline_thickness;
     };
     
     // Comparison operators.

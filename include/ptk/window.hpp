@@ -9,19 +9,12 @@
 #define PTK_WINDOW_HPP
 
 // Local Headers
+#include "ptk/core/canvas.hpp"
 #include "ptk/core/eventhandling.hpp"
 #include "ptk/core/container.hpp"
 
 // C++ Headers
 #include <string>
-
-// OpenGL Headers
-#include <OpenGL/gl.h>
-
-// Skia
-#include "include/gpu/GrContext.h"
-#include "include/core/SkCanvas.h"
-#include "include/core/SkSurface.h"
 
 // GLFW Headers
 #include <GLFW/glfw3.h>
@@ -56,15 +49,10 @@ namespace pTK
         // Window
         GLFWwindow* m_window;
         WindowData m_data;
+        Canvas* m_canvas;
 
-        // Skia
-        GrContext* m_context;
-        SkSurface* m_surface;
-        SkCanvas* m_canvas;
-        
         // Init Functions
         void init_glfw();
-        void init_skia();
         
         // Set Event Callbacks
         void set_window_callbacks();

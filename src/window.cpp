@@ -17,16 +17,10 @@
 #include <sstream>
 #include <iostream>
 
-// Skia
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/gl/GrGLInterface.h"
-#include "include/gpu/GrRenderTarget.h"
-
 namespace pTK
 {
     Window::Window(const std::string& t_name, unsigned int t_width, unsigned int t_height)
-        : EventHandling(), Container(), m_window{nullptr}, m_data{t_name, t_width, t_height}, m_context{nullptr}, m_surface{nullptr}, m_canvas{
-            nullptr}
+        : EventHandling(), Container(), m_window{nullptr}, m_data{t_name, t_width, t_height}, m_canvas{nullptr}
     {
         init_glfw();
 
@@ -38,28 +32,28 @@ namespace pTK
             throw std::logic_error("Failed to create GLFW Window.");
         }
         
-        // Bind and clear context.
+        PTK_INFO("[Window] Created with w: {0:d}px and h: {0:d}px", t_width, t_height);
+        
+        // Bind context.
         glfwMakeContextCurrent(m_window);
-        glViewport(0, 0, t_width, t_height);
-        glClearColor(0.3f, 0.2f, 0.2f, 1.0f);
-        glClearStencil(0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-        init_skia();
-        if (m_surface == nullptr)
-            throw std::logic_error("Skia error");
-
-        // Save Canvas for rendering.
-        m_canvas = m_surface->getCanvas();
-
+        // Init Canvas
+        int width, height;
+        glfwGetFramebufferSize(m_window, &width, &height);
+        m_canvas = new Canvas(width, height);
+        if (m_canvas == nullptr)
+        {
+            glfwTerminate();
+            throw std::logic_error("Failed to create Canvas.");
+        }
+        
+        
         // Set pointer for use in callbacks;
         glfwSetWindowUserPointer(m_window, this);
         
         set_window_callbacks();
         set_mouse_callbacks();
         set_key_callbacks();
-        
-        
     }
     
     // Init Functions
@@ -72,33 +66,6 @@ namespace pTK
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_STENCIL_BITS, 0);
         glfwWindowHint(GLFW_DEPTH_BITS, 0);
-    }
-    
-    void Window::init_skia()
-    {
-        // Init Skia
-        auto interface = GrGLMakeNativeInterface();
-        m_context = GrContext::MakeGL(interface).release();
-        
-        GrGLint buffer;
-        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &buffer);
-        GrGLFramebufferInfo info;
-        info.fFBOID = (GrGLuint) buffer;
-        info.fFormat = GL_RGBA8;
-        
-        SkColorType colorType;
-        if (kRGBA_8888_GrPixelConfig == kSkia8888_GrPixelConfig) {
-            colorType = kRGBA_8888_SkColorType;
-        }
-        else {
-            colorType = kBGRA_8888_SkColorType;
-        }
-        
-        int width, height;
-        glfwGetFramebufferSize(m_window, &width, &height);
-        GrBackendRenderTarget backendRenderTarget(width, height, 0, 0, info);
-        
-        m_surface = SkSurface::MakeFromBackendRenderTarget(m_context, backendRenderTarget, kBottomLeft_GrSurfaceOrigin, colorType, nullptr, nullptr).release();
     }
     
     // Set Event Callbacks
@@ -156,18 +123,17 @@ namespace pTK
 
     Window::~Window()
     {
-        delete m_surface;
-        delete m_context;
+        delete m_canvas;
         glfwTerminate();
     }
 
     void Window::draw()
     {
         for_each([&](const std::shared_ptr<Widget>& widget){
-            widget->draw(m_canvas);
+            widget->draw(m_canvas->skcanvas());
         });
         
-        m_canvas->flush();
+        m_canvas->skcanvas()->flush();
     }
     
     void Window::update()
@@ -194,7 +160,7 @@ namespace pTK
         // Set Framebuffer Size.
         int fb_width, fb_height;
         glfwGetFramebufferSize(m_window, &fb_width, &fb_height);
-        glViewport(0, 0, fb_width, fb_height);
+        m_canvas->resize(fb_width, fb_height);
         
         PTK_INFO("ResizeEvent: W: {0:d}x{1:d}, FB: {2:d}x{3:d}", t_width, t_height, fb_width, fb_height);
     }
