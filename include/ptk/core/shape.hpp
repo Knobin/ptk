@@ -5,6 +5,9 @@
 //  Created by Robin Gustafsson on 2019-06-19.
 //
 
+#ifndef PTK_CORE_SHAPE_HPP
+#define PTK_CORE_SHAPE_HPP
+
 // Local Headers
 #include "ptk/core/widget.hpp"
 #include "ptk/util/color.hpp"
@@ -67,3 +70,5 @@ namespace pTK
     bool operator==(const Shape& lhs, const Shape& rhs);
     bool operator!=(const Shape& lhs, const Shape& rhs);
 }
+
+#endif // PTK_CORE_SHAPE_HPP

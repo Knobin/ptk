@@ -5,6 +5,9 @@
 //  Created by Robin Gustafsson on 2019-06-20.
 //
 
+#ifndef PTK_CORE_CONTAINER_HPP
+#define PTK_CORE_CONTAINER_HPP
+
 // Local Headers
 #include "ptk/core/widget.hpp"
 
@@ -131,3 +134,5 @@ namespace pTK
     bool operator==(const Container& lhs, const Container& rhs);
     bool operator!=(const Container& lhs, const Container& rhs);
 }
+
+#endif // PTK_CORE_CONTAINER_HPP
