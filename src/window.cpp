@@ -176,6 +176,8 @@ namespace pTK
             std::cout << "Key pressed: " << event->get_keycode() << "\n";
         else if (event->get_type() == EventType::KeyReleased)
             std::cout << "Key released: " << event->get_keycode() << "\n";
+        
+        delete t_event;
     }
 
     void Window::mouse_event(Event* t_event)
@@ -184,12 +186,12 @@ namespace pTK
         if (type == EventType::MouseMoved)
         {
             MotionEvent* m_event = (MotionEvent*)t_event;
-            int index = find_if(Vec2<float>(m_event->get_posx(), m_event->get_posy()));
+            int index = rfind_if(Vec2<float>(m_event->get_posx(), m_event->get_posy()));
         } else if (type == EventType::MouseButtonPressed || type == EventType::MouseButtonReleased)
         {
             ButtonEvent* b_event = (ButtonEvent*)t_event;
             Vec2<int> pos(b_event->get_posx()*m_data.scale.x, b_event->get_posy()*m_data.scale.y);
-            int index = find_if(Vec2<float>(pos));
+            int index = rfind_if(Vec2<float>(pos));
             if (index != -1)
             {
                 EventType type = b_event->get_type();
@@ -199,6 +201,8 @@ namespace pTK
                     at(index)->handle_release_event(b_event->get_button(), pos);
             }
         }
+        
+        delete t_event;
     }
 
     void Window::window_event(Event* t_event)
@@ -209,5 +213,7 @@ namespace pTK
             ResizeEvent* resize_event = (ResizeEvent*)t_event;
             resize(resize_event->get_width(), resize_event->get_height());
         }
+        
+        delete t_event;
     }
 }
