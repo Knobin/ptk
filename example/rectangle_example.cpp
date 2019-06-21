@@ -1,6 +1,8 @@
 #include "ptk/application.hpp"
 #include "ptk/widgets/rectangle.hpp"
 
+#include <iostream>
+
 // settings
 const unsigned int SCR_WIDTH = 960;
 const unsigned int SCR_HEIGHT = 540;
@@ -18,6 +20,10 @@ int main(int argc, char *argv[])
     rect->set_outline_thickness(2);
     rect->set_outline_color(pTK::Color(225, 225, 225, 100));
     window.add(rect);
+    
+    rect->on_click([](pTK::MouseButton, const pTK::Vec2<int>&){
+        std::cout << "Rectangle Clicked!\n";
+    });
     
     return app.exec(&window);
 }

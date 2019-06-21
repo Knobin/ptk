@@ -66,6 +66,36 @@ namespace pTK
         return m_widgets.at(index).first;
     }
     
+    int Container::find_if(const std::function<bool(const std::shared_ptr<Widget>& widget)>& cond) const
+    {
+        for (auto it = m_widgets.begin(); it != m_widgets.end(); it++)
+        {
+            if (cond(it->first))
+            {
+                return std::distance(m_widgets.begin(), it);
+            }
+        }
+        return -1;
+    }
+    
+    int Container::find_if(const Vec2<float>& pos) const
+    {
+        for (auto it = m_widgets.begin(); it != m_widgets.end(); it++)
+        {
+            Vec2<float> w_pos = it->first->get_position();
+            Vec2<float> w_size = it->first->get_size();
+            if ((w_pos.x <= pos.x) && (w_pos.x + w_size.x >= pos.x))
+            {
+                if ((w_pos.y <= pos.y) && (w_pos.y + w_size.y >= pos.y))
+                {
+                    return std::distance(m_widgets.begin(), it);;
+                }
+            }
+        }
+        
+        return -1;
+    }
+    
     uint32_t Container::count() const
     {
         return m_widgets.size();

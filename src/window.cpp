@@ -7,9 +7,9 @@
 
 // Local Headers
 #include "ptk/window.hpp"
-#include "ptk/events/keyevent.hpp"
-#include "ptk/events/mouseevent.hpp"
-#include "ptk/events/windowevent.hpp"
+#include "ptk/events/key_event.hpp"
+#include "ptk/events/mouse_event.hpp"
+#include "ptk/events/window_event.hpp"
 #include "ptk/log.hpp"
 
 // C++ Headers
@@ -20,7 +20,7 @@
 namespace pTK
 {
     Window::Window(const std::string& t_name, unsigned int t_width, unsigned int t_height)
-        : EventHandling(), Container(), m_window{nullptr}, m_data{t_name, t_width, t_height}, m_canvas{nullptr}
+        : Container(), m_window{nullptr}, m_data{t_name, {t_width, t_height}, {1.0f, 1.0f}}, m_canvas{nullptr}
     {
         init_glfw();
 
@@ -34,6 +34,10 @@ namespace pTK
         
         PTK_INFO("[Window] Created with w: {0:d}px and h: {0:d}px", t_width, t_height);
         
+        // Get Monitor Scale
+        glfwGetWindowContentScale(m_window, &m_data.scale.x, &m_data.scale.y);
+        PTK_INFO("[Window] Monitor scale is x: {0:f} and y: {0:f}", m_data.scale.x, m_data.scale.y);
+        
         // Bind context.
         glfwMakeContextCurrent(m_window);
 
@@ -46,7 +50,6 @@ namespace pTK
             glfwTerminate();
             throw std::logic_error("Failed to create Canvas.");
         }
-        
         
         // Set pointer for use in callbacks;
         glfwSetWindowUserPointer(m_window, this);
@@ -154,8 +157,8 @@ namespace pTK
     void Window::resize(unsigned int t_width, unsigned int t_height)
     {
         // Set Window Size.
-        m_data.width = t_width;
-        m_data.height = t_height;
+        m_data.size.x = t_width;
+        m_data.size.y = t_height;
         
         // Set Framebuffer Size.
         int fb_width, fb_height;
@@ -180,16 +183,21 @@ namespace pTK
         EventType type = t_event->get_type();
         if (type == EventType::MouseMoved)
         {
-            MotionEvent* motion_event = (MotionEvent*)t_event;
-            //std::cout << "Mouse moved to: " << motion_event->get_posx() << "x" << motion_event->get_posy() << "\n";
+            MotionEvent* m_event = (MotionEvent*)t_event;
+            int index = find_if(Vec2<float>(m_event->get_posx(), m_event->get_posy()));
         } else if (type == EventType::MouseButtonPressed || type == EventType::MouseButtonReleased)
         {
-            ButtonEvent* button_event = (ButtonEvent*)t_event;
-            if (button_event->get_type() == EventType::MouseButtonPressed)
-            PTK_INFO("ButtonEvent: Pressed: {0:d}, At: {1:d}x{2:d}", (int)button_event->get_button(), button_event->get_posx(), button_event->get_posy());
-            else if (button_event->get_type() == EventType::MouseButtonReleased)
-                PTK_INFO("ButtonEvent: Released: {0:d}, At: {1:d}x{2:d}", (int)button_event->get_button(), button_event->get_posx(), button_event->get_posy());
-            
+            ButtonEvent* b_event = (ButtonEvent*)t_event;
+            Vec2<int> pos(b_event->get_posx()*m_data.scale.x, b_event->get_posy()*m_data.scale.y);
+            int index = find_if(Vec2<float>(pos));
+            if (index != -1)
+            {
+                EventType type = b_event->get_type();
+                if (type == EventType::MouseButtonPressed)
+                    at(index)->handle_click_event(b_event->get_button(), pos);
+                else if (type == EventType::MouseButtonReleased)
+                    at(index)->handle_release_event(b_event->get_button(), pos);
+            }
         }
     }
 

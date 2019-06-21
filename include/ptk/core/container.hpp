@@ -71,6 +71,20 @@ namespace pTK
          */
         const std::shared_ptr<Widget>& at(uint32_t index) const;
         
+        /** Function for retrieving the first widget that matches the parameters.
+         
+         @param func    function to call for each widget.
+         @return        index where to find widget
+         */
+        int find_if(const std::function<bool(const std::shared_ptr<Widget>& widget)>& cond) const;
+        
+        /** Function for retrieving the first widget that matches the parameters.
+         
+         @param func    function to call for each widget.
+         @return        index where to find widget
+         */
+        int find_if(const Vec2<float>& pos) const;
+        
         /** Function for retrieving the first widget in the container.
          
          Should in no circumstances be called when the container is empty!

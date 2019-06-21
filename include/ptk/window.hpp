@@ -10,8 +10,9 @@
 
 // Local Headers
 #include "ptk/core/canvas.hpp"
-#include "ptk/core/eventhandling.hpp"
+#include "ptk/core/event.hpp"
 #include "ptk/core/container.hpp"
+#include "ptk/util/vec2.hpp"
 
 // C++ Headers
 #include <string>
@@ -24,11 +25,11 @@ namespace pTK
     struct WindowData
     {
         std::string name;
-        unsigned int width;
-        unsigned int height;
+        Vec2<uint32_t> size;
+        Vec2<float> scale;
     };
 
-    class Window : public EventHandling, public Container
+    class Window : public Container
     {
     public:
         Window(const std::string& t_name, unsigned int t_width, unsigned int t_height);
@@ -41,8 +42,8 @@ namespace pTK
         void resize(unsigned int t_width, unsigned int t_height);
         
         // Event processing
-        void key_event(Event* t_event) override;
-        void mouse_event(Event* t_event) override;
+        void key_event(Event* t_event);
+        void mouse_event(Event* t_event);
         void window_event(Event* t_event);
 
     private:
