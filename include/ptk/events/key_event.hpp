@@ -11,6 +11,9 @@
 // Local Headers
 #include "ptk/core/event.hpp"
 
+// C++ Headers
+#include <cstdint>
+
 namespace pTK
 {
     /** KeyEvent class implementation.
@@ -24,10 +27,12 @@ namespace pTK
     public:
         /** Constructs KeyEvent with default values with t_type and t_keycode.
          
-         @return    default initialized KeyEvent
+         @param type        press or release
+         @param keycode     associated keycode
+         @return            default initialized KeyEvent
          */
-        KeyEvent(EventType t_type, int t_keycode)
-            : Event(EventCategory::Key, t_type), m_keycode{t_keycode}
+        KeyEvent(EventType type, int32_t keycode)
+            : Event(EventCategory::Key, type), m_keycode{keycode}
         {
         }
         ~KeyEvent() final = default;
@@ -36,10 +41,10 @@ namespace pTK
          
          @return    Pressed or Released keycode
          */
-        int get_keycode() const { return m_keycode; }
+        int32_t get_keycode() const { return m_keycode; }
 
     private:
-        int m_keycode;
+        int32_t m_keycode;
     };
 }
 

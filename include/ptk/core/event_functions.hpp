@@ -1,5 +1,5 @@
 //
-//  core/event_handlers.hpp
+//  core/event_functions.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2019-06-21.

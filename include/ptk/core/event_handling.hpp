@@ -1,5 +1,5 @@
 //
-//  core/eventshandler.hpp
+//  core/event_handling.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2019-06-13.
@@ -14,18 +14,18 @@
 
 namespace pTK
 {
-    /** EventHandler class implementation.
+    /** EventHandling class implementation.
      
      This class is to handle the incoming events.
      
      Depending on the event category and type, one of
      the defined functions below will be called.
      */
-    class EventHandler : public EventCallbacks, public EventFunctions
+    class EventHandling : public EventCallbacks, public EventFunctions
     {
     public:
-        EventHandler();
-        virtual ~EventHandler() = default;
+        EventHandling();
+        virtual ~EventHandling() = default;
         
         /** Function for handling when a key is pressed or released.
          

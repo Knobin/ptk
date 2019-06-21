@@ -10,6 +10,7 @@
 
 // Local Headers
 #include "ptk/core/event.hpp"
+#include "ptk/util/vec2.hpp"
 
 namespace pTK
 {
@@ -21,31 +22,48 @@ namespace pTK
     class ResizeEvent : public Event
     {
     public:
-        /** Constructs ResizeEvent with default values with t_width and t_height.
+        /** Constructs ResizeEvent with default values with width and height.
          
-         @return    default initialized ResizeEvent
+         @param width   associated width
+         @param height  associated height
+         @return        default initialized ResizeEvent
          */
-        ResizeEvent(unsigned int t_width, unsigned int t_height)
-            : Event(EventCategory::Window, EventType::WindowResize), m_width{t_width}, m_height{t_height}
+        ResizeEvent(uint32_t width, uint32_t height)
+            : Event(EventCategory::Window, EventType::WindowResize), m_size{width, height}
+        {
+        }
+        
+        /** Constructs ResizeEvent with default values with size.
+         
+         @param size    associated width and height
+         @return        default initialized ResizeEvent
+         */
+        ResizeEvent(const Vec2<uint32_t>& size)
+            : Event(EventCategory::Window, EventType::WindowResize), m_size{size}
         {
         }
         ~ResizeEvent() final = default;
 
         /** Function for retrieving the associated width.
          
-         @return    new width
+         @return    width
          */
-        unsigned int get_width() const { return m_width; }
+        uint32_t get_width() const { return m_size.x; }
         
         /** Function for retrieving the associated height.
          
-         @return    new height
+         @return    height
          */
-        unsigned int get_height() const { return m_height; }
+        uint32_t get_height() const { return m_size.y; }
+        
+        /** Function for retrieving the associated size.
+         
+         @return    size
+         */
+        const Vec2<uint32_t>& get_size() const { return m_size; }
 
     private:
-        unsigned int m_width;
-        unsigned int m_height;
+        Vec2<uint32_t> m_size;
     };
 }
 

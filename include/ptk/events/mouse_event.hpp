@@ -10,6 +10,10 @@
 
 // Local Headers
 #include "ptk/core/event.hpp"
+#include "ptk/util/vec2.hpp"
+
+// C++ Headers
+#include <cstdint>
 
 namespace pTK
 {
@@ -36,10 +40,22 @@ namespace pTK
     public:
         /** Constructs MotionEvent with default values with t_posx and t_posy.
          
-         @return    default initialized MotionEvent
+         @param posx    associated x position
+         @param posy    associated y position
+         @return        default initialized MotionEvent
          */
-        MotionEvent(int t_posx, int t_posy)
-            : Event(EventCategory::Mouse, EventType::MouseMoved), m_posx{t_posx}, m_posy{t_posy}
+        MotionEvent(int32_t posx, int32_t posy)
+            : Event(EventCategory::Mouse, EventType::MouseMoved), m_pos{posx, posy}
+        {
+        }
+        
+        /** Constructs MotionEvent with default values with pos.
+         
+         @param pos     associated x and y position
+         @return        default initialized MotionEvent
+         */
+        MotionEvent(const Vec2<int32_t>& pos)
+            : Event(EventCategory::Mouse, EventType::MouseMoved), m_pos{pos}
         {
         }
         virtual ~MotionEvent() = default;
@@ -48,16 +64,21 @@ namespace pTK
          
          @return    x position
          */
-        int get_posx() const { return m_posx; }
+        int32_t get_posx() const { return m_pos.x; }
         
         /** Function for retrieving the associated y position.
          
          @return    y position
          */
-        int get_posy() const { return m_posy; }
+        int32_t get_posy() const { return m_pos.y; }
+        
+        /** Function for retrieving the associated position.
+         
+         @return    y position
+         */
+        const Vec2<int32_t>& get_pos() const { return m_pos; }
     private:
-        int m_posx;
-        int m_posy;
+        Vec2<int32_t> m_pos;
     };
 
     /** ScrollEvent class implementation.
@@ -70,10 +91,22 @@ namespace pTK
     public:
         /** Constructs ScrollEvent with default values with t_xoffset and t_yoffset.
          
-         @return    default initialized ScrollEvent
+         @param x_offset    associated x offset
+         @param y_offset    associated y offset
+         @return            default initialized ScrollEvent
          */
-        ScrollEvent(int t_xoffset, int t_yoffset)
-            : Event(EventCategory::Mouse, EventType::MouseScrolled), m_xoffset{t_xoffset}, m_yoffset{t_yoffset}
+        ScrollEvent(int32_t x_offset, int32_t y_offset)
+            : Event(EventCategory::Mouse, EventType::MouseScrolled), m_offset{x_offset, y_offset}
+        {
+        }
+        
+        /** Constructs ScrollEvent with default values with offset.
+         
+         @param offset  associated x and y offset
+         @return        default initialized ScrollEvent
+         */
+        ScrollEvent(const Vec2<int32_t>& offset)
+        : Event(EventCategory::Mouse, EventType::MouseScrolled), m_offset{offset}
         {
         }
         virtual ~ScrollEvent() = default;
@@ -82,16 +115,22 @@ namespace pTK
          
          @return    x offset
          */
-        int get_x_offset() const { return m_xoffset; }
+        int get_x_offset() const { return m_offset.x; }
         
         /** Function for retrieving the associated y offset.
          
          @return    y offset
          */
-        int get_y_offset() const { return m_yoffset; }
+        int get_y_offset() const { return m_offset.y; }
+        
+        /** Function for retrieving the associated offset.
+         
+         @return    offset
+         */
+        const Vec2<int32_t>& get_offset() const { return m_offset; }
+        
     private:
-        int m_xoffset;
-        int m_yoffset;
+        Vec2<int32_t> m_offset;
     };
 
     /** ButtonEvent class implementation.
@@ -106,10 +145,14 @@ namespace pTK
         /** Constructs ButtonEvent with default values with type,
          t_button, t_posx and t_posy.
          
-         @return    default initialized ButtonEvent
+         @param type    press or release
+         @param button  which button
+         @param posx    associated x position
+         @param posy    associated y position
+         @return        default initialized ButtonEvent
          */
-        ButtonEvent(EventType type, MouseButton t_button, int t_posx, int t_posy)
-            : MotionEvent(t_posx, t_posy), m_button{t_button}
+        ButtonEvent(EventType type, MouseButton button, int posx, int posy)
+            : MotionEvent(posx, posy), m_button{button}
         {
             m_type = type;
         }

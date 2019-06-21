@@ -10,7 +10,7 @@
 
 // Local Headers
 #include "ptk/core/drawable.hpp"
-#include "ptk/core/event_handler.hpp"
+#include "ptk/core/event_handling.hpp"
 #include "ptk/util/vec2.hpp"
 
 // C++ Headers
@@ -23,7 +23,7 @@ namespace pTK
      This class is low level class for widget, that
      has the essential component for rendering.
      */
-    class Widget : public Drawable, public EventHandler
+    class Widget : public Drawable, public EventHandling
     {
     public:
         /** Constructs Event with default values.

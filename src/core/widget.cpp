@@ -11,7 +11,7 @@
 namespace pTK
 {
     Widget::Widget()
-        : Drawable(), EventHandler(), m_size{0, 0}, m_position{0 ,0}
+        : Drawable(), EventHandling(), m_size{0, 0}, m_position{0 ,0}
     {
     }
     
