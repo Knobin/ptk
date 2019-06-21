@@ -186,19 +186,19 @@ namespace pTK
         if (type == EventType::MouseMoved)
         {
             MotionEvent* m_event = (MotionEvent*)t_event;
-            int index = rfind_if(Vec2<float>(m_event->get_posx(), m_event->get_posy()));
+            std::shared_ptr<Widget> m_widget = rfind_if(Vec2<float>(m_event->get_posx(), m_event->get_posy()));
         } else if (type == EventType::MouseButtonPressed || type == EventType::MouseButtonReleased)
         {
             ButtonEvent* b_event = (ButtonEvent*)t_event;
             Vec2<int> pos(b_event->get_posx()*m_data.scale.x, b_event->get_posy()*m_data.scale.y);
-            int index = rfind_if(Vec2<float>(pos));
-            if (index != -1)
+            std::shared_ptr<Widget> b_widget = rfind_if(Vec2<float>(pos));
+            if (b_widget != nullptr)
             {
                 EventType type = b_event->get_type();
                 if (type == EventType::MouseButtonPressed)
-                    at(index)->handle_click_event(b_event->get_button(), pos);
+                    b_widget->handle_click_event(b_event->get_button(), pos);
                 else if (type == EventType::MouseButtonReleased)
-                    at(index)->handle_release_event(b_event->get_button(), pos);
+                    b_widget->handle_release_event(b_event->get_button(), pos);
             }
         }
         

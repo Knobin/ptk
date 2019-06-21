@@ -69,28 +69,28 @@ namespace pTK
          @param index   index in container
          @return        widget in container
          */
-        const std::shared_ptr<Widget>& at(uint32_t index) const;
+        std::shared_ptr<Widget> at(uint32_t index) const;
         
         /** Function for retrieving the first widget that matches the parameters.
          
-         Function will return -1 if no widget is found.
+         Function will return nullptr if no widget is found.
          
          @param pos     position of widget to find
          @return        index where to find widget
          */
-        int32_t find_if(const Vec2<float>& pos) const;
+        std::shared_ptr<Widget>  find_if(const Vec2<float>& pos) const;
         
         /** Function for retrieving the first widget that matches the parameters.
          
          This function will begin checking with the last widget and iterate to
          the begining.
          
-         Function will return -1 if no widget is found.
+         Function will return nullptr if no widget is found.
          
          @param pos     position of widget to find
          @return        index where to find widget
          */
-        int32_t rfind_if(const Vec2<float>& pos) const;
+        std::shared_ptr<Widget> rfind_if(const Vec2<float>& pos) const;
         
         /** Function for retrieving the first widget in the container.
          
@@ -99,7 +99,7 @@ namespace pTK
          
          @return    first widget in container
          */
-        const std::shared_ptr<Widget>& front() const;
+        std::shared_ptr<Widget> front() const;
         
         /** Function for retrieving the last widget in the container.
          
@@ -108,7 +108,7 @@ namespace pTK
          
          @return    first last in container
          */
-        const std::shared_ptr<Widget>& back() const;
+        std::shared_ptr<Widget> back() const;
         
         /** Function for removing a widget to the container.
          

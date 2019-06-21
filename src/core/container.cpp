@@ -61,12 +61,12 @@ namespace pTK
         m_widgets.erase(it, m_widgets.end());
     }
     
-    const std::shared_ptr<Widget>& Container::at(uint32_t index) const
+    std::shared_ptr<Widget> Container::at(uint32_t index) const
     {
         return m_widgets.at(index).first;
     }
     
-    int32_t Container::find_if(const Vec2<float>& pos) const
+    std::shared_ptr<Widget> Container::find_if(const Vec2<float>& pos) const
     {
         for (auto it = m_widgets.begin(); it != m_widgets.end(); it++)
         {
@@ -76,15 +76,15 @@ namespace pTK
             {
                 if ((w_pos.y <= pos.y) && (w_pos.y + w_size.y >= pos.y))
                 {
-                    return std::distance(m_widgets.begin(), it);;
+                    return it->first;
                 }
             }
         }
         
-        return -1;
+        return std::shared_ptr<Widget>(nullptr);
     }
     
-    int32_t Container::rfind_if(const Vec2<float>& pos) const
+    std::shared_ptr<Widget> Container::rfind_if(const Vec2<float>& pos) const
     {
         for (auto it = m_widgets.rbegin(); it != m_widgets.rend(); it++)
         {
@@ -94,12 +94,12 @@ namespace pTK
             {
                 if ((w_pos.y <= pos.y) && (w_pos.y + w_size.y >= pos.y))
                 {
-                    return std::distance(m_widgets.begin(), it.base()) - 1;
+                    return it->first;
                 }
             }
         }
         
-        return -1;
+        return std::shared_ptr<Widget>(nullptr);
     }
     
     uint32_t Container::count() const
@@ -107,12 +107,12 @@ namespace pTK
         return m_widgets.size();
     }
     
-    const std::shared_ptr<Widget>& Container::front() const
+    std::shared_ptr<Widget> Container::front() const
     {
         return m_widgets.front().first;
     }
     
-    const std::shared_ptr<Widget>& Container::back() const
+    std::shared_ptr<Widget> Container::back() const
     {
         return m_widgets.back().first;
     }
