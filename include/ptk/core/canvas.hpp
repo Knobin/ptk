@@ -8,6 +8,12 @@
 #ifndef PTK_CORE_CANVAS_HPP
 #define PTK_CORE_CANVAS_HPP
 
+// Local Headers
+#include "ptk/util/vec2.hpp"
+
+// C++ Headers
+#include <memory>
+
 // OpenGL Headers
 #include <OpenGL/gl.h>
 
@@ -30,7 +36,7 @@ namespace pTK
          
          @return    default initialized Canvas
          */
-        Canvas(unsigned int width, unsigned int height);
+        Canvas(const Vec2<uint32_t>& size);
         ~Canvas();
         
         /** Function for resizing the Canvas.
@@ -38,7 +44,7 @@ namespace pTK
          @param width   New width of canvas
          @param width   New height of canvas
          */
-        void resize(unsigned int width, unsigned int height);
+        void resize(const Vec2<uint32_t>& size);
         
         /** Function for clearing the Canvas.
          
@@ -49,7 +55,7 @@ namespace pTK
          
          @return    SkCanvas property
          */
-        SkCanvas* skcanvas() const;
+        SkCanvas* sk_canvas() const;
     private:
         // Skia
         GrContext* m_context;

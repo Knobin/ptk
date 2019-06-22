@@ -16,7 +16,7 @@
 
 namespace pTK
 {
-    Canvas::Canvas(unsigned int width, unsigned int height)
+    Canvas::Canvas(const Vec2<uint32_t>& size)
         : m_context{nullptr}, m_surface{nullptr}, m_canvas{nullptr}, m_info{}, m_color_type{}
     {
         auto interface = GrGLMakeNativeInterface();
@@ -32,23 +32,20 @@ namespace pTK
         else
             m_color_type = kBGRA_8888_SkColorType;
             
-        resize(width, height);
+        resize(size);
         clear();
-        
-        PTK_INFO("[Canvas] Created with w: {0:d}px and h: {0:d}px", width, height);
     }
     
     Canvas::~Canvas()
     {
         delete m_surface;
-        delete m_context;
     }
     
-    void Canvas::resize(unsigned int width, unsigned int height)
+    void Canvas::resize(const Vec2<uint32_t>& size)
     {
-        glViewport(0, 0, width, height);
+        glViewport(0, 0, size.x, size.y);
         
-        GrBackendRenderTarget backendRenderTarget(width, height, 0, 0, m_info);
+        GrBackendRenderTarget backendRenderTarget(size.x, size.y, 0, 0, m_info);
         
         delete m_surface;
         m_surface = SkSurface::MakeFromBackendRenderTarget(m_context, backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_color_type, nullptr, nullptr).release();
@@ -58,6 +55,8 @@ namespace pTK
         
         // Save Canvas for rendering.
         m_canvas = m_surface->getCanvas();
+        
+        PTK_INFO("[Canvas] Created with w: {0:d}px and h: {0:d}px", size.x, size.y);
     }
     
     void Canvas::clear()
@@ -69,7 +68,7 @@ namespace pTK
         glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
     
-    SkCanvas* Canvas::skcanvas() const
+    SkCanvas* Canvas::sk_canvas() const
     {
         return m_canvas;
     }

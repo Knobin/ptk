@@ -44,7 +44,7 @@ namespace pTK
         // Init Canvas
         int width, height;
         glfwGetFramebufferSize(m_window, &width, &height);
-        m_canvas = new Canvas(width, height);
+        m_canvas = new Canvas(Vec2<uint32_t>(width, height));
         if (m_canvas == nullptr)
         {
             glfwTerminate();
@@ -133,10 +133,10 @@ namespace pTK
     void Window::draw()
     {
         for_each([&](const std::shared_ptr<Widget>& widget){
-            widget->draw(m_canvas->skcanvas());
+            widget->on_draw(m_canvas->sk_canvas());
         });
         
-        m_canvas->skcanvas()->flush();
+        m_canvas->sk_canvas()->flush();
     }
     
     void Window::update()
@@ -163,7 +163,7 @@ namespace pTK
         // Set Framebuffer Size.
         int fb_width, fb_height;
         glfwGetFramebufferSize(m_window, &fb_width, &fb_height);
-        m_canvas->resize(fb_width, fb_height);
+        m_canvas->resize(Vec2<uint32_t>(fb_width, fb_height));
         
         PTK_INFO("ResizeEvent: W: {0:d}x{1:d}, FB: {2:d}x{3:d}", t_width, t_height, fb_width, fb_height);
     }

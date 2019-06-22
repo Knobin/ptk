@@ -15,8 +15,8 @@ namespace pTK
 {
     /** Drawable class implementation.
      
-        This class is the base class for drawable widget.
-        Widgets without this class cannot be drawn.
+     This class is the base class for drawable widget.
+     Widgets without this class cannot be drawn.
      */
     class Drawable
     {
@@ -24,9 +24,12 @@ namespace pTK
         virtual ~Drawable() = default;
         
         /** Draw function.
-            Function is called when it is time to draw.
+         
+         Function is called when it is time to draw.
+         
+         @param canvas   SkCanvas to draw to.
          */
-        virtual void draw(SkCanvas*) const {}
+        virtual void on_draw(SkCanvas*) {}
     };
 }
 

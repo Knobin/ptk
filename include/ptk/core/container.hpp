@@ -56,7 +56,7 @@ namespace pTK
          @param widget      widget to add
          @param priority    priority of widget
          */
-        void add(const std::shared_ptr<Widget>& widget, int32_t priority = 0);
+        void add(const std::shared_ptr<Widget>& widget);
         
         /** Function for removing a widget to the container.
          
@@ -116,39 +116,14 @@ namespace pTK
          */
         uint32_t count() const;
         
-        /** Function for setting a priority to a widget in the container.
-         
-         @param widget      widget to apply change for
-         @param priority    priority of widget
-         */
-        void set_priority(const std::shared_ptr<Widget>& widget, int32_t priority);
-        
-        /** Function for retrieving the priority of a widget in the container.
-         
-         @return    widget count in container
-         */
-        int32_t get_priority(const std::shared_ptr<Widget>& widget) const;
-        
         /** Function for looping over the widgets in the container.
          
          @param func    function to call for each widget.
          */
         void for_each(const std::function<void(const std::shared_ptr<Widget>& widget)>& func) const;
         
-        /** Function for looping over the container allowing access
-         to both widgets and its priorities.
-         
-         @param func    function to call for each widget.
-         */
-        void for_each(const std::function<void(std::pair<std::shared_ptr<Widget>, int32_t>)>& func) const;
-        
     private:
-        std::vector<std::pair<std::shared_ptr<Widget>, int32_t>> m_widgets;
-        
-        /** Function for sorting the container.
-         
-         */
-        void sort();
+        std::vector<std::shared_ptr<Widget>> m_widgets;
     };
     
     // Comparison operators.

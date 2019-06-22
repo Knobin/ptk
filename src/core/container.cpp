@@ -21,8 +21,8 @@ namespace pTK
     
     Container::Container(const Container& rhs)
     {
-        rhs.for_each([&](const std::pair<std::shared_ptr<Widget>, int32_t>& pair){
-            add(pair.first, pair.second);
+        rhs.for_each([&](const std::shared_ptr<Widget>& widget){
+            add(widget);
         });
     }
     
@@ -31,52 +31,51 @@ namespace pTK
         if (this == &rhs)
             return *this;
         
-        rhs.for_each([&](const std::pair<std::shared_ptr<Widget>, int32_t>& pair){
-            add(pair.first, pair.second);
+        rhs.for_each([&](const std::shared_ptr<Widget>& widget){
+            add(widget);
         });
         
         return *this;
     }
     
-    void Container::add(const std::shared_ptr<Widget>& widget, int32_t priority)
+    void Container::add(const std::shared_ptr<Widget>& widget)
     {
         if (widget != nullptr)
         {
-            auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [&](const std::pair<std::shared_ptr<Widget>, int32_t>& rhs){
-                return widget == rhs.first;
+            auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [&](const std::shared_ptr<Widget>& rhs){
+                return widget == rhs;
             });
             if (it == m_widgets.end())
             {
-                m_widgets.push_back(std::make_pair(widget, priority));
-                sort();
+                m_widgets.push_back(widget);
             }
         }
     }
     
     void Container::remove(const std::shared_ptr<Widget>& widget)
     {
-        auto it = std::remove_if(m_widgets.begin(), m_widgets.end(), [&](const std::pair<std::shared_ptr<Widget>, int32_t>& rhs){
-            return widget == rhs.first;
+        auto it = std::remove_if(m_widgets.begin(), m_widgets.end(), [&](const std::shared_ptr<Widget>& rhs){
+            return widget == rhs;
         });
         m_widgets.erase(it, m_widgets.end());
     }
     
     std::shared_ptr<Widget> Container::at(uint32_t index) const
     {
-        return m_widgets.at(index).first;
+        return m_widgets.at(index);
     }
     
     std::shared_ptr<Widget> Container::find_if(const Vec2<float>& pos) const
     {
         for (auto it = m_widgets.begin(); it != m_widgets.end(); it++)
         {
-            Vec2<float> w_pos = it->first->get_position();
-            Vec2<float> w_size = it->first->get_size();
+            Vec2<float> w_pos = (*it)->get_position();
+            Vec2<float> w_size = (*it)->get_size();
             if ((w_pos.x <= pos.x) && (w_pos.x + w_size.x >= pos.x))
             {
                 if ((w_pos.y <= pos.y) && (w_pos.y + w_size.y >= pos.y))
                 {
-                    return it->first;
+                    return (*it);
                 }
             }
         }
@@ -88,13 +87,13 @@ namespace pTK
     {
         for (auto it = m_widgets.rbegin(); it != m_widgets.rend(); it++)
         {
-            Vec2<float> w_pos = it->first->get_position();
-            Vec2<float> w_size = it->first->get_size();
+            Vec2<float> w_pos = (*it)->get_position();
+            Vec2<float> w_size = (*it)->get_size();
             if ((w_pos.x <= pos.x) && (w_pos.x + w_size.x >= pos.x))
             {
                 if ((w_pos.y <= pos.y) && (w_pos.y + w_size.y >= pos.y))
                 {
-                    return it->first;
+                    return (*it);
                 }
             }
         }
@@ -109,66 +108,20 @@ namespace pTK
     
     std::shared_ptr<Widget> Container::front() const
     {
-        return m_widgets.front().first;
+        return m_widgets.front();
     }
     
     std::shared_ptr<Widget> Container::back() const
     {
-        return m_widgets.back().first;
-    }
-    
-    void Container::set_priority(const std::shared_ptr<Widget>& widget, int32_t priority)
-    {
-        if (widget != nullptr)
-        {
-            auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [&](const std::pair<std::shared_ptr<Widget>, int32_t>& rhs){
-                return widget == rhs.first;
-            });
-            if (it != m_widgets.end())
-            {
-                it->second = priority;
-                sort();
-            }
-        }
-    }
-    
-    int32_t Container::get_priority(const std::shared_ptr<Widget>& widget) const
-    {
-        if (widget != nullptr)
-        {
-            auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [&](const std::pair<std::shared_ptr<Widget>, int32_t>& rhs){
-                return widget == rhs.first;
-            });
-            if (it != m_widgets.end())
-            {
-                return it->second;
-            }
-        }
-        
-        return 0;
+        return m_widgets.back();
     }
     
     void Container::for_each(const std::function<void(const std::shared_ptr<Widget>& widget)>& func) const
     {
         for (auto it = m_widgets.begin(); it != m_widgets.end(); it++)
         {
-            func(it->first);
+            func((*it));
         }
-    }
-    
-    void Container::for_each(const std::function<void(const std::pair<std::shared_ptr<Widget>, int32_t>)>& func) const
-    {
-        for (auto it = m_widgets.begin(); it != m_widgets.end(); it++)
-        {
-            func(*it);
-        }
-    }
-    
-    void Container::sort()
-    {
-        std::sort(m_widgets.begin(), m_widgets.end(), [](const std::pair<std::shared_ptr<Widget>, int32_t>& lhs, const std::pair<std::shared_ptr<Widget>, int32_t>& rhs){
-            return lhs.second > rhs.second;
-        });
     }
     
     // Comparison operators.
@@ -179,9 +132,9 @@ namespace pTK
         
         bool equal = true;
         int i = 0;
-        lhs.for_each([&](const std::pair<std::shared_ptr<pTK::Widget>, int32_t>& pair){
+        lhs.for_each([&](const std::shared_ptr<pTK::Widget>& widget){
             auto rhs_widget = rhs.at(i);
-            if ((pair.first != rhs_widget) || (pair.second != rhs.get_priority(rhs_widget)))
+            if (widget != rhs_widget)
                 equal = false;
             i++;
         });

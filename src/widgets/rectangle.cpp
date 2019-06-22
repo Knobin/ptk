@@ -15,7 +15,7 @@ namespace pTK
     {
     }
     
-    void Rectangle::draw(SkCanvas* canvas) const
+    void Rectangle::on_draw(SkCanvas* canvas)
     {
         SkPaint paint;
         paint.setAntiAlias(true);
