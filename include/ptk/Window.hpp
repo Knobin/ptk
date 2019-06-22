@@ -32,19 +32,19 @@ namespace pTK
     class Window : public Container
     {
     public:
-        Window(const std::string& t_name, unsigned int t_width, unsigned int t_height);
+        Window(const std::string& name, unsigned int width, unsigned int height);
         virtual ~Window();
 
         void draw();
         void update();
-        void swap_buffers();
-        bool should_close();
-        void resize(unsigned int t_width, unsigned int t_height);
+        void swapBuffers();
+        bool shouldClose();
+        void resize(unsigned int width, unsigned int height);
         
         // Event processing
-        void key_event(Event* t_event);
-        void mouse_event(Event* t_event);
-        void window_event(Event* t_event);
+        void handleKeyEvent(Event* event);
+        void handleMouseEvent(Event* event);
+        void handleWindowEvent(Event* event);
 
     private:
         // Window
@@ -53,12 +53,12 @@ namespace pTK
         Canvas* m_canvas;
 
         // Init Functions
-        void init_glfw();
+        void initGLFW();
         
         // Set Event Callbacks
-        void set_window_callbacks();
-        void set_mouse_callbacks();
-        void set_key_callbacks();
+        void setWindowCallbacks();
+        void setMouseCallbacks();
+        void setKeyCallbacks();
     };
 }
 

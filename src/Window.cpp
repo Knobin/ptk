@@ -19,20 +19,20 @@
 
 namespace pTK
 {
-    Window::Window(const std::string& t_name, unsigned int t_width, unsigned int t_height)
-        : Container(), m_window{nullptr}, m_data{t_name, {t_width, t_height}, {1.0f, 1.0f}}, m_canvas{nullptr}
+    Window::Window(const std::string& name, unsigned int width, unsigned int height)
+        : Container(), m_window{nullptr}, m_data{name, {width, height}, {1.0f, 1.0f}}, m_canvas{nullptr}
     {
-        init_glfw();
+        initGLFW();
 
         // Create Window.
-        m_window = glfwCreateWindow((int)t_width, (int)t_height, t_name.c_str(), nullptr, nullptr);
+        m_window = glfwCreateWindow((int)width, (int)height, name.c_str(), nullptr, nullptr);
         if (m_window == nullptr)
         {
             glfwTerminate();
             throw std::logic_error("Failed to create GLFW Window.");
         }
         
-        PTK_INFO("[Window] Created with w: {0:d}px and h: {0:d}px", t_width, t_height);
+        PTK_INFO("[Window] Created with w: {0:d}px and h: {0:d}px", width, height);
         
         // Get Monitor Scale
         glfwGetWindowContentScale(m_window, &m_data.scale.x, &m_data.scale.y);
@@ -42,9 +42,9 @@ namespace pTK
         glfwMakeContextCurrent(m_window);
 
         // Init Canvas
-        int width, height;
-        glfwGetFramebufferSize(m_window, &width, &height);
-        m_canvas = new Canvas(Vec2<uint32_t>(width, height));
+        int fbWidth, fbHeight;
+        glfwGetFramebufferSize(m_window, &fbWidth, &fbHeight);
+        m_canvas = new Canvas(Vec2<uint32_t>(fbWidth, fbHeight));
         if (m_canvas == nullptr)
         {
             glfwTerminate();
@@ -54,13 +54,13 @@ namespace pTK
         // Set pointer for use in callbacks;
         glfwSetWindowUserPointer(m_window, this);
         
-        set_window_callbacks();
-        set_mouse_callbacks();
-        set_key_callbacks();
+        setWindowCallbacks();
+        setMouseCallbacks();
+        setKeyCallbacks();
     }
     
     // Init Functions
-    void Window::init_glfw()
+    void Window::initGLFW()
     {
         // Initialize and configure of glfw.
         glfwInit();
@@ -72,21 +72,21 @@ namespace pTK
     }
     
     // Set Event Callbacks
-    void Window::set_window_callbacks()
+    void Window::setWindowCallbacks()
     {
         // void window_size_callback(GLFWwindow* window, int width, int height)
         glfwSetWindowSizeCallback(m_window, [](GLFWwindow* t_window, int t_width, int t_height){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
-            window->window_event(new ResizeEvent((unsigned int)t_width, (unsigned int)t_height));
+            window->handleWindowEvent(new ResizeEvent((unsigned int)t_width, (unsigned int)t_height));
         });
     }
     
-    void Window::set_mouse_callbacks()
+    void Window::setMouseCallbacks()
     {
         // void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
         glfwSetCursorPosCallback(m_window, [](GLFWwindow* t_window, double t_xpos, double t_ypos){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
-            window->mouse_event(new MotionEvent((int)t_xpos, (int)t_ypos));
+            window->handleWindowEvent(new MotionEvent((int)t_xpos, (int)t_ypos));
         });
         // void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
         glfwSetMouseButtonCallback(m_window, [](GLFWwindow* t_window, int t_button, int t_action, int){
@@ -106,21 +106,21 @@ namespace pTK
                 button = MouseButton::NONE;
             
             if (t_action == GLFW_PRESS)
-                window->mouse_event(new ButtonEvent(EventType::MouseButtonPressed, button, (int)xpos, (int)ypos));
+                window->handleMouseEvent(new ButtonEvent(EventType::MouseButtonPressed, button, (int)xpos, (int)ypos));
             else if (t_action == GLFW_RELEASE)
-                window->mouse_event(new ButtonEvent(EventType::MouseButtonReleased, button, (int)xpos, (int)ypos));
+                window->handleMouseEvent(new ButtonEvent(EventType::MouseButtonReleased, button, (int)xpos, (int)ypos));
         });
     }
     
-    void Window::set_key_callbacks()
+    void Window::setKeyCallbacks()
     {
         // void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
         glfwSetKeyCallback(m_window, [](GLFWwindow* t_window, int t_key, int, int t_action, int){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
             if (t_action == GLFW_PRESS)
-                window->key_event(new KeyEvent(EventType::KeyPressed, t_key));
+                window->handleKeyEvent(new KeyEvent(EventType::KeyPressed, t_key));
             else if (t_action == GLFW_RELEASE)
-                window->key_event(new KeyEvent(EventType::KeyReleased, t_key));
+                window->handleKeyEvent(new KeyEvent(EventType::KeyReleased, t_key));
         });
     }
 
@@ -144,32 +144,32 @@ namespace pTK
         glfwPollEvents();
     }
 
-    void Window::swap_buffers()
+    void Window::swapBuffers()
     {
         glfwSwapBuffers(m_window);
     }
 
-    bool Window::should_close()
+    bool Window::shouldClose()
     {
         return (bool)glfwWindowShouldClose(m_window);
     }
 
-    void Window::resize(unsigned int t_width, unsigned int t_height)
+    void Window::resize(unsigned int width, unsigned int height)
     {
         // Set Window Size.
-        m_data.size.x = t_width;
-        m_data.size.y = t_height;
+        m_data.size.x = width;
+        m_data.size.y = height;
         
         // Set Framebuffer Size.
         int fb_width, fb_height;
         glfwGetFramebufferSize(m_window, &fb_width, &fb_height);
         m_canvas->resize(Vec2<uint32_t>(fb_width, fb_height));
         
-        PTK_INFO("ResizeEvent: W: {0:d}x{1:d}, FB: {2:d}x{3:d}", t_width, t_height, fb_width, fb_height);
+        PTK_INFO("ResizeEvent: W: {0:d}x{1:d}, FB: {2:d}x{3:d}", width, height, fb_width, fb_height);
     }
 
     // Event processing
-    void Window::key_event(Event* t_event)
+    void Window::handleKeyEvent(Event* t_event)
     {
         KeyEvent* event = (KeyEvent*)t_event;
         if (event->type() == EventType::KeyPressed)
@@ -180,7 +180,7 @@ namespace pTK
         delete t_event;
     }
 
-    void Window::mouse_event(Event* t_event)
+    void Window::handleMouseEvent(Event* t_event)
     {
         EventType type = t_event->type();
         if (type == EventType::MouseMoved)
@@ -205,15 +205,15 @@ namespace pTK
         delete t_event;
     }
 
-    void Window::window_event(Event* t_event)
+    void Window::handleWindowEvent(Event* event)
     {
-        EventType type = t_event->type();
+        EventType type = event->type();
         if (type == EventType::WindowResize)
         {
-            ResizeEvent* resize_event = (ResizeEvent*)t_event;
+            ResizeEvent* resize_event = (ResizeEvent*)event;
             resize(resize_event->get_width(), resize_event->get_height());
         }
         
-        delete t_event;
+        delete event;
     }
 }
