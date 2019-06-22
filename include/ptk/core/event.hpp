@@ -63,13 +63,13 @@ namespace pTK
          
          @return    Type of event
          */
-        EventType get_type() const { return m_type; }
+        EventType type() const { return m_type; }
         
         /** Function for retrieving the category of the event.
          
          @return    Type of event
          */
-        EventCategory get_category() const { return m_category; }
+        EventCategory category() const { return m_category; }
 
     protected:
         EventType m_type;

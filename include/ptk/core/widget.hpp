@@ -37,39 +37,39 @@ namespace pTK
          
          @return    Current size
          */
-        const Vec2<float>& get_size() const;
+        const Vec2<float>& getSize() const;
         
         /** Function for setting size.
          
          @param width   new width
          @param height  new height
          */
-        void set_size(float width, float height);
+        void setSize(float width, float height);
         
         /** Function for setting size.
          
          @param size    new width and height
          */
-        void set_size(const Vec2<float>& size);
+        void setSize(const Vec2<float>& size);
         
         /** Function for retrieving the position.
          
          @return    Current position
          */
-        const Vec2<float>& get_position() const;
+        const Vec2<float>& getPosition() const;
         
         /** Function for setting position.
          
          @param x   new x position
          @param y   new y position
          */
-        void set_position(float x, float y);
+        void setPosition(float x, float y);
         
         /** Function for setting position.
          
          @param position    new x and y positions
          */
-        void set_position(const Vec2<float>& position);
+        void setPosition(const Vec2<float>& position);
         
         /** Function for moving.
          Will set the position based on the current values and

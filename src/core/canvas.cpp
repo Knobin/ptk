@@ -17,7 +17,7 @@
 namespace pTK
 {
     Canvas::Canvas(const Vec2<uint32_t>& size)
-        : m_context{nullptr}, m_surface{nullptr}, m_canvas{nullptr}, m_info{}, m_color_type{}
+        : m_context{nullptr}, m_surface{nullptr}, m_canvas{nullptr}, m_info{}, m_colorType{}
     {
         auto interface = GrGLMakeNativeInterface();
         m_context = GrContext::MakeGL(interface).release();
@@ -28,9 +28,9 @@ namespace pTK
         m_info.fFormat = GL_RGBA8;
         
         if (kRGBA_8888_GrPixelConfig == kSkia8888_GrPixelConfig)
-            m_color_type = kRGBA_8888_SkColorType;
+            m_colorType = kRGBA_8888_SkColorType;
         else
-            m_color_type = kBGRA_8888_SkColorType;
+            m_colorType = kBGRA_8888_SkColorType;
             
         resize(size);
         clear();
@@ -48,7 +48,7 @@ namespace pTK
         GrBackendRenderTarget backendRenderTarget(size.x, size.y, 0, 0, m_info);
         
         delete m_surface;
-        m_surface = SkSurface::MakeFromBackendRenderTarget(m_context, backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_color_type, nullptr, nullptr).release();
+        m_surface = SkSurface::MakeFromBackendRenderTarget(m_context, backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, nullptr).release();
         
         if (m_surface == nullptr)
             throw std::logic_error("Skia error");
@@ -68,7 +68,7 @@ namespace pTK
         glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
     
-    SkCanvas* Canvas::sk_canvas() const
+    SkCanvas* Canvas::skCanvas() const
     {
         return m_canvas;
     }

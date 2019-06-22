@@ -28,42 +28,42 @@ namespace pTK
          
          @return    Current Color
          */
-        const Color& get_color() const;
+        const Color& getColor() const;
         
         /** Function for setting the Color of the Shape.
          
          @param Color   Shape Color
          */
-        void set_color(const Color& color);
+        void setColor(const Color& color);
         
         /** Function for retrieving the Color of the Shape.
          
          @return    Current Color
          */
-        const Color& get_outline_color() const;
+        const Color& getOutlineColor() const;
         
         /** Function for setting the Color of the outline.
          
          @param outline_color   outline Color
          */
-        void set_outline_color(const Color& outline_color);
+        void setOutlineColor(const Color& outlineColor);
         
         /** Function for retrieving the thickness of the outline.
          
          @return    outline thickness
          */
-        float get_outline_thickness() const;
+        float getOutlineThickness() const;
         
         /** Function for setting the thickness of the outline.
          
          @param outline_thickness   thickness of outline
          */
-        void set_outline_thickness(float outline_thickness);
+        void setOutlineThickness(float outlineThickness);
         
     private:
         Color m_color;
-        Color m_outline_color;
-        float m_outline_thickness;
+        Color m_outlineColor;
+        float m_outlineThickness;
     };
     
     // Comparison operators.

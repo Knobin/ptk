@@ -18,43 +18,43 @@ namespace pTK
     
     void EventHandling::handle_key_event(EventType type, int keycode)
     {
-        on_key_event(type, keycode);
-        if (m_key_callback != nullptr)
-            m_key_callback(type, keycode);
+        onKeyEvent(type, keycode);
+        if (m_keyCallback != nullptr)
+            m_keyCallback(type, keycode);
     }
     
     void EventHandling::handle_hover_event()
     {
-        on_hover_event();
-        if (m_hover_callback != nullptr)
-            m_hover_callback();
+        onHoverEvent();
+        if (m_hoverCallback != nullptr)
+            m_hoverCallback();
     }
     
     void EventHandling::handle_leave_event()
     {
-        on_leave_event();
-        if (m_leave_callback != nullptr)
-            m_leave_callback();
+        onLeaveEvent();
+        if (m_leaveCallback != nullptr)
+            m_leaveCallback();
     }
     
     void EventHandling::handle_scroll_event(const Vec2<int>& offset)
     {
-        on_scroll_event(offset);
-        if (m_scroll_callback != nullptr)
-            m_scroll_callback(offset);
+        onScrollEvent(offset);
+        if (m_scrollCallback != nullptr)
+            m_scrollCallback(offset);
     }
     
     void EventHandling::handle_click_event(MouseButton button, const Vec2<int>& position)
     {
-        on_click_event(button, position);
-        if (m_click_callback != nullptr)
-            m_click_callback(button, position);
+        onClickEvent(button, position);
+        if (m_clickCallback != nullptr)
+            m_clickCallback(button, position);
     }
     
     void EventHandling::handle_release_event(MouseButton button, const Vec2<int>& position)
     {
-        on_release_event(button, position);
-        if (m_release_callback != nullptr)
-            m_release_callback(button, position);
+        onReleaseEvent(button, position);
+        if (m_releaseCallback != nullptr)
+            m_releaseCallback(button, position);
     }
 }

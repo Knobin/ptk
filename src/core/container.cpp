@@ -69,8 +69,8 @@ namespace pTK
     {
         for (auto it = m_widgets.begin(); it != m_widgets.end(); it++)
         {
-            Vec2<float> w_pos = (*it)->get_position();
-            Vec2<float> w_size = (*it)->get_size();
+            Vec2<float> w_pos = (*it)->getPosition();
+            Vec2<float> w_size = (*it)->getSize();
             if ((w_pos.x <= pos.x) && (w_pos.x + w_size.x >= pos.x))
             {
                 if ((w_pos.y <= pos.y) && (w_pos.y + w_size.y >= pos.y))
@@ -87,8 +87,8 @@ namespace pTK
     {
         for (auto it = m_widgets.rbegin(); it != m_widgets.rend(); it++)
         {
-            Vec2<float> w_pos = (*it)->get_position();
-            Vec2<float> w_size = (*it)->get_size();
+            Vec2<float> w_pos = (*it)->getPosition();
+            Vec2<float> w_size = (*it)->getSize();
             if ((w_pos.x <= pos.x) && (w_pos.x + w_size.x >= pos.x))
             {
                 if ((w_pos.y <= pos.y) && (w_pos.y + w_size.y >= pos.y))

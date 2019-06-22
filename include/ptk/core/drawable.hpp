@@ -29,7 +29,7 @@ namespace pTK
          
          @param canvas   SkCanvas to draw to.
          */
-        virtual void on_draw(SkCanvas*) {}
+        virtual void onDraw(SkCanvas*) {}
     };
 }
 

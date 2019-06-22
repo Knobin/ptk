@@ -15,32 +15,32 @@ namespace pTK
     {
     }
     
-    const Vec2<float>& Widget::get_size() const
+    const Vec2<float>& Widget::getSize() const
     {
         return m_size;
     }
     
-    void Widget::set_size(float width, float height)
+    void Widget::setSize(float width, float height)
     {
         m_size = {width, height};
     }
     
-    void Widget::set_size(const Vec2<float>& size)
+    void Widget::setSize(const Vec2<float>& size)
     {
         m_size = size;
     }
     
-    const Vec2<float>& Widget::get_position() const
+    const Vec2<float>& Widget::getPosition() const
     {
         return m_position;
     }
     
-    void Widget::set_position(float x, float y)
+    void Widget::setPosition(float x, float y)
     {
         m_position = {x, y};
     }
     
-    void Widget::set_position(const Vec2<float>& position)
+    void Widget::setPosition(const Vec2<float>& position)
     {
         m_position = position;
     }
@@ -59,7 +59,7 @@ namespace pTK
     // Comparison operators.
     bool operator==(const Widget& lhs, const Widget& rhs)
     {
-        return ((lhs.get_position() == rhs.get_position()) && (lhs.get_size() == rhs.get_size()));
+        return ((lhs.getPosition() == rhs.getPosition()) && (lhs.getSize() == rhs.getSize()));
     }
     
     bool operator!=(const Widget& lhs, const Widget& rhs)

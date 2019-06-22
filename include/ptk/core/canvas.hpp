@@ -55,14 +55,14 @@ namespace pTK
          
          @return    SkCanvas property
          */
-        SkCanvas* sk_canvas() const;
+        SkCanvas* skCanvas() const;
     private:
         // Skia
         GrContext* m_context;
         SkSurface* m_surface;
         SkCanvas* m_canvas;
         GrGLFramebufferInfo m_info;
-        SkColorType m_color_type;
+        SkColorType m_colorType;
     };
 }
 

@@ -90,12 +90,12 @@ namespace pTK
         void handle_release_event(MouseButton button, const Vec2<int>& position);
         
     private:
-        using EventCallbacks::m_key_callback;
-        using EventCallbacks::m_hover_callback;
-        using EventCallbacks::m_leave_callback;
-        using EventCallbacks::m_scroll_callback;
-        using EventCallbacks::m_click_callback;
-        using EventCallbacks::m_release_callback;
+        using EventCallbacks::m_keyCallback;
+        using EventCallbacks::m_hoverCallback;
+        using EventCallbacks::m_leaveCallback;
+        using EventCallbacks::m_scrollCallback;
+        using EventCallbacks::m_clickCallback;
+        using EventCallbacks::m_releaseCallback;
     };
 }
 

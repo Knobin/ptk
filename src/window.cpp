@@ -133,10 +133,10 @@ namespace pTK
     void Window::draw()
     {
         for_each([&](const std::shared_ptr<Widget>& widget){
-            widget->on_draw(m_canvas->sk_canvas());
+            widget->onDraw(m_canvas->skCanvas());
         });
         
-        m_canvas->sk_canvas()->flush();
+        m_canvas->skCanvas()->flush();
     }
     
     void Window::update()
@@ -172,9 +172,9 @@ namespace pTK
     void Window::key_event(Event* t_event)
     {
         KeyEvent* event = (KeyEvent*)t_event;
-        if (event->get_type() == EventType::KeyPressed)
+        if (event->type() == EventType::KeyPressed)
             std::cout << "Key pressed: " << event->get_keycode() << "\n";
-        else if (event->get_type() == EventType::KeyReleased)
+        else if (event->type() == EventType::KeyReleased)
             std::cout << "Key released: " << event->get_keycode() << "\n";
         
         delete t_event;
@@ -182,7 +182,7 @@ namespace pTK
 
     void Window::mouse_event(Event* t_event)
     {
-        EventType type = t_event->get_type();
+        EventType type = t_event->type();
         if (type == EventType::MouseMoved)
         {
             MotionEvent* m_event = (MotionEvent*)t_event;
@@ -194,7 +194,7 @@ namespace pTK
             std::shared_ptr<Widget> b_widget = rfind_if(Vec2<float>(pos));
             if (b_widget != nullptr)
             {
-                EventType type = b_event->get_type();
+                EventType type = b_event->type();
                 if (type == EventType::MouseButtonPressed)
                     b_widget->handle_click_event(b_event->get_button(), pos);
                 else if (type == EventType::MouseButtonReleased)
@@ -207,7 +207,7 @@ namespace pTK
 
     void Window::window_event(Event* t_event)
     {
-        EventType type = t_event->get_type();
+        EventType type = t_event->type();
         if (type == EventType::WindowResize)
         {
             ResizeEvent* resize_event = (ResizeEvent*)t_event;

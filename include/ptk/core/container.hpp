@@ -78,7 +78,7 @@ namespace pTK
          @param pos     position of widget to find
          @return        index where to find widget
          */
-        std::shared_ptr<Widget>  find_if(const Vec2<float>& pos) const;
+        std::shared_ptr<Widget> find_if(const Vec2<float>& pos) const;
         
         /** Function for retrieving the first widget that matches the parameters.
          

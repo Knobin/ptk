@@ -11,46 +11,46 @@
 namespace pTK
 {
     Shape::Shape()
-        : Widget(), m_color{0, 0, 0}, m_outline_color{0, 0, 0}, m_outline_thickness{0}
+        : Widget(), m_color{0, 0, 0}, m_outlineColor{0, 0, 0}, m_outlineThickness{0}
     {
     }
     
-    const Color& Shape::get_color() const
+    const Color& Shape::getColor() const
     {
         return m_color;
     }
     
-    void Shape::set_color(const Color& color)
+    void Shape::setColor(const Color& color)
     {
         m_color = color;
     }
     
-    const Color& Shape::get_outline_color() const
+    const Color& Shape::getOutlineColor() const
     {
-        return m_outline_color;
+        return m_outlineColor;
     }
     
-    void Shape::set_outline_color(const Color& outline_color)
+    void Shape::setOutlineColor(const Color& outline_color)
     {
-        m_outline_color = outline_color;
+        m_outlineColor = outline_color;
     }
     
-    float Shape::get_outline_thickness() const
+    float Shape::getOutlineThickness() const
     {
-        return m_outline_thickness;
+        return m_outlineThickness;
     }
     
-    void Shape::set_outline_thickness(float outline_thickness)
+    void Shape::setOutlineThickness(float outlineThickness)
     {
-        m_outline_thickness = outline_thickness;
+        m_outlineThickness = outlineThickness;
     }
     
     // Comparison operators.
     bool operator==(const Shape& lhs, const Shape& rhs)
     {
-        return ((lhs.get_color() == rhs.get_color()) &&
-                (lhs.get_outline_color() == rhs.get_outline_color()) &&
-                (lhs.get_outline_thickness() == rhs.get_outline_thickness()));
+        return ((lhs.getColor() == rhs.getColor()) &&
+                (lhs.getOutlineColor() == rhs.getOutlineColor()) &&
+                (lhs.getOutlineThickness() == rhs.getOutlineThickness()));
     }
     
     bool operator!=(const Shape& lhs, const Shape& rhs)

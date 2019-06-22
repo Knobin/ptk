@@ -33,22 +33,22 @@ namespace pTK
          
          Derived from Drawable.
          */
-        void on_draw(SkCanvas*) override;
+        void onDraw(SkCanvas*) override;
         
         /** Function for setting the corner radius.
          
          @param radius  corner radius
          */
-        void set_corner_radius(float radius);
+        void setCornerRadius(float radius);
         
         /** Function for retrieving the corner radius.
          
          @return    corner radius
          */
-        float get_corner_radius() const;
+        float getCornerRadius() const;
         
     private:
-        float m_corner_radius;
+        float m_cornerRadius;
     };
     
     // Comparison operators.

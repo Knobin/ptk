@@ -11,38 +11,38 @@
 namespace pTK
 {
     EventCallbacks::EventCallbacks()
-        : m_key_callback{nullptr}, m_hover_callback{nullptr}, m_leave_callback{nullptr},
-            m_scroll_callback{nullptr}, m_click_callback{nullptr}, m_release_callback{nullptr}
+        : m_keyCallback{nullptr}, m_hoverCallback{nullptr}, m_leaveCallback{nullptr},
+            m_scrollCallback{nullptr}, m_clickCallback{nullptr}, m_releaseCallback{nullptr}
     {
     }
     
-    void EventCallbacks::on_key(const std::function<void(EventType, int)>& callback)
+    void EventCallbacks::onKey(const std::function<void(EventType, int)>& callback)
     {
-        m_key_callback = callback;
+        m_keyCallback = callback;
     }
     
-    void EventCallbacks::on_hover(const std::function<void()>& callback)
+    void EventCallbacks::onHover(const std::function<void()>& callback)
     {
-        m_hover_callback = callback;
+        m_hoverCallback = callback;
     }
     
-    void EventCallbacks::on_leave(const std::function<void()>& callback)
+    void EventCallbacks::onLeave(const std::function<void()>& callback)
     {
-        m_leave_callback = callback;
+        m_leaveCallback = callback;
     }
     
-    void EventCallbacks::on_scroll(const std::function<void(const Vec2<int>&)>& callback)
+    void EventCallbacks::onScroll(const std::function<void(const Vec2<int>&)>& callback)
     {
-        m_scroll_callback = callback;
+        m_scrollCallback = callback;
     }
     
-    void EventCallbacks::on_click(const std::function<void(MouseButton, const Vec2<int>&)>& callback)
+    void EventCallbacks::onClick(const std::function<void(MouseButton, const Vec2<int>&)>& callback)
     {
-        m_click_callback = callback;
+        m_clickCallback = callback;
     }
     
-    void EventCallbacks::on_release(const std::function<void(MouseButton, const Vec2<int>&)>& callback)
+    void EventCallbacks::onRelease(const std::function<void(MouseButton, const Vec2<int>&)>& callback)
     {
-        m_release_callback = callback;
+        m_releaseCallback = callback;
     }
 }
