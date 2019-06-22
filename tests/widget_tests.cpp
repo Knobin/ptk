@@ -11,7 +11,7 @@ TEST_CASE("Widget Constructors")
     {
         pTK::Widget t;
         pTK::Vec2<float> correct{0, 0};
-        REQUIRE(t.get_size() == correct);
+        REQUIRE(t.getSize() == correct);
     }
 }
 
@@ -20,32 +20,32 @@ TEST_CASE("Widget Setters")
     // Testing Setters.
     pTK::Vec2<float> correct{10, 20};
     
-    SECTION("set_size(float width, float height)")
+    SECTION("setSize(float width, float height)")
     {
         pTK::Widget t;
-        t.set_size(10, 20);
-        REQUIRE(t.get_size() == correct);
+        t.setSize(10, 20);
+        REQUIRE(t.getSize() == correct);
     }
     
-    SECTION("set_size(const Vec2<float>& size)")
+    SECTION("setSize(const Vec2<float>& size)")
     {
         pTK::Widget t;
-        t.set_size(correct);
-        REQUIRE(t.get_size() == correct);
+        t.setSize(correct);
+        REQUIRE(t.getSize() == correct);
     }
     
-    SECTION("set_position(float x, float y)")
+    SECTION("setPosition(float x, float y)")
     {
         pTK::Widget t;
-        t.set_position(10, 20);
-        REQUIRE(t.get_position() == correct);
+        t.setPosition(10, 20);
+        REQUIRE(t.getPosition() == correct);
     }
     
-    SECTION("set_size(const Vec2<float>& size)")
+    SECTION("setSize(const Vec2<float>& size)")
     {
         pTK::Widget t;
-        t.set_position(correct);
-        REQUIRE(t.get_position() == correct);
+        t.setPosition(correct);
+        REQUIRE(t.getPosition() == correct);
     }
 }
 
@@ -54,22 +54,22 @@ TEST_CASE("Widget Getters")
     // Testing Getters.
     pTK::Vec2<float> correct{10, 20};
     
-    SECTION("const Vec2<float>& get_size() const")
+    SECTION("const Vec2<float>& getSize() const")
     {
         pTK::Widget t;
-        t.set_size(correct);
-        REQUIRE(t.get_size().x == correct.x);
-        REQUIRE(t.get_size().y == correct.y);
-        REQUIRE(t.get_size() == correct);
+        t.setSize(correct);
+        REQUIRE(t.getSize().x == correct.x);
+        REQUIRE(t.getSize().y == correct.y);
+        REQUIRE(t.getSize() == correct);
     }
     
-    SECTION("const Vec2<float>& get_position() const")
+    SECTION("const Vec2<float>& getPosition() const")
     {
         pTK::Widget t;
-        t.set_position(correct);
-        REQUIRE(t.get_position().x == correct.x);
-        REQUIRE(t.get_position().y == correct.y);
-        REQUIRE(t.get_position() == correct);
+        t.setPosition(correct);
+        REQUIRE(t.getPosition().x == correct.x);
+        REQUIRE(t.getPosition().y == correct.y);
+        REQUIRE(t.getPosition() == correct);
     }
 }
 
@@ -79,22 +79,22 @@ TEST_CASE("Widget Copy and Assignment")
     pTK::Vec2<float> pos{10, 20};
     pTK::Vec2<float> size{15, 45};
     pTK::Widget t;
-    t.set_size(size);
-    t.set_position(pos);
+    t.setSize(size);
+    t.setPosition(pos);
     
     SECTION("Copy")
     {
         pTK::Widget tmp = t;
-        REQUIRE(t.get_position() == pos);
-        REQUIRE(t.get_size() == size);
+        REQUIRE(t.getPosition() == pos);
+        REQUIRE(t.getSize() == size);
     }
     
     SECTION("Assignment")
     {
         pTK::Widget tmp;
         tmp = t;
-        REQUIRE(t.get_position() == pos);
-        REQUIRE(t.get_size() == size);
+        REQUIRE(t.getPosition() == pos);
+        REQUIRE(t.getSize() == size);
     }
     
     SECTION("Check if pos and size has changed")
@@ -113,12 +113,12 @@ TEST_CASE ("Widget Comparison")
     pTK::Widget t;
     pTK::Widget t1;
     pTK::Widget t2;
-    t2.set_size(42, 14);
+    t2.setSize(42, 14);
     pTK::Widget t3;
-    t3.set_position(10, 20);
+    t3.setPosition(10, 20);
     pTK::Widget t4;
-    t4.set_position(10, 20);
-    t4.set_size(42, 14);
+    t4.setPosition(10, 20);
+    t4.setSize(42, 14);
     
     SECTION("Equal")
     {

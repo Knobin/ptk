@@ -11,9 +11,9 @@ TEST_CASE("Constructors")
     {
         pTK::Rectangle rect;
         
-        REQUIRE(rect.get_color() == pTK::Color(0, 0, 0));
-        REQUIRE(rect.get_outline_color() == pTK::Color(0, 0, 0));
-        REQUIRE(rect.get_outline_thickness() == 0);
+        REQUIRE(rect.getColor() == pTK::Color(0, 0, 0));
+        REQUIRE(rect.getOutlineColor() == pTK::Color(0, 0, 0));
+        REQUIRE(rect.getOutlineThickness() == 0);
     }
 }
 
@@ -25,32 +25,32 @@ TEST_CASE("Getters and Setters")
     SECTION("color")
     {
         pTK::Rectangle rect;
-        rect.set_color(correct_colors);
-        REQUIRE(rect.get_color() == correct_colors);
+        rect.setColor(correct_colors);
+        REQUIRE(rect.getColor() == correct_colors);
     }
     
-    SECTION("outline_color")
+    SECTION("outlineColor")
     {
         pTK::Rectangle rect;
-        rect.set_outline_color(correct_colors);
-        REQUIRE(rect.get_outline_color() == correct_colors);
+        rect.setOutlineColor(correct_colors);
+        REQUIRE(rect.getOutlineColor() == correct_colors);
     }
     
-    SECTION("outline_thickness")
+    SECTION("outlineThickness")
     {
         pTK::Rectangle rect;
-        rect.set_outline_thickness(10);
-        REQUIRE(rect.get_outline_thickness() == 10);
+        rect.setOutlineThickness(10);
+        REQUIRE(rect.getOutlineThickness() == 10);
     }
     
-    SECTION("corner_radius")
+    SECTION("cornerRadius")
     {
         pTK::Rectangle rect;
-        rect.set_corner_radius(10);
-        REQUIRE(rect.get_corner_radius() == 10);
+        rect.setCornerRadius(10);
+        REQUIRE(rect.getCornerRadius() == 10);
         
-        rect.set_corner_radius(-10);
-        REQUIRE(rect.get_corner_radius() == 10);
+        rect.setCornerRadius(-10);
+        REQUIRE(rect.getCornerRadius() == 10);
     }
 }
 
@@ -58,33 +58,33 @@ TEST_CASE("Copy and Assignment")
 {
     // Testing Rectangle Copy and Assignment.
     pTK::Color  color{50, 100, 150, 200};
-    pTK::Color  outline_color{75, 125, 175, 225};
-    float       outline_thickness = 50;
-    float       corner_radius = 10;
+    pTK::Color  outlineColor{75, 125, 175, 225};
+    float       outlineThickness = 50;
+    float       cornerRadius = 10;
     
     pTK::Rectangle rect;
-    rect.set_color(color);
-    rect.set_outline_color(outline_color);
-    rect.set_outline_thickness(outline_thickness);
-    rect.set_corner_radius(corner_radius);
+    rect.setColor(color);
+    rect.setOutlineColor(outlineColor);
+    rect.setOutlineThickness(outlineThickness);
+    rect.setCornerRadius(cornerRadius);
     
     SECTION("Copy")
     {
         pTK::Rectangle tmp = rect;
-        REQUIRE(tmp.get_color() == color);
-        REQUIRE(tmp.get_outline_color() == outline_color);
-        REQUIRE(tmp.get_outline_thickness() == outline_thickness);
-        REQUIRE(tmp.get_corner_radius() == corner_radius);
+        REQUIRE(tmp.getColor() == color);
+        REQUIRE(tmp.getOutlineColor() == outlineColor);
+        REQUIRE(tmp.getOutlineThickness() == outlineThickness);
+        REQUIRE(tmp.getCornerRadius() == cornerRadius);
     }
     
     SECTION("Assignment")
     {
         pTK::Rectangle tmp;
         tmp = rect;
-        REQUIRE(tmp.get_color() == color);
-        REQUIRE(tmp.get_outline_color() == outline_color);
-        REQUIRE(tmp.get_outline_thickness() == outline_thickness);
-        REQUIRE(tmp.get_corner_radius() == corner_radius);
+        REQUIRE(tmp.getColor() == color);
+        REQUIRE(tmp.getOutlineColor() == outlineColor);
+        REQUIRE(tmp.getOutlineThickness() == outlineThickness);
+        REQUIRE(tmp.getCornerRadius() == cornerRadius);
     }
 }
 
@@ -92,25 +92,25 @@ TEST_CASE ("Comparison")
 {
     // Testing Transformable Comparison.
     pTK::Color  color{50, 100, 150, 200};
-    pTK::Color  outline_color{75, 125, 175, 225};
-    float       outline_thickness = 50;
-    float       corner_radius = 10;
+    pTK::Color  outlineColor{75, 125, 175, 225};
+    float       outlineThickness = 50;
+    float       cornerRadius = 10;
     
     pTK::Rectangle rect;
-    rect.set_color(color);
-    rect.set_outline_color(outline_color);
-    rect.set_outline_thickness(outline_thickness);
-    rect.set_corner_radius(corner_radius);
+    rect.setColor(color);
+    rect.setOutlineColor(outlineColor);
+    rect.setOutlineThickness(outlineThickness);
+    rect.setCornerRadius(cornerRadius);
     pTK::Rectangle r1 = rect;
     
     pTK::Rectangle r2;
-    r2.set_outline_color(color);
+    r2.setOutlineColor(color);
     
     pTK::Rectangle r3;
-    r3.set_color(outline_color);
+    r3.setColor(outlineColor);
     
     pTK::Rectangle r4;
-    r4.set_corner_radius(corner_radius);
+    r4.setCornerRadius(cornerRadius);
     
     SECTION("Equal")
     {

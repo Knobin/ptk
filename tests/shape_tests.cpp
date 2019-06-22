@@ -10,37 +10,37 @@ TEST_CASE("Shape Constructors")
     SECTION("Shape()")
     {
         pTK::Shape s;
-        pTK::Color correct_colors{0, 0, 0, 255};
-        REQUIRE(s.get_color() == correct_colors);
-        REQUIRE(s.get_outline_color() == correct_colors);
-        REQUIRE(s.get_outline_thickness() == 0);
+        pTK::Color correctColors{0, 0, 0, 255};
+        REQUIRE(s.getColor() == correctColors);
+        REQUIRE(s.getOutlineColor() == correctColors);
+        REQUIRE(s.getOutlineThickness() == 0);
     }
 }
 
 TEST_CASE("Shape Getters and Setters")
 {
     // Testing Getters and Setters.
-    pTK::Color correct_colors{50, 100, 150, 200};
+    pTK::Color correctColors{50, 100, 150, 200};
     
     SECTION("color")
     {
         pTK::Shape s;
-        s.set_color(correct_colors);
-        REQUIRE(s.get_color() == correct_colors);
+        s.setColor(correctColors);
+        REQUIRE(s.getColor() == correctColors);
     }
     
     SECTION("outline_color")
     {
         pTK::Shape s;
-        s.set_outline_color(correct_colors);
-        REQUIRE(s.get_outline_color() == correct_colors);
+        s.setOutlineColor(correctColors);
+        REQUIRE(s.getOutlineColor() == correctColors);
     }
     
     SECTION("outline_thickness")
     {
         pTK::Shape s;
-        s.set_outline_thickness(10);
-        REQUIRE(s.get_outline_thickness() == 10);
+        s.setOutlineThickness(10);
+        REQUIRE(s.getOutlineThickness() == 10);
     }
 }
 
@@ -52,25 +52,25 @@ TEST_CASE("Shape Copy and Assignment")
     uint32_t    outline_thickness = 50;
     
     pTK::Shape s;
-    s.set_color(color);
-    s.set_outline_color(outline_color);
-    s.set_outline_thickness(outline_thickness);
+    s.setColor(color);
+    s.setOutlineColor(outline_color);
+    s.setOutlineThickness(outline_thickness);
     
     SECTION("Copy")
     {
         pTK::Shape tmp = s;
-        REQUIRE(tmp.get_color() == color);
-        REQUIRE(tmp.get_outline_color() == outline_color);
-        REQUIRE(tmp.get_outline_thickness() == outline_thickness);
+        REQUIRE(tmp.getColor() == color);
+        REQUIRE(tmp.getOutlineColor() == outline_color);
+        REQUIRE(tmp.getOutlineThickness() == outline_thickness);
     }
     
     SECTION("Assignment")
     {
         pTK::Shape tmp;
         tmp = s;
-        REQUIRE(tmp.get_color() == color);
-        REQUIRE(tmp.get_outline_color() == outline_color);
-        REQUIRE(tmp.get_outline_thickness() == outline_thickness);
+        REQUIRE(tmp.getColor() == color);
+        REQUIRE(tmp.getOutlineColor() == outline_color);
+        REQUIRE(tmp.getOutlineThickness() == outline_thickness);
     }
 }
 
@@ -82,16 +82,16 @@ TEST_CASE ("Shape Comparison")
     uint32_t    outline_thickness = 50;
     
     pTK::Shape s;
-    s.set_color(color);
-    s.set_outline_color(outline_color);
-    s.set_outline_thickness(outline_thickness);
+    s.setColor(color);
+    s.setOutlineColor(outline_color);
+    s.setOutlineThickness(outline_thickness);
     pTK::Shape s1 = s;
     
     pTK::Shape s2;
-    s2.set_outline_color(color);
+    s2.setOutlineColor(color);
     
     pTK::Shape s3;
-    s3.set_color(outline_color);
+    s3.setColor(outline_color);
     
     SECTION("Equal")
     {
