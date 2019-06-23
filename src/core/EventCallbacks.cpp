@@ -16,32 +16,32 @@ namespace pTK
     {
     }
     
-    void EventCallbacks::onKey(const std::function<void(EventType, int)>& callback)
+    void EventCallbacks::onKey(const std::function<bool(EventType, int)>& callback)
     {
         m_keyCallback = callback;
     }
     
-    void EventCallbacks::onHover(const std::function<void()>& callback)
+    void EventCallbacks::onHover(const std::function<bool()>& callback)
     {
         m_hoverCallback = callback;
     }
     
-    void EventCallbacks::onLeave(const std::function<void()>& callback)
+    void EventCallbacks::onLeave(const std::function<bool()>& callback)
     {
         m_leaveCallback = callback;
     }
     
-    void EventCallbacks::onScroll(const std::function<void(const Vec2<int>&)>& callback)
+    void EventCallbacks::onScroll(const std::function<bool(const Vec2<int>&)>& callback)
     {
         m_scrollCallback = callback;
     }
     
-    void EventCallbacks::onClick(const std::function<void(MouseButton, const Vec2<int>&)>& callback)
+    void EventCallbacks::onClick(const std::function<bool(MouseButton, const Vec2<int>&)>& callback)
     {
         m_clickCallback = callback;
     }
     
-    void EventCallbacks::onRelease(const std::function<void(MouseButton, const Vec2<int>&)>& callback)
+    void EventCallbacks::onRelease(const std::function<bool(MouseButton, const Vec2<int>&)>& callback)
     {
         m_releaseCallback = callback;
     }

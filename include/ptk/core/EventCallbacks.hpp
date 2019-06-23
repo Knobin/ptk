@@ -28,47 +28,47 @@ namespace pTK
          
          @param callback    function to call on key event
          */
-        void onKey(const std::function<void(EventType, int)>& callback);
+        void onKey(const std::function<bool(EventType, int)>& callback);
         
         /** Function for handling when mouse is entering.
          
          @param callback    function to call on hover event
          */
-        void onHover(const std::function<void()>& callback);
+        void onHover(const std::function<bool()>& callback);
         
         /** Function for handling when mouse is leaving.
          
          @param callback    function to call on leaving event
          */
-        void onLeave(const std::function<void()>& callback);
+        void onLeave(const std::function<bool()>& callback);
         
         /** Function for handling when mouse is scrolling.
          
          @param offset     x and y offset
          */
-        void onScroll(const std::function<void(const Vec2<int>&)>& callback);
+        void onScroll(const std::function<bool(const Vec2<int>&)>& callback);
         
         /** Function for handling when mouse is clicking.
          
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        void onClick(const std::function<void(MouseButton, const Vec2<int>&)>& callback);
+        void onClick(const std::function<bool(MouseButton, const Vec2<int>&)>& callback);
         
         /** Function for handling when mouse is released.
          
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        void onRelease(const std::function<void(MouseButton, const Vec2<int>&)>& callback);
+        void onRelease(const std::function<bool(MouseButton, const Vec2<int>&)>& callback);
         
     protected:
-        std::function<void(EventType, int)> m_keyCallback;
-        std::function<void()> m_hoverCallback;
-        std::function<void()> m_leaveCallback;
-        std::function<void(const Vec2<int>&)> m_scrollCallback;
-        std::function<void(MouseButton, const Vec2<int>&)> m_clickCallback;
-        std::function<void(MouseButton, const Vec2<int>&)> m_releaseCallback;
+        std::function<bool(EventType, int)> m_keyCallback;
+        std::function<bool()> m_hoverCallback;
+        std::function<bool()> m_leaveCallback;
+        std::function<bool(const Vec2<int>&)> m_scrollCallback;
+        std::function<bool(MouseButton, const Vec2<int>&)> m_clickCallback;
+        std::function<bool(MouseButton, const Vec2<int>&)> m_releaseCallback;
     };
 }
 

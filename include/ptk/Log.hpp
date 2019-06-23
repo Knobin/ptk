@@ -13,11 +13,16 @@
 
 // PTK_DEBUG will enable all debug defines.
 #ifdef PTK_DEBUG
+    #define PTK_ENABLE_ASSERT
     #define PTK_ENABLE_WARNING
     #define PTK_ENABLE_ERROR
     #define PTK_ENABLE_TRACE
     #define PTK_ENABLE_INFO
     #define PTK_ENABLE_FATAL
+#endif
+
+#ifdef PTK_ENABLE_ASSERT
+    #define PTK_ASSERT(x, ...)   if(!(x)) { PTK_ERROR("Assertion Failed: {0}", __VA_ARGS__); }
 #endif
 
 #ifdef PTK_ENABLE_WARNING

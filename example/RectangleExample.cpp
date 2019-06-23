@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
     
     rect->onClick([](pTK::MouseButton, const pTK::Vec2<int>&){
         std::cout << "Rectangle Clicked!\n";
+        return true;
     });
     
     return app.exec(&window);

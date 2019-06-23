@@ -9,7 +9,7 @@
 #define PTK_CORE_DRAWABLE_HPP
 
 // Skia Headers
-#include "include/core/SkCanvas.h"
+#include "ptk/core/Canvas.hpp"
 
 namespace pTK
 {
@@ -21,6 +21,10 @@ namespace pTK
     class Drawable
     {
     public:
+        Drawable()
+            : m_visible{true}
+        {
+        }
         virtual ~Drawable() = default;
         
         /** Draw function.
@@ -30,6 +34,24 @@ namespace pTK
          @param canvas   SkCanvas to draw to.
          */
         virtual void onDraw(SkCanvas*) {}
+        
+        void show()
+        {
+            m_visible = true;
+        }
+        
+        void hide()
+        {
+            m_visible = true;
+        }
+        
+        bool visible() const
+        {
+            return m_visible;
+        }
+        
+    private:
+        bool m_visible;
     };
 }
 

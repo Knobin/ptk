@@ -9,10 +9,13 @@
 #include "ptk/core/Canvas.hpp"
 #include "ptk/Log.hpp"
 
-// Skia
+// Skia Headers
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wgnu-anonymous-struct"
 #include "include/gpu/GrBackendSurface.h"
 #include "include/gpu/gl/GrGLInterface.h"
 #include "include/gpu/GrRenderTarget.h"
+#pragma GCC diagnostic pop
 
 namespace pTK
 {
@@ -20,7 +23,7 @@ namespace pTK
         : m_context{nullptr}, m_surface{nullptr}, m_canvas{nullptr}, m_info{}, m_colorType{}
     {
         auto interface = GrGLMakeNativeInterface();
-        m_context = GrContext::MakeGL(interface).release();
+        m_context.reset(GrContext::MakeGL(interface).release());
 
         GrGLint buffer;
         glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &buffer);
@@ -33,7 +36,18 @@ namespace pTK
             m_colorType = kBGRA_8888_SkColorType;
             
         resize(size);
-        clear();
+        PTK_ASSERT(m_surface, "Failed to create surface!");
+    }
+    
+    Canvas::Canvas(const Canvas& canvas, const Vec2<uint32_t>& size)
+        : m_context{canvas.m_context}, m_surface{nullptr}, m_canvas{nullptr}, m_info{canvas.m_info}, m_colorType{canvas.m_colorType}
+    {
+        GrBackendRenderTarget backendRenderTarget(size.x, size.y, 0, 0, m_info);
+        
+        m_surface = SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, nullptr).release();
+        
+        resize(size);
+        PTK_ASSERT(m_surface, "Failed to generate surface!");
     }
     
     Canvas::~Canvas()
@@ -48,7 +62,7 @@ namespace pTK
         GrBackendRenderTarget backendRenderTarget(size.x, size.y, 0, 0, m_info);
         
         delete m_surface;
-        m_surface = SkSurface::MakeFromBackendRenderTarget(m_context, backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, nullptr).release();
+        m_surface = SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, nullptr).release();
         
         if (m_surface == nullptr)
             throw std::logic_error("Skia error");
@@ -56,7 +70,9 @@ namespace pTK
         // Save Canvas for rendering.
         m_canvas = m_surface->getCanvas();
         
-        PTK_INFO("[Canvas] Created with w: {0:d}px and h: {0:d}px", size.x, size.y);
+        clear();
+        
+        PTK_INFO("[Canvas] Created with w: {0:d}px and h: {1:d}px", size.x, size.y);
     }
     
     void Canvas::clear()
@@ -71,5 +87,10 @@ namespace pTK
     SkCanvas* Canvas::skCanvas() const
     {
         return m_canvas;
+    }
+    
+    SkSurface* Canvas::skSurface() const
+    {
+        return m_surface;
     }
 }

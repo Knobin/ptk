@@ -16,45 +16,58 @@ namespace pTK
     {
     }
     
-    void EventHandling::handle_key_event(EventType type, int keycode)
+    bool EventHandling::handleKeyEvent(EventType type, int keycode)
     {
-        onKeyEvent(type, keycode);
+        bool rValue = onKeyEvent(type, keycode);
         if (m_keyCallback != nullptr)
-            m_keyCallback(type, keycode);
+            rValue |= m_keyCallback(type, keycode);
+        
+        return rValue;
     }
     
-    void EventHandling::handle_hover_event()
+    bool EventHandling::handleHoverEvent()
     {
-        onHoverEvent();
+        bool rValue = onHoverEvent();
         if (m_hoverCallback != nullptr)
-            m_hoverCallback();
+            rValue |= m_hoverCallback();
+        
+        return rValue;
     }
     
-    void EventHandling::handle_leave_event()
+    bool EventHandling::handleLeaveEvent()
     {
-        onLeaveEvent();
+        bool rValue = onLeaveEvent();
         if (m_leaveCallback != nullptr)
-            m_leaveCallback();
+            rValue |= m_leaveCallback();
+        
+        return rValue;
     }
     
-    void EventHandling::handle_scroll_event(const Vec2<int>& offset)
+    bool EventHandling::handleScrollEvent(const Vec2<int>& offset)
     {
-        onScrollEvent(offset);
+        bool rValue = onScrollEvent(offset);
         if (m_scrollCallback != nullptr)
-            m_scrollCallback(offset);
+            rValue |= m_scrollCallback(offset);
+        
+        return rValue;
     }
     
-    void EventHandling::handle_click_event(MouseButton button, const Vec2<int>& position)
+    bool EventHandling::handleClickEvent(MouseButton button, const Vec2<int>& position)
     {
-        onClickEvent(button, position);
+        bool rValue = onClickEvent(button, position);
+        rValue = false;
         if (m_clickCallback != nullptr)
-            m_clickCallback(button, position);
+            rValue |= m_clickCallback(button, position);
+        
+        return rValue;
     }
     
-    void EventHandling::handle_release_event(MouseButton button, const Vec2<int>& position)
+    bool EventHandling::handleReleaseEvent(MouseButton button, const Vec2<int>& position)
     {
-        onReleaseEvent(button, position);
+        bool rValue = onReleaseEvent(button, position);
         if (m_releaseCallback != nullptr)
-            m_releaseCallback(button, position);
+            rValue |= m_releaseCallback(button, position);
+        
+        return rValue;
     }
 }

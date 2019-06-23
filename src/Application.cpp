@@ -25,23 +25,16 @@ namespace pTK
 
     int Application::exec(pTK::Window* window)
     {
+        window->show();
+        
         // Render loop.
         while (!window->shouldClose())
         {
-            // Clear.
-            glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
             // Poll Events.
-            window->update();
-            
-            // Draw.
-            window->draw();
-            
-            // Swap buffers.
-            window->swapBuffers();
+            window->pollEvents();
 
             // Sleep.
-            std::this_thread::sleep_for(std::chrono::milliseconds(16));
+            std::this_thread::sleep_for(std::chrono::milliseconds(32));
         }
 
         return 0;

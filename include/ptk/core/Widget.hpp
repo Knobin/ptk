@@ -18,6 +18,8 @@
 
 namespace pTK
 {
+    class Container;
+    
     /** Widget class implementation.
      
      This class is low level class for widget, that
@@ -88,9 +90,14 @@ namespace pTK
          */
         void move(const Vec2<float>& offset);
         
+        void setParent(Container* parent);
+        
+        Container* getParent() const;
+        
     private:
         Vec2<float> m_size;
         Vec2<float> m_position;
+        Container* m_parent;
     };
     
     // Comparison operators.

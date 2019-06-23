@@ -48,6 +48,12 @@ namespace pTK
             if (it == m_widgets.end())
             {
                 m_widgets.push_back(widget);
+                widget->setParent(this);
+                
+                if (!verifyChild(widget.get()))
+                {
+                    widget->hide();
+                }
             }
         }
     }
@@ -58,6 +64,7 @@ namespace pTK
             return widget == rhs;
         });
         m_widgets.erase(it, m_widgets.end());
+        widget->setParent(nullptr);
     }
     
     std::shared_ptr<Widget> Container::at(uint32_t index) const
@@ -122,6 +129,11 @@ namespace pTK
         {
             func((*it));
         }
+    }
+    
+    bool Container::verifyChild(Widget*) const
+    {
+        return true;
     }
     
     // Comparison operators.

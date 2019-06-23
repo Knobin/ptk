@@ -16,6 +16,10 @@
 
 // C++ Headers
 #include <string>
+#include <queue>
+
+// GLEW Headers
+//#include <GL/glew.h>
 
 // GLFW Headers
 #include <GLFW/glfw3.h>
@@ -35,22 +39,26 @@ namespace pTK
         Window(const std::string& name, unsigned int width, unsigned int height);
         virtual ~Window();
 
-        void draw();
-        void update();
+        void pollEvents();
         void swapBuffers();
         bool shouldClose();
         void resize(unsigned int width, unsigned int height);
         
-        // Event processing
-        void handleKeyEvent(Event* event);
-        void handleMouseEvent(Event* event);
-        void handleWindowEvent(Event* event);
-
+        // Visible
+        void show();
+        void hide();
+        
+        // Event
+        void sendEvent(Event* event);
+        void handleEvents();
+        
     private:
         // Window
         GLFWwindow* m_window;
         WindowData m_data;
-        Canvas* m_canvas;
+        Canvas* m_mainCanvas;
+        Canvas* m_drawCanvas;
+        std::queue<Event*> m_events;
 
         // Init Functions
         void initGLFW();
@@ -59,6 +67,13 @@ namespace pTK
         void setWindowCallbacks();
         void setMouseCallbacks();
         void setKeyCallbacks();
+        
+        // Event processing
+        void handleKeyEvent(Event* event);
+        void handleMouseEvent(Event* event);
+        void handleWindowEvent(Event* event);
+        
+        void draw();
     };
 }
 

@@ -122,6 +122,8 @@ namespace pTK
          */
         void for_each(const std::function<void(const std::shared_ptr<Widget>& widget)>& func) const;
         
+        virtual bool verifyChild(Widget*) const;
+        
     private:
         std::vector<std::shared_ptr<Widget>> m_widgets;
     };

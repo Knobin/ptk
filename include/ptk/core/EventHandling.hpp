@@ -36,7 +36,7 @@ namespace pTK
          @param type    Key event (press or release)
          @param int     Keycode
          */
-        void handle_key_event(EventType type, int keycode);
+        bool handleKeyEvent(EventType type, int keycode);
         
         /** Function for handling when mouse is entering.
          
@@ -45,7 +45,7 @@ namespace pTK
          the event internally.
          
          */
-        void handle_hover_event();
+        bool handleHoverEvent();
         
         /** Function for handling when mouse is leaving.
          
@@ -54,7 +54,7 @@ namespace pTK
          the event internally.
          
          */
-        void handle_leave_event();
+        bool handleLeaveEvent();
         
         /** Function for handling when mouse is scrolling.
          
@@ -64,7 +64,7 @@ namespace pTK
          
          @param offset     x and y offset
          */
-        void handle_scroll_event(const Vec2<int>& offset);
+        bool handleScrollEvent(const Vec2<int>& offset);
         
         
         /** Function for handling when mouse is clicking.
@@ -76,7 +76,7 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        void handle_click_event(MouseButton button, const Vec2<int>& position);
+        bool handleClickEvent(MouseButton button, const Vec2<int>& position);
         
         /** Function for handling when mouse is released.
          
@@ -87,7 +87,7 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        void handle_release_event(MouseButton button, const Vec2<int>& position);
+        bool handleReleaseEvent(MouseButton button, const Vec2<int>& position);
         
     private:
         using EventCallbacks::m_keyCallback;
