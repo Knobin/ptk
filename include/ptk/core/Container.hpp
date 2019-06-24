@@ -56,13 +56,20 @@ namespace pTK
          @param widget      widget to add
          @param priority    priority of widget
          */
-        void add(const std::shared_ptr<Widget>& widget);
+        virtual void add(const std::shared_ptr<Widget>& widget);
         
         /** Function for removing a widget to the container.
          
          @param widget      widget to remove
          */
-        void remove(const std::shared_ptr<Widget>& widget);
+        virtual void remove(const std::shared_ptr<Widget>& widget);
+        
+        /** Function for verifying when a widget change either size
+         or position.
+         
+         @param widget      widget that sent the request.
+         */
+        virtual bool verifyChild(Widget*) const;
         
         /** Function for retrieving a widget at index in the container.
          
@@ -70,6 +77,15 @@ namespace pTK
          @return        widget in container
          */
         std::shared_ptr<Widget> at(uint32_t index) const;
+        
+        /** Function for retrieving the first widget that matches the parameters.
+         
+         Function will return nullptr if no widget is found.
+         
+         @param cond    condition function
+         @return        index where to find widget
+         */
+        std::shared_ptr<Widget> find_if(const std::function<bool(const std::shared_ptr<Widget>& widget)>& cond) const;
         
         /** Function for retrieving the first widget that matches the parameters.
          
@@ -122,7 +138,9 @@ namespace pTK
          */
         void for_each(const std::function<void(const std::shared_ptr<Widget>& widget)>& func) const;
         
-        virtual bool verifyChild(Widget*) const;
+    protected:
+        bool insert_widget(const std::shared_ptr<Widget>& widget);
+        bool remove_widget(const std::shared_ptr<Widget>& widget);
         
     private:
         std::vector<std::shared_ptr<Widget>> m_widgets;
