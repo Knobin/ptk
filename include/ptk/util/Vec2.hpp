@@ -30,6 +30,15 @@ namespace pTK
         {
         }
         
+        template <typename S>
+        Vec2<T>& operator=( const Vec2<S>& vec )
+        {
+            x = static_cast<T>(vec.x);
+            y = static_cast<T>(vec.y);
+            
+            return *this;
+        }
+        
         // Variables.
         T x;
         T y;
