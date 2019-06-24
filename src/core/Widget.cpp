@@ -22,7 +22,7 @@ namespace pTK
         return m_size;
     }
     
-    void Widget::setSize(float width, float height)
+    void Widget::setSizeRequest(float width, float height)
     {
         Vec2<float> backup = m_size;
         m_size = {width, height};
@@ -37,7 +37,7 @@ namespace pTK
         }
     }
     
-    void Widget::setSize(const Vec2<float>& size)
+    void Widget::setSizeRequest(const Vec2<float>& size)
     {
         Vec2<float> backup = m_size;
         m_size = size;
@@ -57,7 +57,7 @@ namespace pTK
         return m_position;
     }
     
-    void Widget::setPosition(float x, float y)
+    void Widget::setPositionRequest(float x, float y)
     {
         Vec2<float> backup = m_position;
         m_position = {x, y};
@@ -72,7 +72,7 @@ namespace pTK
         }
     }
     
-    void Widget::setPosition(const Vec2<float>& position)
+    void Widget::setPositionRequest(const Vec2<float>& position)
     {
         Vec2<float> backup = m_position;
         m_position = position;
@@ -87,7 +87,7 @@ namespace pTK
         }
     }
     
-    void Widget::move(float offset_x, float offset_y)
+    void Widget::moveRequest(float offset_x, float offset_y)
     {
         Vec2<float> backup = m_position;
         m_position.x += offset_x;
@@ -103,7 +103,7 @@ namespace pTK
         }
     }
     
-    void Widget::move(const Vec2<float>& offset)
+    void Widget::moveRequest(const Vec2<float>& offset)
     {
         Vec2<float> backup = m_position;
         m_position += offset;

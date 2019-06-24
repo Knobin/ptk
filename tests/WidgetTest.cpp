@@ -20,31 +20,31 @@ TEST_CASE("Widget Setters")
     // Testing Setters.
     pTK::Vec2<float> correct{10, 20};
     
-    SECTION("setSize(float width, float height)")
+    SECTION("setSizeRequest(float width, float height)")
     {
         pTK::Widget t;
-        t.setSize(10, 20);
+        t.setSizeRequest(10, 20);
         REQUIRE(t.getSize() == correct);
     }
     
-    SECTION("setSize(const Vec2<float>& size)")
+    SECTION("setSizeRequest(const Vec2<float>& size)")
     {
         pTK::Widget t;
-        t.setSize(correct);
+        t.setSizeRequest(correct);
         REQUIRE(t.getSize() == correct);
     }
     
-    SECTION("setPosition(float x, float y)")
+    SECTION("setPositionRequest(float x, float y)")
     {
         pTK::Widget t;
-        t.setPosition(10, 20);
+        t.setPositionRequest(10, 20);
         REQUIRE(t.getPosition() == correct);
     }
     
-    SECTION("setSize(const Vec2<float>& size)")
+    SECTION("setSizeRequest(const Vec2<float>& size)")
     {
         pTK::Widget t;
-        t.setPosition(correct);
+        t.setPositionRequest(correct);
         REQUIRE(t.getPosition() == correct);
     }
 }
@@ -57,7 +57,7 @@ TEST_CASE("Widget Getters")
     SECTION("const Vec2<float>& getSize() const")
     {
         pTK::Widget t;
-        t.setSize(correct);
+        t.setSizeRequest(correct);
         REQUIRE(t.getSize().x == correct.x);
         REQUIRE(t.getSize().y == correct.y);
         REQUIRE(t.getSize() == correct);
@@ -66,7 +66,7 @@ TEST_CASE("Widget Getters")
     SECTION("const Vec2<float>& getPosition() const")
     {
         pTK::Widget t;
-        t.setPosition(correct);
+        t.setPositionRequest(correct);
         REQUIRE(t.getPosition().x == correct.x);
         REQUIRE(t.getPosition().y == correct.y);
         REQUIRE(t.getPosition() == correct);
@@ -79,8 +79,8 @@ TEST_CASE("Widget Copy and Assignment")
     pTK::Vec2<float> pos{10, 20};
     pTK::Vec2<float> size{15, 45};
     pTK::Widget t;
-    t.setSize(size);
-    t.setPosition(pos);
+    t.setSizeRequest(size);
+    t.setPositionRequest(pos);
     
     SECTION("Copy")
     {
@@ -113,12 +113,12 @@ TEST_CASE ("Widget Comparison")
     pTK::Widget t;
     pTK::Widget t1;
     pTK::Widget t2;
-    t2.setSize(42, 14);
+    t2.setSizeRequest(42, 14);
     pTK::Widget t3;
-    t3.setPosition(10, 20);
+    t3.setPositionRequest(10, 20);
     pTK::Widget t4;
-    t4.setPosition(10, 20);
-    t4.setSize(42, 14);
+    t4.setPositionRequest(10, 20);
+    t4.setSizeRequest(42, 14);
     
     SECTION("Equal")
     {

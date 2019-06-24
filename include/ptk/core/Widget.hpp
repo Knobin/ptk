@@ -46,13 +46,13 @@ namespace pTK
          @param width   new width
          @param height  new height
          */
-        void setSize(float width, float height);
+        void setSizeRequest(float width, float height);
         
         /** Function for setting size.
          
          @param size    new width and height
          */
-        void setSize(const Vec2<float>& size);
+        void setSizeRequest(const Vec2<float>& size);
         
         /** Function for retrieving the position.
          
@@ -65,13 +65,13 @@ namespace pTK
          @param x   new x position
          @param y   new y position
          */
-        void setPosition(float x, float y);
+        void setPositionRequest(float x, float y);
         
         /** Function for setting position.
          
          @param position    new x and y positions
          */
-        void setPosition(const Vec2<float>& position);
+        void setPositionRequest(const Vec2<float>& position);
         
         /** Function for moving.
          Will set the position based on the current values and
@@ -80,7 +80,7 @@ namespace pTK
          @param offset_x    amount to move x
          @param offset_y    amount to move y
          */
-        void move(float offset_x, float offset_y);
+        void moveRequest(float offset_x, float offset_y);
         
         /** Function for moving.
          Will set the position based on the current values and
@@ -88,7 +88,7 @@ namespace pTK
          
          @param offset  amount to move x and y
          */
-        void move(const Vec2<float>& offset);
+        void moveRequest(const Vec2<float>& offset);
         
         void setParent(Container* parent);
         

@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
     pTK::Window window("pTK Rect Example", SCR_WIDTH, SCR_HEIGHT);
     
     std::shared_ptr<pTK::Rectangle> rect = std::make_shared<pTK::Rectangle>();
-    rect->setSize(250, 250);
-    rect->setPosition(250, 250);
+    rect->setSizeRequest(250, 250);
+    rect->setPositionRequest(250, 250);
     rect->setCornerRadius(25);
     rect->setColor(pTK::Color(25, 25, 25));
     rect->setOutlineThickness(2);
