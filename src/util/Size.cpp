@@ -11,53 +11,27 @@
 namespace pTK
 {
     Size::Size()
-        : m_width{0.0f}, m_height{0.0f}
+        : width{0.0f}, height{0.0f}
     {
         
     }
     
-    Size::Size(float width, float height)
-        : m_width{width}, m_height{height}
+    Size::Size(float t_width, float t_height)
+        : width{t_width}, height{t_height}
     {
         
     }
     
-    void Size::setSize(float width, float height)
+    void Size::setSize(float t_width, float t_height)
     {
-        m_width = width;
-        m_height = height;
-    }
-    
-    void Size::setSize(const Size& size)
-    {
-        m_width = size.getWidth();
-        m_height = size.getHeight();
-    }
-    
-    void Size::setWidth(float width)
-    {
-        m_width = width;
-    }
-    
-    void Size::setHeight(float height)
-    {
-        m_height = height;
-    }
-    
-    float Size::getHeight() const
-    {
-        return m_height;
-    }
-    
-    float Size::getWidth() const
-    {
-        return m_width;
+        width = t_width;
+        height = t_height;
     }
     
     // Comparison operators.
     bool operator==(const Size& lhs, const Size& rhs)
     {
-        return ((lhs.getWidth() == rhs.getWidth()) && (lhs.getHeight() == rhs.getHeight()));
+        return ((lhs.width == rhs.width) && (lhs.height == rhs.height));
     }
     
     bool operator!=(const Size& lhs, const Size& rhs)
@@ -69,8 +43,8 @@ namespace pTK
     Size operator+(const Size& lhs, const Size& rhs)
     {
         Size newSize;
-        newSize.setWidth(lhs.getWidth() + rhs.getWidth());
-        newSize.setHeight(lhs.getHeight() + rhs.getHeight());
+        newSize.width = lhs.width + rhs.width;
+        newSize.height = lhs.height + rhs.height;
         
         return newSize;
     }
@@ -78,8 +52,8 @@ namespace pTK
     Size operator-(const Size& lhs, const Size& rhs)
     {
         Size newSize;
-        newSize.setWidth(lhs.getWidth() - rhs.getWidth());
-        newSize.setHeight(lhs.getHeight() - rhs.getHeight());
+        newSize.width = lhs.width - rhs.width;
+        newSize.height = lhs.height - rhs.height;
         
         return newSize;
     }
@@ -87,8 +61,8 @@ namespace pTK
     Size operator*(const Size& lhs, const Size& rhs)
     {
         Size newSize;
-        newSize.setWidth(lhs.getWidth() * rhs.getWidth());
-        newSize.setHeight(lhs.getHeight() * rhs.getHeight());
+        newSize.width = lhs.width * rhs.width;
+        newSize.height = lhs.height * rhs.height;
         
         return newSize;
     }
@@ -96,8 +70,8 @@ namespace pTK
     Size operator/(const Size& lhs, const Size& rhs)
     {
         Size newSize;
-        newSize.setWidth(lhs.getWidth() / rhs.getWidth());
-        newSize.setHeight(lhs.getHeight() / rhs.getHeight());
+        newSize.width = lhs.width / rhs.width;
+        newSize.height = lhs.height / rhs.height;
         
         return newSize;
     }

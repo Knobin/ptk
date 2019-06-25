@@ -13,16 +13,16 @@ TEST_CASE("Constructors")
     {
         pTK::Size size;
         
-        REQUIRE(size.getWidth() == 0.0f);
-        REQUIRE(size.getHeight() == 0.0f);
+        REQUIRE(size.width == 0.0f);
+        REQUIRE(size.height == 0.0f);
     }
     
     SECTION("Size(float width, float height)")
     {
         pTK::Size size{cWidth, cHeight};
         
-        REQUIRE(size.getWidth() == cWidth);
-        REQUIRE(size.getHeight() == cHeight);
+        REQUIRE(size.width == cWidth);
+        REQUIRE(size.height == cHeight);
     }
 }
 
@@ -32,33 +32,12 @@ TEST_CASE("Getters and Setters")
     float cWidth = 55.0f;
     float cHeight = 350.0f;
     
-    SECTION("SetWidth(float width)")
-    {
-        pTK::Size size;
-        size.setWidth(cWidth);
-        REQUIRE(size.getWidth() == cWidth);
-    }
-    
-    SECTION("SetHeight(float height)")
-    {
-        pTK::Size size;
-        size.setHeight(cHeight);
-        REQUIRE(size.getHeight() == cHeight);
-    }
-    
     SECTION("setSize(float width, float height)")
     {
         pTK::Size size;
         size.setSize(cWidth, cHeight);
-        REQUIRE(size.getWidth() == cWidth);
-        REQUIRE(size.getHeight() == cHeight);
-    }
-    
-    SECTION("setSize(const Size& size)")
-    {
-        pTK::Size size{cWidth, cHeight};
-        REQUIRE(size.getWidth() == cWidth);
-        REQUIRE(size.getHeight() == cHeight);
+        REQUIRE(size.width == cWidth);
+        REQUIRE(size.height == cHeight);
     }
 }
 
@@ -74,16 +53,16 @@ TEST_CASE("Copy and Assignment")
     SECTION("Copy")
     {
         pTK::Size tmp = size;
-        REQUIRE(tmp.getWidth() == cWidth);
-        REQUIRE(tmp.getHeight() == cHeight);
+        REQUIRE(tmp.width == cWidth);
+        REQUIRE(tmp.height == cHeight);
     }
     
     SECTION("Assignment")
     {
         pTK::Size tmp;
         tmp = size;
-        REQUIRE(tmp.getWidth() == cWidth);
-        REQUIRE(tmp.getHeight() == cHeight);
+        REQUIRE(tmp.width == cWidth);
+        REQUIRE(tmp.height == cHeight);
     }
 }
 
@@ -99,10 +78,10 @@ TEST_CASE ("Comparison")
     pTK::Size s1 = size;
     
     pTK::Size s2;
-    s2.setHeight(cHeight);
+    s2.height = cHeight;
     
     pTK::Size s3;
-    s3.setWidth(cWidth);
+    s3.width = cWidth;
     
     SECTION("Equal")
     {
