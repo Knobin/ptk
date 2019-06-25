@@ -11,53 +11,27 @@
 namespace pTK
 {
     Position::Position()
-        : m_x{0.0f}, m_y{0.0f}
+        : x{0.0f}, y{0.0f}
     {
         
     }
     
-    Position::Position(float x, float y)
-        : m_x{x}, m_y{y}
+    Position::Position(float t_x, float t_y)
+        : x{t_x}, y{t_y}
     {
         
     }
 
-    void Position::setPosition(float x, float y)
+    void Position::setPosition(float t_x, float t_y)
     {
-        m_x = x;
-        m_y = y;
-    }
-    
-    void Position::setPosition(const Position& position)
-    {
-        m_x = position.getX();
-        m_y = position.getY();
-    }
-    
-    void Position::setX(float x)
-    {
-        m_x = x;
-    }
-    
-    void Position::setY(float y)
-    {
-        m_y = y;
-    }
-    
-    float Position::getX() const
-    {
-        return m_x;
-    }
-    
-    float Position::getY() const
-    {
-        return m_y;
+        x = t_x;
+        y = t_y;
     }
     
     // Comparison operators.
     bool operator==(const Position& lhs, const Position& rhs)
     {
-        return ((lhs.getX() == rhs.getX()) && (lhs.getY() == rhs.getY()));
+        return ((lhs.x == rhs.x) && (lhs.y == rhs.y));
     }
     
     bool operator!=(const Position& lhs, const Position& rhs)
@@ -69,8 +43,8 @@ namespace pTK
     Position operator+(const Position& lhs, const Position& rhs)
     {
         Position newPosition;
-        newPosition.setX(lhs.getX() + rhs.getX());
-        newPosition.setY(lhs.getY() + rhs.getY());
+        newPosition.x = lhs.x + rhs.x;
+        newPosition.y = lhs.y + rhs.y;
         
         return newPosition;
     }
@@ -78,8 +52,8 @@ namespace pTK
     Position operator-(const Position& lhs, const Position& rhs)
     {
         Position newPosition;
-        newPosition.setX(lhs.getX() - rhs.getX());
-        newPosition.setY(lhs.getY() - rhs.getY());
+        newPosition.x = lhs.x - rhs.x;
+        newPosition.y = lhs.y - rhs.y;
         
         return newPosition;
     }
@@ -87,8 +61,8 @@ namespace pTK
     Position operator*(const Position& lhs, const Position& rhs)
     {
         Position newPosition;
-        newPosition.setX(lhs.getX() * rhs.getX());
-        newPosition.setY(lhs.getY() * rhs.getY());
+        newPosition.x = lhs.x * rhs.x;
+        newPosition.y = lhs.y * rhs.y;
         
         return newPosition;
     }
@@ -96,8 +70,8 @@ namespace pTK
     Position operator/(const Position& lhs, const Position& rhs)
     {
         Position newPosition;
-        newPosition.setX(lhs.getX() / rhs.getX());
-        newPosition.setY(lhs.getY() / rhs.getY());
+        newPosition.x = lhs.x / rhs.x;
+        newPosition.y = lhs.y / rhs.y;
         
         return newPosition;
     }

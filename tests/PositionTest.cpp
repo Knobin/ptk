@@ -13,16 +13,16 @@ TEST_CASE("Constructors")
     {
         pTK::Position pos;
         
-        REQUIRE(pos.getX() == 0.0f);
-        REQUIRE(pos.getY() == 0.0f);
+        REQUIRE(pos.x == 0.0f);
+        REQUIRE(pos.y == 0.0f);
     }
     
     SECTION("Position(float width, float height)")
     {
         pTK::Position pos{cX, cY};
         
-        REQUIRE(pos.getX() == cX);
-        REQUIRE(pos.getY() == cY);
+        REQUIRE(pos.x == cX);
+        REQUIRE(pos.y == cY);
     }
 }
 
@@ -32,34 +32,34 @@ TEST_CASE("Getters and Setters")
     float cX = 55.0f;
     float cY = 350.0f;
     
-    SECTION("setX(float x)")
+    SECTION("x (float x)")
     {
         pTK::Position pos;
-        pos.setX(cX);
-        REQUIRE(pos.getX() == cX);
+        pos.x = cX;
+        REQUIRE(pos.x == cX);
     }
     
-    SECTION("setY(float y)")
+    SECTION("y (float y)")
     {
         pTK::Position pos;
-        pos.setY(cY);
-        REQUIRE(pos.getY() == cY);
+        pos.y = cY;
+        REQUIRE(pos.y == cY);
     }
     
     SECTION("setPosition(float x, float y)")
     {
         pTK::Position pos;
         pos.setPosition(cX, cY);
-        REQUIRE(pos.getX() == cX);
-        REQUIRE(pos.getY() == cY);
+        REQUIRE(pos.x == cX);
+        REQUIRE(pos.y == cY);
     }
     
     SECTION("setPosition(const Position& pos)")
     {
         pTK::Position pos;
         pos.setPosition(cX, cY);
-        REQUIRE(pos.getX() == cX);
-        REQUIRE(pos.getY() == cY);
+        REQUIRE(pos.x == cX);
+        REQUIRE(pos.y == cY);
     }
 }
 
@@ -75,16 +75,16 @@ TEST_CASE("Copy and Assignment")
     SECTION("Copy")
     {
         pTK::Position tmp = pos;
-        REQUIRE(tmp.getX() == cX);
-        REQUIRE(tmp.getY() == cY);
+        REQUIRE(tmp.x == cX);
+        REQUIRE(tmp.y == cY);
     }
     
     SECTION("Assignment")
     {
         pTK::Position tmp;
         tmp = pos;
-        REQUIRE(tmp.getX() == cX);
-        REQUIRE(tmp.getY() == cY);
+        REQUIRE(tmp.x == cX);
+        REQUIRE(tmp.y == cY);
     }
 }
 
@@ -100,10 +100,10 @@ TEST_CASE ("Comparison")
     pTK::Position p1 = pos;
     
     pTK::Position p2;
-    p2.setY(cY);
+    p2.y = cY;
     
     pTK::Position p3;
-    p3.setX(cX);
+    p3.x = cX;
     
     SECTION("Equal")
     {

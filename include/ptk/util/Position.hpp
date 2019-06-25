@@ -10,49 +10,36 @@
 
 namespace pTK
 {
+    /** Position class implementation.
+     
+     This class is low level class handling position.
+     */
     class Position
     {
     public:
-        /** Position class implementation.
+        /** Constructs Position with default values.
          
-         This class is low level class handling Position.
+         @return    default initialized Position
          */
         Position();
-        Position(float x, float y);
+        
+        /** Constructs Position with default values with t_x and t_y.
+         
+         @return    default initialized Position
+         */
+        Position(float t_x, float t_y);
+        
         ~Position() = default;
         
-        /** Function for setting Position.
+        /** Function for setting both x and y position.
          
-         @param width   new width
-         @param height  new height
+         @param t_x     new x position
+         @param t_y     new y position
          */
-        void setPosition(float x, float y);
+        void setPosition(float t_x, float t_y);
         
-        /** Function for setting Position.
-         
-         @param Position    new width and height
-         */
-        void setPosition(const Position& position);
-        
-        /** Function for setting x position.
-         
-         @param width    new width
-         */
-        void setX(float x);
-        
-        /** Function for setting y position.
-         
-         @param height    new height
-         */
-        void setY(float y);
-        
-        float getX() const;
-    
-        float getY() const;
-        
-    private:
-        float m_x;
-        float m_y;
+        float x;
+        float y;
     };
     
     // Comparison operators.
