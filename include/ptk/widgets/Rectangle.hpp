@@ -33,7 +33,7 @@ namespace pTK
          
          Derived from Drawable.
          */
-        void onDraw(SkCanvas*) override;
+        void onDraw(const Canvas& canvas) override;
         
         /** Function for setting the corner radius.
          

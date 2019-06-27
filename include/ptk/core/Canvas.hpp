@@ -10,6 +10,8 @@
 
 // Local Headers
 #include "ptk/util/Vec2.hpp"
+#include "ptk/util/Position.hpp"
+#include "ptk/util/Size.hpp"
 
 // C++ Headers
 #include <memory>
@@ -40,8 +42,8 @@ namespace pTK
          
          @return    default initialized Canvas
          */
-        Canvas(const Vec2<uint32_t>& size);
-        Canvas(const Canvas& canvas, const Vec2<uint32_t>& size);
+        Canvas(const Vec2u& size);
+        Canvas(const Canvas& canvas, const Vec2u& size);
         ~Canvas();
         
         /** Function for resizing the Canvas.
@@ -49,7 +51,7 @@ namespace pTK
          @param width   New width of canvas
          @param width   New height of canvas
          */
-        void resize(const Vec2<uint32_t>& size);
+        void resize(const Vec2u& size);
         
         /** Function for clearing the Canvas.
          
@@ -67,6 +69,18 @@ namespace pTK
          @return    SkSurface property
          */
         SkSurface* skSurface() const;
+        
+        /** Function for setting the DPI scale.
+         
+         @param scale   x and y scale
+         */
+        void setDPIScale(const Vec2f& scale);
+        
+        /** Function for retrieving the DPI scale.
+         
+         @param scale   x and y scale
+         */
+        const Vec2f& getDPIScale() const;
     private:
         // Skia
         std::shared_ptr<GrContext> m_context;
@@ -74,7 +88,13 @@ namespace pTK
         SkCanvas* m_canvas;
         GrGLFramebufferInfo m_info;
         SkColorType m_colorType;
+        Vec2f m_dpiScale;
     };
+    
+    
+    // Functions for converting utility classes to SkPoint for drawing.
+    SkPoint convertToSkPoint(const Position& pos, const Vec2f& scale = {1.0f, 1.0f});
+    SkPoint convertToSkPoint(const Size& size, const Vec2f& scale = {1.0f, 1.0f});
 }
 
 #endif // PTK_CORE_CANVAS_HPP

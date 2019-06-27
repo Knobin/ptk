@@ -19,8 +19,9 @@
 
 namespace pTK
 {
-    Canvas::Canvas(const Vec2<uint32_t>& size)
-        : m_context{nullptr}, m_surface{nullptr}, m_canvas{nullptr}, m_info{}, m_colorType{}
+    Canvas::Canvas(const Vec2u& size)
+        : m_context{nullptr}, m_surface{nullptr}, m_canvas{nullptr}, m_info{}, m_colorType{},
+            m_dpiScale{1.0f, 1.0f}
     {
         auto interface = GrGLMakeNativeInterface();
         m_context.reset(GrContext::MakeGL(interface).release());
@@ -39,8 +40,9 @@ namespace pTK
         PTK_ASSERT(m_surface, "Failed to create surface!");
     }
     
-    Canvas::Canvas(const Canvas& canvas, const Vec2<uint32_t>& size)
-        : m_context{canvas.m_context}, m_surface{nullptr}, m_canvas{nullptr}, m_info{canvas.m_info}, m_colorType{canvas.m_colorType}
+    Canvas::Canvas(const Canvas& canvas, const Vec2u& size)
+        : m_context{canvas.m_context}, m_surface{nullptr}, m_canvas{nullptr}, m_info{canvas.m_info},
+            m_colorType{canvas.m_colorType}, m_dpiScale{canvas.m_dpiScale}
     {
         GrBackendRenderTarget backendRenderTarget(size.x, size.y, 0, 0, m_info);
         
@@ -55,7 +57,7 @@ namespace pTK
         delete m_surface;
     }
     
-    void Canvas::resize(const Vec2<uint32_t>& size)
+    void Canvas::resize(const Vec2u& size)
     {
         glViewport(0, 0, size.x, size.y);
         
@@ -72,14 +74,14 @@ namespace pTK
         
         clear();
         
-        PTK_INFO("[Canvas] Created with w: {0:d}px and h: {1:d}px", size.x, size.y);
+        PTK_INFO("[Canvas] Created with {0:d}x{1:d}", size.x, size.y);
     }
     
     void Canvas::clear()
     {
-        m_canvas->clear(SkColorSetARGB(255, 255*0.3, 255*0.2, 255*0.2));
+        m_canvas->clear(SkColorSetARGB(255, 245, 245, 245));
         
-        glClearColor(0.3f, 0.2f, 0.2f, 1.0f);
+        glClearColor(0.96f, 0.96f, 0.96f, 1.0f);
         glClearStencil(0);
         glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
@@ -92,5 +94,26 @@ namespace pTK
     SkSurface* Canvas::skSurface() const
     {
         return m_surface;
+    }
+    
+    void Canvas::setDPIScale(const Vec2f& scale)
+    {
+        m_dpiScale = scale;
+    }
+    
+    const Vec2f& Canvas::getDPIScale() const
+    {
+        return m_dpiScale;
+    }
+    
+    // Functions for converting utility classes to SkPoint for drawing.
+    SkPoint convertToSkPoint(const Position& pos, const Vec2f& scale)
+    {
+        return SkPoint{pos.x*scale.x, pos.y*scale.y};
+    }
+    
+    SkPoint convertToSkPoint(const Size& size, const Vec2f& scale)
+    {
+        return SkPoint{size.width*scale.x, size.height*scale.y};
     }
 }

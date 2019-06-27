@@ -7,38 +7,50 @@
 
 // Local Headers
 #include "ptk/widgets/Rectangle.hpp"
+#include "ptk/Log.hpp"
 
 namespace pTK
 {
     Rectangle::Rectangle()
-        : Shape(), m_cornerRadius{0}
+        : Shape(), m_cornerRadius{0.0f}
     {
     }
     
-    void Rectangle::onDraw(SkCanvas* canvas)
+    void Rectangle::onDraw(const Canvas& canvas)
     {
+        SkCanvas* skCanvas = canvas.skCanvas();
+        Vec2f dpiScale{canvas.getDPIScale()};
+        
+        // Set Size and Position
+        SkPoint pos{convertToSkPoint(getPosition(), dpiScale)};
+        SkPoint size{convertToSkPoint(getSize(), dpiScale)};
+        size += pos; // skia needs the size to be pos+size.
+        pos.fX += (getOutlineThickness()/2)*dpiScale.x;
+        pos.fY += (getOutlineThickness()/2)*dpiScale.y;
+        size.fX -= (getOutlineThickness()/2)*dpiScale.x;
+        size.fY -= (getOutlineThickness()/2)*dpiScale.y;
+        
+        // Set Color
         SkPaint paint;
         paint.setAntiAlias(true);
         Color color = getColor();
         paint.setARGB(color.a, color.r, color.g, color.b);
         
-        Vec2<float> tmp_pos = getPosition();
-        SkPoint pos = {tmp_pos.x, tmp_pos.y};
-        Vec2<float> tmp_size = getSize();
-        SkPoint size = pos + SkPoint{tmp_size.x, tmp_size.y};
-        
+        // Draw Rect
         SkRect rect;
         rect.set(pos, size);
-        canvas->drawRoundRect(rect, m_cornerRadius, m_cornerRadius, paint);
+        paint.setStrokeWidth((float)getOutlineThickness()*dpiScale.x);
+        paint.setStyle(SkPaint::kStrokeAndFill_Style);
+        skCanvas->drawRoundRect(rect, m_cornerRadius*dpiScale.x, m_cornerRadius*dpiScale.y, paint);
         
-        if (getOutlineThickness() > 0)
+        if (getOutlineThickness() > 0.0f)
         {
-            paint.setStrokeWidth((float)getOutlineThickness());
-            Color o_color = getOutlineColor();
-            paint.setARGB(o_color.a, o_color.r, o_color.g, o_color.b);
+            // Draw Outline
+            rect.set(pos, size);
+            Color outColor = getOutlineColor();
+            paint.setARGB(outColor.a, outColor.r, outColor.g, outColor.b);
             paint.setStyle(SkPaint::kStroke_Style);
-            
-            canvas->drawRoundRect(rect, m_cornerRadius, m_cornerRadius, paint);
+            skCanvas->drawRoundRect(rect, m_cornerRadius*dpiScale.x, m_cornerRadius*dpiScale.y, paint);
         }
     }
     

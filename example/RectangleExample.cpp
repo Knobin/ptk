@@ -13,16 +13,16 @@ int main(int argc, char *argv[])
     pTK::Window window("pTK Rect Example", SCR_WIDTH, SCR_HEIGHT);
     
     std::shared_ptr<pTK::Rectangle> rect = std::make_shared<pTK::Rectangle>();
-    rect->setSizeRequest(250, 250);
-    rect->setPositionRequest(250, 250);
-    rect->setCornerRadius(25);
-    rect->setColor(pTK::Color(25, 25, 25));
+    rect->setName("My Rectangle");
+    rect->setSizeHint(pTK::Size(250, 100));
+    rect->setPosHint(pTK::Position(250, 250));
+    rect->setCornerRadius(10);
+    rect->setColor(pTK::Color(0x161B21FF));
     rect->setOutlineThickness(2);
-    rect->setOutlineColor(pTK::Color(225, 225, 225, 100));
+    rect->setOutlineColor(pTK::Color(0xF4A950FF));
     window.add(rect);
-    
-    rect->onClick([](pTK::MouseButton, const pTK::Vec2<int>&){
-        std::cout << "Rectangle Clicked!\n";
+    rect->onClick([&rect](pTK::MouseButton, const pTK::Position&){
+        std::cout << rect->getName() << " clicked!\n";
         return true;
     });
     
