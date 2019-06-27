@@ -2,7 +2,7 @@
 //  core/Types.hpp
 //  pTK
 //
-//  Created by Robin Gustafsson on 2019-06-19.
+//  Created by Robin Gustafsson on 2019-06-27.
 //
 
 #ifndef PTK_CORE_TYPES_HPP

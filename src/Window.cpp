@@ -160,8 +160,16 @@ namespace pTK
     
     void Window::pollEvents()
     {
-        // GLFW will wait until event is sent.
-        glfwWaitEvents();
+        if (m_events.empty())
+        {
+            // GLFW will wait until event is sent.
+            glfwWaitEvents();
+        }else
+        {
+            // We already have events in queue,
+            // poll GLFW events and continue.
+            glfwPollEvents();
+        }
     }
 
     void Window::swapBuffers()
