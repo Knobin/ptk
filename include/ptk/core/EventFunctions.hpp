@@ -44,21 +44,21 @@ namespace pTK
          
          @param offset     x and y offset
          */
-        virtual bool onScrollEvent(const Vec2<int>&) { return true; }
+        virtual bool onScrollEvent(const Vec2f&) { return true; }
         
         /** Function for handling when mouse is clicking.
          
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        virtual bool onClickEvent(MouseButton, const Vec2<int>&) { return true; }
+        virtual bool onClickEvent(MouseButton, const Position&) { return true; }
         
         /** Function for handling when mouse is released.
          
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        virtual bool onReleaseEvent(MouseButton, const Vec2<int>&) { return true; }
+        virtual bool onReleaseEvent(MouseButton, const Position&) { return true; }
     };
 }
 

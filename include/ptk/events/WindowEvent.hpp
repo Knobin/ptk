@@ -38,7 +38,7 @@ namespace pTK
          @param size    associated width and height
          @return        default initialized ResizeEvent
          */
-        ResizeEvent(const Vec2<uint32_t>& size)
+        ResizeEvent(const Vec2u& size)
             : Event(EventCategory::Window, EventType::WindowResize), m_size{size}
         {
         }
@@ -48,22 +48,22 @@ namespace pTK
          
          @return    width
          */
-        uint32_t get_width() const { return m_size.x; }
+        uint32_t getWidth() const { return m_size.x; }
         
         /** Function for retrieving the associated height.
          
          @return    height
          */
-        uint32_t get_height() const { return m_size.y; }
+        uint32_t getHeight() const { return m_size.y; }
         
         /** Function for retrieving the associated size.
          
          @return    size
          */
-        const Vec2<uint32_t>& get_size() const { return m_size; }
+        const Vec2u& getSize() const { return m_size; }
 
     private:
-        Vec2<uint32_t> m_size;
+        Vec2u m_size;
     };
 }
 

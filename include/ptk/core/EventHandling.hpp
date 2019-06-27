@@ -64,7 +64,7 @@ namespace pTK
          
          @param offset     x and y offset
          */
-        bool handleScrollEvent(const Vec2<int>& offset);
+        bool handleScrollEvent(const Vec2f& offset);
         
         
         /** Function for handling when mouse is clicking.
@@ -76,7 +76,7 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        bool handleClickEvent(MouseButton button, const Vec2<int>& position);
+        bool handleClickEvent(MouseButton button, const Position& position);
         
         /** Function for handling when mouse is released.
          
@@ -87,7 +87,7 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        bool handleReleaseEvent(MouseButton button, const Vec2<int>& position);
+        bool handleReleaseEvent(MouseButton button, const Position& position);
         
     private:
         using EventCallbacks::m_keyCallback;

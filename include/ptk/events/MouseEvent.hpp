@@ -10,6 +10,7 @@
 
 // Local Headers
 #include "ptk/core/Event.hpp"
+#include "ptk/util/Position.hpp"
 #include "ptk/util/Vec2.hpp"
 
 // C++ Headers
@@ -44,7 +45,7 @@ namespace pTK
          @param posy    associated y position
          @return        default initialized MotionEvent
          */
-        MotionEvent(int32_t posx, int32_t posy)
+        MotionEvent(float posx, float posy)
             : Event(EventCategory::Mouse, EventType::MouseMoved), m_pos{posx, posy}
         {
         }
@@ -54,7 +55,7 @@ namespace pTK
          @param pos     associated x and y position
          @return        default initialized MotionEvent
          */
-        MotionEvent(const Vec2<int32_t>& pos)
+        MotionEvent(const Position& pos)
             : Event(EventCategory::Mouse, EventType::MouseMoved), m_pos{pos}
         {
         }
@@ -64,21 +65,21 @@ namespace pTK
          
          @return    x position
          */
-        int32_t get_posx() const { return m_pos.x; }
+        float getX() const { return m_pos.x; }
         
         /** Function for retrieving the associated y position.
          
          @return    y position
          */
-        int32_t get_posy() const { return m_pos.y; }
+        float getY() const { return m_pos.y; }
         
         /** Function for retrieving the associated position.
          
          @return    y position
          */
-        const Vec2<int32_t>& get_pos() const { return m_pos; }
+        const Position& getPos() const { return m_pos; }
     private:
-        Vec2<int32_t> m_pos;
+        Position m_pos;
     };
 
     /** ScrollEvent class implementation.
@@ -95,7 +96,7 @@ namespace pTK
          @param y_offset    associated y offset
          @return            default initialized ScrollEvent
          */
-        ScrollEvent(int32_t x_offset, int32_t y_offset)
+        ScrollEvent(float x_offset, float y_offset)
             : Event(EventCategory::Mouse, EventType::MouseScrolled), m_offset{x_offset, y_offset}
         {
         }
@@ -105,8 +106,8 @@ namespace pTK
          @param offset  associated x and y offset
          @return        default initialized ScrollEvent
          */
-        ScrollEvent(const Vec2<int32_t>& offset)
-        : Event(EventCategory::Mouse, EventType::MouseScrolled), m_offset{offset}
+        ScrollEvent(const Vec2f& offset)
+            : Event(EventCategory::Mouse, EventType::MouseScrolled), m_offset{offset}
         {
         }
         virtual ~ScrollEvent() = default;
@@ -115,22 +116,22 @@ namespace pTK
          
          @return    x offset
          */
-        int get_x_offset() const { return m_offset.x; }
+        int getX() const { return m_offset.x; }
         
         /** Function for retrieving the associated y offset.
          
          @return    y offset
          */
-        int get_y_offset() const { return m_offset.y; }
+        int getY() const { return m_offset.y; }
         
         /** Function for retrieving the associated offset.
          
          @return    offset
          */
-        const Vec2<int32_t>& get_offset() const { return m_offset; }
+        const Vec2f& getOffset() const { return m_offset; }
         
     private:
-        Vec2<int32_t> m_offset;
+        Vec2f m_offset;
     };
 
     /** ButtonEvent class implementation.
@@ -151,7 +152,7 @@ namespace pTK
          @param posy    associated y position
          @return        default initialized ButtonEvent
          */
-        ButtonEvent(EventType type, MouseButton button, int posx, int posy)
+        ButtonEvent(EventType type, MouseButton button, float posx, float posy)
             : MotionEvent(posx, posy), m_button{button}
         {
             m_type = type;
@@ -162,7 +163,7 @@ namespace pTK
          
          @return    Pressed or Released button
          */
-        MouseButton get_button() const { return m_button; }
+        MouseButton getButton() const { return m_button; }
     private:
         MouseButton m_button;
     };

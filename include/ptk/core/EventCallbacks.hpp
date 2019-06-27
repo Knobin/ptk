@@ -46,29 +46,29 @@ namespace pTK
          
          @param offset     x and y offset
          */
-        void onScroll(const std::function<bool(const Vec2<int>&)>& callback);
+        void onScroll(const std::function<bool(const Vec2f&)>& callback);
         
         /** Function for handling when mouse is clicking.
          
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        void onClick(const std::function<bool(MouseButton, const Vec2<int>&)>& callback);
+        void onClick(const std::function<bool(MouseButton, const Position&)>& callback);
         
         /** Function for handling when mouse is released.
          
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        void onRelease(const std::function<bool(MouseButton, const Vec2<int>&)>& callback);
+        void onRelease(const std::function<bool(MouseButton, const Position&)>& callback);
         
     protected:
         std::function<bool(EventType, int)> m_keyCallback;
         std::function<bool()> m_hoverCallback;
         std::function<bool()> m_leaveCallback;
-        std::function<bool(const Vec2<int>&)> m_scrollCallback;
-        std::function<bool(MouseButton, const Vec2<int>&)> m_clickCallback;
-        std::function<bool(MouseButton, const Vec2<int>&)> m_releaseCallback;
+        std::function<bool(const Vec2f&)> m_scrollCallback;
+        std::function<bool(MouseButton, const Position&)> m_clickCallback;
+        std::function<bool(MouseButton, const Position&)> m_releaseCallback;
     };
 }
 

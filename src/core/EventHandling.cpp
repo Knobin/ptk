@@ -43,7 +43,7 @@ namespace pTK
         return rValue;
     }
     
-    bool EventHandling::handleScrollEvent(const Vec2<int>& offset)
+    bool EventHandling::handleScrollEvent(const Vec2f& offset)
     {
         bool rValue = onScrollEvent(offset);
         if (m_scrollCallback != nullptr)
@@ -52,7 +52,7 @@ namespace pTK
         return rValue;
     }
     
-    bool EventHandling::handleClickEvent(MouseButton button, const Vec2<int>& position)
+    bool EventHandling::handleClickEvent(MouseButton button, const Position& position)
     {
         bool rValue = onClickEvent(button, position);
         rValue = false;
@@ -62,7 +62,7 @@ namespace pTK
         return rValue;
     }
     
-    bool EventHandling::handleReleaseEvent(MouseButton button, const Vec2<int>& position)
+    bool EventHandling::handleReleaseEvent(MouseButton button, const Position& position)
     {
         bool rValue = onReleaseEvent(button, position);
         if (m_releaseCallback != nullptr)

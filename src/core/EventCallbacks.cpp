@@ -31,17 +31,17 @@ namespace pTK
         m_leaveCallback = callback;
     }
     
-    void EventCallbacks::onScroll(const std::function<bool(const Vec2<int>&)>& callback)
+    void EventCallbacks::onScroll(const std::function<bool(const Vec2f&)>& callback)
     {
         m_scrollCallback = callback;
     }
     
-    void EventCallbacks::onClick(const std::function<bool(MouseButton, const Vec2<int>&)>& callback)
+    void EventCallbacks::onClick(const std::function<bool(MouseButton, const Position&)>& callback)
     {
         m_clickCallback = callback;
     }
     
-    void EventCallbacks::onRelease(const std::function<bool(MouseButton, const Vec2<int>&)>& callback)
+    void EventCallbacks::onRelease(const std::function<bool(MouseButton, const Position&)>& callback)
     {
         m_releaseCallback = callback;
     }
