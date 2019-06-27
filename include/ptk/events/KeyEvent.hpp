@@ -10,9 +10,7 @@
 
 // Local Headers
 #include "ptk/core/Event.hpp"
-
-// C++ Headers
-#include <cstdint>
+#include "ptk/core/Types.hpp"
 
 namespace pTK
 {
@@ -31,7 +29,7 @@ namespace pTK
          @param keycode     associated keycode
          @return            default initialized KeyEvent
          */
-        KeyEvent(EventType type, int32_t keycode)
+        KeyEvent(EventType type, int32 keycode)
             : Event(EventCategory::Key, type), m_keycode{keycode}
         {
         }
@@ -41,10 +39,10 @@ namespace pTK
          
          @return    Pressed or Released keycode
          */
-        int32_t get_keycode() const { return m_keycode; }
+        int32 get_keycode() const { return m_keycode; }
 
     private:
-        int32_t m_keycode;
+        int32 m_keycode;
     };
 }
 

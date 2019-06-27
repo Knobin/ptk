@@ -13,9 +13,6 @@
 #include "ptk/util/Position.hpp"
 #include "ptk/util/Vec2.hpp"
 
-// C++ Headers
-#include <cstdint>
-
 namespace pTK
 {
     /** MouseButton enum class implementation.

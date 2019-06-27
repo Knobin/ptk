@@ -16,7 +16,7 @@ namespace pTK
     {
     }
     
-    bool EventHandling::handleKeyEvent(EventType type, int keycode)
+    bool EventHandling::handleKeyEvent(EventType type, int32 keycode)
     {
         bool rValue = onKeyEvent(type, keycode);
         if (m_keyCallback != nullptr)

@@ -8,8 +8,8 @@
 #ifndef PTK_UTIL_COLOR_HPP
 #define PTK_UTIL_COLOR_HPP
 
-// C++ Headers
-#include <cstdint>
+// Local Headers
+#include "ptk/core/Types.hpp"
 
 namespace pTK
 {
@@ -41,7 +41,7 @@ namespace pTK
          @param color   color with alpha in int form
          @return        Color initialized
          */
-        explicit Color(uint32_t color);
+        explicit Color(uint color);
         
         /** Constructs Color with default with red, green blue and alpha.
             Default value for alpha is 255, if none is specified.
@@ -52,14 +52,14 @@ namespace pTK
          @param alpha   amount of alpha [0, 255]
          @return        Color initialized
          */
-        Color(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha = 255);
+        Color(byte red, byte green, byte blue, byte alpha = 255);
         virtual ~Color() = default;
         
         /** Get function for retrieving copy of Color in int form.
          
          @return    Copy of Color in int form
          */
-        uint32_t to_int() const;
+        uint to_int() const;
         
         /** Set function for setting r, g and b.
          
@@ -67,7 +67,7 @@ namespace pTK
          @param green   amount of green [0, 255]
          @param blue    amount of blue [0, 255]
          */
-        void set_rgb(uint8_t red, uint8_t green, uint8_t blue);
+        void set_rgb(byte red, byte green, byte blue);
         
         /** Set function for setting r, g and b.
             Takes color in uint32 form.
@@ -83,7 +83,7 @@ namespace pTK
          
          @param color   color with alpha in int form
          */
-        void set_rgb(uint32_t color);
+        void set_rgb(uint color);
         
         /** Set function for setting r, g, b and a.
          
@@ -92,19 +92,19 @@ namespace pTK
          @param blue    amount of blue [0, 255]
          @param alpha   amount of alpha [0, 255]
          */
-        void set_rgba(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
+        void set_rgba(byte red, byte green, byte blue, byte alpha);
         
         /** Set function for setting r, g, b and a.
          
          @param color   color with alpha in int form
          */
-        void set_rgba(uint32_t color);
+        void set_rgba(uint color);
         
         // Variables.
-        uint8_t r;
-        uint8_t g;
-        uint8_t b;
-        uint8_t a;
+        byte r;
+        byte g;
+        byte b;
+        byte a;
     };
     
     // Comparison operators.

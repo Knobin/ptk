@@ -28,7 +28,7 @@ namespace pTK
          @param type    Key event (press or release)
          @param int     Keycode
          */
-        virtual bool onKeyEvent(EventType, int) { return true; }
+        virtual bool onKeyEvent(EventType, int32) { return true; }
         
         /** Function for handling when mouse is entering.
          

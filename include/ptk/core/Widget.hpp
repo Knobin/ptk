@@ -15,7 +15,6 @@
 #include "ptk/util/Position.hpp"
 
 // C++ Headers
-#include <cstdint>
 #include <string>
 
 namespace pTK

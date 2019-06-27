@@ -28,7 +28,7 @@ namespace pTK
          
          @param callback    function to call on key event
          */
-        void onKey(const std::function<bool(EventType, int)>& callback);
+        void onKey(const std::function<bool(EventType, int32)>& callback);
         
         /** Function for handling when mouse is entering.
          
@@ -63,7 +63,7 @@ namespace pTK
         void onRelease(const std::function<bool(MouseButton, const Position&)>& callback);
         
     protected:
-        std::function<bool(EventType, int)> m_keyCallback;
+        std::function<bool(EventType, int32)> m_keyCallback;
         std::function<bool()> m_hoverCallback;
         std::function<bool()> m_leaveCallback;
         std::function<bool(const Vec2f&)> m_scrollCallback;

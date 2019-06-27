@@ -48,7 +48,7 @@ namespace pTK
         remove_widget(widget);
     }
     
-    std::shared_ptr<Widget> Container::at(uint32_t index) const
+    std::shared_ptr<Widget> Container::at(uint index) const
     {
         if (index < count())
             return m_widgets.at(index);
@@ -112,7 +112,7 @@ namespace pTK
         return std::shared_ptr<Widget>(nullptr);
     }
     
-    uint32_t Container::count() const
+    uint Container::count() const
     {
         return m_widgets.size();
     }

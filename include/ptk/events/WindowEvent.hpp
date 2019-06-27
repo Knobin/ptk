@@ -28,7 +28,7 @@ namespace pTK
          @param height  associated height
          @return        default initialized ResizeEvent
          */
-        ResizeEvent(uint32_t width, uint32_t height)
+        ResizeEvent(uint width, uint height)
             : Event(EventCategory::Window, EventType::WindowResize), m_size{width, height}
         {
         }
@@ -48,13 +48,13 @@ namespace pTK
          
          @return    width
          */
-        uint32_t getWidth() const { return m_size.x; }
+        uint getWidth() const { return m_size.x; }
         
         /** Function for retrieving the associated height.
          
          @return    height
          */
-        uint32_t getHeight() const { return m_size.y; }
+        uint getHeight() const { return m_size.y; }
         
         /** Function for retrieving the associated size.
          

@@ -26,7 +26,7 @@ namespace pTK
     class Window : public Container
     {
     public:
-        Window(const std::string& name, uint32_t width, uint32_t height);
+        Window(const std::string& name, uint width, uint height);
         virtual ~Window();
 
         // Size

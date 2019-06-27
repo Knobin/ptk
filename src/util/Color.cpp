@@ -20,21 +20,21 @@ namespace pTK
     {
     }
     
-    Color::Color(uint32_t color)
+    Color::Color(uint color)
     {
         set_rgba(color);
     }
     
-    Color::Color(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+    Color::Color(byte red, byte green, byte blue, byte alpha)
         : r{red}, g{green}, b{blue}, a{alpha}
     {
         
     }
     
     // Get.
-    uint32_t Color::to_int() const
+    uint Color::to_int() const
     {
-        uint32_t r_value = 0;
+        uint r_value = 0;
         r_value |= (r << 24);
         r_value |= (g << 16);
         r_value |= (b << 8);
@@ -44,21 +44,21 @@ namespace pTK
     }
     
     // Set.
-    void Color::set_rgb(uint8_t red, uint8_t green, uint8_t blue)
+    void Color::set_rgb(byte red, byte green, byte blue)
     {
         r = red;
         g = green;
         b = blue;
     }
     
-    void Color::set_rgb(uint32_t color)
+    void Color::set_rgb(uint color)
     {
-        r = (uint8_t)((color >> 24) & 0xFF);
-        g = (uint8_t)((color >> 16) & 0xFF);
-        b = (uint8_t)((color >> 8) & 0xFF);
+        r = (byte)((color >> 24) & 0xFF);
+        g = (byte)((color >> 16) & 0xFF);
+        b = (byte)((color >> 8) & 0xFF);
     }
     
-    void Color::set_rgba(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+    void Color::set_rgba(byte red, byte green, byte blue, byte alpha)
     {
         r = red;
         g = green;
@@ -66,12 +66,12 @@ namespace pTK
         a = alpha;
     }
     
-    void Color::set_rgba(uint32_t color)
+    void Color::set_rgba(uint color)
     {
-        r = (uint8_t)((color >> 24) & 0xFF);
-        g = (uint8_t)((color >> 16) & 0xFF);
-        b = (uint8_t)((color >> 8) & 0xFF);
-        a = (uint8_t)(color & 0xFF);
+        r = (byte)((color >> 24) & 0xFF);
+        g = (byte)((color >> 16) & 0xFF);
+        b = (byte)((color >> 8) & 0xFF);
+        a = (byte)(color & 0xFF);
     }
     
     // Comparison operators.

@@ -8,8 +8,8 @@
 #ifndef PTK_UTIL_VEC2_HPP
 #define PTK_UTIL_VEC2_HPP
 
-// C++ Headers
-#include <cstdint>
+// Local Headers
+#include "ptk/core/Types.hpp"
 
 namespace pTK
 {
@@ -126,8 +126,8 @@ namespace pTK
     }
 
     typedef Vec2<float> Vec2f;
-    typedef Vec2<uint32_t> Vec2u;
-    typedef Vec2<int32_t> Vec2i;
+    typedef Vec2<uint> Vec2u;
+    typedef Vec2<int32> Vec2i;
 }
 
 #endif // PTK_UTIL_VEC2_HPP

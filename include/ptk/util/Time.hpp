@@ -8,8 +8,10 @@
 #ifndef PTK_UTIL_TIME_HPP
 #define PTK_UTIL_TIME_HPP
 
+// Local Headers
+#include "ptk/core/Types.hpp"
+
 // C++ Headers
-#include <cstdint>
 #include <chrono>
 
 namespace pTK
@@ -33,42 +35,42 @@ namespace pTK
          
          @return    Time passed in nanoseconds
          */
-        uint32_t nanoseconds() const;
+        uint64 nanoseconds() const;
         
         /** Function for retrieving the time passed in microseconds,
          since reset was called or object was created.
          
          @return    Time passed in microseconds
          */
-        uint32_t microseconds() const;
+        uint64 microseconds() const;
         
         /** Function for retrieving the time passed in milliseconds,
          since reset was called or object was created.
          
          @return    Time passed in milliseconds
          */
-        uint32_t milliseconds() const;
+        uint64 milliseconds() const;
         
         /** Function for retrieving the time passed in seconds,
          since reset was called or object was created.
          
          @return    Time passed in seconds
          */
-        uint32_t seconds() const;
+        uint64 seconds() const;
         
         /** Function for retrieving the time passed in minutes,
          since reset was called or object was created.
          
          @return    Time passed in minutes
          */
-        uint32_t minutes() const;
+        uint32 minutes() const;
         
         /** Function for retrieving the time passed in hours,
          since reset was called or object was created.
          
          @return    Time passed in hours
          */
-        uint32_t hours() const;
+        uint32 hours() const;
         
     private:
         std::chrono::high_resolution_clock::time_point m_start;

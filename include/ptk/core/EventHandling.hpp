@@ -36,7 +36,7 @@ namespace pTK
          @param type    Key event (press or release)
          @param int     Keycode
          */
-        bool handleKeyEvent(EventType type, int keycode);
+        bool handleKeyEvent(EventType type, int32 keycode);
         
         /** Function for handling when mouse is entering.
          

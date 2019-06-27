@@ -69,7 +69,7 @@ namespace pTK
          @param index   index in container
          @return        widget in container
          */
-        std::shared_ptr<Widget> at(uint32_t index) const;
+        std::shared_ptr<Widget> at(uint index) const;
         
         /** Function for retrieving a Widget with the specified name.
          
@@ -139,7 +139,7 @@ namespace pTK
          
          @return    widget count in container
          */
-        uint32_t count() const;
+        uint count() const;
         
         /** Function for looping over the widgets in the container.
          

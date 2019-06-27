@@ -19,7 +19,7 @@
 
 namespace pTK
 {
-    Window::Window(const std::string& name, unsigned int width, unsigned int height)
+    Window::Window(const std::string& name, uint width, uint height)
         : Container(), m_window{nullptr}, m_name{name}, m_size{(float)width, (float)height}, m_minSize{0.0f, 0.0f},
             m_maxSize{0.0f, 0.0f}, m_scale{1.0f, 1.0f}, m_drawCanvas{nullptr}, m_events{}
     {
@@ -267,8 +267,8 @@ namespace pTK
         // Currently just for testing.
         if (insert_widget(widget))
         {
-            uint32_t width = 0;
-            uint32_t height = 0;
+            uint width = 0;
+            uint height = 0;
             for_each([&width, &height](const std::shared_ptr<Widget>& widget){
                 height += widget->getSize().height;
                 width = (width < widget->getSize().width) ? widget->getSize().width : width;
@@ -297,8 +297,8 @@ namespace pTK
      */
     void Window::handleEvents()
     {
-        uint32_t eventCount = m_events.size();
-        for (uint32_t i{0}; i < eventCount; i++)
+        uint eventCount = m_events.size();
+        for (uint i{0}; i < eventCount; i++)
         {
             Event* event = m_events.front();
             m_events.pop();
