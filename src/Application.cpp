@@ -7,6 +7,8 @@
 
 // Local Headers
 #include "ptk/Application.hpp"
+#include "ptk/util/Time.hpp"
+#include "ptk/Log.hpp"
 
 // C++ Headers
 #include <thread>
@@ -27,14 +29,23 @@ namespace pTK
     {
         window->show();
         
+        Time time;
+        
         // Render loop.
         while (!window->shouldClose())
         {
-            // Poll Events.
+            // Until drawing is fully set up, we send a draw event.
+            window->sendEvent(new Event(EventCategory::Window, EventType::WindowDraw));
+            
+            // Events
             window->pollEvents();
+            window->handleEvents();
 
-            // Sleep.
+            // Should not really be here, since we are waiting for events.
             std::this_thread::sleep_for(std::chrono::milliseconds(32));
+            
+            //PTK_INFO("loop time: {0:d}ms", time.milliseconds());
+            time.reset();
         }
 
         return 0;
