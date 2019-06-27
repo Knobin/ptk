@@ -25,7 +25,7 @@ file(GLOB_RECURSE HEADER_FILES
 include_directories(${CMAKE_SOURCE_DIR}/include/)
 
 # Skia Path and include folder
-set(SKIA_SDK "${CMAKE_SOURCE_DIR}/vendor/skia")
+set(SKIA_SDK "${CMAKE_SOURCE_DIR}/third_party/skia")
 include_directories(${SKIA_SDK})
 
 # Define executable
@@ -45,13 +45,13 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES})
 
 # GLFW
-add_subdirectory(${CMAKE_SOURCE_DIR}/vendor/glfw)
-include_directories(${CMAKE_SOURCE_DIR}/vendor/glfw/include)
+add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/glfw)
+include_directories(${CMAKE_SOURCE_DIR}/third_party/glfw/include)
 target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
 
 # spdlog
 set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
-add_subdirectory(${CMAKE_SOURCE_DIR}/vendor/spdlog)
+add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/spdlog)
 target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
 
 # Example
