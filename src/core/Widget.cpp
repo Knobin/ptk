@@ -13,109 +13,8 @@
 namespace pTK
 {
     Widget::Widget()
-        : Drawable(), EventHandling(), m_size{0, 0}, m_position{0 ,0}, m_parent{nullptr}
+        : Drawable(), EventHandling(), m_parent{nullptr}, m_name{}
     {
-    }
-    
-    const Vec2<float>& Widget::getSize() const
-    {
-        return m_size;
-    }
-    
-    void Widget::setSizeRequest(float width, float height)
-    {
-        Vec2<float> backup = m_size;
-        m_size = {width, height};
-        
-        if (m_parent != nullptr)
-        {
-            if (!m_parent->verifyChild(this))
-            {
-                PTK_WARN("[Widget] Parent did not accept size!\nFrom: {0:f}x{1:f} to {2:f}x{3:f}", backup.x, backup.y, m_position.x, m_position.y);
-                m_size = backup;
-            }
-        }
-    }
-    
-    void Widget::setSizeRequest(const Vec2<float>& size)
-    {
-        Vec2<float> backup = m_size;
-        m_size = size;
-        
-        if (m_parent != nullptr)
-        {
-            if (!m_parent->verifyChild(this))
-            {
-                PTK_WARN("[Widget] Parent did not accept size!\nFrom: {0:f}x{1:f} to {2:f}x{3:f}", backup.x, backup.y, m_position.x, m_position.y);
-                m_size = backup;
-            }
-        }
-    }
-    
-    const Vec2<float>& Widget::getPosition() const
-    {
-        return m_position;
-    }
-    
-    void Widget::setPositionRequest(float x, float y)
-    {
-        Vec2<float> backup = m_position;
-        m_position = {x, y};
-        
-        if (m_parent != nullptr)
-        {
-            if (!m_parent->verifyChild(this))
-            {
-                PTK_WARN("[Widget] Parent did not accept position!\nFrom: {0:f}x{1:f} to {2:f}x{3:f}", backup.x, backup.y, m_position.x, m_position.y);
-                m_position = backup;
-            }
-        }
-    }
-    
-    void Widget::setPositionRequest(const Vec2<float>& position)
-    {
-        Vec2<float> backup = m_position;
-        m_position = position;
-        
-        if (m_parent != nullptr)
-        {
-            if (!m_parent->verifyChild(this))
-            {
-                PTK_WARN("[Widget] Parent did not accept position!\nFrom: {0:f}x{1:f} to {2:f}x{3:f}", backup.x, backup.y, m_position.x, m_position.y);
-                m_position = backup;
-            }
-        }
-    }
-    
-    void Widget::moveRequest(float offset_x, float offset_y)
-    {
-        Vec2<float> backup = m_position;
-        m_position.x += offset_x;
-        m_position.y += offset_y;
-        
-        if (m_parent != nullptr)
-        {
-            if (!m_parent->verifyChild(this))
-            {
-                PTK_WARN("[Widget] Parent did not accept move!\nFrom: {0:f}x{1:f} to {2:f}x{3:f}", backup.x, backup.y, m_position.x, m_position.y);
-                m_position = backup;
-            }
-        }
-    }
-    
-    void Widget::moveRequest(const Vec2<float>& offset)
-    {
-        Vec2<float> backup = m_position;
-        m_position += offset;
-        
-        if (m_parent != nullptr)
-        {
-            if (!m_parent->verifyChild(this))
-            {
-                PTK_WARN("[Widget] Parent did not accept move!\nFrom: {0:f}x{1:f} to {2:f}x{3:f}", backup.x, backup.y, m_position.x, m_position.y);
-                m_position = backup;
-            }
-        }
     }
     
     void Widget::setParent(Container* parent)
@@ -128,10 +27,83 @@ namespace pTK
         return m_parent;
     }
     
+    void Widget::setSizeHint(const Size& size)
+    {
+        Size backup = m_size;
+        m_size = size;
+        
+        if (!notifyParent())
+        {
+            m_size = backup;
+        }
+    }
+    
+    void Widget::setMinSizeHint(const Size& size)
+    {
+        m_minSize = size;
+    }
+    
+    void Widget::setMaxSizeHint(const Size& size)
+    {
+        m_maxSize = size;
+    }
+    
+    void Widget::setPosHint(const Position& pos)
+    {
+        Position backup = m_pos;
+        m_pos = pos;
+        
+        if (!notifyParent())
+        {
+            m_pos = backup;
+        }
+    }
+    
+    const Size& Widget::getSize() const
+    {
+        return m_size;
+    }
+    
+    const Size& Widget::getMinSize() const
+    {
+        return m_minSize;
+    }
+    
+    const Size& Widget::getMaxSize() const
+    {
+        return m_maxSize;
+    }
+    
+    const Position& Widget::getPosition() const
+    {
+        return m_pos;
+    }
+    
+    void Widget::setName(const std::string& name)
+    {
+        m_name = name;
+    }
+    
+    const std::string& Widget::getName() const
+    {
+        return m_name;
+    }
+    
+    bool Widget::notifyParent() const
+    {
+        if (m_parent != nullptr)
+            return m_parent->verifyChild(this);
+        
+        return true;
+    }
+    
     // Comparison operators.
     bool operator==(const Widget& lhs, const Widget& rhs)
     {
-        return ((lhs.getPosition() == rhs.getPosition()) && (lhs.getSize() == rhs.getSize()));
+        return ((lhs.getPosition() == rhs.getPosition()) &&
+                (lhs.getSize() == rhs.getSize()) &&
+                (lhs.getName() == rhs.getName()) &&
+                (lhs.getParent() == rhs.getParent()));
     }
     
     bool operator!=(const Widget& lhs, const Widget& rhs)

@@ -64,19 +64,19 @@ namespace pTK
          */
         virtual void remove(const std::shared_ptr<Widget>& widget);
         
-        /** Function for verifying when a widget change either size
-         or position.
-         
-         @param widget      widget that sent the request.
-         */
-        virtual bool verifyChild(Widget*) const;
-        
         /** Function for retrieving a widget at index in the container.
          
          @param index   index in container
          @return        widget in container
          */
         std::shared_ptr<Widget> at(uint32_t index) const;
+        
+        /** Function for retrieving a Widget with the specified name.
+         
+         @param name    name of the Widget
+         @return        Widget in container
+         */
+        std::shared_ptr<Widget> find(const std::string& name) const;
         
         /** Function for retrieving the first widget that matches the parameters.
          
@@ -87,6 +87,15 @@ namespace pTK
          */
         std::shared_ptr<Widget> find_if(const std::function<bool(const std::shared_ptr<Widget>& widget)>& cond) const;
         
+        /** Function for retrieving the first widget that matches the parameters. Starting at the end and moving to the front.
+         
+         Function will return nullptr if no widget is found.
+         
+         @param cond    condition function
+         @return        index where to find widget
+         */
+        std::shared_ptr<Widget> rfind_if(const std::function<bool(const std::shared_ptr<Widget>& widget)>& cond) const;
+        
         /** Function for retrieving the first widget that matches the parameters.
          
          Function will return nullptr if no widget is found.
@@ -94,7 +103,7 @@ namespace pTK
          @param pos     position of widget to find
          @return        index where to find widget
          */
-        std::shared_ptr<Widget> find_if(const Vec2<float>& pos) const;
+        std::shared_ptr<Widget> find_if(const Position& pos) const;
         
         /** Function for retrieving the first widget that matches the parameters.
          
@@ -106,7 +115,7 @@ namespace pTK
          @param pos     position of widget to find
          @return        index where to find widget
          */
-        std::shared_ptr<Widget> rfind_if(const Vec2<float>& pos) const;
+        std::shared_ptr<Widget> rfind_if(const Position& pos) const;
         
         /** Function for retrieving the first widget in the container.
          
@@ -138,8 +147,33 @@ namespace pTK
          */
         void for_each(const std::function<void(const std::shared_ptr<Widget>& widget)>& func) const;
         
+        /** Function will be called when something changed in Widget
+         that needs to be verified.
+         
+         @param widget  Child that needs to be verified
+         @return        If change is accepted
+         */
+        virtual bool verifyChild(const Widget* widget);
+        
     protected:
+        /** Internal function for inserting a Widget.
+         
+         If widget is already inserted it will return false otherwise
+         insert the Widget and return true.
+         
+         @param widget  Widget that wants to be added.
+         @return        Status
+         */
         bool insert_widget(const std::shared_ptr<Widget>& widget);
+        
+        /** Internal function for removing a Widget.
+         
+         If widget is not found, return will be false otherwise
+         the widget will be removed and true will be returned.
+         
+         @param widget  Widget that wants to be removed.
+         @return        Status
+         */
         bool remove_widget(const std::shared_ptr<Widget>& widget);
         
     private:

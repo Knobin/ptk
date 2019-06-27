@@ -56,6 +56,16 @@ namespace pTK
         return std::shared_ptr<Widget>(nullptr);
     }
     
+    std::shared_ptr<Widget> Container::find(const std::string& name) const
+    {
+        if (name.size() != 0)
+            for (auto it = m_widgets.begin(); it != m_widgets.end(); it++)
+                if ((*it)->getName() == name)
+                    return (*it);
+        
+        return std::shared_ptr<Widget>(nullptr);
+    }
+    
     std::shared_ptr<Widget> Container::find_if(const std::function<bool(const std::shared_ptr<Widget>& widget)>& cond) const
     {
         for (auto it = m_widgets.begin(); it != m_widgets.end(); it++)
@@ -65,28 +75,37 @@ namespace pTK
         return std::shared_ptr<Widget>(nullptr);
     }
     
-    std::shared_ptr<Widget> Container::find_if(const Vec2<float>& pos) const
+    std::shared_ptr<Widget> Container::rfind_if(const std::function<bool(const std::shared_ptr<Widget>& widget)>& cond) const
+    {
+        for (auto it = m_widgets.rbegin(); it != m_widgets.rend(); it++)
+            if (cond((*it)))
+                return (*it);
+        
+        return std::shared_ptr<Widget>(nullptr);
+    }
+    
+    std::shared_ptr<Widget> Container::find_if(const Position& pos) const
     {
         for (auto it = m_widgets.begin(); it != m_widgets.end(); it++)
         {
-            Vec2<float> w_pos = (*it)->getPosition();
-            Vec2<float> w_size = (*it)->getSize();
-            if ((w_pos.x <= pos.x) && (w_pos.x + w_size.x >= pos.x))
-                if ((w_pos.y <= pos.y) && (w_pos.y + w_size.y >= pos.y))
+            Position wPos = (*it)->getPosition();
+            Size wSize = (*it)->getSize();
+            if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
+                if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
                     return (*it);
         }
         
         return std::shared_ptr<Widget>(nullptr);
     }
     
-    std::shared_ptr<Widget> Container::rfind_if(const Vec2<float>& pos) const
+    std::shared_ptr<Widget> Container::rfind_if(const Position& pos) const
     {
         for (auto it = m_widgets.rbegin(); it != m_widgets.rend(); it++)
         {
-            Vec2<float> w_pos = (*it)->getPosition();
-            Vec2<float> w_size = (*it)->getSize();
-            if ((w_pos.x <= pos.x) && (w_pos.x + w_size.x >= pos.x))
-                if ((w_pos.y <= pos.y) && (w_pos.y + w_size.y >= pos.y))
+            Position wPos = (*it)->getPosition();
+            Size wSize = (*it)->getSize();
+            if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
+                if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
                     return (*it);
         }
         
@@ -114,7 +133,7 @@ namespace pTK
             func((*it));
     }
     
-    bool Container::verifyChild(Widget*) const
+    bool Container::verifyChild(const Widget*)
     {
         return true;
     }

@@ -11,10 +11,12 @@
 // Local Headers
 #include "ptk/core/Drawable.hpp"
 #include "ptk/core/EventHandling.hpp"
-#include "ptk/util/Vec2.hpp"
+#include "ptk/util/Size.hpp"
+#include "ptk/util/Position.hpp"
 
 // C++ Headers
 #include <cstdint>
+#include <string>
 
 namespace pTK
 {
@@ -35,69 +37,93 @@ namespace pTK
         Widget();
         virtual ~Widget() = default;
         
-        /** Function for retrieving the size.
+        /** Function sets the Container parent of the Widget.
          
-         @return    Current size
+         @param parent  the parent Container
          */
-        const Vec2<float>& getSize() const;
-        
-        /** Function for setting size.
-         
-         @param width   new width
-         @param height  new height
-         */
-        void setSizeRequest(float width, float height);
-        
-        /** Function for setting size.
-         
-         @param size    new width and height
-         */
-        void setSizeRequest(const Vec2<float>& size);
-        
-        /** Function for retrieving the position.
-         
-         @return    Current position
-         */
-        const Vec2<float>& getPosition() const;
-        
-        /** Function for setting position.
-         
-         @param x   new x position
-         @param y   new y position
-         */
-        void setPositionRequest(float x, float y);
-        
-        /** Function for setting position.
-         
-         @param position    new x and y positions
-         */
-        void setPositionRequest(const Vec2<float>& position);
-        
-        /** Function for moving.
-         Will set the position based on the current values and
-         add the offset.
-         
-         @param offset_x    amount to move x
-         @param offset_y    amount to move y
-         */
-        void moveRequest(float offset_x, float offset_y);
-        
-        /** Function for moving.
-         Will set the position based on the current values and
-         add the offset.
-         
-         @param offset  amount to move x and y
-         */
-        void moveRequest(const Vec2<float>& offset);
-        
         void setParent(Container* parent);
         
+        /** Function for retrieving the Container parent of the Widget.
+         
+         @return  the Container parent of the Widget
+         */
         Container* getParent() const;
         
+        /** Function for requesting the size of the Widget.
+         
+         @param size  requested size of the Widget.
+         */
+        void setSizeHint(const Size& size);
+        
+        /** Function for requesting the minimal size of the Widget.
+         
+         @param size  requested size of the Widget.
+         */
+        void setMinSizeHint(const Size& size);
+        
+        /** Function for requesting the maximal size of the Widget.
+         
+         @param size  requested size of the Widget.
+         */
+        void setMaxSizeHint(const Size& size);
+        
+        /** Function for requesting the position of the Widget.
+         
+         @param pos  requested position of the Widget.
+         */
+        void setPosHint(const Position& pos);
+        
+        /** Function for retrieving the current size of the Widget.
+         
+         @return  current size
+         */
+        const Size& getSize() const;
+        
+        /** Function for retrieving the current minimal size of the Widget.
+         
+         @return  current minimal size
+         */
+        const Size& getMinSize() const;
+        
+        /** Function for retrieving the current maximal size of the Widget.
+         
+         @return  current maximal size
+         */
+        const Size& getMaxSize() const;
+        
+        /** Function for retrieving the current position of the Widget.
+         
+         @return  current position
+         */
+        const Position& getPosition() const;
+        
+        /** Function for setting the name of the Widget.
+         
+         @param  name   name of the widget
+         */
+        void setName(const std::string& name);
+        
+        /** Function for retrieving the name of the Widget.
+         
+         @return  name
+         */
+        const std::string& getName() const;
+        
     private:
-        Vec2<float> m_size;
-        Vec2<float> m_position;
         Container* m_parent;
+        
+        Size m_size;
+        Size m_minSize;
+        Size m_maxSize;
+        Position m_pos;
+        
+        std::string m_name;
+        
+        /** Function for notifying the parent of a change.
+            True will be returned if the change was accepted by
+            the parent.
+         */
+        bool notifyParent() const;
     };
     
     // Comparison operators.

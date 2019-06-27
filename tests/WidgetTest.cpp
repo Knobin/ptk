@@ -3,122 +3,135 @@
 
 #include "ptk/core/Widget.hpp"
 
-TEST_CASE("Widget Constructors")
+/**
+    All these tests are performed without a parent present.
+    Parent will decide its child Size and Parent dynamically and
+    if hard to test.
+ 
+    More tests will be added in the future to ensure that the Widget class
+    is working correctly.
+ */
+
+TEST_CASE("Constructors")
 {
     // Testing Constructors with correct data.
     
     SECTION("Widget()")
     {
         pTK::Widget t;
-        pTK::Vec2<float> correct{0, 0};
-        REQUIRE(t.getSize() == correct);
+        pTK::Size cSize{0, 0};
+        pTK::Position cPos{0, 0};
+        REQUIRE(t.getSize() == cSize);
+        REQUIRE(t.getMinSize() == cSize);
+        REQUIRE(t.getMaxSize() == cSize);
+        REQUIRE(t.getPosition() == cPos);
     }
 }
 
-TEST_CASE("Widget Setters")
+TEST_CASE("Getters and Setters")
 {
     // Testing Setters.
-    pTK::Vec2<float> correct{10, 20};
+    pTK::Size cSize{10, 20};
+    pTK::Position cPos{55, 85};
     
-    SECTION("setSizeRequest(float width, float height)")
+    SECTION("setSizeHint(const Size& size)")
     {
         pTK::Widget t;
-        t.setSizeRequest(10, 20);
-        REQUIRE(t.getSize() == correct);
+        t.setSizeHint(cSize);
+        REQUIRE(t.getSize() == cSize);
     }
     
-    SECTION("setSizeRequest(const Vec2<float>& size)")
+    SECTION("setMinSizeHint(const Size& size)")
     {
         pTK::Widget t;
-        t.setSizeRequest(correct);
-        REQUIRE(t.getSize() == correct);
+        t.setMinSizeHint(cSize);
+        REQUIRE(t.getMinSize() == cSize);
     }
     
-    SECTION("setPositionRequest(float x, float y)")
+    SECTION("setMaxSizeHint(const Size& size)")
     {
         pTK::Widget t;
-        t.setPositionRequest(10, 20);
-        REQUIRE(t.getPosition() == correct);
+        t.setMaxSizeHint(cSize);
+        REQUIRE(t.getMaxSize() == cSize);
     }
     
-    SECTION("setSizeRequest(const Vec2<float>& size)")
+    SECTION("Size, minSize and maxSize")
     {
         pTK::Widget t;
-        t.setPositionRequest(correct);
-        REQUIRE(t.getPosition() == correct);
-    }
-}
-
-TEST_CASE("Widget Getters")
-{
-    // Testing Getters.
-    pTK::Vec2<float> correct{10, 20};
-    
-    SECTION("const Vec2<float>& getSize() const")
-    {
-        pTK::Widget t;
-        t.setSizeRequest(correct);
-        REQUIRE(t.getSize().x == correct.x);
-        REQUIRE(t.getSize().y == correct.y);
-        REQUIRE(t.getSize() == correct);
+        pTK::Size cMinSize{25, 55};
+        pTK::Size cMaxSize{95, 35};
+        t.setSizeHint(cSize);
+        t.setMinSizeHint(cMinSize);
+        t.setMaxSizeHint(cMaxSize);
+        REQUIRE(t.getSize() == cSize);
+        REQUIRE(t.getMinSize() == cMinSize);
+        REQUIRE(t.getMaxSize() == cMaxSize);
     }
     
-    SECTION("const Vec2<float>& getPosition() const")
+    SECTION("setPosHint(const Position& pos)")
     {
         pTK::Widget t;
-        t.setPositionRequest(correct);
-        REQUIRE(t.getPosition().x == correct.x);
-        REQUIRE(t.getPosition().y == correct.y);
-        REQUIRE(t.getPosition() == correct);
+        t.setPosHint(cPos);
+        REQUIRE(t.getPosition() == cPos);
+    }
+    
+    SECTION("Name")
+    {
+        pTK::Widget t;
+        t.setName("testName");
+        REQUIRE(t.getName() == "testName");
     }
 }
 
-TEST_CASE("Widget Copy and Assignment")
+TEST_CASE("Copy and Assignment")
 {
     // Testing Widget Copy and Assignment.
-    pTK::Vec2<float> pos{10, 20};
-    pTK::Vec2<float> size{15, 45};
+    pTK::Size cSize{145, 235};
+    pTK::Size cMinSize{25, 55};
+    pTK::Size cMaxSize{95, 35};
+    pTK::Position cPos{430, 1050};
     pTK::Widget t;
-    t.setSizeRequest(size);
-    t.setPositionRequest(pos);
+    t.setSizeHint(cSize);
+    t.setMinSizeHint(cMinSize);
+    t.setMaxSizeHint(cMaxSize);
+    t.setPosHint(cPos);
     
     SECTION("Copy")
     {
         pTK::Widget tmp = t;
-        REQUIRE(t.getPosition() == pos);
-        REQUIRE(t.getSize() == size);
+        REQUIRE(t.getSize() == cSize);
+        REQUIRE(t.getMinSize() == cMinSize);
+        REQUIRE(t.getMaxSize() == cMaxSize);
+        REQUIRE(t.getPosition() == cPos);
     }
     
     SECTION("Assignment")
     {
         pTK::Widget tmp;
         tmp = t;
-        REQUIRE(t.getPosition() == pos);
-        REQUIRE(t.getSize() == size);
-    }
-    
-    SECTION("Check if pos and size has changed")
-    {
-        REQUIRE(pos.x == 10);
-        REQUIRE(pos.y == 20);
-        
-        REQUIRE(size.x == 15);
-        REQUIRE(size.y == 45);
+        REQUIRE(t.getSize() == cSize);
+        REQUIRE(t.getMinSize() == cMinSize);
+        REQUIRE(t.getMaxSize() == cMaxSize);
+        REQUIRE(t.getPosition() == cPos);
     }
 }
 
-TEST_CASE ("Widget Comparison")
+/**
+    More tests in Comparison should be added in the future.
+ */
+
+TEST_CASE ("Comparison")
 {
     // Testing Widget Comparison.
     pTK::Widget t;
     pTK::Widget t1;
     pTK::Widget t2;
-    t2.setSizeRequest(42, 14);
+    t2.setSizeHint({42, 14});
     pTK::Widget t3;
-    t3.setPositionRequest(10, 20);
+    t3.setPosHint({10, 20});
     pTK::Widget t4;
-    t4.setPositionRequest(10, 20);
-    t4.setSizeRequest(42, 14);
+    t4.setPosHint({10, 20});
+    t4.setSizeHint({42, 14});
     
     SECTION("Equal")
     {
