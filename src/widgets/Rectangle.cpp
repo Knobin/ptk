@@ -40,13 +40,16 @@ namespace pTK
         SkRect rect;
         rect.set(pos, size);
         paint.setStrokeWidth((float)getOutlineThickness()*dpiScale.x);
-        paint.setStyle(SkPaint::kStrokeAndFill_Style);
+        if (getOutlineThickness() > 0.0f)
+            paint.setStyle(SkPaint::kFill_Style);
+        else
+            paint.setStyle(SkPaint::kStrokeAndFill_Style);
+        
         skCanvas->drawRoundRect(rect, m_cornerRadius*dpiScale.x, m_cornerRadius*dpiScale.y, paint);
         
         if (getOutlineThickness() > 0.0f)
         {
             // Draw Outline
-            rect.set(pos, size);
             Color outColor = getOutlineColor();
             paint.setARGB(outColor.a, outColor.r, outColor.g, outColor.b);
             paint.setStyle(SkPaint::kStroke_Style);
