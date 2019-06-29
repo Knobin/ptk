@@ -154,8 +154,6 @@ namespace pTK
         m_drawCanvas->skCanvas()->flush();
         
         swapBuffers();
-        
-        //PTK_INFO("DRAW ISSUED");
     }
     
     void Window::pollEvents()
@@ -252,7 +250,8 @@ namespace pTK
         
         // Set Framebuffer Size.
         Vec2u fbSize = getContentSize();
-        m_drawCanvas->resize(fbSize);
+        if (fbSize != m_drawCanvas->getSize())
+            m_drawCanvas->resize(fbSize);
         
         // TODO: Resize the widgets
     }
@@ -306,6 +305,14 @@ namespace pTK
     void Window::handleEvents()
     {
         uint eventCount = m_events.size();
+        
+        // Until drawing is fully set up, we send a draw event.
+        if (eventCount != 0)
+        {
+            eventCount++;
+            sendEvent(new Event(EventCategory::Window, EventType::WindowDraw));
+        }
+        
         for (uint i{0}; i < eventCount; i++)
         {
             Event* event = m_events.front();
@@ -357,6 +364,7 @@ namespace pTK
         EventType type = event->type();
         if (type == EventType::WindowDraw)
         {
+            //PTK_INFO("[Window] Draw");
             draw();
         }
         else if (type == EventType::WindowResize)

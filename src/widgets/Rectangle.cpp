@@ -25,10 +25,14 @@ namespace pTK
         SkPoint pos{convertToSkPoint(getPosition(), dpiScale)};
         SkPoint size{convertToSkPoint(getSize(), dpiScale)};
         size += pos; // skia needs the size to be pos+size.
-        pos.fX += (getOutlineThickness()/2)*dpiScale.x;
-        pos.fY += (getOutlineThickness()/2)*dpiScale.y;
-        size.fX -= (getOutlineThickness()/2)*dpiScale.x;
-        size.fY -= (getOutlineThickness()/2)*dpiScale.y;
+        
+        // Outline
+        float outlineThickness = getOutlineThickness();
+        float halfOutlineThickness = outlineThickness/2;
+        pos.fX += halfOutlineThickness*dpiScale.x;
+        pos.fY += halfOutlineThickness*dpiScale.y;
+        size.fX -= halfOutlineThickness*dpiScale.x;
+        size.fY -= halfOutlineThickness*dpiScale.y;
         
         // Set Color
         SkPaint paint;
@@ -39,15 +43,15 @@ namespace pTK
         // Draw Rect
         SkRect rect;
         rect.set(pos, size);
-        paint.setStrokeWidth((float)getOutlineThickness()*dpiScale.x);
-        if (getOutlineThickness() > 0.0f)
+        paint.setStrokeWidth(outlineThickness*dpiScale.x);
+        if (outlineThickness > 0.0f)
             paint.setStyle(SkPaint::kFill_Style);
         else
             paint.setStyle(SkPaint::kStrokeAndFill_Style);
         
         skCanvas->drawRoundRect(rect, m_cornerRadius*dpiScale.x, m_cornerRadius*dpiScale.y, paint);
         
-        if (getOutlineThickness() > 0.0f)
+        if (outlineThickness > 0.0f)
         {
             // Draw Outline
             Color outColor = getOutlineColor();
@@ -59,7 +63,7 @@ namespace pTK
     
     void Rectangle::setCornerRadius(float radius)
     {
-        if (radius > 0)
+        if (radius >= 0)
             m_cornerRadius = radius;
     }
     

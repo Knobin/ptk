@@ -70,6 +70,12 @@ namespace pTK
          */
         SkSurface* skSurface() const;
         
+        /** Function for retrieving the size of the Canvas.
+         
+         @return    size of canvas
+         */
+        const Vec2u& getSize() const;
+        
         /** Function for setting the DPI scale.
          
          @param scale   x and y scale
@@ -88,6 +94,7 @@ namespace pTK
         SkCanvas* m_canvas;
         GrGLFramebufferInfo m_info;
         SkColorType m_colorType;
+        Vec2u m_size;
         Vec2f m_dpiScale;
     };
     

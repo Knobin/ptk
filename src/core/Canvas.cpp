@@ -21,7 +21,7 @@ namespace pTK
 {
     Canvas::Canvas(const Vec2u& size)
         : m_context{nullptr}, m_surface{nullptr}, m_canvas{nullptr}, m_info{}, m_colorType{},
-            m_dpiScale{1.0f, 1.0f}
+            m_size{size}, m_dpiScale{1.0f, 1.0f}
     {
         auto interface = GrGLMakeNativeInterface();
         m_context.reset(GrContext::MakeGL(interface).release());
@@ -71,6 +71,7 @@ namespace pTK
         
         // Save Canvas for rendering.
         m_canvas = m_surface->getCanvas();
+        m_size = size;
         
         clear();
         
@@ -94,6 +95,11 @@ namespace pTK
     SkSurface* Canvas::skSurface() const
     {
         return m_surface;
+    }
+    
+    const Vec2u& Canvas::getSize() const
+    {
+        return m_size;
     }
     
     void Canvas::setDPIScale(const Vec2f& scale)

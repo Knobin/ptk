@@ -34,9 +34,6 @@ namespace pTK
         // Render loop.
         while (!window->shouldClose())
         {
-            // Until drawing is fully set up, we send a draw event.
-            window->sendEvent(new Event(EventCategory::Window, EventType::WindowDraw));
-            
             // Events
             window->pollEvents();
             window->handleEvents();
