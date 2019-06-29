@@ -9,6 +9,8 @@
 #define PTK_CORE_CANVAS_HPP
 
 // Local Headers
+#include "ptk/util/NonMovable.hpp"
+#include "ptk/util/NonCopyable.hpp"
 #include "ptk/util/Vec2.hpp"
 #include "ptk/util/Position.hpp"
 #include "ptk/util/Size.hpp"
@@ -35,7 +37,7 @@ namespace pTK
      This class is to handle the SkCanvas for easy access with
      functions for common operations.
      */
-    class Canvas
+    class Canvas : public NonMovable, public NonCopyable
     {
     public:
         /** Constructs Canvas with default values.
@@ -43,7 +45,6 @@ namespace pTK
          @return    default initialized Canvas
          */
         Canvas(const Vec2u& size);
-        Canvas(const Canvas& canvas, const Vec2u& size);
         ~Canvas();
         
         /** Function for resizing the Canvas.

@@ -20,8 +20,8 @@
 namespace pTK
 {
     Window::Window(const std::string& name, uint width, uint height)
-        : Container(), m_window{nullptr}, m_name{name}, m_size{(float)width, (float)height}, m_minSize{0.0f, 0.0f},
-            m_maxSize{0.0f, 0.0f}, m_scale{1.0f, 1.0f}, m_drawCanvas{nullptr}, m_events{}
+        : Container(), NonMovable(), NonCopyable(), m_window{nullptr}, m_name{name}, m_size{(float)width, (float)height},
+            m_minSize{0.0f, 0.0f}, m_maxSize{0.0f, 0.0f}, m_scale{1.0f, 1.0f}, m_drawCanvas{nullptr}, m_events{}
     {
         initGLFW();
 

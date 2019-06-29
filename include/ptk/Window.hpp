@@ -9,6 +9,8 @@
 #define PTK_WINDOW_HPP
 
 // Local Headers
+#include "ptk/util/NonMovable.hpp"
+#include "ptk/util/NonCopyable.hpp"
 #include "ptk/core/Container.hpp"
 #include "ptk/core/Canvas.hpp"
 #include "ptk/core/Event.hpp"
@@ -23,7 +25,7 @@
 
 namespace pTK
 {
-    class Window : public Container
+    class Window : public Container, public NonMovable, public NonCopyable
     {
     public:
         Window(const std::string& name, uint width, uint height);

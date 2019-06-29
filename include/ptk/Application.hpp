@@ -9,6 +9,8 @@
 #define PTK_APPLICATION_HPP
 
 // Local Headers
+#include "ptk/util/NonMovable.hpp"
+#include "ptk/util/NonCopyable.hpp"
 #include "ptk/Window.hpp"
 
 namespace pTK
@@ -19,7 +21,7 @@ namespace pTK
      application.
      
      */
-    class Application
+    class Application : public NonMovable, public NonCopyable
     {
     public:
         /** Constructs Event with default values.

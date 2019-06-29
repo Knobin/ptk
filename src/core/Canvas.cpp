@@ -20,8 +20,8 @@
 namespace pTK
 {
     Canvas::Canvas(const Vec2u& size)
-        : m_context{nullptr}, m_surface{nullptr}, m_canvas{nullptr}, m_info{}, m_colorType{},
-            m_size{size}, m_dpiScale{1.0f, 1.0f}
+        : NonMovable(), NonCopyable(), m_context{nullptr}, m_surface{nullptr}, m_canvas{nullptr}, m_info{},
+            m_colorType{}, m_size{size}, m_dpiScale{1.0f, 1.0f}
     {
         auto interface = GrGLMakeNativeInterface();
         m_context.reset(GrContext::MakeGL(interface).release());
@@ -38,18 +38,6 @@ namespace pTK
             
         resize(size);
         PTK_ASSERT(m_surface, "Failed to create surface!");
-    }
-    
-    Canvas::Canvas(const Canvas& canvas, const Vec2u& size)
-        : m_context{canvas.m_context}, m_surface{nullptr}, m_canvas{nullptr}, m_info{canvas.m_info},
-            m_colorType{canvas.m_colorType}, m_dpiScale{canvas.m_dpiScale}
-    {
-        GrBackendRenderTarget backendRenderTarget(size.x, size.y, 0, 0, m_info);
-        
-        m_surface = SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, nullptr).release();
-        
-        resize(size);
-        PTK_ASSERT(m_surface, "Failed to generate surface!");
     }
     
     Canvas::~Canvas()

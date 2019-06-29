@@ -17,6 +17,7 @@
 namespace pTK
 {
     Application::Application(int argc, char *argv[])
+        : NonMovable(), NonCopyable()
     {
         std::cout << "Arguments:\n";
         for (int i = 0; i < argc; i++)
