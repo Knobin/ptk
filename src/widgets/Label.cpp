@@ -32,16 +32,31 @@ namespace pTK
         calculateBounds();
     }
     
+    const std::string& Label::getFont() const
+    {
+        return m_fontName;
+    }
+    
     void Label::setFontSize(uint fontSize)
     {
         m_fontSize = fontSize;
         calculateBounds();
     }
     
+    uint Label::getFontSize() const
+    {
+        return m_fontSize;
+    }
+    
     void Label::setText(const std::string& text)
     {
         m_text = text;
         calculateBounds();
+    }
+    
+    const std::string& Label::getText() const
+    {
+        return m_text;
     }
     
     void Label::calculateBounds()
