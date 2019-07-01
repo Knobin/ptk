@@ -42,6 +42,10 @@ namespace pTK
         std::string m_text;
         
         void calculateBounds();
+        
+        // Keep these private, for internal use.
+        using Widget::setSizeHint;
+        using Widget::setMinSizeHint;
     };
 }
 

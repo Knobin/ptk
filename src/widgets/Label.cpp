@@ -21,7 +21,7 @@
 namespace pTK
 {
     Label::Label()
-        : Shape(), m_fontName{""}, m_fontSize{12}, m_text{}
+        : Shape(), m_fontName{""}, m_fontSize{12}, m_text{""}
     {
         
     }
@@ -55,7 +55,8 @@ namespace pTK
         
         SkRect bounds;
         font.measureText(m_text.c_str(), m_text.size(), SkTextEncoding::kUTF8, &bounds);
-        setSizeHint(Size(bounds.width(), bounds.height()));
+        setMinSizeHint(Size(bounds.width(), bounds.height()));
+        setSizeHint(Size(bounds.width(), bounds.height())); // This will call redraw.
     }
     
     void Label::onDraw(const Canvas& canvas)
