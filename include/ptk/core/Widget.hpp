@@ -118,9 +118,14 @@ namespace pTK
         
         std::string m_name;
         
+        /** Function for notifying the parent of a change and
+            put it on an internal render queue.
+         */
+        bool redraw() const;
+        
         /** Function for notifying the parent of a change.
-            True will be returned if the change was accepted by
-            the parent.
+         True will be returned if the change was accepted by
+         the parent.
          */
         bool notifyParent() const;
     };

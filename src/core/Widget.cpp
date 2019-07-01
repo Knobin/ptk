@@ -29,34 +29,26 @@ namespace pTK
     
     void Widget::setSizeHint(const Size& size)
     {
-        Size backup = m_size;
         m_size = size;
-        
-        if (!notifyParent())
-        {
-            m_size = backup;
-        }
+        redraw();
     }
     
     void Widget::setMinSizeHint(const Size& size)
     {
         m_minSize = size;
+        notifyParent();
     }
     
     void Widget::setMaxSizeHint(const Size& size)
     {
         m_maxSize = size;
+        notifyParent();
     }
     
     void Widget::setPosHint(const Position& pos)
     {
-        Position backup = m_pos;
         m_pos = pos;
-        
-        if (!notifyParent())
-        {
-            m_pos = backup;
-        }
+        redraw();
     }
     
     const Size& Widget::getSize() const
@@ -87,6 +79,14 @@ namespace pTK
     const std::string& Widget::getName() const
     {
         return m_name;
+    }
+    
+    bool Widget::redraw() const
+    {
+        if (m_parent != nullptr)
+            return m_parent->redrawChild(this);
+        
+        return false;
     }
     
     bool Widget::notifyParent() const

@@ -133,6 +133,11 @@ namespace pTK
             func((*it));
     }
     
+    bool Container::redrawChild(const Widget*)
+    {
+        return true;
+    }
+    
     bool Container::verifyChild(const Widget*)
     {
         return true;

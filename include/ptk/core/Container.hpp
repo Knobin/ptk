@@ -147,6 +147,13 @@ namespace pTK
          */
         void for_each(const std::function<void(const std::shared_ptr<Widget>& widget)>& func) const;
         
+        /** Function will be called when a widget needs to be redrawn.
+         
+         @param widget  Child that needs to redraw
+         @return        If put on queue
+         */
+        virtual bool redrawChild(const Widget* widget);
+        
         /** Function will be called when something changed in Widget
          that needs to be verified.
          
