@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
     label->setFont("Arial");
     label->setText("Example label");
     label->setColor(pTK::Color(0x161B21FF));
+    label->setOutlineThickness(2);
+    label->setOutlineColor(pTK::Color(0xF4A950FF));
     window.add(label);
     label->onClick([&label](pTK::MouseButton, const pTK::Position&){
         std::cout << label->getName() << " clicked!\n";

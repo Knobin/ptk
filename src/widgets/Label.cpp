@@ -80,6 +80,29 @@ namespace pTK
         font.measureText(m_text.c_str(), m_text.size(), SkTextEncoding::kUTF8, &bounds);
         SkPoint pos{convertToSkPoint(getPosition(), dpiScale)};
         
+        // Outline
+        float outlineThickness = getOutlineThickness();
+        paint.setStrokeWidth(outlineThickness*dpiScale.x);
+        if (outlineThickness > 0.0f)
+        {
+            float halfOutlineThickness = outlineThickness/2;
+            pos.fX += halfOutlineThickness*dpiScale.x;
+            pos.fY += halfOutlineThickness*dpiScale.y;
+            paint.setStyle(SkPaint::kFill_Style);
+        }else
+        {
+            paint.setStyle(SkPaint::kStrokeAndFill_Style);
+        }
+        
         skCanvas->drawString(m_text.c_str(), pos.fX + (-1*bounds.x()), pos.fY + (-1*bounds.y()), font, paint);
+        
+        if (outlineThickness > 0.0f)
+        {
+            // Draw Outline
+            Color outColor = getOutlineColor();
+            paint.setARGB(outColor.a, outColor.r, outColor.g, outColor.b);
+            paint.setStyle(SkPaint::kStroke_Style);
+            skCanvas->drawString(m_text.c_str(), pos.fX + (-1*bounds.x()), pos.fY + (-1*bounds.y()), font, paint);
+        }
     }
 }
