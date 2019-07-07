@@ -7,16 +7,13 @@
 
 // Local Headers
 #include "ptk/widgets/Label.hpp"
-#include "ptk/Log.hpp"
 
 // Skia Headers
 #include "include/core/SkFont.h"
 #include "include/core/SkTypeface.h"
-#include "include/core/SkPaint.h"
-#include "include/core/SkTextBlob.h"
 
-#include <stdexcept>
-#include <iostream>
+// C++ Headers
+#include <cmath>
 
 namespace pTK
 {
@@ -70,8 +67,7 @@ namespace pTK
         
         SkRect bounds;
         font.measureText(m_text.c_str(), m_text.size(), SkTextEncoding::kUTF8, &bounds);
-        setMinSizeHint(Size(bounds.width(), bounds.height()));
-        setSizeHint(Size(bounds.width(), bounds.height())); // This will call redraw.
+        setSizeHint(Size(std::ceil(bounds.width()), std::ceil(bounds.height()))); // This will call redraw.
     }
     
     void Label::onDraw(SkCanvas* canvas)
@@ -98,9 +94,6 @@ namespace pTK
         paint.setStrokeWidth(outlineThickness);
         if (outlineThickness > 0.0f)
         {
-            float halfOutlineThickness = outlineThickness/2;
-            pos.fX += halfOutlineThickness;
-            pos.fY += halfOutlineThickness;
             paint.setStyle(SkPaint::kFill_Style);
         }else
         {
