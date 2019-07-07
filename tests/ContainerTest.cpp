@@ -1,143 +1,222 @@
 #define CATCH_CONFIG_MAIN
 #include "catch2/catch.hpp"
 
-#include "ptk/core/Container.hpp"
-#include "ptk/core/Widget.hpp"
+#include "ptk/util/Container.hpp"
 
-TEST_CASE("Container Constructors")
+TEST_CASE("Constructors")
 {
     // Testing Constructors with correct data.
     
     SECTION("Container()")
     {
-        pTK::Container cont;
-        REQUIRE(cont.count() == 0);
+        pTK::Container<int> cont;
+        REQUIRE(cont.size() == 0);
+    }
+    
+    SECTION("Container(T item)")
+    {
+        pTK::Container<int> cont(1);
+        REQUIRE(cont.at(0) == 1);
+        REQUIRE(cont.size() == 1);
+    }
+    
+    SECTION("Initializer list")
+    {
+        pTK::Container<int> cont{1, 2, 3, 4, 5};
+        REQUIRE(cont.size() == 5);
+        REQUIRE(cont.at(0) == 1);
+        REQUIRE(cont.at(1) == 2);
+        REQUIRE(cont.at(2) == 3);
+        REQUIRE(cont.at(3) == 4);
+        REQUIRE(cont.at(4) == 5);
     }
 }
 
-TEST_CASE("Container Add and Remove")
+TEST_CASE("Insert and Remove")
 {
-    // Testing Add and Remove.
-    pTK::Container cont;
-    std::shared_ptr<pTK::Widget> widget = std::make_shared<pTK::Widget>();
+    // Testing insert and Remove.
+    pTK::Container<int> cont;
+    int integer = 5;
     
-    SECTION("add(const std::shared_ptr<Widget>& widget)")
+    SECTION("insert(const std::shared_ptr<Widget>& widget)")
     {
-        cont.add(widget);
-        REQUIRE(cont.count() == 1);
+        cont.insert(integer);
+        REQUIRE(cont.size() == 1);
     }
     
-    SECTION("remove(const std::shared_ptr<Widget>& widget)")
+    SECTION("erase(const std::shared_ptr<Widget>& widget)")
     {
-        cont.remove(widget);
-        REQUIRE(cont.count() == 0);
+        cont.erase(integer);
+        REQUIRE(cont.size() == 0);
     }
     
-    SECTION("Duplicates on add")
+    SECTION("Duplicates on insert")
     {
-        cont.add(widget);
-        cont.add(widget);
+        cont.insert(integer);
+        cont.insert(integer);
         
-        // Container does not allow duplicates.
-        REQUIRE(cont.count() == 1);
+        // Container allows duplicates.
+        REQUIRE(cont.size() == 2);
     }
-    
 }
 
-TEST_CASE("Container for_each")
+TEST_CASE("Access")
+{
+    // Testing access functions.
+    pTK::Container<int> cont{1, 2, 3, 4, 5};
+    pTK::Container<int> emptyContainer{};
+    
+    SECTION("Front")
+    {
+        REQUIRE(cont.front() == 1);
+    }
+    
+    SECTION("Front")
+    {
+        REQUIRE(cont.back() == 5);
+    }
+    
+    SECTION("Size")
+    {
+        REQUIRE(cont.size() == 5);
+        REQUIRE(emptyContainer.size() == 0);
+    }
+    
+    SECTION("Empty")
+    {
+        REQUIRE(cont.empty() == false);
+        REQUIRE(emptyContainer.empty() == true);
+    }
+}
+
+TEST_CASE("find (iterators)")
+{
+    // Testing find functions.
+    pTK::Container<int> cont{1, 2, 3, 4, 5};;
+    using iterator = pTK::Container<int>::iterator;
+    using reverse_iterator = pTK::Container<int>::reverse_iterator;
+    
+    SECTION("find")
+    {
+        iterator it = cont.find(2);
+        REQUIRE_FALSE(it == cont.end());
+        REQUIRE((*it) == 2);
+    }
+    
+    SECTION("rfind")
+    {
+        reverse_iterator it = cont.rfind(3);
+        REQUIRE_FALSE(it == cont.rend());
+        REQUIRE((*it) == 3);
+    }
+    
+    SECTION("findIf")
+    {
+        iterator it = cont.findIf([](const int& item){
+            return item == 5;
+        });
+        REQUIRE_FALSE(it == cont.end());
+        REQUIRE((*it) == 5);
+    }
+    
+    SECTION("rfindIf")
+    {
+        reverse_iterator it = cont.rfindIf([](const int& item){
+            return item == 1;
+        });
+        REQUIRE_FALSE(it == cont.rend());
+        REQUIRE((*it) == 1);
+    }
+}
+
+TEST_CASE("forEach")
 {
     // Testing for_each functions.
-    pTK::Container cont;
-    std::shared_ptr<pTK::Widget> widgets[3];
+    pTK::Container<int> cont;
+    int integers[3];
+    integers[0] = 1;
+    integers[1] = 2;
+    integers[2] = 3;
     
-    widgets[0] = std::make_shared<pTK::Widget>();
-    widgets[1] = std::make_shared<pTK::Widget>();
-    widgets[2] = std::make_shared<pTK::Widget>();
+    cont.insert(integers[0]);
+    cont.insert(integers[1]);
+    cont.insert(integers[2]);
     
-    cont.add(widgets[0]);
-    cont.add(widgets[1]);
-    cont.add(widgets[2]);
-    
-    SECTION("widget")
-    {
-        int i = 0;
-        cont.for_each([&](const std::shared_ptr<pTK::Widget>& widget){
-            REQUIRE(widget == widgets[i]);
-            i++;
-        });
-    }
+    int i = 0;
+    cont.forEach([&](const int& integer){
+        REQUIRE(integer == integers[i]);
+        i++;
+    });
 }
 
-TEST_CASE("Container Copy and Assignment")
+TEST_CASE("Copy and Assignment")
 {
     // Testing Container Copy and Assignment.
-    pTK::Container cont;
-    std::shared_ptr<pTK::Widget> widgets[3];
+    pTK::Container<int> cont;
+    int integers[3];
+    integers[0] = 1;
+    integers[1] = 2;
+    integers[2] = 3;
     
-    widgets[0] = std::make_shared<pTK::Widget>();
-    widgets[1] = std::make_shared<pTK::Widget>();
-    widgets[2] = std::make_shared<pTK::Widget>();
-    
-    cont.add(widgets[0]);
-    cont.add(widgets[1]);
-    cont.add(widgets[2]);
+    cont.insert(integers[0]);
+    cont.insert(integers[1]);
+    cont.insert(integers[2]);
     
     SECTION("Copy")
     {
-        pTK::Container tmp = cont;
-
-        int i = 0;
+        pTK::Container<int> tmp = cont;
+        
+        unsigned int i = 0;
         bool equal = true;
-        tmp.for_each([&](const std::shared_ptr<pTK::Widget>& widget){
-            if (widgets[i] != widget)
+        tmp.forEach([&](const int& integer){
+            if (integers[i] != integer)
                 equal = false;
             i++;
         });
         
-        REQUIRE(tmp.count() == cont.count());
-        REQUIRE(i == cont.count());
+        REQUIRE(tmp.size() == cont.size());
+        REQUIRE(i == cont.size());
         REQUIRE(equal == true);
     }
     
     SECTION("Assignment")
     {
-        pTK::Container tmp;
+        pTK::Container<int> tmp;
         tmp = cont;
         
-        int i = 0;
+        unsigned int i = 0;
         bool equal = true;
-        tmp.for_each([&](const std::shared_ptr<pTK::Widget>& widget){
-            if (widgets[i] != widget)
+        tmp.forEach([&](const int& integer){
+            if (integers[i] != integer)
                 equal = false;
             i++;
         });
         
-        REQUIRE(tmp.count() == cont.count());
-        REQUIRE(i == cont.count());
+        REQUIRE(tmp.size() == cont.size());
+        REQUIRE(i == cont.size());
         REQUIRE(equal == true);
     }
 }
 
-TEST_CASE ("Container Comparison")
+TEST_CASE ("Comparison")
 {
     // Testing Transformable Comparison.
-    pTK::Container cont;
-    std::shared_ptr<pTK::Widget> widgets[3];
+    pTK::Container<int> cont;
+    int integers[3];
+    integers[0] = 1;
+    integers[1] = 2;
+    integers[2] = 3;
     
-    widgets[0] = std::make_shared<pTK::Widget>();
-    widgets[1] = std::make_shared<pTK::Widget>();
-    widgets[2] = std::make_shared<pTK::Widget>();
+    cont.insert(integers[0]);
+    cont.insert(integers[1]);
+    cont.insert(integers[2]);
     
-    cont.add(widgets[0]);
-    cont.add(widgets[1]);
-    cont.add(widgets[2]);
-    
-    pTK::Container tmp = cont;
-    pTK::Container tmp2;
-    pTK::Container tmp3;
-    tmp3.add(widgets[0]);
-    pTK::Container tmp4;
-    tmp4.add(widgets[0]);
+    pTK::Container<int> tmp = cont;
+    pTK::Container<int> tmp2;
+    pTK::Container<int> tmp3;
+    tmp3.insert(integers[0]);
+    pTK::Container<int> tmp4;
+    tmp4.insert(integers[0]);
     
     SECTION("Equal")
     {
