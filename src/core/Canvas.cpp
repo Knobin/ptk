@@ -21,7 +21,7 @@ namespace pTK
 {
     Canvas::Canvas(const Vec2u& size)
         : NonMovable(), NonCopyable(), m_context{nullptr}, m_surface{nullptr}, m_canvas{nullptr}, m_info{},
-            m_colorType{}, m_size{size}, m_dpiScale{1.0f, 1.0f}
+            m_colorType{}, m_size{size}
     {
         auto interface = GrGLMakeNativeInterface();
         m_context.reset(GrContext::MakeGL(interface).release());
@@ -37,7 +37,6 @@ namespace pTK
             m_colorType = kBGRA_8888_SkColorType;
             
         resize(size);
-        PTK_ASSERT(m_surface, "Failed to create surface!");
     }
     
     Canvas::~Canvas()
@@ -54,8 +53,7 @@ namespace pTK
         delete m_surface;
         m_surface = SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, nullptr).release();
         
-        if (m_surface == nullptr)
-            throw std::logic_error("Skia error");
+        PTK_ASSERT(m_surface, "Failed to create surface!");
         
         // Save Canvas for rendering.
         m_canvas = m_surface->getCanvas();
@@ -88,16 +86,6 @@ namespace pTK
     const Vec2u& Canvas::getSize() const
     {
         return m_size;
-    }
-    
-    void Canvas::setDPIScale(const Vec2f& scale)
-    {
-        m_dpiScale = scale;
-    }
-    
-    const Vec2f& Canvas::getDPIScale() const
-    {
-        return m_dpiScale;
     }
     
     // Functions for converting utility classes to SkPoint for drawing.

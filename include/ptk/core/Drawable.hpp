@@ -33,7 +33,7 @@ namespace pTK
          
          @param canvas   SkCanvas to draw to.
          */
-        virtual void onDraw(const Canvas&) {}
+        virtual void onDraw(SkCanvas*) {}
         
         void show()
         {

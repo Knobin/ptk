@@ -16,23 +16,20 @@ namespace pTK
     {
     }
     
-    void Rectangle::onDraw(const Canvas& canvas)
+    void Rectangle::onDraw(SkCanvas* canvas)
     {
-        SkCanvas* skCanvas = canvas.skCanvas();
-        Vec2f dpiScale{canvas.getDPIScale()};
-        
         // Set Size and Position
-        SkPoint pos{convertToSkPoint(getPosition(), dpiScale)};
-        SkPoint size{convertToSkPoint(getSize(), dpiScale)};
+        SkPoint pos{convertToSkPoint(getPosition())};
+        SkPoint size{convertToSkPoint(getSize())};
         size += pos; // skia needs the size to be pos+size.
         
         // Outline
         float outlineThickness = getOutlineThickness();
         float halfOutlineThickness = outlineThickness/2;
-        pos.fX += halfOutlineThickness*dpiScale.x;
-        pos.fY += halfOutlineThickness*dpiScale.y;
-        size.fX -= halfOutlineThickness*dpiScale.x;
-        size.fY -= halfOutlineThickness*dpiScale.y;
+        pos.fX += halfOutlineThickness;
+        pos.fY += halfOutlineThickness;
+        size.fX -= halfOutlineThickness;
+        size.fY -= halfOutlineThickness;
         
         // Set Color
         SkPaint paint;
@@ -43,13 +40,13 @@ namespace pTK
         // Draw Rect
         SkRect rect;
         rect.set(pos, size);
-        paint.setStrokeWidth(outlineThickness*dpiScale.x);
+        paint.setStrokeWidth(outlineThickness);
         if (outlineThickness > 0.0f)
             paint.setStyle(SkPaint::kFill_Style);
         else
             paint.setStyle(SkPaint::kStrokeAndFill_Style);
         
-        skCanvas->drawRoundRect(rect, m_cornerRadius*dpiScale.x, m_cornerRadius*dpiScale.y, paint);
+        canvas->drawRoundRect(rect, m_cornerRadius, m_cornerRadius, paint);
         
         if (outlineThickness > 0.0f)
         {
@@ -57,7 +54,7 @@ namespace pTK
             Color outColor = getOutlineColor();
             paint.setARGB(outColor.a, outColor.r, outColor.g, outColor.b);
             paint.setStyle(SkPaint::kStroke_Style);
-            skCanvas->drawRoundRect(rect, m_cornerRadius*dpiScale.x, m_cornerRadius*dpiScale.y, paint);
+            canvas->drawRoundRect(rect, m_cornerRadius, m_cornerRadius, paint);
         }
     }
     

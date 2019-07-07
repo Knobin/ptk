@@ -75,7 +75,7 @@ namespace pTK
          
          Derived from Drawable.
          */
-        void onDraw(const Canvas& canvas) override;
+        void onDraw(SkCanvas* canvas) override;
         
     private:
         std::string m_fontName;

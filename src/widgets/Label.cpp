@@ -74,11 +74,8 @@ namespace pTK
         setSizeHint(Size(bounds.width(), bounds.height())); // This will call redraw.
     }
     
-    void Label::onDraw(const Canvas& canvas)
+    void Label::onDraw(SkCanvas* canvas)
     {
-        SkCanvas* skCanvas = canvas.skCanvas();
-        Vec2f dpiScale{canvas.getDPIScale()};
-        
         // Set Color.
         SkPaint paint;
         paint.setAntiAlias(true);
@@ -89,28 +86,28 @@ namespace pTK
         if (m_fontName == "")
             font = SkFont(SkTypeface::MakeDefault(), m_fontSize);
         else
-            font = SkFont(SkTypeface::MakeFromName(m_fontName.c_str(), SkFontStyle::Normal()), m_fontSize*dpiScale.x);
+            font = SkFont(SkTypeface::MakeFromName(m_fontName.c_str(), SkFontStyle::Normal()), m_fontSize);
         
         // Calculate Bounds and Position.
         SkRect bounds;
         font.measureText(m_text.c_str(), m_text.size(), SkTextEncoding::kUTF8, &bounds);
-        SkPoint pos{convertToSkPoint(getPosition(), dpiScale)};
+        SkPoint pos{convertToSkPoint(getPosition())};
         
         // Outline
         float outlineThickness = getOutlineThickness();
-        paint.setStrokeWidth(outlineThickness*dpiScale.x);
+        paint.setStrokeWidth(outlineThickness);
         if (outlineThickness > 0.0f)
         {
             float halfOutlineThickness = outlineThickness/2;
-            pos.fX += halfOutlineThickness*dpiScale.x;
-            pos.fY += halfOutlineThickness*dpiScale.y;
+            pos.fX += halfOutlineThickness;
+            pos.fY += halfOutlineThickness;
             paint.setStyle(SkPaint::kFill_Style);
         }else
         {
             paint.setStyle(SkPaint::kStrokeAndFill_Style);
         }
         
-        skCanvas->drawString(m_text.c_str(), pos.fX + (-1*bounds.x()), pos.fY + (-1*bounds.y()), font, paint);
+        canvas->drawString(m_text.c_str(), pos.fX + (-1*bounds.x()), pos.fY + (-1*bounds.y()), font, paint);
         
         if (outlineThickness > 0.0f)
         {
@@ -118,7 +115,7 @@ namespace pTK
             Color outColor = getOutlineColor();
             paint.setARGB(outColor.a, outColor.r, outColor.g, outColor.b);
             paint.setStyle(SkPaint::kStroke_Style);
-            skCanvas->drawString(m_text.c_str(), pos.fX + (-1*bounds.x()), pos.fY + (-1*bounds.y()), font, paint);
+            canvas->drawString(m_text.c_str(), pos.fX + (-1*bounds.x()), pos.fY + (-1*bounds.y()), font, paint);
         }
     }
 }

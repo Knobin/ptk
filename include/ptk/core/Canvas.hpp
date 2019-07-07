@@ -77,17 +77,6 @@ namespace pTK
          */
         const Vec2u& getSize() const;
         
-        /** Function for setting the DPI scale.
-         
-         @param scale   x and y scale
-         */
-        void setDPIScale(const Vec2f& scale);
-        
-        /** Function for retrieving the DPI scale.
-         
-         @param scale   x and y scale
-         */
-        const Vec2f& getDPIScale() const;
     private:
         // Skia
         std::shared_ptr<GrContext> m_context;
@@ -96,7 +85,6 @@ namespace pTK
         GrGLFramebufferInfo m_info;
         SkColorType m_colorType;
         Vec2u m_size;
-        Vec2f m_dpiScale;
     };
     
     

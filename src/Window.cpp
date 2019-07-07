@@ -50,7 +50,6 @@ namespace pTK
             glfwTerminate();
             throw std::logic_error("Failed to create Canvas.");
         }
-        m_drawCanvas->setDPIScale(m_scale);
         
         // Set pointer for use in callbacks;
         glfwSetWindowUserPointer(m_window, this);
@@ -146,10 +145,12 @@ namespace pTK
 
     void Window::draw()
     {
+        SkMatrix matrix;
         m_drawCanvas->clear();
-        
+        matrix.setScale(m_scale.x, m_scale.y);
+        m_drawCanvas->skCanvas()->setMatrix(matrix);
         for_each([&](const std::shared_ptr<Widget>& widget){
-            widget->onDraw(*m_drawCanvas);
+            widget->onDraw(m_drawCanvas->skCanvas());
         });
         m_drawCanvas->skCanvas()->flush();
         
