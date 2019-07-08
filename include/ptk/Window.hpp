@@ -11,7 +11,7 @@
 // Local Headers
 #include "ptk/util/NonMovable.hpp"
 #include "ptk/util/NonCopyable.hpp"
-#include "ptk/core/Container.hpp"
+#include "ptk/core/Box.hpp"
 #include "ptk/core/Canvas.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/util/Vec2.hpp"
@@ -25,20 +25,20 @@
 
 namespace pTK
 {
-    class Window : public Container, public NonMovable, public NonCopyable
+    class Window : public Box, public NonMovable, public NonCopyable
     {
     public:
+        Window() = delete;
         Window(const std::string& name, uint width, uint height);
         virtual ~Window();
 
         // Size
         Vec2u getContentSize() const;
         const Vec2f& getDPIScale() const;
-        const Size& getSize() const;
-        void setSizeHint(const Size& size) const;
+        void setSizeHint(const Size& size) override;
         void setMinSizeHint(const Size& size);
-        void setMaxSizeHint(const Size& size);
         const Size& getMinSize() const;
+        void setMaxSizeHint(const Size& size);
         const Size& getMaxSize() const;
         
         // Close
@@ -50,7 +50,7 @@ namespace pTK
         void hide();
         
         // Widget handling
-        void add(const std::shared_ptr<Widget>& widget) override;
+        bool add(const std::shared_ptr<Widget>& widget) override;
         
         // Event
         void pollEvents();
@@ -60,8 +60,6 @@ namespace pTK
     private:
         // Window
         GLFWwindow* m_window;
-        std::string m_name;
-        Size m_size;
         Size m_minSize;
         Size m_maxSize;
         Vec2f m_scale;
@@ -81,9 +79,19 @@ namespace pTK
         void handleMouseEvent(Event* event);
         void handleWindowEvent(Event* event);
         
-        void draw();
+        /** Draw function.
+         
+         Derived from Drawable.
+         */
+        void onDraw(SkCanvas*) override;
+        
         void resize(unsigned int width, unsigned int height);
         void swapBuffers();
+        
+        // Hide functions
+        void setPosHint(const Position&) override {}
+        using Widget::setParent;
+        using Widget::getParent;
     };
 }
 

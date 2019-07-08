@@ -20,24 +20,24 @@
 namespace pTK
 {
     Window::Window(const std::string& name, uint width, uint height)
-        : Container(), NonMovable(), NonCopyable(), m_window{nullptr}, m_name{name}, m_size{(float)width, (float)height},
-            m_minSize{0.0f, 0.0f}, m_maxSize{0.0f, 0.0f}, m_scale{1.0f, 1.0f}, m_drawCanvas{nullptr}, m_events{}
+        : Box(), NonMovable(), NonCopyable(),
+            m_window{nullptr}, m_minSize{0.0f, 0.0f}, m_maxSize{0.0f, 0.0f}, m_scale{1.0f, 1.0f},
+                m_drawCanvas{nullptr}, m_events{}
     {
+        // Set Widget properties.
+        Widget::setSizeHint({(float)width, (float)height});
+        setName(name);
+        
         initGLFW();
 
         // Create Window.
         m_window = glfwCreateWindow((int)width, (int)height, name.c_str(), nullptr, nullptr);
-        if (m_window == nullptr)
-        {
-            glfwTerminate();
-            throw std::logic_error("Failed to create GLFW Window.");
-        }
-        
+        PTK_ASSERT(m_window, "[Window] Failed to create GLFW Window");
         PTK_INFO("[Window] Created with {0:d}x{1:d}", (int)width, (int)height);
         
         // Get Monitor Scale
         glfwGetWindowContentScale(m_window, &m_scale.x, &m_scale.y);
-        PTK_INFO("[Window] Monitor scale is {0:f}x{1:f}", m_scale.x, m_scale.y);
+        PTK_INFO("[Window] Monitor scale is {0:0.2f}x{1:0.2f}", m_scale.x, m_scale.y);
         
         // Bind context.
         glfwMakeContextCurrent(m_window);
@@ -45,15 +45,10 @@ namespace pTK
         // Init Canvas
         Vec2u fbSize = getContentSize();
         m_drawCanvas = new Canvas(fbSize);
-        if (m_drawCanvas == nullptr)
-        {
-            glfwTerminate();
-            throw std::logic_error("Failed to create Canvas.");
-        }
+        PTK_ASSERT(m_drawCanvas, "[Window] Failed to create Canvas");
         
-        // Set pointer for use in callbacks;
+        // Set Callbacks
         glfwSetWindowUserPointer(m_window, this);
-        
         setWindowCallbacks();
         setMouseCallbacks();
         setKeyCallbacks();
@@ -143,17 +138,17 @@ namespace pTK
         glfwTerminate();
     }
 
-    void Window::draw()
+    void Window::onDraw(SkCanvas*)
     {
-        SkMatrix matrix;
+        SkCanvas* canvas = m_drawCanvas->skCanvas();
         m_drawCanvas->clear();
+        SkMatrix matrix;
         matrix.setScale(m_scale.x, m_scale.y);
-        m_drawCanvas->skCanvas()->setMatrix(matrix);
-        for_each([&](const std::shared_ptr<Widget>& widget){
-            widget->onDraw(m_drawCanvas->skCanvas());
+        canvas->setMatrix(matrix);
+        forEach([&](const std::shared_ptr<Widget>& widget){
+            widget->onDraw(canvas);
         });
-        m_drawCanvas->skCanvas()->flush();
-        
+        canvas->flush();
         swapBuffers();
     }
     
@@ -190,12 +185,7 @@ namespace pTK
         return m_scale;
     }
     
-    const Size& Window::getSize() const
-    {
-        return m_size;
-    }
-    
-    void Window::setSizeHint(const Size& size) const
+    void Window::setSizeHint(const Size& size)
     {
         // TODO: Some checking in layout to confirm if size change
         // is doable.
@@ -246,8 +236,7 @@ namespace pTK
     void Window::resize(unsigned int width, unsigned int height)
     {
         // Set Window Size.
-        m_size.width = width;
-        m_size.height = height;
+        Widget::setSizeHint({(float)width, (float)height});
         
         // Set Framebuffer Size.
         Vec2u fbSize = getContentSize();
@@ -269,22 +258,25 @@ namespace pTK
     }
     
     // Widget handling
-    void Window::add(const std::shared_ptr<Widget>& widget)
+    bool Window::add(const std::shared_ptr<Widget>& widget)
     {
         // This will be replaced in the future.
         // Currently just for testing.
-        if (insert_widget(widget))
+        if (Box::add(widget))
         {
             uint width = 0;
             uint height = 0;
-            for_each([&width, &height](const std::shared_ptr<Widget>& widget){
+            forEach([&width, &height](const std::shared_ptr<Widget>& widget){
                 height += widget->getSize().height;
                 width = (width < widget->getSize().width) ? widget->getSize().width : width;
             });
             widget->setPosHint({0, height - widget->getSize().height});
             PTK_INFO("[Window] resized to {0:d}x{1:d}", width, height);
             setSizeHint(Size(width, height));
+            return true;
         }
+        
+        return false;
     }
     
     // Event
@@ -342,21 +334,17 @@ namespace pTK
         EventType type = event->type();
         if (type == EventType::MouseMoved)
         {
-            ; // MotionEvent* m_event = (MotionEvent*)event;
-            // TODO: Send MotionEvent to Layout
+            MotionEvent* mEvent = (MotionEvent*)event;
+            handleHoverEvent(mEvent->getPos());
         } else if (type == EventType::MouseButtonPressed || type == EventType::MouseButtonReleased)
         {
             ButtonEvent* bEvent = (ButtonEvent*)event;
-            Position clickPos{bEvent->getPos()};
-            auto bWidget = rfind_if(clickPos);
-            if (bWidget != nullptr)
-            {
-                EventType type = bEvent->type();
-                if (type == EventType::MouseButtonPressed)
-                    bWidget->handleClickEvent(bEvent->getButton(), clickPos);
-                else if (type == EventType::MouseButtonReleased)
-                    bWidget->handleReleaseEvent(bEvent->getButton(), clickPos);
-            }
+            Position pos{bEvent->getPos()};
+            MouseButton btn = bEvent->getButton();
+            if (type == EventType::MouseButtonPressed)
+                handleClickEvent(btn, pos);
+            else if (type == EventType::MouseButtonReleased)
+                handleReleaseEvent(btn, pos);
         }
     }
 
@@ -365,8 +353,7 @@ namespace pTK
         EventType type = event->type();
         if (type == EventType::WindowDraw)
         {
-            //PTK_INFO("[Window] Draw");
-            draw();
+            onDraw(nullptr);
         }
         else if (type == EventType::WindowResize)
         {
