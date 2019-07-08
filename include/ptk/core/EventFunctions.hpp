@@ -30,10 +30,15 @@ namespace pTK
          */
         virtual bool onKeyEvent(EventType, int32) { return true; }
         
+        /** Function for handling when mouse is hovering.
+         
+         */
+        virtual bool onHoverEvent(const Position&) { return true; }
+        
         /** Function for handling when mouse is entering.
          
          */
-        virtual bool onHoverEvent() { return true; }
+        virtual bool onEnterEvent() { return true; }
         
         /** Function for handling when mouse is leaving.
          

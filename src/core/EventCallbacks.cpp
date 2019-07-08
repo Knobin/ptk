@@ -21,9 +21,14 @@ namespace pTK
         m_keyCallback = callback;
     }
     
-    void EventCallbacks::onHover(const std::function<bool()>& callback)
+    void EventCallbacks::onHover(const std::function<bool(const Position&)>& callback)
     {
         m_hoverCallback = callback;
+    }
+    
+    void EventCallbacks::onEnter(const std::function<bool()>& callback)
+    {
+        m_enterCallback = callback;
     }
     
     void EventCallbacks::onLeave(const std::function<bool()>& callback)

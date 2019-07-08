@@ -25,11 +25,20 @@ namespace pTK
         return rValue;
     }
     
-    bool EventHandling::handleHoverEvent()
+    bool EventHandling::handleHoverEvent(const Position& pos)
     {
-        bool rValue = onHoverEvent();
+        bool rValue = onHoverEvent(pos);
         if (m_hoverCallback != nullptr)
-            rValue |= m_hoverCallback();
+            rValue |= m_hoverCallback(pos);
+        
+        return rValue;
+    }
+    
+    bool EventHandling::handleEnterEvent()
+    {
+        bool rValue = onEnterEvent();
+        if (m_enterCallback != nullptr)
+            rValue |= m_enterCallback();
         
         return rValue;
     }

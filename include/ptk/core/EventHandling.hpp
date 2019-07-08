@@ -38,6 +38,15 @@ namespace pTK
          */
         bool handleKeyEvent(EventType type, int32 keycode);
         
+        /** Function for handling when mouse is hovering.
+         
+         This function will call two other functions to handle the event.
+         One for the user to bind to and one for derived classes to handle
+         the event internally.
+         
+         */
+        bool handleHoverEvent(const Position&);
+        
         /** Function for handling when mouse is entering.
          
          This function will call two other functions to handle the event.
@@ -45,7 +54,7 @@ namespace pTK
          the event internally.
          
          */
-        bool handleHoverEvent();
+        bool handleEnterEvent();
         
         /** Function for handling when mouse is leaving.
          
