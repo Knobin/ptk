@@ -86,7 +86,6 @@ namespace pTK
         
         // Keep these private, for internal use.
         using Widget::setSizeHint;
-        using Widget::setMinSizeHint;
     };
 }
 

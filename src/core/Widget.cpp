@@ -7,7 +7,6 @@
 
 // Local Headers
 #include "ptk/core/Widget.hpp"
-#include "ptk/core/Container.hpp"
 #include "ptk/Log.hpp"
 
 namespace pTK
@@ -17,12 +16,12 @@ namespace pTK
     {
     }
     
-    void Widget::setParent(Container* parent)
+    void Widget::setParent(Widget* parent)
     {
         m_parent = parent;
     }
     
-    Container* Widget::getParent() const
+    Widget* Widget::getParent() const
     {
         return m_parent;
     }
@@ -31,18 +30,6 @@ namespace pTK
     {
         m_size = size;
         redraw();
-    }
-    
-    void Widget::setMinSizeHint(const Size& size)
-    {
-        m_minSize = size;
-        notifyParent();
-    }
-    
-    void Widget::setMaxSizeHint(const Size& size)
-    {
-        m_maxSize = size;
-        notifyParent();
     }
     
     void Widget::setPosHint(const Position& pos)
@@ -54,16 +41,6 @@ namespace pTK
     const Size& Widget::getSize() const
     {
         return m_size;
-    }
-    
-    const Size& Widget::getMinSize() const
-    {
-        return m_minSize;
-    }
-    
-    const Size& Widget::getMaxSize() const
-    {
-        return m_maxSize;
     }
     
     const Position& Widget::getPosition() const
@@ -81,20 +58,17 @@ namespace pTK
         return m_name;
     }
     
-    bool Widget::redraw() const
+    bool Widget::redrawChild(Widget*)
+    {
+        return true;
+    }
+    
+    bool Widget::redraw()
     {
         if (m_parent != nullptr)
             return m_parent->redrawChild(this);
         
         return false;
-    }
-    
-    bool Widget::notifyParent() const
-    {
-        if (m_parent != nullptr)
-            return m_parent->verifyChild(this);
-        
-        return true;
     }
     
     // Comparison operators.

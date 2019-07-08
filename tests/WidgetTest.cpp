@@ -22,8 +22,6 @@ TEST_CASE("Constructors")
         pTK::Size cSize{0, 0};
         pTK::Position cPos{0, 0};
         REQUIRE(t.getSize() == cSize);
-        REQUIRE(t.getMinSize() == cSize);
-        REQUIRE(t.getMaxSize() == cSize);
         REQUIRE(t.getPosition() == cPos);
     }
 }
@@ -39,33 +37,6 @@ TEST_CASE("Getters and Setters")
         pTK::Widget t;
         t.setSizeHint(cSize);
         REQUIRE(t.getSize() == cSize);
-    }
-    
-    SECTION("setMinSizeHint(const Size& size)")
-    {
-        pTK::Widget t;
-        t.setMinSizeHint(cSize);
-        REQUIRE(t.getMinSize() == cSize);
-    }
-    
-    SECTION("setMaxSizeHint(const Size& size)")
-    {
-        pTK::Widget t;
-        t.setMaxSizeHint(cSize);
-        REQUIRE(t.getMaxSize() == cSize);
-    }
-    
-    SECTION("Size, minSize and maxSize")
-    {
-        pTK::Widget t;
-        pTK::Size cMinSize{25, 55};
-        pTK::Size cMaxSize{95, 35};
-        t.setSizeHint(cSize);
-        t.setMinSizeHint(cMinSize);
-        t.setMaxSizeHint(cMaxSize);
-        REQUIRE(t.getSize() == cSize);
-        REQUIRE(t.getMinSize() == cMinSize);
-        REQUIRE(t.getMaxSize() == cMaxSize);
     }
     
     SECTION("setPosHint(const Position& pos)")
@@ -92,16 +63,12 @@ TEST_CASE("Copy and Assignment")
     pTK::Position cPos{430, 1050};
     pTK::Widget t;
     t.setSizeHint(cSize);
-    t.setMinSizeHint(cMinSize);
-    t.setMaxSizeHint(cMaxSize);
     t.setPosHint(cPos);
     
     SECTION("Copy")
     {
         pTK::Widget tmp = t;
         REQUIRE(t.getSize() == cSize);
-        REQUIRE(t.getMinSize() == cMinSize);
-        REQUIRE(t.getMaxSize() == cMaxSize);
         REQUIRE(t.getPosition() == cPos);
     }
     
@@ -110,8 +77,6 @@ TEST_CASE("Copy and Assignment")
         pTK::Widget tmp;
         tmp = t;
         REQUIRE(t.getSize() == cSize);
-        REQUIRE(t.getMinSize() == cMinSize);
-        REQUIRE(t.getMaxSize() == cMaxSize);
         REQUIRE(t.getPosition() == cPos);
     }
 }

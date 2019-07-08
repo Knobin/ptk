@@ -19,8 +19,6 @@
 
 namespace pTK
 {
-    class Container;
-    
     /** Widget class implementation.
      
      This class is low level class for widget, that
@@ -40,55 +38,31 @@ namespace pTK
          
          @param parent  the parent Container
          */
-        void setParent(Container* parent);
+        void setParent(Widget* parent);
         
         /** Function for retrieving the Container parent of the Widget.
          
          @return  the Container parent of the Widget
          */
-        Container* getParent() const;
+        Widget* getParent() const;
         
         /** Function for requesting the size of the Widget.
          
          @param size  requested size of the Widget.
          */
-        void setSizeHint(const Size& size);
-        
-        /** Function for requesting the minimal size of the Widget.
-         
-         @param size  requested size of the Widget.
-         */
-        void setMinSizeHint(const Size& size);
-        
-        /** Function for requesting the maximal size of the Widget.
-         
-         @param size  requested size of the Widget.
-         */
-        void setMaxSizeHint(const Size& size);
+        virtual void setSizeHint(const Size& size);
         
         /** Function for requesting the position of the Widget.
          
          @param pos  requested position of the Widget.
          */
-        void setPosHint(const Position& pos);
+        virtual void setPosHint(const Position& pos);
         
         /** Function for retrieving the current size of the Widget.
          
          @return  current size
          */
         const Size& getSize() const;
-        
-        /** Function for retrieving the current minimal size of the Widget.
-         
-         @return  current minimal size
-         */
-        const Size& getMinSize() const;
-        
-        /** Function for retrieving the current maximal size of the Widget.
-         
-         @return  current maximal size
-         */
-        const Size& getMaxSize() const;
         
         /** Function for retrieving the current position of the Widget.
          
@@ -108,12 +82,16 @@ namespace pTK
          */
         const std::string& getName() const;
         
+    protected:
+        /** Function for redrawing the child.
+         
+         */
+        virtual bool redrawChild(Widget*);
+        
     private:
-        Container* m_parent;
+        Widget* m_parent;
         
         Size m_size;
-        Size m_minSize;
-        Size m_maxSize;
         Position m_pos;
         
         std::string m_name;
@@ -121,13 +99,7 @@ namespace pTK
         /** Function for notifying the parent of a change and
             put it on an internal render queue.
          */
-        bool redraw() const;
-        
-        /** Function for notifying the parent of a change.
-         True will be returned if the change was accepted by
-         the parent.
-         */
-        bool notifyParent() const;
+        bool redraw();
     };
     
     // Comparison operators.
