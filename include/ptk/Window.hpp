@@ -11,7 +11,7 @@
 // Local Headers
 #include "ptk/util/NonMovable.hpp"
 #include "ptk/util/NonCopyable.hpp"
-#include "ptk/core/Box.hpp"
+#include "ptk/widgets/VBox.hpp"
 #include "ptk/core/Canvas.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/util/Vec2.hpp"
@@ -25,7 +25,7 @@
 
 namespace pTK
 {
-    class Window : public Box, public NonMovable, public NonCopyable
+    class Window : public VBox, public NonMovable, public NonCopyable
     {
     public:
         Window() = delete;
@@ -33,7 +33,7 @@ namespace pTK
         virtual ~Window();
 
         // Size
-        Vec2u getContentSize() const;
+        Size getContentSize() const;
         const Vec2f& getDPIScale() const;
         void setSizeHint(const Size& size) override;
         void setMinSizeHint(const Size& size);
@@ -48,9 +48,6 @@ namespace pTK
         // Visible
         void show();
         void hide();
-        
-        // Widget handling
-        bool add(const std::shared_ptr<Widget>& widget) override;
         
         // Event
         void pollEvents();
@@ -75,15 +72,12 @@ namespace pTK
         void setKeyCallbacks();
         
         // Event processing
-        void handleKeyEvent(Event* event);
+        void handleKeyboardEvent(Event* event);
         void handleMouseEvent(Event* event);
         void handleWindowEvent(Event* event);
         
-        /** Draw function.
-         
-         Derived from Drawable.
-         */
-        void onDraw(SkCanvas*) override;
+        void onDraw(SkCanvas* canvas) override;
+        bool drawChild(Widget* widget) override;
         
         void resize(unsigned int width, unsigned int height);
         void swapBuffers();

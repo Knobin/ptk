@@ -20,7 +20,7 @@
 namespace pTK
 {
     Window::Window(const std::string& name, uint width, uint height)
-        : Box(), NonMovable(), NonCopyable(),
+        : VBox(), NonMovable(), NonCopyable(),
             m_window{nullptr}, m_minSize{0.0f, 0.0f}, m_maxSize{0.0f, 0.0f}, m_scale{1.0f, 1.0f},
                 m_drawCanvas{nullptr}, m_events{}
     {
@@ -43,8 +43,7 @@ namespace pTK
         glfwMakeContextCurrent(m_window);
 
         // Init Canvas
-        Vec2u fbSize = getContentSize();
-        m_drawCanvas = new Canvas(fbSize);
+        m_drawCanvas = new Canvas(getContentSize());
         PTK_ASSERT(m_drawCanvas, "[Window] Failed to create Canvas");
         
         // Set Callbacks
@@ -137,19 +136,28 @@ namespace pTK
         delete m_drawCanvas;
         glfwTerminate();
     }
-
-    void Window::onDraw(SkCanvas*)
+    
+    void Window::onDraw(SkCanvas* canvas)
     {
-        SkCanvas* canvas = m_drawCanvas->skCanvas();
-        m_drawCanvas->clear();
+        Color color = getBackground();
+        m_drawCanvas->clear(color);
         SkMatrix matrix;
         matrix.setScale(m_scale.x, m_scale.y);
         canvas->setMatrix(matrix);
-        forEach([&](const std::shared_ptr<Widget>& widget){
-            widget->onDraw(canvas);
-        });
+        drawWidgets(canvas);
         canvas->flush();
         swapBuffers();
+    }
+    
+    bool Window::drawChild(Widget* widget)
+    {
+        if (find(widget) != end())
+        {
+            sendEvent(new Event(EventCategory::Window, EventType::WindowDraw));
+            return true;
+        }
+        
+        return false;
     }
     
     void Window::pollEvents()
@@ -172,12 +180,12 @@ namespace pTK
     }
     
     // Size
-    Vec2u Window::getContentSize() const
+    Size Window::getContentSize() const
     {
         int width, height;
         glfwGetFramebufferSize(m_window, &width, &height);
         
-        return Vec2u(width, height);
+        return Size(width, height);
     }
     
     const Vec2f& Window::getDPIScale() const
@@ -239,7 +247,7 @@ namespace pTK
         Widget::setSizeHint({(float)width, (float)height});
         
         // Set Framebuffer Size.
-        Vec2u fbSize = getContentSize();
+        Size fbSize = getContentSize();
         if (fbSize != m_drawCanvas->getSize())
             m_drawCanvas->resize(fbSize);
         
@@ -255,28 +263,6 @@ namespace pTK
     void Window::hide()
     {
         glfwHideWindow(m_window);
-    }
-    
-    // Widget handling
-    bool Window::add(const std::shared_ptr<Widget>& widget)
-    {
-        // This will be replaced in the future.
-        // Currently just for testing.
-        if (Box::add(widget))
-        {
-            uint width = 0;
-            uint height = 0;
-            forEach([&width, &height](const std::shared_ptr<Widget>& widget){
-                height += widget->getSize().height;
-                width = (width < widget->getSize().width) ? widget->getSize().width : width;
-            });
-            widget->setPosHint({0, height - widget->getSize().height});
-            PTK_INFO("[Window] resized to {0:d}x{1:d}", width, height);
-            setSizeHint(Size(width, height));
-            return true;
-        }
-        
-        return false;
     }
     
     // Event
@@ -314,7 +300,7 @@ namespace pTK
             if (event->category() == EventCategory::Window)
                 handleWindowEvent(event);
             else if (event->category() == EventCategory::Key)
-                handleKeyEvent(event);
+                handleKeyboardEvent(event);
             else if (event->category() == EventCategory::Mouse)
                 handleMouseEvent(event);
             
@@ -323,10 +309,10 @@ namespace pTK
     }
 
     // Event processing
-    void Window::handleKeyEvent(Event* t_event)
+    void Window::handleKeyboardEvent(Event* t_event)
     {
-        KeyEvent* event = (KeyEvent*)t_event;
-        PTK_INFO("Key {0}: {1:d}", (event->type() == EventType::KeyPressed) ? "pressed" : "released",event->get_keycode());
+        KeyEvent* kEvent = (KeyEvent*)t_event;
+        handleKeyEvent(kEvent->type(), kEvent->get_keycode());
     }
 
     void Window::handleMouseEvent(Event* event)
@@ -353,7 +339,7 @@ namespace pTK
         EventType type = event->type();
         if (type == EventType::WindowDraw)
         {
-            onDraw(nullptr);
+            onDraw(m_drawCanvas->skCanvas());
         }
         else if (type == EventType::WindowResize)
         {
