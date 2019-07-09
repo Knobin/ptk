@@ -38,6 +38,11 @@ namespace pTK
          @param window  start window
          */
         int exec(Window* window);
+        
+        // TODO: Menubar
+        // TODO: Thread safe option
+        // TODO: Support multiple windows
+        // TODO: window id
     };
 }
 

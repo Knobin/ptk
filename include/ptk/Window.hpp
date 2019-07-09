@@ -15,10 +15,12 @@
 #include "ptk/core/Canvas.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/util/Vec2.hpp"
+#include "ptk/util/SafeQueue.hpp"
 
 // C++ Headers
 #include <string>
-#include <queue>
+#include <thread>
+#include <atomic>
 
 // GLFW Headers
 #include <GLFW/glfw3.h>
@@ -61,7 +63,9 @@ namespace pTK
         Size m_maxSize;
         Vec2f m_scale;
         Canvas* m_drawCanvas;
-        std::queue<Event*> m_events;
+        SafeQueue<Event*> m_events;
+        std::thread m_handleThread;
+        std::atomic<bool> m_runThreads;
 
         // Init Functions
         void initGLFW();
@@ -79,7 +83,7 @@ namespace pTK
         void onDraw(SkCanvas* canvas) override;
         bool drawChild(Widget* widget) override;
         
-        void resize(unsigned int width, unsigned int height);
+        void resize(const Vec2u& wSize, const Vec2u& cSize);
         void swapBuffers();
         
         // Hide functions

@@ -22,7 +22,7 @@ namespace pTK
     Window::Window(const std::string& name, uint width, uint height)
         : VBox(), NonMovable(), NonCopyable(),
             m_window{nullptr}, m_minSize{0.0f, 0.0f}, m_maxSize{0.0f, 0.0f}, m_scale{1.0f, 1.0f},
-                m_drawCanvas{nullptr}, m_events{}
+                m_drawCanvas{nullptr}, m_events{}, m_handleThread{}, m_runThreads{false}
     {
         // Set Widget properties.
         Widget::setSizeHint({(float)width, (float)height});
@@ -39,18 +39,24 @@ namespace pTK
         glfwGetWindowContentScale(m_window, &m_scale.x, &m_scale.y);
         PTK_INFO("[Window] Monitor scale is {0:0.2f}x{1:0.2f}", m_scale.x, m_scale.y);
         
-        // Bind context.
-        glfwMakeContextCurrent(m_window);
-
-        // Init Canvas
-        m_drawCanvas = new Canvas(getContentSize());
-        PTK_ASSERT(m_drawCanvas, "[Window] Failed to create Canvas");
-        
         // Set Callbacks
         glfwSetWindowUserPointer(m_window, this);
         setWindowCallbacks();
         setMouseCallbacks();
         setKeyCallbacks();
+        
+        // Start Event handler thread
+        m_runThreads = true;
+        m_handleThread = std::thread([&](){
+            // Bind context.
+            glfwMakeContextCurrent(m_window);
+            
+            // Init Canvas
+            m_drawCanvas = new Canvas(getContentSize());
+            PTK_ASSERT(m_drawCanvas, "[Window] Failed to create Canvas");
+            
+            handleEvents();
+        });
     }
     
     // Init Functions
@@ -72,7 +78,9 @@ namespace pTK
         // void window_size_callback(GLFWwindow* window, int width, int height)
         glfwSetWindowSizeCallback(m_window, [](GLFWwindow* t_window, int t_width, int t_height){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
-            window->sendEvent(new ResizeEvent((unsigned int)t_width, (unsigned int)t_height));
+            Vec2u windowSize{(uint)t_width, (uint)t_height};
+            Size contentSize = window->getContentSize();
+            window->sendEvent(new ResizeEvent(windowSize, {(uint)contentSize.width, (uint)contentSize.height}));
         });
         
         // void window_close_callback(GLFWwindow* window)
@@ -133,6 +141,9 @@ namespace pTK
 
     Window::~Window()
     {
+        sendEvent(new Event(EventCategory::NONE, EventType::NONE));
+        m_runThreads = false;
+        m_handleThread.join();
         delete m_drawCanvas;
         glfwTerminate();
     }
@@ -241,13 +252,13 @@ namespace pTK
         glfwSetWindowShouldClose(m_window, GLFW_TRUE);
     }
 
-    void Window::resize(unsigned int width, unsigned int height)
+    void Window::resize(const Vec2u& wSize, const Vec2u& cSize)
     {
         // Set Window Size.
-        Widget::setSizeHint({(float)width, (float)height});
+        Widget::setSizeHint({(float)wSize.x, (float)wSize.y});
         
         // Set Framebuffer Size.
-        Size fbSize = getContentSize();
+        Size fbSize{static_cast<float>(cSize.x), static_cast<float>(cSize.y)};
         if (fbSize != m_drawCanvas->getSize())
             m_drawCanvas->resize(fbSize);
         
@@ -284,16 +295,7 @@ namespace pTK
      */
     void Window::handleEvents()
     {
-        uint eventCount = m_events.size();
-        
-        // Until drawing is fully set up, we send a draw event.
-        /*if (eventCount != 0)
-        {
-            eventCount++;
-            sendEvent(new Event(EventCategory::Window, EventType::WindowDraw));
-        }*/
-        
-        for (uint i{0}; i < eventCount; i++)
+        while (m_runThreads)
         {
             Event* event = m_events.front();
             m_events.pop();
@@ -345,7 +347,7 @@ namespace pTK
         else if (type == EventType::WindowResize)
         {
             ResizeEvent* rEvent = (ResizeEvent*)event;
-            resize(rEvent->getWidth(), rEvent->getHeight());
+            resize(rEvent->getSize(), rEvent->getContentSize());
         }
     }
 }

@@ -19,10 +19,9 @@ namespace pTK
     Application::Application(int argc, char *argv[])
         : NonMovable(), NonCopyable()
     {
-        std::cout << "Arguments:\n";
         for (int i = 0; i < argc; i++)
         {
-            std::cout << i << ": " << argv[i] << "\n";
+            ; PTK_INFO("[Application] {0}: {1}", i, argv[i]);
         }
     }
 
@@ -37,7 +36,6 @@ namespace pTK
         {
             // Events
             window->pollEvents();
-            window->handleEvents();
 
             // Should not really be here, since we are waiting for events.
             std::this_thread::sleep_for(std::chrono::milliseconds(32));
