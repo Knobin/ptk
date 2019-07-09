@@ -23,7 +23,7 @@ namespace pTK
             Size size = getSize();
             Position pos = getPosition();
             uint cellCount = m_layoutData.size();
-            Size cellSize = {size.width, (size.height/2)};
+            Size cellSize = {size.width, (size.height/cellCount)};
             
             Size minLayoutSize{};
             m_layoutData.forEach([&minLayoutSize](const layoutData& data){

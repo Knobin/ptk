@@ -10,6 +10,7 @@
 #include "ptk/events/KeyEvent.hpp"
 #include "ptk/events/MouseEvent.hpp"
 #include "ptk/events/WindowEvent.hpp"
+#include "ptk/util/Semaphore.hpp"
 #include "ptk/Log.hpp"
 
 // C++ Headers
@@ -46,17 +47,26 @@ namespace pTK
         setKeyCallbacks();
         
         // Start Event handler thread
+        Semaphore sema(0);
         m_runThreads = true;
         m_handleThread = std::thread([&](){
             // Bind context.
             glfwMakeContextCurrent(m_window);
             
             // Init Canvas
-            m_drawCanvas = new Canvas(getContentSize());
+            Size wSize = getSize();
+            Vec2f wScale = getDPIScale();
+            m_drawCanvas = new Canvas(Size(wSize.width*wScale.x, wSize.height*wScale.y));
             PTK_ASSERT(m_drawCanvas, "[Window] Failed to create Canvas");
+            
+            // Init finished
+            sema.up();
             
             handleEvents();
         });
+        
+        // Wait for m_handleThread to init.
+        sema.down();
     }
     
     // Init Functions
