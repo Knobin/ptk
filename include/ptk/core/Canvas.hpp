@@ -14,6 +14,7 @@
 #include "ptk/util/Vec2.hpp"
 #include "ptk/util/Position.hpp"
 #include "ptk/util/Size.hpp"
+#include "ptk/util/Color.hpp"
 
 // C++ Headers
 #include <memory>
@@ -44,7 +45,7 @@ namespace pTK
          
          @return    default initialized Canvas
          */
-        Canvas(const Vec2u& size);
+        Canvas(const Size& size);
         ~Canvas();
         
         /** Function for resizing the Canvas.
@@ -52,12 +53,13 @@ namespace pTK
          @param width   New width of canvas
          @param width   New height of canvas
          */
-        void resize(const Vec2u& size);
+        void resize(const Size& size);
         
         /** Function for clearing the Canvas.
          
+         @param color   Clear color
          */
-        void clear();
+        void clear(const Color& color);
         
         /** Function for retrieving the SkCanvas of the Canvas.
          
@@ -75,7 +77,7 @@ namespace pTK
          
          @return    size of canvas
          */
-        const Vec2u& getSize() const;
+        const Size& getSize() const;
         
     private:
         // Skia
@@ -84,7 +86,7 @@ namespace pTK
         SkCanvas* m_canvas;
         GrGLFramebufferInfo m_info;
         SkColorType m_colorType;
-        Vec2u m_size;
+        Size m_size;
     };
     
     

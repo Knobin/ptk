@@ -19,7 +19,7 @@
 
 namespace pTK
 {
-    Canvas::Canvas(const Vec2u& size)
+    Canvas::Canvas(const Size& size)
         : NonMovable(), NonCopyable(), m_context{nullptr}, m_surface{nullptr}, m_canvas{nullptr}, m_info{},
             m_colorType{}, m_size{size}
     {
@@ -44,11 +44,11 @@ namespace pTK
         delete m_surface;
     }
     
-    void Canvas::resize(const Vec2u& size)
+    void Canvas::resize(const Size& size)
     {
-        glViewport(0, 0, size.x, size.y);
+        glViewport(0, 0, size.width, size.height);
         
-        GrBackendRenderTarget backendRenderTarget(size.x, size.y, 0, 0, m_info);
+        GrBackendRenderTarget backendRenderTarget(size.width, size.height, 0, 0, m_info);
         
         delete m_surface;
         m_surface = SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, nullptr).release();
@@ -59,18 +59,12 @@ namespace pTK
         m_canvas = m_surface->getCanvas();
         m_size = size;
         
-        clear();
-        
-        PTK_INFO("[Canvas] Created with {0:d}x{1:d}", size.x, size.y);
+        PTK_INFO("[Canvas] Created with {0}x{1}", size.width, size.height);
     }
     
-    void Canvas::clear()
+    void Canvas::clear(const Color& color)
     {
-        m_canvas->clear(SkColorSetARGB(255, 245, 245, 245));
-        
-        glClearColor(0.96f, 0.96f, 0.96f, 1.0f);
-        glClearStencil(0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        m_canvas->clear(SkColorSetARGB(255, color.r, color.g, color.b));
     }
     
     SkCanvas* Canvas::skCanvas() const
@@ -83,7 +77,7 @@ namespace pTK
         return m_surface;
     }
     
-    const Vec2u& Canvas::getSize() const
+    const Size& Canvas::getSize() const
     {
         return m_size;
     }
