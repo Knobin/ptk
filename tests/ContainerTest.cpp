@@ -66,6 +66,45 @@ TEST_CASE("Access")
     pTK::Container<int> cont{1, 2, 3, 4, 5};
     pTK::Container<int> emptyContainer{};
     
+    SECTION("At")
+    {
+        REQUIRE(cont.at(0) == 1);
+        REQUIRE(cont.at(1) == 2);
+        REQUIRE(cont.at(2) == 3);
+        REQUIRE(cont.at(3) == 4);
+        REQUIRE(cont.at(4) == 5);
+        
+        REQUIRE_THROWS(cont.at(-1));
+        REQUIRE_THROWS(cont.at(5));
+    }
+    
+    SECTION("const T operator[]")
+    {
+        REQUIRE(cont[0] == 1);
+        REQUIRE(cont[1] == 2);
+        REQUIRE(cont[2] == 3);
+        REQUIRE(cont[3] == 4);
+        REQUIRE(cont[4] == 5);
+        
+        REQUIRE_THROWS(cont[-1]);
+        REQUIRE_THROWS(cont[5]);
+    }
+    
+    SECTION("T& operator[]")
+    {
+        pTK::Container<int> cont2{1, 2, 3, 4, 5};
+        cont2[0] = 11;
+        cont2[4] = 51;
+        REQUIRE(cont2[0] == 11);
+        REQUIRE(cont2[1] == 2);
+        REQUIRE(cont2[2] == 3);
+        REQUIRE(cont2[3] == 4);
+        REQUIRE(cont2[4] == 51);
+        
+        REQUIRE_THROWS(cont[-1] = -1);
+        REQUIRE_THROWS(cont[5] = -5);
+    }
+    
     SECTION("Front")
     {
         REQUIRE(cont.front() == 1);

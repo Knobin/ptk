@@ -141,6 +141,32 @@ namespace pTK
             return m_holder.at(index);
         }
         
+        /** Operator for retrieving the element at the index in the Container.
+         
+         @param index   Index
+         @return        element in Container
+         */
+        const T operator[](uint index) const
+        {
+            if (index < 0 || index >= size())
+                throw std::out_of_range("Index is out of range!");
+            
+            return m_holder[index];
+        }
+        
+        /** Operator for retrieving the element at the index in the Container.
+         
+         @param index   Index
+         @return        element in Container
+         */
+        T& operator[](uint index)
+        {
+            if (index < 0 || index >= size())
+                throw std::out_of_range("Index is out of range!");
+            
+            return m_holder[index];
+        }
+        
         /** Function for retrieving the size of the Container.
          
          */
