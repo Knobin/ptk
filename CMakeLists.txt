@@ -14,6 +14,10 @@ else()
     set(PTK_BUILD_TYPE "Release")
 endif()
 
+# Options
+option(BUILD_TESTS "Build test programs" OFF)
+option(BUILD_EXAMPLES "Build example programs" ON)
+
 # Source files
 file(GLOB_RECURSE SOURCE_FILES
         ${CMAKE_SOURCE_DIR}/src/*.cpp)
@@ -55,8 +59,12 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/spdlog)
 target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
 
 # Example
-add_subdirectory(${CMAKE_SOURCE_DIR}/example)
+if (BUILD_EXAMPLES)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/example)
+endif (BUILD_EXAMPLES)
 
 # Tests
+if (BUILD_TESTS)
 enable_testing()
-add_subdirectory(${CMAKE_SOURCE_DIR}/tests)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/tests)
+endif (BUILD_TESTS)
