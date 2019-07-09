@@ -29,13 +29,13 @@ namespace pTK
     void Widget::setSizeHint(const Size& size)
     {
         m_size = size;
-        redraw();
+        draw();
     }
     
     void Widget::setPosHint(const Position& pos)
     {
         m_pos = pos;
-        redraw();
+        draw();
     }
     
     const Size& Widget::getSize() const
@@ -58,15 +58,15 @@ namespace pTK
         return m_name;
     }
     
-    bool Widget::redrawChild(Widget*)
+    bool Widget::drawChild(Widget*)
     {
         return true;
     }
     
-    bool Widget::redraw()
+    bool Widget::draw()
     {
         if (m_parent != nullptr)
-            return m_parent->redrawChild(this);
+            return m_parent->drawChild(this);
         
         return false;
     }

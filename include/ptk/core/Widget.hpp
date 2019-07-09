@@ -86,7 +86,12 @@ namespace pTK
         /** Function for redrawing the child.
          
          */
-        virtual bool redrawChild(Widget*);
+        virtual bool drawChild(Widget*);
+        
+        /** Function for notifying the parent of a change and
+         put it on an internal render queue.
+         */
+        bool draw();
         
     private:
         Widget* m_parent;
@@ -95,11 +100,6 @@ namespace pTK
         Position m_pos;
         
         std::string m_name;
-        
-        /** Function for notifying the parent of a change and
-            put it on an internal render queue.
-         */
-        bool redraw();
     };
     
     // Comparison operators.
