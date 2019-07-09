@@ -36,7 +36,7 @@ if (EXISTS ${SKIA_SDK}/out/${PTK_BUILD_TYPE}/libskia.a)
     message(STATUS "Skia build type: ${PTK_BUILD_TYPE}")
     target_link_libraries(${PROJECT_NAME} ${SKIA_SDK}/out/${PTK_BUILD_TYPE}/libskia.a)
 else()
-    message(FATAL_ERROR "Skia is not found for build type: ${PTK_BUILD_TYPE}")
+    message(FATAL_ERROR "pTK does not yet support dynamic linking of skia")
 endif()
 
 # OpenGL
