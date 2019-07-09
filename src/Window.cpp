@@ -252,6 +252,7 @@ namespace pTK
             m_drawCanvas->resize(fbSize);
         
         // TODO: Resize the widgets
+        sendEvent(new Event(EventCategory::Window, EventType::WindowDraw));
     }
     
     // Visible
@@ -286,11 +287,11 @@ namespace pTK
         uint eventCount = m_events.size();
         
         // Until drawing is fully set up, we send a draw event.
-        if (eventCount != 0)
+        /*if (eventCount != 0)
         {
             eventCount++;
             sendEvent(new Event(EventCategory::Window, EventType::WindowDraw));
-        }
+        }*/
         
         for (uint i{0}; i < eventCount; i++)
         {

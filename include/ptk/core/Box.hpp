@@ -173,7 +173,7 @@ namespace pTK
         
     private:
         // These functions will not be used outside of this class.
-        using ContainerType::insert;
+        using ContainerType::push;
         using ContainerType::erase;
         
         // Variables

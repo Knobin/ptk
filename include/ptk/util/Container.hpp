@@ -13,8 +13,8 @@
 
 // C++ Headers
 #include <vector>
-#include <utility>
 #include <functional>
+#include <algorithm>
 
 namespace pTK
 {
@@ -51,7 +51,7 @@ namespace pTK
         Container(T item)
             : m_holder{}
         {
-            insert(item);
+            push(item);
         }
         
         /** Constructs Container with default values with list.
@@ -59,12 +59,11 @@ namespace pTK
          @return    default initialized Container
          */
         Container(std::initializer_list<T> list)
-        : m_holder{}
+            : m_holder{}
         {
-            for (T item : list)
-            {
-                insert(item);
-            }
+            reserve(list.size());
+            for (const T& item : list)
+                push(item);
         }
         
         /** Constructs Container with default values with Container.
@@ -73,9 +72,9 @@ namespace pTK
          */
         Container(const Container& rhs)
         {
-            rhs.forEach([&](const T& item){
-                insert(item);
-            });
+            reserve(rhs.size());
+            for (auto it{rhs.cbegin()}; it != rhs.cend(); it++)
+                push((*it));
         }
         
         ~Container() = default;
@@ -90,9 +89,9 @@ namespace pTK
             if (this == &rhs)
                 return *this;
             
-            rhs.forEach([&](const T& item){
-                insert(item);
-            });
+            reserve(rhs.size());
+            for (auto it{rhs.cbegin()}; it != rhs.cend(); it++)
+                push((*it));
             
             return *this;
         }
@@ -101,9 +100,28 @@ namespace pTK
          
          @param item        item to add
          */
-        void insert(const T& item)
+        void push(const T& item)
         {
             m_holder.push_back(item);
+        }
+        
+        /** Function for inserting an element to the Container.
+         
+         @param item        item to add
+         */
+        void push(T&& item)
+        {
+            m_holder.push_back(std::forward<T>(item));
+        }
+        
+        /** Function for inserting an element to the Container.
+         
+         @param item        item to add
+         */
+        template<typename ...Args>
+        void emplace(Args&&... args)
+        {
+            m_holder.emplace_back(std::forward<Args>(args)...);
         }
         
         /** Function for removing an element from the Container.
@@ -114,7 +132,7 @@ namespace pTK
         {
             const_iterator it = find(item);
             
-            if (it != end())
+            if (it != cend())
                 m_holder.erase(it);
         }
         
@@ -124,7 +142,7 @@ namespace pTK
          */
         void erase(const_iterator it)
         {
-            if (it != end())
+            if (it != cend())
                 m_holder.erase(it);
         }
         
@@ -133,7 +151,7 @@ namespace pTK
          @param index   Index
          @return        element in Container
          */
-        T at(uint index) const
+        const T& at(uint index) const
         {
             if (index < 0 || index >= size())
                 throw std::out_of_range("Index is out of range!");
@@ -141,12 +159,35 @@ namespace pTK
             return m_holder.at(index);
         }
         
+        /** Function for retrieving the element at the index in the Container.
+         
+         @param index   Index
+         @return        element in Container
+         */
+        T& at(uint index)
+        {
+            if (index < 0 || index >= size())
+                throw std::out_of_range("Index is out of range!");
+            
+            return m_holder.at(index);
+        }
+        
+        /** Function for retrieving the element at the index in the Container.
+         
+         @param count   count to reserve
+         @return        element in Container
+         */
+        void reserve(uint count)
+        {
+            m_holder.reserve(count);
+        }
+        
         /** Operator for retrieving the element at the index in the Container.
          
          @param index   Index
          @return        element in Container
          */
-        const T operator[](uint index) const
+        const T& operator[](uint index) const
         {
             if (index < 0 || index >= size())
                 throw std::out_of_range("Index is out of range!");
@@ -191,7 +232,7 @@ namespace pTK
          
          @return    first element in Container
          */
-        T front() const
+        const T& front() const
         {
             return m_holder.front();
         }
@@ -203,7 +244,31 @@ namespace pTK
          
          @return    last element in container
          */
-        T back() const
+        const T& back() const
+        {
+            return m_holder.back();
+        }
+        
+        /** Function for retrieving the first element in the container.
+         
+         Should in no circumstances be called when the container is empty!
+         This is considered to be undefined behavior!
+         
+         @return    first element in Container
+         */
+        T& front()
+        {
+            return m_holder.front();
+        }
+        
+        /** Function for retrieving the last element in the container.
+         
+         Should in no circumstances be called when the container is empty!
+         This is considered to be undefined behavior!
+         
+         @return    last element in container
+         */
+        T& back()
         {
             return m_holder.back();
         }

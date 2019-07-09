@@ -2,6 +2,7 @@
 #include "catch2/catch.hpp"
 
 #include "ptk/util/Container.hpp"
+#include <iostream>
 
 TEST_CASE("Constructors")
 {
@@ -32,28 +33,49 @@ TEST_CASE("Constructors")
     }
 }
 
-TEST_CASE("Insert and Remove")
+TEST_CASE("push and Remove")
 {
-    // Testing insert and Remove.
+    // Testing push and Remove.
     pTK::Container<int> cont;
     int integer = 5;
     
-    SECTION("insert(const std::shared_ptr<Widget>& widget)")
+    SECTION("push")
     {
-        cont.insert(integer);
+        cont.push(integer);
         REQUIRE(cont.size() == 1);
+        REQUIRE(cont.at(0) == 5);
     }
     
-    SECTION("erase(const std::shared_ptr<Widget>& widget)")
+    SECTION("emplace")
     {
+        struct test
+        {
+            int x;
+            int copy;
+            
+            test(int y, int c) : x{y}, copy{c} {}
+            test(const test& item) : x{item.x}, copy{item.copy} { copy++; }
+        };
+        pTK::Container<test> contTest;
+        contTest.reserve(5);
+        contTest.emplace(test(55, 0));
+        REQUIRE(contTest.size() == 1);
+        REQUIRE(contTest.at(0).x == 55);
+        REQUIRE(contTest.at(0).copy == 1);
+    }
+    
+    SECTION("erase")
+    {
+        cont.push(integer);
+        REQUIRE(cont.size() == 1);
         cont.erase(integer);
         REQUIRE(cont.size() == 0);
     }
     
-    SECTION("Duplicates on insert")
+    SECTION("Duplicates on push")
     {
-        cont.insert(integer);
-        cont.insert(integer);
+        cont.push(integer);
+        cont.push(integer);
         
         // Container allows duplicates.
         REQUIRE(cont.size() == 2);
@@ -177,9 +199,9 @@ TEST_CASE("forEach")
     integers[1] = 2;
     integers[2] = 3;
     
-    cont.insert(integers[0]);
-    cont.insert(integers[1]);
-    cont.insert(integers[2]);
+    cont.push(integers[0]);
+    cont.push(integers[1]);
+    cont.push(integers[2]);
     
     int i = 0;
     cont.forEach([&](const int& integer){
@@ -197,9 +219,9 @@ TEST_CASE("Copy and Assignment")
     integers[1] = 2;
     integers[2] = 3;
     
-    cont.insert(integers[0]);
-    cont.insert(integers[1]);
-    cont.insert(integers[2]);
+    cont.push(integers[0]);
+    cont.push(integers[1]);
+    cont.push(integers[2]);
     
     SECTION("Copy")
     {
@@ -246,16 +268,16 @@ TEST_CASE ("Comparison")
     integers[1] = 2;
     integers[2] = 3;
     
-    cont.insert(integers[0]);
-    cont.insert(integers[1]);
-    cont.insert(integers[2]);
+    cont.push(integers[0]);
+    cont.push(integers[1]);
+    cont.push(integers[2]);
     
     pTK::Container<int> tmp = cont;
     pTK::Container<int> tmp2;
     pTK::Container<int> tmp3;
-    tmp3.insert(integers[0]);
+    tmp3.push(integers[0]);
     pTK::Container<int> tmp4;
-    tmp4.insert(integers[0]);
+    tmp4.push(integers[0]);
     
     SECTION("Equal")
     {

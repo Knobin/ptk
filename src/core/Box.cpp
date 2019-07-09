@@ -21,8 +21,8 @@ namespace pTK
     {
         if (ContainerType::find(widget) == end())
         {
-            insert(widget);
-            m_layoutData.insert({widget.get(), widget->getSize(), widget->getPosition()});
+            push(widget);
+            m_layoutData.push({widget.get(), widget->getSize(), widget->getPosition()});
             widget->setParent(this);
             return true;
         }
