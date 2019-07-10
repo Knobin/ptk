@@ -26,6 +26,12 @@ namespace pTK
     public:
         /** Constructs Event with default values.
          
+         @return        default initialized Transformable
+         */
+        Application();
+        
+        /** Constructs Event with default values.
+         
          @param argc    argument count
          @param argv    arguments
          @return        default initialized Transformable

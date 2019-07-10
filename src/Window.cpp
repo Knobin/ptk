@@ -34,7 +34,7 @@ namespace pTK
         // Create Window.
         m_window = glfwCreateWindow((int)width, (int)height, name.c_str(), nullptr, nullptr);
         PTK_ASSERT(m_window, "[Window] Failed to create GLFW Window");
-        PTK_INFO("[Window] Created with {0:d}x{1:d}", (int)width, (int)height);
+        PTK_INFO("[Window] GLFW Window Created with {0:d}x{1:d}", (int)width, (int)height);
         
         // Get Monitor Scale
         glfwGetWindowContentScale(m_window, &m_scale.x, &m_scale.y);
@@ -50,6 +50,7 @@ namespace pTK
         Semaphore sema(0);
         m_runThreads = true;
         m_handleThread = std::thread([&](){
+            PTK_INFO("[Window] Event Thread Started");
             // Bind context.
             glfwMakeContextCurrent(m_window);
             
@@ -60,13 +61,17 @@ namespace pTK
             PTK_ASSERT(m_drawCanvas, "[Window] Failed to create Canvas");
             
             // Init finished
+            PTK_INFO("[Window] Event Thread Initialized");
             sema.up();
             
             handleEvents();
+            
+            PTK_INFO("[Window] Event Thread Ended");
         });
         
         // Wait for m_handleThread to init.
         sema.down();
+        PTK_INFO("[Window] Initialization finished");
     }
     
     // Init Functions
@@ -132,8 +137,6 @@ namespace pTK
                 window->sendEvent(new ButtonEvent(EventType::MouseButtonPressed, button, xpos, ypos));
             else if (t_action == GLFW_RELEASE)
                 window->sendEvent(new ButtonEvent(EventType::MouseButtonReleased, button, xpos, ypos));
-            
-            PTK_INFO("[Window] Cursor {0} at {1:d}x{2:d}", (t_action == GLFW_PRESS) ? "click" : "release", (int)xpos, (int)ypos);
         });
     }
     
@@ -151,11 +154,11 @@ namespace pTK
 
     Window::~Window()
     {
-        sendEvent(new Event(EventCategory::NONE, EventType::NONE));
-        m_runThreads = false;
         m_handleThread.join();
+        PTK_INFO("[Window] Event Thread joined");
         delete m_drawCanvas;
         glfwTerminate();
+        PTK_INFO("[Window] Destructed");
     }
     
     void Window::onDraw(SkCanvas* canvas)
@@ -172,7 +175,7 @@ namespace pTK
     
     bool Window::drawChild(Widget* widget)
     {
-        if (find(widget) != end())
+        if (find(widget) != cend())
         {
             sendEvent(new Event(EventCategory::Window, EventType::WindowDraw));
             return true;
@@ -251,15 +254,10 @@ namespace pTK
         return (bool)glfwWindowShouldClose(m_window);
     }
     
-    /** This function will let GLFW know that we want to close the window.
-        GLFW will then call the user definable callback window_close_callback().
-        This function will send a WindowClose Event that can be handled in
-        handleWindowEvent(). The event is not needed to catch or handle. just
-        a way to potentially cleanup before the destructor is called.
-     */
     void Window::close()
     {
         glfwSetWindowShouldClose(m_window, GLFW_TRUE);
+        sendEvent(new Event(EventCategory::Window, EventType::WindowClose));
     }
 
     void Window::resize(const Vec2u& wSize, const Vec2u& cSize)
@@ -290,19 +288,11 @@ namespace pTK
     // Event
     void Window::sendEvent(Event* event)
     {
+        PTK_ASSERT(event, "Event is nullptr");
         if (event != nullptr)
             m_events.push(event);
     }
     
-    /** User events can push more events to the queue when
-     handling current events and make the queue larger.
-     Therefore, we only handle the current events in the
-     queue and handle events pushed in the loop in the
-     next time we handle events.
-     By doing this, we will avoid processing events forever,
-     if the user accidentally pushes events in a non ending
-     loop or creates a non ending loop.
-     */
     void Window::handleEvents()
     {
         while (m_runThreads)
@@ -358,6 +348,9 @@ namespace pTK
         {
             ResizeEvent* rEvent = (ResizeEvent*)event;
             resize(rEvent->getSize(), rEvent->getContentSize());
+        }else if (type == EventType::WindowClose)
+        {
+            m_runThreads = false;
         }
     }
 }

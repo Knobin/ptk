@@ -16,20 +16,22 @@
 
 namespace pTK
 {
-    Application::Application(int argc, char *argv[])
+    Application::Application()
         : NonMovable(), NonCopyable()
     {
-        for (int i = 0; i < argc; i++)
-        {
-            ; PTK_INFO("[Application] {0}: {1}", i, argv[i]);
-        }
+    }
+    
+    Application::Application(int, char* [])
+        : NonMovable(), NonCopyable()
+    {
+        // TODO: Check arguments.
     }
 
     int Application::exec(pTK::Window* window)
     {
-        window->show();
+        PTK_ASSERT(window, "Window is nullptr");
         
-        Time time;
+        window->show();
         
         // Render loop.
         while (!window->shouldClose())
@@ -37,12 +39,11 @@ namespace pTK
             // Events
             window->pollEvents();
 
-            // Should not really be here, since we are waiting for events.
+            // To lower cpu usage, we wait.
             std::this_thread::sleep_for(std::chrono::milliseconds(32));
-            
-            //PTK_INFO("loop time: {0:d}ms", time.milliseconds());
-            time.reset();
         }
+        
+        window->hide();
 
         return 0;
     }

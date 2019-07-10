@@ -151,7 +151,7 @@ namespace pTK
          @param index   Index
          @return        element in Container
          */
-        const T& at(uint index) const
+        const T& at(unsigned int index) const
         {
             if (index < 0 || index >= size())
                 throw std::out_of_range("Index is out of range!");
@@ -164,7 +164,7 @@ namespace pTK
          @param index   Index
          @return        element in Container
          */
-        T& at(uint index)
+        T& at(unsigned int index)
         {
             if (index < 0 || index >= size())
                 throw std::out_of_range("Index is out of range!");
@@ -177,7 +177,7 @@ namespace pTK
          @param count   count to reserve
          @return        element in Container
          */
-        void reserve(uint count)
+        void reserve(unsigned int count)
         {
             m_holder.reserve(count);
         }
@@ -187,7 +187,7 @@ namespace pTK
          @param index   Index
          @return        element in Container
          */
-        const T& operator[](uint index) const
+        const T& operator[](unsigned int index) const
         {
             if (index < 0 || index >= size())
                 throw std::out_of_range("Index is out of range!");
@@ -200,7 +200,7 @@ namespace pTK
          @param index   Index
          @return        element in Container
          */
-        T& operator[](uint index)
+        T& operator[](unsigned int index)
         {
             if (index < 0 || index >= size())
                 throw std::out_of_range("Index is out of range!");
@@ -211,7 +211,7 @@ namespace pTK
         /** Function for retrieving the size of the Container.
          
          */
-        uint size() const
+        unsigned int size() const
         {
             return m_holder.size();
         }
