@@ -20,67 +20,43 @@ namespace pTK
     {
         if (Box::add(widget))
         {
-            Size size = getSize();
+            Size boxSize = getSize();
             Position pos = getPosition();
-            uint cellCount = m_layoutData.size();
-            Size cellSize = {size.width, (size.height/cellCount)};
+            uint cellCount = size();
+            Size cellSize = {boxSize.width, (boxSize.height/cellCount)};
             
             Size minLayoutSize{};
-            m_layoutData.forEach([&minLayoutSize](const layoutData& data){
-                minLayoutSize.height += data.size.height;
-                minLayoutSize.width = (data.size.width > minLayoutSize.width) ? data.size.width : minLayoutSize.width;
+            forEach([&minLayoutSize](const Cell& cell){
+                Size cSize = cell.getMinSize();
+                minLayoutSize.height += cSize.height;
+                minLayoutSize.width = (cSize.width > minLayoutSize.width) ? cSize.width : minLayoutSize.width;
             });
             
-            // Widgets wont fit, resize VBox.
-            if ((minLayoutSize.width > size.width) || (minLayoutSize.height > size.height))
+            // Cells wont fit, resize VBox.
+            if ((minLayoutSize.width > boxSize.width) || (minLayoutSize.height > boxSize.height))
             {
                 setSize(minLayoutSize); // this will generate a Resize event.
-                for (auto it = m_layoutData.begin(); it != m_layoutData.end(); it++)
+                for (auto it = begin(); it != end(); it++)
                 {
-                    (*it).widget->setPosHint(pos);
-                    (*it).pos = pos;
-                    pos.y += (*it).size.height;
+                    Size cSize = it->getMinSize();
+                    it->setSize(Size(minLayoutSize.width, cSize.height));
+                    it->setPosHint(pos);
+                    pos.y += it->getSize().height;
                 }
                 
                 return true;
             }
             
-            // minCellSize required
-            Size minCell{};
-            m_layoutData.forEach([&minCell](const layoutData& data){
-                minCell.height = (data.size.height > minCell.height) ? data.size.height : minCell.height;
-                minCell.width = (data.size.width > minCell.width) ? data.size.width : minCell.width;
-            });
-            
-            if ((minCell.width > cellSize.width) || (minCell.height > cellSize.height))
+            // Set last inserted size. (it is smaller than other cells)
+            // No resize needed. only repositioning.
+            //float delta = minLayout
+            float delta = (boxSize.height - minLayoutSize.height) / cellCount;
+            for (auto it = begin(); it != end(); it++)
             {
-                Size newSize{minCell.width, minCell.height*cellCount};
-                setSize(newSize); // this will generate a Resize event.
-                Position wPos{pos};
-                for (auto it = m_layoutData.begin(); it != m_layoutData.end(); it++)
-                {
-                    Position offset{(minCell.width/2), (minCell.height/2)};
-                    offset.x -= ((*it).size.width/2);
-                    offset.y -= ((*it).size.height/2);
-                    Position newWidgetPosition = wPos + offset;
-                    (*it).widget->setPosHint(newWidgetPosition);
-                    (*it).pos = newWidgetPosition;
-                    pos.y += minCell.height;
-                }
-                
-                return true;
-            }
-            
-            // TODO: No resize needed. only repositioning.
-            for (auto it = m_layoutData.begin(); it != m_layoutData.end(); it++)
-            {
-                Position offset{(cellSize.width/2), (cellSize.height/2)};
-                offset.x -= ((*it).size.width/2);
-                offset.y -= ((*it).size.height/2);
-                Position newWidgetPosition{pos + offset};
-                (*it).widget->setPosHint(newWidgetPosition);
-                (*it).pos = newWidgetPosition;
-                pos.y += cellSize.height;
+                Size wMinSize = it->getMinSize();
+                it->setSize(Size(boxSize.width, wMinSize.height+delta));
+                it->setPosHint(pos);
+                pos.y += it->getSize().height;
             }
             
             draw();
@@ -92,34 +68,15 @@ namespace pTK
     
     bool VBox::drawChild(Widget* widget)
     {
-        Container<layoutData>::iterator it = m_layoutData.findIf([widget](const layoutData& data){
-            if (data.widget == widget)
+        iterator it = findIf([widget](const Cell& cell){
+            if (cell.getWidget().get() == widget)
                 return true;
             return false;
         });
-        if (it != m_layoutData.end())
+        if (it != end())
         {
-            // Position
-            if (widget->getPosition() != it->pos)
-                widget->setPosHint(it->pos);
-            
-            // Size
-            Size wSize = widget->getSize();
-            if (wSize != it->size)
-            {
-                it->size = wSize;
-                Size newSize;
-                for (const layoutData& data : m_layoutData)
-                {
-                    newSize.width = (data.size.width > newSize.width) ? data.size.width : newSize.width;
-                    newSize.height += data.size.height;
-                }
-                setSize(newSize);
-            }else
-            {
-                draw();
-            }
-            
+            it->drawChild(widget);
+            draw();
             return true;
         }
         
@@ -131,15 +88,35 @@ namespace pTK
         Position currentPos = getPosition();
         Position deltaPos = pos - currentPos;
         
-        for (auto it = m_layoutData.begin(); it != m_layoutData.end(); it++)
+        for (auto it = begin(); it != end(); it++)
         {
-            Position wPos = it->widget->getPosition();
+            Position wPos = it->getPosition();
             wPos += deltaPos;
-            it->pos = wPos;
-            it->widget->setPosHint(wPos);
+            it->setPosHint(wPos);
         }
         
         Widget::setPosHint(pos);
+    }
+    
+    void VBox::setSize(const Size& newSize)
+    {
+        uint cellCount = size();
+        Size currentBoxSize = getSize();
+        Size delta = (newSize - currentBoxSize);
+        delta.height /= cellCount;
+        
+        float height = 0;
+        for (auto it = begin(); it != end(); it++)
+        {
+            Size wSize = it->getSize();
+            it->setSize(Size(newSize.width, (wSize.height+delta.height)));
+            Position wPos = it->getPosition();
+            wPos.y += height;
+            it->setPosHint(wPos);
+            height += delta.height;
+        }
+        
+        Widget::setSize(newSize);
     }
 }
 

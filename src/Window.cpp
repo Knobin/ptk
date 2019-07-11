@@ -222,6 +222,7 @@ namespace pTK
         // TODO: Some checking in layout to confirm if size change
         // is doable.
         glfwSetWindowSize(m_window, size.width, size.height);
+        Widget::setSize(size);
     }
     
     void Window::setMinSize(const Size& size)
@@ -252,16 +253,14 @@ namespace pTK
 
     void Window::resize(const Vec2u& wSize, const Vec2u& cSize)
     {
-        // Set Window Size.
-        Widget::setSize({(float)wSize.x, (float)wSize.y});
-        
         // Set Framebuffer Size.
         Size fbSize{static_cast<float>(cSize.x), static_cast<float>(cSize.y)};
         if (fbSize != m_drawCanvas->getSize())
             m_drawCanvas->resize(fbSize);
         
         // TODO: Resize the widgets
-        sendEvent(new Event(EventCategory::Window, EventType::WindowDraw));
+        VBox::setSize(Size(wSize.x, wSize.y));
+        //sendEvent(new Event(EventCategory::Window, EventType::WindowDraw));
     }
     
     // Visible

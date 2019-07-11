@@ -25,6 +25,8 @@ namespace pTK
         bool drawChild(Widget* widget) override;
         
         void setPosHint(const Position& pos) override;
+        
+        void setSize(const Size& newSize) override;
     };
 }
 
