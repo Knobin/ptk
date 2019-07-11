@@ -30,6 +30,8 @@ namespace pTK
         
         void setPosHint(const Position& pos) override;
         
+        void setSize(const Size& size) override;
+        
         // Event handling
         
         /** Function for handling when a key is pressed or released.
@@ -87,6 +89,8 @@ namespace pTK
          */
         bool onReleaseEvent(MouseButton btn, const Position& pos) override;
     private:
+        void calculatePosition();
+        
         std::shared_ptr<Widget> m_widget;
         Size m_widgetSize;
         Position m_widgetPos;

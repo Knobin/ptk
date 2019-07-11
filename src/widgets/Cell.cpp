@@ -12,7 +12,7 @@
 namespace pTK
 {
     Cell::Cell()
-    : m_widget{nullptr}, m_widgetSize{}, m_widgetPos{}, m_clicked{false}, m_hover{false}
+        : m_widget{nullptr}, m_widgetSize{}, m_widgetPos{}, m_clicked{false}, m_hover{false}
     {
     }
     
@@ -23,6 +23,8 @@ namespace pTK
         m_widgetSize = widget->getSize();
         m_widgetPos = widget->getPosition();
         widget->setParent(this);
+        Widget::setSize(m_widgetSize);
+        setMinSize(m_widgetSize);
     }
     
     void Cell::setWidget(const std::shared_ptr<Widget>& widget)
@@ -76,6 +78,26 @@ namespace pTK
         m_widget->setPosHint(wPos);
         
         Widget::setPosHint(pos);
+    }
+    
+    void Cell::setSize(const Size& size)
+    {
+        // Set widget position. ( TODO: Align)
+        // We align center default.
+        Widget::setSize(size);
+        calculatePosition();
+    }
+    
+    void Cell::calculatePosition()
+    {
+        Size size = getSize();
+        Position currentPos = getPosition();
+        Size widgetSize = m_widget->getSize();
+        currentPos += Position{size.width/2, size.height/2};
+        currentPos -= Position{widgetSize.width/2, widgetSize.height/2};
+        currentPos.x = (currentPos.x < 0) ? 0 : currentPos.x;
+        currentPos.y = (currentPos.y < 0) ? 0 : currentPos.y;
+        m_widget->setPosHint(currentPos);
     }
     
     bool Cell::onClickEvent(MouseButton btn, const Position& pos)
