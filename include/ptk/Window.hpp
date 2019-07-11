@@ -37,11 +37,9 @@ namespace pTK
         // Size
         Size getContentSize() const;
         const Vec2f& getDPIScale() const;
-        void setSizeHint(const Size& size) override;
-        void setMinSizeHint(const Size& size);
-        const Size& getMinSize() const;
-        void setMaxSizeHint(const Size& size);
-        const Size& getMaxSize() const;
+        void setSize(const Size& size) override;
+        void setMinSize(const Size& size) override;
+        void setMaxSize(const Size& size) override;
         
         // Close
         bool shouldClose();

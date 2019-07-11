@@ -34,7 +34,7 @@ namespace pTK
             // Widgets wont fit, resize VBox.
             if ((minLayoutSize.width > size.width) || (minLayoutSize.height > size.height))
             {
-                setSizeHint(minLayoutSize); // this will generate a Resize event.
+                setSize(minLayoutSize); // this will generate a Resize event.
                 for (auto it = m_layoutData.begin(); it != m_layoutData.end(); it++)
                 {
                     (*it).widget->setPosHint(pos);
@@ -55,7 +55,7 @@ namespace pTK
             if ((minCell.width > cellSize.width) || (minCell.height > cellSize.height))
             {
                 Size newSize{minCell.width, minCell.height*cellCount};
-                setSizeHint(newSize); // this will generate a Resize event.
+                setSize(newSize); // this will generate a Resize event.
                 Position wPos{pos};
                 for (auto it = m_layoutData.begin(); it != m_layoutData.end(); it++)
                 {
@@ -114,7 +114,7 @@ namespace pTK
                     newSize.width = (data.size.width > newSize.width) ? data.size.width : newSize.width;
                     newSize.height += data.size.height;
                 }
-                setSizeHint(newSize);
+                setSize(newSize);
             }else
             {
                 draw();

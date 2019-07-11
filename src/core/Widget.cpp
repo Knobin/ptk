@@ -12,7 +12,7 @@
 namespace pTK
 {
     Widget::Widget()
-        : Drawable(), EventHandling(), m_parent{nullptr}, m_name{}
+        : Drawable(), EventHandling(), Sizable(), m_parent{nullptr}, m_name{}
     {
     }
     
@@ -26,9 +26,9 @@ namespace pTK
         return m_parent;
     }
     
-    void Widget::setSizeHint(const Size& size)
+    void Widget::setSize(const Size& size)
     {
-        m_size = size;
+        Sizable::setSize(size);
         draw();
     }
     
@@ -36,11 +36,6 @@ namespace pTK
     {
         m_pos = pos;
         draw();
-    }
-    
-    const Size& Widget::getSize() const
-    {
-        return m_size;
     }
     
     const Position& Widget::getPosition() const

@@ -11,7 +11,7 @@
 // Local Headers
 #include "ptk/core/Drawable.hpp"
 #include "ptk/core/EventHandling.hpp"
-#include "ptk/util/Size.hpp"
+#include "ptk/core/Sizable.hpp"
 #include "ptk/util/Position.hpp"
 
 // C++ Headers
@@ -24,7 +24,7 @@ namespace pTK
      This class is low level class for widget, that
      has the essential component for rendering.
      */
-    class Widget : public Drawable, public EventHandling
+    class Widget : public Drawable, public EventHandling, public Sizable
     {
     public:
         /** Constructs Event with default values.
@@ -47,22 +47,16 @@ namespace pTK
         Widget* getParent() const;
         
         /** Function for requesting the size of the Widget.
-         
-         @param size  requested size of the Widget.
-         */
-        virtual void setSizeHint(const Size& size);
+            
+            @param size  requested size of the Widget.
+        */
+        void setSize(const Size& size) override;
         
         /** Function for requesting the position of the Widget.
          
          @param pos  requested position of the Widget.
          */
         virtual void setPosHint(const Position& pos);
-        
-        /** Function for retrieving the current size of the Widget.
-         
-         @return  current size
-         */
-        const Size& getSize() const;
         
         /** Function for retrieving the current position of the Widget.
          
@@ -96,7 +90,6 @@ namespace pTK
     private:
         Widget* m_parent;
         
-        Size m_size;
         Position m_pos;
         
         std::string m_name;

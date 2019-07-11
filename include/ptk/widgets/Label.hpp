@@ -85,7 +85,7 @@ namespace pTK
         void calculateBounds();
         
         // Keep these private, for internal use.
-        using Widget::setSizeHint;
+        using Widget::setSize;
     };
 }
 

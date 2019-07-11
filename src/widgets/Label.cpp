@@ -67,7 +67,7 @@ namespace pTK
         
         SkRect bounds;
         font.measureText(m_text.c_str(), m_text.size(), SkTextEncoding::kUTF8, &bounds);
-        setSizeHint(Size(std::ceil(bounds.width()), std::ceil(bounds.height()))); // This will call redraw.
+        setSize(Size(std::ceil(bounds.width()), std::ceil(bounds.height()))); // This will call redraw.
     }
     
     void Label::onDraw(SkCanvas* canvas)

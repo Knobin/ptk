@@ -26,7 +26,7 @@ namespace pTK
                 m_drawCanvas{nullptr}, m_events{}, m_handleThread{}, m_runThreads{false}
     {
         // Set Widget properties.
-        Widget::setSizeHint({(float)width, (float)height});
+        Widget::setSize({(float)width, (float)height});
         setName(name);
         
         initGLFW();
@@ -217,35 +217,25 @@ namespace pTK
         return m_scale;
     }
     
-    void Window::setSizeHint(const Size& size)
+    void Window::setSize(const Size& size)
     {
         // TODO: Some checking in layout to confirm if size change
         // is doable.
         glfwSetWindowSize(m_window, size.width, size.height);
     }
     
-    void Window::setMinSizeHint(const Size& size)
+    void Window::setMinSize(const Size& size)
     {
         // TODO: Some checking in layout to confirm if min size
         // is doable. If not, set the lowest size doable instead.
         m_minSize = size;
     }
     
-    void Window::setMaxSizeHint(const Size& size)
+    void Window::setMaxSize(const Size& size)
     {
         // TODO: Some checking in layout to confirm if max size
         // is doable. If not, set the highest size doable instead.
         m_maxSize = size;
-    }
-    
-    const Size& Window::getMinSize() const
-    {
-        return m_minSize;
-    }
-    
-    const Size& Window::getMaxSize() const
-    {
-        return m_maxSize;
     }
 
     // Close
@@ -263,7 +253,7 @@ namespace pTK
     void Window::resize(const Vec2u& wSize, const Vec2u& cSize)
     {
         // Set Window Size.
-        Widget::setSizeHint({(float)wSize.x, (float)wSize.y});
+        Widget::setSize({(float)wSize.x, (float)wSize.y});
         
         // Set Framebuffer Size.
         Size fbSize{static_cast<float>(cSize.x), static_cast<float>(cSize.y)};

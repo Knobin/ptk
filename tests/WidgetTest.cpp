@@ -32,10 +32,10 @@ TEST_CASE("Getters and Setters")
     pTK::Size cSize{10, 20};
     pTK::Position cPos{55, 85};
     
-    SECTION("setSizeHint(const Size& size)")
+    SECTION("setSize(const Size& size)")
     {
         pTK::Widget t;
-        t.setSizeHint(cSize);
+        t.setSize(cSize);
         REQUIRE(t.getSize() == cSize);
     }
     
@@ -62,7 +62,7 @@ TEST_CASE("Copy and Assignment")
     pTK::Size cMaxSize{95, 35};
     pTK::Position cPos{430, 1050};
     pTK::Widget t;
-    t.setSizeHint(cSize);
+    t.setSize(cSize);
     t.setPosHint(cPos);
     
     SECTION("Copy")
@@ -91,12 +91,12 @@ TEST_CASE ("Comparison")
     pTK::Widget t;
     pTK::Widget t1;
     pTK::Widget t2;
-    t2.setSizeHint({42, 14});
+    t2.setSize({42, 14});
     pTK::Widget t3;
     t3.setPosHint({10, 20});
     pTK::Widget t4;
     t4.setPosHint({10, 20});
-    t4.setSizeHint({42, 14});
+    t4.setSize({42, 14});
     
     SECTION("Equal")
     {
