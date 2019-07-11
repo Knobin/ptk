@@ -10,7 +10,7 @@
 
 // Local Headers
 #include "ptk/util/Container.hpp"
-#include "ptk/core/Widget.hpp"
+#include "ptk/widgets/Cell.hpp"
 #include "ptk/util/Color.hpp"
 #include "ptk/Log.hpp"
 
@@ -20,7 +20,7 @@
 
 namespace pTK
 {
-    using ContainerType = Container<std::shared_ptr<Widget>>;
+    using ContainerType = Container<Cell>;
     
     /** Box class implementation.
      
@@ -163,14 +163,6 @@ namespace pTK
          */
         void drawWidgets(SkCanvas* canvas);
         
-        struct layoutData
-        {
-            Widget* widget;
-            Size size;
-            Position pos;
-        };
-        Container<layoutData> m_layoutData;
-        
     private:
         // These functions will not be used outside of this class.
         using ContainerType::push;
@@ -178,8 +170,8 @@ namespace pTK
         
         // Variables
         Color m_background;
-        std::shared_ptr<Widget> m_lastClickedWidget;
-        std::shared_ptr<Widget> m_currentHoverWidget;
+        Cell* m_lastClickedWidget;
+        Cell* m_currentHoverWidget;
     };
 }
 
