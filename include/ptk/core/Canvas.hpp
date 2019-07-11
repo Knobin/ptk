@@ -83,7 +83,7 @@ namespace pTK
     private:
         // Skia
         std::shared_ptr<GrContext> m_context;
-        SkSurface* m_surface;
+        sk_sp<SkSurface> m_surface;
         SkCanvas* m_canvas;
         GrGLFramebufferInfo m_info;
         SkColorType m_colorType;

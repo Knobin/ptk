@@ -41,7 +41,6 @@ namespace pTK
     
     Canvas::~Canvas()
     {
-        delete m_surface;
     }
     
     void Canvas::resize(const Size& size)
@@ -50,8 +49,7 @@ namespace pTK
         
         GrBackendRenderTarget backendRenderTarget(size.width, size.height, 0, 0, m_info);
         
-        delete m_surface;
-        m_surface = SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, nullptr).release();
+        m_surface = SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, nullptr);
         
         PTK_ASSERT(m_surface, "Failed to create surface!");
         
@@ -74,7 +72,7 @@ namespace pTK
     
     SkSurface* Canvas::skSurface() const
     {
-        return m_surface;
+        return m_surface.get();
     }
     
     const Size& Canvas::getSize() const
