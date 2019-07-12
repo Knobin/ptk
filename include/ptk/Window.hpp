@@ -52,7 +52,6 @@ namespace pTK
         // Event
         void pollEvents();
         void sendEvent(Event* event);
-        void handleEvents();
         
     private:
         // Window
@@ -61,7 +60,8 @@ namespace pTK
         Size m_maxSize;
         Vec2f m_scale;
         Canvas* m_drawCanvas;
-        SafeQueue<Event*> m_events;
+        SafeQueue<Event*> m_handleThreadEvents;
+        SafeQueue<Event*> m_mainThreadEvents;
         std::thread m_handleThread;
         std::atomic<bool> m_runThreads;
 
@@ -74,6 +74,8 @@ namespace pTK
         void setKeyCallbacks();
         
         // Event processing
+        void handleMainThreadEvents(Event* event);
+        void handleThreadEvents();
         void handleKeyboardEvent(Event* event);
         void handleMouseEvent(Event* event);
         void handleWindowEvent(Event* event);
@@ -81,7 +83,6 @@ namespace pTK
         void onDraw(SkCanvas* canvas) override;
         bool drawChild(Widget* widget) override;
         
-        void resize(const Vec2u& wSize, const Vec2u& cSize);
         void swapBuffers();
         
         // Hide functions
