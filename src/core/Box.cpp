@@ -112,13 +112,13 @@ namespace pTK
     {
         for (auto it = begin(); it != end(); it++)
         {
-            Position wPos = (*it).getWidget()->getPosition();
-            Size wSize = (*it).getWidget()->getSize();
+            Position wPos = it->getPosition();
+            Size wSize = it->getSize();
             if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
             {
                 if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
                 {
-                    (*it).getWidget()->handleClickEvent(btn, pos);
+                    it->handleClickEvent(btn, pos);
                     m_lastClickedWidget = &(*it);
                     return true;
                 }

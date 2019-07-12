@@ -145,6 +145,9 @@ namespace pTK
         {
             if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
             {
+                if (!m_hover)
+                    m_widget->handleEnterEvent();
+                
                 m_widget->handleHoverEvent(pos);
                 m_hover = true;
                 return true;
