@@ -18,15 +18,13 @@
 #include <sstream>
 #include <iostream>
 
-std::thread::id mainThreadID;
-std::thread::id handleThreadID;
-
 namespace pTK
 {
     Window::Window(const std::string& name, uint width, uint height)
         : VBox(), NonMovable(), NonCopyable(),
             m_window{nullptr}, m_minSize{0.0f, 0.0f}, m_maxSize{0.0f, 0.0f}, m_scale{1.0f, 1.0f},
-                m_drawCanvas{nullptr}, m_handleThreadEvents{}, m_mainThreadEvents{}, m_handleThread{}, m_runThreads{false}
+            m_drawCanvas{nullptr}, m_handleThreadEvents{}, m_mainThreadEvents{}, m_handleThread{},
+            m_runThreads{false}, m_mainThreadID{std::this_thread::get_id()}
     {
         // Set Widget properties.
         Widget::setSize({(float)width, (float)height});
@@ -57,15 +55,13 @@ namespace pTK
         setMouseCallbacks();
         setKeyCallbacks();
         
-        mainThreadID = std::this_thread::get_id();
-        
         // Start Event handler thread
         Semaphore sema(0);
         m_runThreads = true;
         m_handleThread = std::thread([&](){
             PTK_INFO("[Window] Event Thread Started");
             
-            handleThreadID = std::this_thread::get_id();
+            // TODO: Init handleThread if necessary.
             
             // Init finished
             PTK_INFO("[Window] Event Thread Initialized");
@@ -102,13 +98,13 @@ namespace pTK
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
             Vec2u windowSize{(uint)t_width, (uint)t_height};
             Size contentSize = window->getContentSize();
-            window->sendEvent(new ResizeEvent(windowSize, {(uint)contentSize.width, (uint)contentSize.height}));
+            window->sendEvent<ResizeEvent>(windowSize, Vec2u(contentSize.width, contentSize.height));
         });
         
         // void window_close_callback(GLFWwindow* window)
         glfwSetWindowCloseCallback(m_window, [](GLFWwindow* t_window){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
-            window->sendEvent(new Event(EventCategory::Window, EventType::WindowClose));
+            window->sendEvent<Event>(EventCategory::Window, EventType::WindowClose);
         });
     }
     
@@ -121,7 +117,7 @@ namespace pTK
             
             if ((t_xpos >= 0) && (t_xpos <= (wSize.width)))
                 if ((t_ypos >= 0) && (t_ypos <= (wSize.height)))
-                        window->sendEvent(new MotionEvent((int)t_xpos, (int)t_ypos));
+                    window->sendEvent<MotionEvent>((int)t_xpos, (int)t_ypos);
         });
         // void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
         glfwSetMouseButtonCallback(m_window, [](GLFWwindow* t_window, int t_button, int t_action, int){
@@ -141,9 +137,9 @@ namespace pTK
                 button = MouseButton::NONE;
             
             if (t_action == GLFW_PRESS)
-                window->sendEvent(new ButtonEvent(EventType::MouseButtonPressed, button, xpos, ypos));
+                window->sendEvent<ButtonEvent>(EventType::MouseButtonPressed, button, xpos, ypos);
             else if (t_action == GLFW_RELEASE)
-                window->sendEvent(new ButtonEvent(EventType::MouseButtonReleased, button, xpos, ypos));
+                window->sendEvent<ButtonEvent>(EventType::MouseButtonReleased, button, xpos, ypos);
         });
     }
     
@@ -153,9 +149,9 @@ namespace pTK
         glfwSetKeyCallback(m_window, [](GLFWwindow* t_window, int t_key, int, int t_action, int){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
             if (t_action == GLFW_PRESS)
-                window->sendEvent(new KeyEvent(EventType::KeyPressed, t_key));
+                window->sendEvent<KeyEvent>(EventType::KeyPressed, t_key);
             else if (t_action == GLFW_RELEASE)
-                window->sendEvent(new KeyEvent(EventType::KeyReleased, t_key));
+                window->sendEvent<KeyEvent>(EventType::KeyReleased, t_key);
         });
     }
 
@@ -184,7 +180,7 @@ namespace pTK
     {
         if (find(widget) != cend())
         {
-            sendEvent(new Event(EventCategory::Window, EventType::WindowDraw));
+            sendEvent<Event>(EventCategory::Window, EventType::WindowDraw);
             return true;
         }
         
@@ -255,7 +251,7 @@ namespace pTK
     void Window::close()
     {
         glfwSetWindowShouldClose(m_window, GLFW_TRUE);
-        sendEvent(new Event(EventCategory::Window, EventType::WindowClose));
+        sendEvent<Event>(EventCategory::Window, EventType::WindowClose);
     }
     
     // Visible
@@ -270,35 +266,6 @@ namespace pTK
     }
     
     // Event
-    void Window::sendEvent(Event* event)
-    {
-        PTK_ASSERT(event, "Event is nullptr");
-        
-        if (event->category() == EventCategory::Window)
-        {
-            if (std::this_thread::get_id() == mainThreadID)
-            {
-                handleMainThreadEvents(event);
-            }else
-            {
-                // TODO: Make something better...
-                if (event->type() == EventType::WindowResize)
-                {
-                    ResizeEvent* rEvent = (ResizeEvent*)event;
-                    m_mainThreadEvents.push(new ResizeEvent(rEvent->getSize(), rEvent->getContentSize()));
-                    glfwPostEmptyEvent();
-                }else if (event->type() == EventType::WindowDraw)
-                {
-                    m_mainThreadEvents.push(new Event(EventCategory::Window, EventType::WindowDraw));
-                    glfwPostEmptyEvent();
-                }
-            }
-        }
-        
-        // Push event to other thread.
-        m_handleThreadEvents.push(event);
-    }
-    
     void Window::handleMainThreadEvents(Event* event)
     {
         if (event->category() == EventCategory::Window)
@@ -317,7 +284,7 @@ namespace pTK
                     m_drawCanvas->resize(fbSize);
                 
                 // Send draw event.
-                sendEvent(new Event(EventCategory::Window, EventType::WindowDraw));
+                sendEvent<Event>(EventCategory::Window, EventType::WindowDraw);
             }
         }
     }

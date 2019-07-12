@@ -51,7 +51,26 @@ namespace pTK
         
         // Event
         void pollEvents();
-        void sendEvent(Event* event);
+        
+        template<typename T, typename... Args>
+        void sendEvent(Args&& ...args)
+        {
+            T* event = new T(std::forward<Args>(args)...);
+            if (event->category() == EventCategory::Window)
+            {
+                if (std::this_thread::get_id() == m_mainThreadID)
+                {
+                    handleMainThreadEvents(event);
+                }else
+                {
+                    m_mainThreadEvents.push(new T(std::forward<Args>(args)...));
+                    glfwPostEmptyEvent();
+                }
+            }
+            
+            // Push event to other thread.
+            m_handleThreadEvents.push(event);
+        }
         
     private:
         // Window
@@ -64,6 +83,7 @@ namespace pTK
         SafeQueue<Event*> m_mainThreadEvents;
         std::thread m_handleThread;
         std::atomic<bool> m_runThreads;
+        std::thread::id m_mainThreadID;
 
         // Init Functions
         void initGLFW();
