@@ -20,7 +20,7 @@
 
 namespace pTK
 {
-    using ContainerType = Container<Cell>;
+    using ContainerType = Container<std::shared_ptr<Cell>>;
     
     /** Box class implementation.
      

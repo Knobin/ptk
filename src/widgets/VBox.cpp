@@ -26,8 +26,8 @@ namespace pTK
             Size cellSize = {boxSize.width, (boxSize.height/cellCount)};
             
             Size minLayoutSize{};
-            forEach([&minLayoutSize](const Cell& cell){
-                Size cSize = cell.getMinSize();
+            forEach([&minLayoutSize](const std::shared_ptr<Cell>& cell){
+                Size cSize = cell->getMinSize();
                 minLayoutSize.height += cSize.height;
                 minLayoutSize.width = (cSize.width > minLayoutSize.width) ? cSize.width : minLayoutSize.width;
             });
@@ -38,10 +38,10 @@ namespace pTK
                 setSize(minLayoutSize); // this will generate a Resize event.
                 for (auto it = begin(); it != end(); it++)
                 {
-                    Size cSize = it->getMinSize();
-                    it->setSize(Size(minLayoutSize.width, cSize.height));
-                    it->setPosHint(pos);
-                    pos.y += it->getSize().height;
+                    Size cSize = (*it)->getMinSize();
+                    (*it)->setSize(Size(minLayoutSize.width, cSize.height));
+                    (*it)->setPosHint(pos);
+                    pos.y += (*it)->getSize().height;
                 }
                 
                 return true;
@@ -53,10 +53,10 @@ namespace pTK
             float delta = (boxSize.height - minLayoutSize.height) / cellCount;
             for (auto it = begin(); it != end(); it++)
             {
-                Size wMinSize = it->getMinSize();
-                it->setSize(Size(boxSize.width, wMinSize.height+delta));
-                it->setPosHint(pos);
-                pos.y += it->getSize().height;
+                Size wMinSize = (*it)->getMinSize();
+                (*it)->setSize(Size(boxSize.width, wMinSize.height+delta));
+                (*it)->setPosHint(pos);
+                pos.y += (*it)->getSize().height;
             }
             
             draw();
@@ -68,14 +68,13 @@ namespace pTK
     
     bool VBox::drawChild(Widget* widget)
     {
-        iterator it = findIf([widget](const Cell& cell){
-            if (cell.getWidget().get() == widget)
+        iterator it = findIf([widget](const std::shared_ptr<Cell>& cell){
+            if (cell->getWidget().get() == widget)
                 return true;
             return false;
         });
         if (it != end())
         {
-            it->drawChild(widget);
             draw();
             return true;
         }
@@ -90,9 +89,9 @@ namespace pTK
         
         for (auto it = begin(); it != end(); it++)
         {
-            Position wPos = it->getPosition();
+            Position wPos = (*it)->getPosition();
             wPos += deltaPos;
-            it->setPosHint(wPos);
+            (*it)->setPosHint(wPos);
         }
         
         Widget::setPosHint(pos);
@@ -108,11 +107,11 @@ namespace pTK
         float height = 0;
         for (auto it = begin(); it != end(); it++)
         {
-            Size wSize = it->getSize();
-            it->setSize(Size(newSize.width, (wSize.height+delta.height)));
-            Position wPos = it->getPosition();
+            Size wSize = (*it)->getSize();
+            (*it)->setSize(Size(newSize.width, (wSize.height+delta.height)));
+            Position wPos = (*it)->getPosition();
             wPos.y += height;
-            it->setPosHint(wPos);
+            (*it)->setPosHint(wPos);
             height += delta.height;
         }
         

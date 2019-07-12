@@ -19,10 +19,11 @@ namespace pTK
     
     bool Box::add(const std::shared_ptr<Widget>& widget)
     {
-        if (ContainerType::find(widget) == end())
+        if (find(widget.get()) == cend())
         {
-            push(Cell(widget));
-            widget->setParent(this);
+            std::shared_ptr<Cell> cell = std::make_shared<Cell>(widget);
+            cell->setParent(this);
+            push(cell);
             return true;
         }
         return false;
@@ -30,14 +31,18 @@ namespace pTK
     
     void Box::remove(const std::shared_ptr<Widget>& widget)
     {
-        erase(widget);
-        widget->setParent(nullptr);
+        const_iterator it = find(widget.get());
+        if (it != cend())
+        {
+            widget->setParent(nullptr);
+            erase(it);
+        }
     }
     
     Box::const_iterator Box::find(const std::string& name)
     {
-        return findIf([name](const Cell& cell){
-            if (cell.getWidget()->getName() == name)
+        return findIf([name](const std::shared_ptr<Cell>& cell){
+            if (cell->getWidget()->getName() == name)
                 return true;
             
             return false;
@@ -46,8 +51,8 @@ namespace pTK
     
     Box::const_iterator Box::find(const Widget* widget)
     {
-        return findIf([widget](const Cell& cell){
-            if (widget == cell.getWidget().get())
+        return findIf([widget](const std::shared_ptr<Cell>& cell){
+            if (widget == cell.get())
                 return true;
             
             return false;
@@ -56,9 +61,9 @@ namespace pTK
     
     Box::const_iterator Box::find(const Position& pos)
     {
-        return findIf([&pos](const Cell& cell){
-            Position wPos = cell.getWidget()->getPosition();
-            Size wSize = cell.getWidget()->getSize();
+        return findIf([&pos](const std::shared_ptr<Cell>& cell){
+            Position wPos = cell->getPosition();
+            Size wSize = cell->getSize();
             if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
                 if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
                     return true;
@@ -69,9 +74,9 @@ namespace pTK
     
     Box::const_reverse_iterator Box::rfind(const Position& pos)
     {
-        return rfindIf([&pos](const Cell& cell){
-            Position wPos = cell.getWidget()->getPosition();
-            Size wSize = cell.getWidget()->getSize();
+        return rfindIf([&pos](const std::shared_ptr<Cell>& cell){
+            Position wPos = cell->getPosition();
+            Size wSize = cell->getSize();
             if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
                 if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
                     return true;
@@ -103,23 +108,22 @@ namespace pTK
     
     void Box::drawWidgets(SkCanvas* canvas)
     {
-        forEach([&canvas](const Cell& cell){
-            cell.getWidget()->onDraw(canvas);
-        });
+        for (iterator it = begin(); it != end(); it++)
+            (*it)->onDraw(canvas);
     }
     
     bool Box::onClickEvent(MouseButton btn, const Position& pos)
     {
         for (auto it = begin(); it != end(); it++)
         {
-            Position wPos = it->getPosition();
-            Size wSize = it->getSize();
+            Position wPos = (*it)->getPosition();
+            Size wSize = (*it)->getSize();
             if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
             {
                 if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
                 {
-                    it->handleClickEvent(btn, pos);
-                    m_lastClickedWidget = &(*it);
+                    (*it)->handleClickEvent(btn, pos);
+                    m_lastClickedWidget = (*it).get();
                     return true;
                 }
             }
@@ -152,20 +156,20 @@ namespace pTK
     {
         for (auto it = begin(); it != end(); it++)
         {
-            Position wPos = (*it).getWidget()->getPosition();
-            Size wSize = (*it).getWidget()->getSize();
+            Position wPos = (*it)->getPosition();
+            Size wSize = (*it)->getSize();
             if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
             {
                 if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
                 {
                     // Send Leave Event.
-                    if (m_currentHoverWidget != &(*it) || m_currentHoverWidget == nullptr)
+                    if (m_currentHoverWidget != (*it).get() || m_currentHoverWidget == nullptr)
                     {
                         if (m_currentHoverWidget != nullptr)
                             m_currentHoverWidget->handleLeaveEvent();
                         
                         // New current hovered Widget.
-                        m_currentHoverWidget = &(*it);
+                        m_currentHoverWidget = (*it).get();
                         
                         // Fire Enter event on this and on to child.
                         handleEnterEvent();

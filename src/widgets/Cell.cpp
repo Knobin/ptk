@@ -12,7 +12,7 @@
 namespace pTK
 {
     Cell::Cell()
-        : m_widget{nullptr}, m_widgetSize{}, m_widgetPos{}, m_clicked{false}, m_hover{false}
+        : Widget(), m_widget{nullptr}, m_widgetSize{}, m_widgetPos{}, m_clicked{false}, m_hover{false}
     {
     }
     
@@ -42,24 +42,33 @@ namespace pTK
         return m_widget;
     }
     
+    void Cell::onDraw(SkCanvas* canvas)
+    {
+        //Rectangle::onDraw(canvas);
+        m_widget->onDraw(canvas);
+    }
+    
     bool Cell::drawChild(Widget* widget)
     {
-        // Position
-        if (widget->getPosition() != m_widgetPos)
-            widget->setPosHint(m_widgetPos);
-        
-        // Size
-        Size wSize = widget->getSize();
-        if (wSize != m_widgetSize)
+        if (m_widget.get() == widget)
         {
-            m_widgetSize = wSize;
-            Size cellSize = getSize();
-            if ((wSize.width > cellSize.width) || (wSize.height > cellSize.height))
-                setSize(wSize);
+            // Position
+            if (widget->getPosition() != m_widgetPos)
+                widget->setPosHint(m_widgetPos);
             
-            return true;
-        }else
-        {
+            // Size
+            Size wSize = widget->getSize();
+            if (wSize != m_widgetSize)
+            {
+                m_widgetSize = wSize;
+                Size cellSize = getSize();
+                if ((wSize.width > cellSize.width) || (wSize.height > cellSize.height))
+                {
+                    setSize(wSize);
+                    return true;
+                }
+            }
+            
             draw();
             return true;
         }
@@ -97,6 +106,7 @@ namespace pTK
         currentPos -= Position{widgetSize.width/2, widgetSize.height/2};
         currentPos.x = (currentPos.x < 0) ? 0 : currentPos.x;
         currentPos.y = (currentPos.y < 0) ? 0 : currentPos.y;
+        m_widgetPos = currentPos;
         m_widget->setPosHint(currentPos);
     }
     
@@ -150,6 +160,11 @@ namespace pTK
                 
                 m_widget->handleHoverEvent(pos);
                 m_hover = true;
+                return true;
+            }else if (m_hover)
+            {
+                m_widget->handleLeaveEvent();
+                m_hover = false;
                 return true;
             }
         }else if (m_hover)

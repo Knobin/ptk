@@ -192,12 +192,17 @@ namespace pTK
         glfwWaitEvents();
         
         uint eventCount = m_mainThreadEvents.size();
+        bool drawEventHandled = false;
         for (uint i = 0; i < eventCount; i++)
         {
-            Event* wEvent = m_mainThreadEvents.front();
+            std::shared_ptr<Event> wEvent = m_mainThreadEvents.front();
             m_mainThreadEvents.pop();
-            handleMainThreadEvents(wEvent);
-            delete wEvent;
+            
+            if (!drawEventHandled || wEvent->type() != EventType::WindowDraw)
+                handleMainThreadEvents(wEvent.get());
+            
+            if (wEvent->type() == EventType::WindowDraw)
+                drawEventHandled = true;
         }
     }
 
@@ -268,6 +273,7 @@ namespace pTK
     // Event
     void Window::handleMainThreadEvents(Event* event)
     {
+        PTK_ASSERT(event, "Undefined Event");
         if (event->category() == EventCategory::Window)
         {
             if (event->type() == EventType::WindowDraw)
@@ -293,28 +299,28 @@ namespace pTK
     {
         while (m_runThreads)
         {
-            Event* event = m_handleThreadEvents.front();
+            std::shared_ptr<Event> event = m_handleThreadEvents.front();
             m_handleThreadEvents.pop();
             if (event->category() == EventCategory::Window)
-                handleWindowEvent(event);
+                handleWindowEvent(event.get());
             else if (event->category() == EventCategory::Key)
-                handleKeyboardEvent(event);
+                handleKeyboardEvent(event.get());
             else if (event->category() == EventCategory::Mouse)
-                handleMouseEvent(event);
-            
-            delete event;
+                handleMouseEvent(event.get());
         }
     }
 
     // Event processing
-    void Window::handleKeyboardEvent(Event* t_event)
+    void Window::handleKeyboardEvent(Event* event)
     {
-        KeyEvent* kEvent = (KeyEvent*)t_event;
+        PTK_ASSERT(event, "Undefined Event");
+        KeyEvent* kEvent = (KeyEvent*)event;
         handleKeyEvent(kEvent->type(), kEvent->get_keycode());
     }
 
     void Window::handleMouseEvent(Event* event)
     {
+        PTK_ASSERT(event, "Undefined Event");
         EventType type = event->type();
         if (type == EventType::MouseMoved)
         {
@@ -334,6 +340,7 @@ namespace pTK
 
     void Window::handleWindowEvent(Event* event)
     {
+        PTK_ASSERT(event, "Undefined Event");
         EventType type = event->type();
         if (type == EventType::WindowDraw)
         {

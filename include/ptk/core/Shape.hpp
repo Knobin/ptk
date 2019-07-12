@@ -34,7 +34,7 @@ namespace pTK
          
          @param Color   Shape Color
          */
-        void setColor(const Color& color);
+        virtual void setColor(const Color& color);
         
         /** Function for retrieving the Color of the Shape.
          
@@ -46,7 +46,7 @@ namespace pTK
          
          @param outline_color   outline Color
          */
-        void setOutlineColor(const Color& outlineColor);
+        virtual void setOutlineColor(const Color& outlineColor);
         
         /** Function for retrieving the thickness of the outline.
          
@@ -58,7 +58,7 @@ namespace pTK
          
          @param outline_thickness   thickness of outline
          */
-        void setOutlineThickness(float outlineThickness);
+        virtual void setOutlineThickness(float outlineThickness);
         
     private:
         Color m_color;

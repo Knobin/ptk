@@ -25,6 +25,8 @@
 // GLFW Headers
 #include <GLFW/glfw3.h>
 
+#include "ptk/Log.hpp"
+
 namespace pTK
 {
     class Window : public VBox, public NonMovable, public NonCopyable
@@ -55,15 +57,15 @@ namespace pTK
         template<typename T, typename... Args>
         void sendEvent(Args&& ...args)
         {
-            T* event = new T(std::forward<Args>(args)...);
+            std::shared_ptr<T> event = std::make_shared<T>(std::forward<Args>(args)...);
             if (event->category() == EventCategory::Window)
             {
                 if (std::this_thread::get_id() == m_mainThreadID)
                 {
-                    handleMainThreadEvents(event);
+                    handleMainThreadEvents(event.get());
                 }else
                 {
-                    m_mainThreadEvents.push(new T(std::forward<Args>(args)...));
+                    m_mainThreadEvents.push(event);
                     glfwPostEmptyEvent();
                 }
             }
@@ -79,8 +81,8 @@ namespace pTK
         Size m_maxSize;
         Vec2f m_scale;
         Canvas* m_drawCanvas;
-        SafeQueue<Event*> m_handleThreadEvents;
-        SafeQueue<Event*> m_mainThreadEvents;
+        SafeQueue<std::shared_ptr<Event>> m_handleThreadEvents;
+        SafeQueue<std::shared_ptr<Event>> m_mainThreadEvents;
         std::thread m_handleThread;
         std::atomic<bool> m_runThreads;
         std::thread::id m_mainThreadID;

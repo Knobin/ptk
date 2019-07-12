@@ -23,6 +23,7 @@ namespace pTK
     void Shape::setColor(const Color& color)
     {
         m_color = color;
+        draw();
     }
     
     const Color& Shape::getOutlineColor() const
@@ -33,6 +34,7 @@ namespace pTK
     void Shape::setOutlineColor(const Color& outline_color)
     {
         m_outlineColor = outline_color;
+        draw();
     }
     
     float Shape::getOutlineThickness() const
@@ -43,6 +45,7 @@ namespace pTK
     void Shape::setOutlineThickness(float outlineThickness)
     {
         m_outlineThickness = outlineThickness;
+        draw();
     }
     
     // Comparison operators.

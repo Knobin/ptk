@@ -9,7 +9,7 @@
 #define PTK_CORE_CELL_HPP
 
 // Local Headers
-#include "ptk/core/Widget.hpp"
+#include "ptk/widgets/Rectangle.hpp"
 
 // C++ Headers
 #include <memory>
@@ -31,6 +31,8 @@ namespace pTK
         void setPosHint(const Position& pos) override;
         
         void setSize(const Size& size) override;
+        
+        void onDraw(SkCanvas* canvas) override;
         
         // Event handling
         
