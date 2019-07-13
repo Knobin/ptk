@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     
     std::shared_ptr<pTK::Rectangle> rect = std::make_shared<pTK::Rectangle>();
     rect->setName("My Rectangle");
-    rect->setSizeHint(pTK::Size(250, 100));
+    rect->setSize(pTK::Size(250, 100));
     rect->setPosHint(pTK::Position(250, 250));
     rect->setCornerRadius(10);
     rect->setColor(pTK::Color(0x161B21FF));
