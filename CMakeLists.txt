@@ -14,6 +14,14 @@ else()
     set(PTK_BUILD_TYPE "Release")
 endif()
 
+# OS
+if (UNIX AND NOT APPLE)
+    # for Linux, BSD, Solaris, Minix
+    set(SKIA_PLATFORM_DEPENDENCIES "fontconfig")
+else()
+    set(SKIA_PLATFORM_DEPENDENCIES "")
+endif()
+
 # Options
 option(BUILD_TESTS "Build test programs" OFF)
 option(BUILD_EXAMPLES "Build example programs" ON)
@@ -39,6 +47,7 @@ add_library(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 if (EXISTS ${SKIA_SDK}/out/${PTK_BUILD_TYPE}/libskia.a)
     message(STATUS "Skia build type: ${PTK_BUILD_TYPE}")
     target_link_libraries(${PROJECT_NAME} ${SKIA_SDK}/out/${PTK_BUILD_TYPE}/libskia.a)
+    link_directories(${SKIA_SDK}/out/${PTK_BUILD_TYPE})
 else()
     message(FATAL_ERROR "pTK does not yet support dynamic linking of skia")
 endif()
@@ -49,7 +58,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES})
 
 # GLFW
-add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/glfw)
+add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/GLFW)
 include_directories(${CMAKE_SOURCE_DIR}/third_party/glfw/include)
 target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
 
