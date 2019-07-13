@@ -20,8 +20,12 @@
 #include <memory>
 
 // OpenGL Headers
-#define GL_SILENCE_DEPRECATION
-#include <OpenGL/gl.h>
+#ifdef __APPLE__
+    #define GL_SILENCE_DEPRECATION
+    #include <OpenGL/gl.h>
+#elif __linux__
+    #include <GL/gl.h>
+#endif
 
 // Skia Headers
 #pragma GCC diagnostic push
