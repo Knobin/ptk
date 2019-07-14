@@ -10,6 +10,10 @@
 
 namespace pTK
 {
+    /** NonMovable class implementation.
+     
+     Class for forbidding moving.
+     */
     class NonMovable
     {
     public:

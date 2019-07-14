@@ -16,25 +16,74 @@
 
 namespace pTK
 {
+    /** Cell class implementation.
+     
+     Derived from Widget, this class for a Widget for controlling
+     padding and layout style inside of the Cell.
+     */
     class Cell : public Widget
     {
     public:
+        /** Constructs Cell with default values.
+         
+         @return    default initialized Cell
+         */
         Cell();
+        
+        /** Constructs Cell with default values with widget.
+         
+         @return    default initialized Cell
+         */
         Cell(const std::shared_ptr<Widget>& widget);
         ~Cell() = default;
         
+        /** Function for setting the Widget of the Cell.
+
+         @param widget  Widget to set
+         */
         void setWidget(const std::shared_ptr<Widget>& widget);
+        
+        /** Function for setting the Widget of the Cell.
+         
+         @return    current set Widget
+         */
         std::shared_ptr<Widget> getWidget() const;
         
+        /** Function for a child Widget to call the Parent when it
+         need to be drawn.
+         
+         Derived from Widget.
+         
+         @param widget  Child Widget
+         @return        Status (true if handled)
+         */
         bool drawChild(Widget* widget) override;
         
+        /** Function for setting the position of the VBox and its
+         children.
+         
+         Derived from Widget.
+         
+         @param pos     Position to set
+         */
         void setPosHint(const Position& pos) override;
         
+        /** Function for setting the size of the VBox and its
+         children.
+         
+         Derived from Widget.
+         
+         @param newSize     Size to set
+         */
         void setSize(const Size& size) override;
         
+        /** Draw function.
+         Function is called when it is time to draw.
+         
+         Derived from Drawable.
+         @param canvas  canvas to draw to
+         */
         void onDraw(SkCanvas* canvas) override;
-        
-        // Event handling
         
         /** Function for handling when a key is pressed or released.
          

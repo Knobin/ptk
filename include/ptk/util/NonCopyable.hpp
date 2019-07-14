@@ -10,6 +10,10 @@
 
 namespace pTK
 {
+    /** NonMovable struct implementation.
+     
+     Struct for forbidding copying.
+     */
     struct NonCopyable
     {
         NonCopyable() = default;
