@@ -11,8 +11,10 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
 elseif (CMAKE_BUILD_TYPE MATCHES Release)
     set(PTK_BUILD_TYPE "Release")
 else()
+    message(STATUS "No build type specified. Default is Release")
     set(PTK_BUILD_TYPE "Release")
 endif()
+message(STATUS "pTK build: ${PTK_BUILD_TYPE}")
 
 # OS
 if (UNIX AND NOT APPLE)
@@ -26,6 +28,10 @@ endif()
 option(BUILD_TESTS "Build test programs" OFF)
 option(BUILD_EXAMPLES "Build example programs" ON)
 
+# Print Options
+message(STATUS "Build Tests: ${BUILD_TESTS}")
+message(STATUS "Build Examples: ${BUILD_EXAMPLES}")
+
 # Source files
 file(GLOB_RECURSE SOURCE_FILES
         ${CMAKE_SOURCE_DIR}/src/*.cpp)
@@ -36,21 +42,25 @@ file(GLOB_RECURSE HEADER_FILES
 
 include_directories(${CMAKE_SOURCE_DIR}/include/)
 
-# Skia Path and include folder
-set(SKIA_SDK "${CMAKE_SOURCE_DIR}/third_party/skia")
-include_directories(${SKIA_SDK})
+# Skia properties
+set(SKIA_PATH "${CMAKE_SOURCE_DIR}/third_party/skia")
+set(SKIA_LIB_PATH "${SKIA_PATH}/out/${PTK_BUILD_TYPE}")
+message(STATUS "Skia include path: ${SKIA_PATH}")
+message(STATUS "Skia build: ${PTK_BUILD_TYPE}")
+message(STATUS "Skia lib path: ${SKIA_LIB_PATH}")
+
+# Skia library
+add_library(skia STATIC IMPORTED)
+set_target_properties(skia PROPERTIES
+    IMPORTED_LOCATION "${SKIA_LIB_PATH}/libskia.a"
+    INTERFACE_INCLUDE_DIRECTORIES "${SKIA_PATH}"
+)
 
 # Define executable
 add_library(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 # Skia
-if (EXISTS ${SKIA_SDK}/out/${PTK_BUILD_TYPE}/libskia.a)
-    message(STATUS "Skia build type: ${PTK_BUILD_TYPE}")
-    target_link_libraries(${PROJECT_NAME} ${SKIA_SDK}/out/${PTK_BUILD_TYPE}/libskia.a)
-    link_directories(${SKIA_SDK}/out/${PTK_BUILD_TYPE})
-else()
-    message(FATAL_ERROR "pTK does not yet support dynamic linking of skia")
-endif()
+target_link_libraries(${PROJECT_NAME} ${SKIA_PLATFORM_DEPENDENCIES} skia)
 
 # OpenGL
 find_package(OpenGL REQUIRED)
