@@ -28,13 +28,21 @@
 #endif
 
 // Skia Headers
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-#pragma GCC diagnostic ignored "-Wgnu-anonymous-struct"
+#ifdef PTK_COMPILER_GCC
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wpedantic"
+#elif PTK_COMPILER_CLANG
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-anonymous-struct"
+#endif
 #include "include/gpu/GrContext.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkSurface.h"
-#pragma GCC diagnostic pop
+#ifdef PTK_COMPILER_GCC
+    #pragma GCC diagnostic pop
+#elif PTK_COMPILER_CLANG
+    #pragma clang diagnostic pop
+#endif
 
 namespace pTK
 {

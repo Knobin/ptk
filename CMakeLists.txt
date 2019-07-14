@@ -24,6 +24,15 @@ else()
     set(SKIA_PLATFORM_DEPENDENCIES "")
 endif()
 
+# Compiler
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")    
+    add_definitions(-DPTK_COMPILER_CLANG)
+    message(STATUS "Compiler: Clang")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    add_definitions(-DPTK_COMPILER_GCC)
+    message(STATUS "Compiler: GCC")
+endif()
+
 # Options
 option(BUILD_TESTS "Build test programs" OFF)
 option(BUILD_EXAMPLES "Build example programs" ON)
