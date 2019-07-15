@@ -9,11 +9,9 @@
 #define PTK_WIDGETS_LABEL_HPP
 
 // Local Headers
+#include "ptk/core/Font.hpp"
 #include "ptk/core/Shape.hpp"
 #include "ptk/core/Types.hpp"
-
-// C++ Headers
-#include <string>
 
 namespace pTK
 {
@@ -24,7 +22,7 @@ namespace pTK
      is for the unique properties that Shape has that Label
      can also use. Such as Color and outline.
      */
-    class Label : public Shape
+    class Label : public Shape, public Font
     {
     public:
         /** Constructs Label with default values.
@@ -36,27 +34,19 @@ namespace pTK
         
         /** Function for setting the font family of the Label.
          
+         Derived from Font.
+         
          @param font    font family for Label to use
          */
-        void setFont(const std::string& font);
+        void setFontFamily(const std::string& fontFamily) override;
         
-        /** Function for retrieving the current font family used by Label.
+        /** Function for setting the font size of the Label.
          
-         @return  current font family
-         */
-        const std::string& getFont() const;
-        
-        /** Function for setting the font size of the Label
+         Derived from Font.
          
          @param fontSize    size of the font
          */
-        void setFontSize(uint fontSize);
-        
-        /** Function for retrieving the current font size used by Label.
-         
-         @return  current font size
-         */
-        uint getFontSize() const;
+        void setFontSize(uint fontSize) override;
         
         /** Function for setting the text of the Label
          
@@ -78,8 +68,6 @@ namespace pTK
         void onDraw(SkCanvas* canvas) override;
         
     private:
-        std::string m_fontName;
-        uint m_fontSize;
         std::string m_text;
         
         void calculateBounds();

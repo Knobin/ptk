@@ -18,31 +18,20 @@
 namespace pTK
 {
     Label::Label()
-        : Shape(), m_fontName{""}, m_fontSize{12}, m_text{""}
+        : Shape(), Font(), m_text{""}
     {
-        
     }
     
-    void Label::setFont(const std::string& font)
+    void Label::setFontFamily(const std::string& fontFamily)
     {
-        m_fontName = font;
+        Font::setFontFamily(fontFamily);
         calculateBounds();
-    }
-    
-    const std::string& Label::getFont() const
-    {
-        return m_fontName;
     }
     
     void Label::setFontSize(uint fontSize)
     {
-        m_fontSize = fontSize;
+        Font::setFontSize(fontSize);
         calculateBounds();
-    }
-    
-    uint Label::getFontSize() const
-    {
-        return m_fontSize;
     }
     
     void Label::setText(const std::string& text)
@@ -58,12 +47,15 @@ namespace pTK
     
     void Label::calculateBounds()
     {
+        std::string fontFamily = getFontFamily();
+        uint fontSize = getFontSize();
+        
         // Font
         SkFont font;
-        if (m_fontName == "")
-            font = SkFont(SkTypeface::MakeDefault(), m_fontSize);
+        if (fontFamily == "")
+            font = SkFont(SkTypeface::MakeDefault(), fontSize);
         else
-         font = SkFont(SkTypeface::MakeFromName(m_fontName.c_str(), SkFontStyle::Normal()), m_fontSize);
+         font = SkFont(SkTypeface::MakeFromName(fontFamily.c_str(), SkFontStyle::Normal()), fontSize);
         
         SkRect bounds;
         font.measureText(m_text.c_str(), m_text.size(), SkTextEncoding::kUTF8, &bounds);
@@ -79,10 +71,12 @@ namespace pTK
         paint.setARGB(color.a, color.r, color.g, color.b);
         
         SkFont font;
-        if (m_fontName == "")
-            font = SkFont(SkTypeface::MakeDefault(), m_fontSize);
+        std::string fontFamily = getFontFamily();
+        uint fontSize = getFontSize();
+        if (fontFamily == "")
+            font = SkFont(SkTypeface::MakeDefault(), fontSize);
         else
-            font = SkFont(SkTypeface::MakeFromName(m_fontName.c_str(), SkFontStyle::Normal()), m_fontSize);
+            font = SkFont(SkTypeface::MakeFromName(fontFamily.c_str(), SkFontStyle::Normal()), fontSize);
         
         // Calculate Bounds and Position.
         SkRect bounds;
