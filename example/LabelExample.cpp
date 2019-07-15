@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     std::shared_ptr<pTK::Label> label = std::make_shared<pTK::Label>();
     label->setName("My Label");
     label->setFontSize(48);
-    label->setFont("Arial");
+    label->setFontFamily("Arial");
     label->setText("Example label");
     label->setColor(pTK::Color(0x161B21FF));
     label->setOutlineThickness(1.5f);
