@@ -11,10 +11,24 @@
 
 namespace pTK
 {
+    const Button::Style Button::Style::Default{Color(0x007BFFFF), Color(0x0071E6FF), Color(0x0068D9FF), Color(0xFFFFFFFF), 5};
+    const Button::Style Button::Style::Success{Color(0x28A745FF), Color(0x24963CFF), Color(0x218838FF), Color(0xFFFFFFFF), 5};
+    const Button::Style Button::Style::Danger{Color(0xDC3545FF), Color(0xce2331FF), Color(0xBC202DFF), Color(0xFFFFFFFF), 5};
+    
     Button::Button()
-    : Rectangle(), m_text{std::make_shared<Label>()}, m_labelPos{}, m_margin{15},
-        m_hoverColor{}, m_clickColor{}, m_colorCopy{}, m_hover{false}, m_click{false}
+        : Rectangle(), m_text{std::make_shared<Label>()}, m_labelPos{}, m_margin{15},
+            m_hoverColor{}, m_clickColor{}, m_colorCopy{}, m_hover{false}, m_click{false}
     {
+        setStyle(Style::Default);
+        m_text->setParent(this);
+        m_text->setFontSize(16);
+    }
+    
+    Button::Button(const Style& style)
+        : Rectangle(), m_text{std::make_shared<Label>()}, m_labelPos{}, m_margin{15},
+            m_hoverColor{}, m_clickColor{}, m_colorCopy{}, m_hover{false}, m_click{false}
+    {
+        setStyle(style);
         m_text->setParent(this);
         m_text->setFontSize(16);
     }
@@ -163,6 +177,15 @@ namespace pTK
     uint Button::getMargin() const
     {
         return m_margin;
+    }
+    
+    void Button::setStyle(const Style& style)
+    {
+        m_hoverColor = style.hoverColor;
+        m_clickColor = style.clickColor;
+        m_text->setColor(style.textColor);
+        setCornerRadius(style.cornerRadius);
+        setColor(style.color); // Will call draw.
     }
     
     bool Button::onEnterEvent()

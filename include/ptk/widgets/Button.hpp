@@ -23,11 +23,31 @@ namespace pTK
     class Button : public Rectangle
     {
     public:
+        struct Style
+        {
+            Color color;
+            Color hoverColor;
+            Color clickColor;
+            Color textColor;
+            uint cornerRadius;
+            
+            static const Style Default;
+            static const Style Success;
+            static const Style Danger;
+        };
+        
+    public:
         /** Constructs Button with default values.
          
          @return    default initialized Button
          */
         Button();
+        
+        /** Constructs Button with default values with style.
+         
+         @return    default initialized Button
+         */
+        Button(const Style& style);
         virtual ~Button() = default;
         
         /** Function for setting the position of the Button.
@@ -155,6 +175,18 @@ namespace pTK
          @return    Current margin
          */
         uint getMargin() const;
+        
+        /** Function for setting the style of the Button.
+         
+         @param margin   text margin
+         */
+        void setStyle(const Style& style);
+        
+        /** Function for retrieving the style of the Button.
+         
+         @return    Current margin
+         */
+        Style getStyle() const;
         
         /** Function for handling when mouse is entering.
          
