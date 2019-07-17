@@ -46,6 +46,18 @@ namespace pTK
         m_text->setPosHint(textPos);
     }
     
+    void Button::setSize(const Size& newSize)
+    {
+        Size textSize = m_text->getSize();
+        textSize.width += (m_margin*2);
+        textSize.height += (m_margin*2);
+        
+        textSize.width = (newSize.width > textSize.width) ? newSize.width : textSize.width;
+        textSize.height = (newSize.height > textSize.height) ? newSize.height : textSize.height;
+        
+        Widget::setSize(textSize);
+    }
+    
     void Button::onDraw(SkCanvas* canvas)
     {
         Rectangle::onDraw(canvas);
