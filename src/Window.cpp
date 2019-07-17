@@ -22,32 +22,34 @@ namespace pTK
 {
     Window::Window(const std::string& name, uint width, uint height)
         : VBox(), NonMovable(), NonCopyable(),
-            m_window{nullptr}, m_minSize{0.0f, 0.0f}, m_maxSize{0.0f, 0.0f}, m_scale{1.0f, 1.0f},
+            m_window{nullptr}, m_scale{1.0f, 1.0f},
             m_drawCanvas{nullptr}, m_handleThreadEvents{}, m_mainThreadEvents{}, m_handleThread{},
             m_runThreads{false}, m_mainThreadID{std::this_thread::get_id()}
     {
         // Set Widget properties.
         Widget::setSize({(float)width, (float)height});
+        Sizable::setMinSize(Size(GLFW_DONT_CARE, GLFW_DONT_CARE));
+        Sizable::setMaxSize(Size(GLFW_DONT_CARE, GLFW_DONT_CARE));
         setName(name);
         
         initGLFW();
 
         // Create Window.
         m_window = glfwCreateWindow((int)width, (int)height, name.c_str(), nullptr, nullptr);
-        PTK_ASSERT(m_window, "[Window] Failed to create GLFW Window");
-        PTK_INFO("[Window] GLFW Window Created with {0:d}x{1:d}", (int)width, (int)height);
+        PTK_ASSERT(m_window, "Failed to create GLFW Window");
+        PTK_INFO("GLFW Window Created, {0:d}x{1:d}", (int)width, (int)height);
         
         // Get Monitor Scale
         glfwGetWindowContentScale(m_window, &m_scale.x, &m_scale.y);
-        PTK_INFO("[Window] Monitor scale is {0:0.2f}x{1:0.2f}", m_scale.x, m_scale.y);
+        PTK_INFO("Monitor scale, {0:0.2f}x{1:0.2f}", m_scale.x, m_scale.y);
         
         // Bind context.
         glfwMakeContextCurrent(m_window);
         
         // Init Canvas
         Size wSize = getContentSize();
-        m_drawCanvas = new Canvas(Size(wSize.width, wSize.height));
-        PTK_ASSERT(m_drawCanvas, "[Window] Failed to create Canvas");
+        m_drawCanvas = std::make_unique<Canvas>(Size(wSize.width, wSize.height));
+        PTK_ASSERT(m_drawCanvas, "Failed to create Canvas");
         
         // Set Callbacks
         glfwSetWindowUserPointer(m_window, this);
@@ -59,22 +61,22 @@ namespace pTK
         Semaphore sema(0);
         m_runThreads = true;
         m_handleThread = std::thread([&](){
-            PTK_INFO("[Window] Event Thread Started");
+            PTK_INFO("Event Thread Started");
             
             // TODO: Init handleThread if necessary.
             
             // Init finished
-            PTK_INFO("[Window] Event Thread Initialized");
+            PTK_INFO("Event Thread Initialized");
             sema.up();
             
             handleThreadEvents();
             
-            PTK_INFO("[Window] Event Thread Ended");
+            PTK_INFO("Event Thread Ended");
         });
         
         // Wait for m_handleThread to init.
         sema.down();
-        PTK_INFO("[Window] Initialization finished");
+        PTK_INFO("Window Initialization finished");
     }
     
     // Init Functions
@@ -158,10 +160,9 @@ namespace pTK
     Window::~Window()
     {
         m_handleThread.join();
-        PTK_INFO("[Window] Event Thread joined");
-        delete m_drawCanvas;
+        PTK_INFO("Event Thread joined");
         glfwTerminate();
-        PTK_INFO("[Window] Destructed");
+        PTK_INFO("Window Destroyed");
     }
     
     void Window::onDraw(SkCanvas* canvas)
@@ -184,6 +185,7 @@ namespace pTK
             return true;
         }
         
+        PTK_WARN("Unknown Child");
         return false;
     }
     
@@ -235,16 +237,59 @@ namespace pTK
     
     void Window::setMinSize(const Size& size)
     {
-        // TODO: Some checking in layout to confirm if min size
-        // is doable. If not, set the lowest size doable instead.
-        m_minSize = size;
+        Size wSize = getSize();
+        Size contentMinSize = calculateMinSize();
+        Size newMinSize;
+        
+        if (size.width != GLFW_DONT_CARE)
+            newMinSize.width = ((size.width > contentMinSize.width) && (size.width <= wSize.width)) ? size.width : contentMinSize.width;
+        else
+            newMinSize.width = contentMinSize.width;
+        
+        if (size.height != GLFW_DONT_CARE)
+            newMinSize.height = ((size.height > contentMinSize.height) && (size.height <= wSize.height)) ? size.height : contentMinSize.height;
+        else
+            newMinSize.height = contentMinSize.height;
+        
+        Sizable::setMinSize(newMinSize);
+        setLimits(newMinSize, getMaxSize());
     }
     
     void Window::setMaxSize(const Size& size)
     {
-        // TODO: Some checking in layout to confirm if max size
-        // is doable. If not, set the highest size doable instead.
-        m_maxSize = size;
+        Size maxSize = getMaxSize();
+        Size wSize = getSize();
+        Size contentMaxSize = calculateMaxSize();
+        Size newMaxSize(GLFW_DONT_CARE, GLFW_DONT_CARE);
+        
+        // TODO: Fix this
+        contentMaxSize.height = (contentMaxSize.height < -1) ? -1 : contentMaxSize.height;
+        
+        if (size.width != GLFW_DONT_CARE)
+        {
+            newMaxSize.width = ((size.width > contentMaxSize.width) && (size.width <= wSize.width)) ? size.width : contentMaxSize.width;
+            newMaxSize.width = (maxSize.width > newMaxSize.width) ? maxSize.width : newMaxSize.width;
+        }else
+        {
+            newMaxSize.width = (maxSize.width != GLFW_DONT_CARE) ? maxSize.width : contentMaxSize.width;
+        }
+        
+        if (size.height != GLFW_DONT_CARE)
+        {
+            newMaxSize.height = ((size.height > contentMaxSize.height) && (size.height <= wSize.height)) ? size.height : contentMaxSize.height;
+            newMaxSize.height = (maxSize.height > newMaxSize.height) ? maxSize.height : newMaxSize.height;
+        }else
+        {
+            newMaxSize.height = (maxSize.height != GLFW_DONT_CARE) ? maxSize.height : contentMaxSize.height;
+        }
+        
+        Sizable::setMaxSize(newMaxSize);
+        setLimits(getMinSize(), newMaxSize);
+    }
+    
+    void Window::setLimits(const Size& minSize, const Size& maxSize)
+    {
+        glfwSetWindowSizeLimits(m_window, (int)minSize.width, (int)minSize.height, (int)maxSize.width, (int)maxSize.height);
     }
 
     // Close
@@ -288,6 +333,18 @@ namespace pTK
                 Size fbSize{static_cast<float>(cSize.x), static_cast<float>(cSize.y)};
                 if (fbSize != m_drawCanvas->getSize())
                     m_drawCanvas->resize(fbSize);
+                
+                // TODO: May conflict with eventThread.
+                Size contentMinSize = calculateMinSize();
+                Size currentMinSize = getMinSize();
+                if ((currentMinSize.width < contentMinSize.width) || (currentMinSize.height < contentMinSize.height))
+                setMinSize(contentMinSize);
+                
+                // TODO: May conflict with eventThread.
+                Size contentMaxSize = calculateMaxSize();
+                Size currentMaxSize = getMaxSize();
+                if ((currentMaxSize.width > contentMaxSize.width) || (currentMaxSize.height > contentMaxSize.height))
+                setMaxSize(contentMaxSize);
                 
                 // Send draw event.
                 sendEvent<Event>(EventCategory::Window, EventType::WindowDraw);

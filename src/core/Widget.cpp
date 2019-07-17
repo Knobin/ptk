@@ -14,6 +14,8 @@ namespace pTK
     Widget::Widget()
         : Drawable(), EventHandling(), Sizable(), m_parent{nullptr}, m_name{}
     {
+        setMinSize(Size(-1.0f, -1.0f));
+        setMaxSize(Size(-1.0f, -1.0f));
     }
     
     void Widget::setParent(Widget* parent)

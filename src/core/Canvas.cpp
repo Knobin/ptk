@@ -66,7 +66,7 @@ namespace pTK
         m_canvas = m_surface->getCanvas();
         m_size = size;
         
-        PTK_INFO("[Canvas] Created with {0}x{1}", size.width, size.height);
+        PTK_INFO("Created Canvas, {0}x{1}", size.width, size.height);
     }
     
     void Canvas::clear(const Color& color)

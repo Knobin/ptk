@@ -234,5 +234,15 @@ namespace pTK
     {
         return m_background;
     }
+    
+    Size Box::calculateMinSize() const
+    {
+        return Size(-1.0f, -1.0f);
+    }
+    
+    Size Box::calculateMaxSize() const
+    {
+        return Size(-1.0f, -1.0f);
+    }
 }
 

@@ -158,6 +158,18 @@ namespace pTK
         
     protected:
         
+        /** Funtion for getting the minimal size of all Cells in Container.
+         
+         @return    minimal size of all Cells
+         */
+        virtual Size calculateMinSize() const;
+        
+        /** Funtion for getting the miximal size of all Cells in Container.
+         
+         @return    miximal size of all Cells
+         */
+        virtual Size calculateMaxSize() const;
+        
         /** Funtion for drawing all the Widgets in the Container.
          
          */

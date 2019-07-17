@@ -19,11 +19,13 @@ namespace pTK
     Application::Application()
         : NonMovable(), NonCopyable()
     {
+        Log::init();
     }
     
     Application::Application(int, char* [])
         : NonMovable(), NonCopyable()
     {
+        Log::init();
         // TODO: Check arguments.
     }
 

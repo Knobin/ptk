@@ -117,5 +117,37 @@ namespace pTK
         
         Widget::setSize(newSize);
     }
+    
+    Size VBox::calculateMinSize() const
+    {
+        Size contentMinSize;
+        for (auto it = cbegin(); it != cend(); it++)
+        {
+            Size minSize = (*it)->getMinSize();
+            contentMinSize.width = (minSize.width > contentMinSize.width) ? minSize.width : contentMinSize.width;
+            contentMinSize.height = (minSize.height == -1) ? -1 : contentMinSize.height + minSize.height;
+        }
+        
+        return contentMinSize;
+    }
+    
+    Size VBox::calculateMaxSize() const
+    {
+        Size contentMaxSize;
+        auto it = cbegin();
+        if (it != cend())
+        {
+            contentMaxSize.height = (*it)->getMaxSize().height;
+            contentMaxSize.width = (*it)->getMaxSize().width;
+            while (++it != cend())
+            {
+                Size maxSize = (*it)->getMaxSize();
+                contentMaxSize.width = (maxSize.width < contentMaxSize.width) ? maxSize.width : contentMaxSize.width;
+                contentMaxSize.height = (maxSize.height == -1) ? -1 : contentMaxSize.height + maxSize.height;
+            }
+        }
+        
+        return contentMaxSize;
+    }
 }
 

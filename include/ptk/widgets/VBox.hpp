@@ -67,6 +67,11 @@ namespace pTK
          @param newSize     Size to set
          */
         void setSize(const Size& newSize) override;
+        
+    protected:
+        Size calculateMaxSize() const override;
+        
+        Size calculateMinSize() const override;
     };
 }
 

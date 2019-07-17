@@ -77,10 +77,8 @@ namespace pTK
     private:
         // Window
         GLFWwindow* m_window;
-        Size m_minSize;
-        Size m_maxSize;
         Vec2f m_scale;
-        Canvas* m_drawCanvas;
+        std::unique_ptr<Canvas> m_drawCanvas;
         SafeQueue<std::shared_ptr<Event>> m_handleThreadEvents;
         SafeQueue<std::shared_ptr<Event>> m_mainThreadEvents;
         std::thread m_handleThread;
@@ -106,6 +104,7 @@ namespace pTK
         bool drawChild(Widget* widget) override;
         
         void swapBuffers();
+        void setLimits(const Size& minSize, const Size& maxSize);
         
         // Hide functions
         void setPosHint(const Position&) override {}
