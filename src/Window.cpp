@@ -27,7 +27,7 @@ namespace pTK
             m_runThreads{false}, m_mainThreadID{std::this_thread::get_id()}
     {
         // Set Widget properties.
-        Widget::setSize({(float)width, (float)height});
+        Widget::setSize({(int)width, (int)height});
         Sizable::setMinSize(Size(GLFW_DONT_CARE, GLFW_DONT_CARE));
         Sizable::setMaxSize(Size(GLFW_DONT_CARE, GLFW_DONT_CARE));
         setName(name);
@@ -330,7 +330,7 @@ namespace pTK
                 Vec2u cSize = rEvent->getContentSize();
                 
                 // Set Framebuffer Size.
-                Size fbSize{static_cast<float>(cSize.x), static_cast<float>(cSize.y)};
+                Size fbSize{(int)cSize.x, (int)cSize.y};
                 if (fbSize != m_drawCanvas->getSize())
                     m_drawCanvas->resize(fbSize);
                 

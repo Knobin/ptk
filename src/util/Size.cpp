@@ -11,18 +11,18 @@
 namespace pTK
 {
     Size::Size()
-        : width{0.0f}, height{0.0f}
+        : width{0}, height{0}
     {
         
     }
     
-    Size::Size(float t_width, float t_height)
+    Size::Size(int t_width, int t_height)
         : width{t_width}, height{t_height}
     {
         
     }
     
-    void Size::setSize(float t_width, float t_height)
+    void Size::setSize(int t_width, int t_height)
     {
         width = t_width;
         height = t_height;

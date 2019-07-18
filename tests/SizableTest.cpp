@@ -10,9 +10,9 @@ TEST_CASE("Constructors")
     SECTION("Sizable()")
     {
         pTK::Sizable size;
-        REQUIRE(size.getMinSize() == pTK::Size(0.0f, 0.0f));
-        REQUIRE(size.getSize() == pTK::Size(0.0f, 0.0f));
-        REQUIRE(size.getMaxSize() == pTK::Size(0.0f, 0.0f));
+        REQUIRE(size.getMinSize() == pTK::Size(0, 0));
+        REQUIRE(size.getSize() == pTK::Size(0, 0));
+        REQUIRE(size.getMaxSize() == pTK::Size(0, 0));
     }
 }
 
@@ -23,7 +23,7 @@ TEST_CASE("Getters and Setters")
     
     SECTION("minSize")
     {
-        pTK::Size minSize(10.0f, 2.0f);
+        pTK::Size minSize(10, 2);
         size.setMinSize(minSize);
         
         REQUIRE(size.getMinSize() == minSize);
@@ -31,7 +31,7 @@ TEST_CASE("Getters and Setters")
     
     SECTION("size")
     {
-        pTK::Size s(1200.0f, 142.0f);
+        pTK::Size s(1200, 142);
         size.setSize(s);
         
         REQUIRE(size.getSize() == s);
@@ -39,7 +39,7 @@ TEST_CASE("Getters and Setters")
     
     SECTION("maxSize")
     {
-        pTK::Size maxSize(2420.0f, 420.0f);
+        pTK::Size maxSize(2420, 420);
         size.setMaxSize(maxSize);
         
         REQUIRE(size.getMaxSize() == maxSize);
@@ -50,9 +50,9 @@ TEST_CASE("Copy and Assignment")
 {
     // Testing Container Copy and Assignment.
     pTK::Sizable size;
-    pTK::Size s1(10.0f, 20.0f);
-    pTK::Size s2(15.0f, 30.0f);
-    pTK::Size s3(50.0f, 100.0f);
+    pTK::Size s1(10, 20);
+    pTK::Size s2(15, 30);
+    pTK::Size s3(50, 100);
     size.setMinSize(s1);
     size.setSize(s2);
     size.setMaxSize(s3);
@@ -81,9 +81,9 @@ TEST_CASE ("Comparison")
 {
     // Testing Transformable Comparison.
     pTK::Sizable size;
-    pTK::Size s1(10.0f, 20.0f);
-    pTK::Size s2(15.0f, 30.0f);
-    pTK::Size s3(50.0f, 100.0f);
+    pTK::Size s1(10, 20);
+    pTK::Size s2(15, 30);
+    pTK::Size s3(50, 100);
     size.setMinSize(s1);
     size.setSize(s2);
     size.setMaxSize(s3);

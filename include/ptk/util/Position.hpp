@@ -27,7 +27,7 @@ namespace pTK
          
          @return    default initialized Position
          */
-        Position(float t_x, float t_y);
+        Position(int t_x, int t_y);
         
         ~Position() = default;
         
@@ -36,10 +36,10 @@ namespace pTK
          @param t_x     new x position
          @param t_y     new y position
          */
-        void setPosition(float t_x, float t_y);
+        void setPosition(int t_x, int t_y);
         
-        float x;
-        float y;
+        int x;
+        int y;
     };
     
     // Comparison operators.

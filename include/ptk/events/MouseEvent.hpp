@@ -42,7 +42,7 @@ namespace pTK
          @param posy    associated y position
          @return        default initialized MotionEvent
          */
-        MotionEvent(float posx, float posy)
+        MotionEvent(int posx, int posy)
             : Event(EventCategory::Mouse, EventType::MouseMoved), m_pos{posx, posy}
         {
         }
@@ -62,13 +62,13 @@ namespace pTK
          
          @return    x position
          */
-        float getX() const { return m_pos.x; }
+        int getX() const { return m_pos.x; }
         
         /** Function for retrieving the associated y position.
          
          @return    y position
          */
-        float getY() const { return m_pos.y; }
+        int getY() const { return m_pos.y; }
         
         /** Function for retrieving the associated position.
          
@@ -113,13 +113,13 @@ namespace pTK
          
          @return    x offset
          */
-        int getX() const { return m_offset.x; }
+        float getX() const { return m_offset.x; }
         
         /** Function for retrieving the associated y offset.
          
          @return    y offset
          */
-        int getY() const { return m_offset.y; }
+        float getY() const { return m_offset.y; }
         
         /** Function for retrieving the associated offset.
          
@@ -149,7 +149,7 @@ namespace pTK
          @param posy    associated y position
          @return        default initialized ButtonEvent
          */
-        ButtonEvent(EventType type, MouseButton button, float posx, float posy)
+        ButtonEvent(EventType type, MouseButton button, int posx, int posy)
             : MotionEvent(posx, posy), m_button{button}
         {
             m_type = type;

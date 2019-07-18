@@ -6,18 +6,18 @@
 TEST_CASE("Constructors")
 {
     // Testing Constructors with correct data.
-    float cX = 50.0f;
-    float cY = 300.0f;
+    int cX = 50;
+    int cY = 300;
     
     SECTION("Position()")
     {
         pTK::Position pos;
         
-        REQUIRE(pos.x == 0.0f);
-        REQUIRE(pos.y == 0.0f);
+        REQUIRE(pos.x == 0);
+        REQUIRE(pos.y == 0);
     }
     
-    SECTION("Position(float width, float height)")
+    SECTION("Position(int width, int height)")
     {
         pTK::Position pos{cX, cY};
         
@@ -29,24 +29,24 @@ TEST_CASE("Constructors")
 TEST_CASE("Getters and Setters")
 {
     // Testing Getters and Setters.
-    float cX = 55.0f;
-    float cY = 350.0f;
+    int cX = 55;
+    int cY = 350;
     
-    SECTION("x (float x)")
+    SECTION("x (int x)")
     {
         pTK::Position pos;
         pos.x = cX;
         REQUIRE(pos.x == cX);
     }
     
-    SECTION("y (float y)")
+    SECTION("y (int y)")
     {
         pTK::Position pos;
         pos.y = cY;
         REQUIRE(pos.y == cY);
     }
     
-    SECTION("setPosition(float x, float y)")
+    SECTION("setPosition(int x, int y)")
     {
         pTK::Position pos;
         pos.setPosition(cX, cY);
@@ -66,8 +66,8 @@ TEST_CASE("Getters and Setters")
 TEST_CASE("Copy and Assignment")
 {
     // Testing Rectangle Copy and Assignment.
-    float cX = 949.0f;
-    float cY = 84.0f;
+    int cX = 949;
+    int cY = 84;
     
     pTK::Position pos;
     pos.setPosition(cX, cY);
@@ -91,8 +91,8 @@ TEST_CASE("Copy and Assignment")
 TEST_CASE ("Comparison")
 {
     // Testing Transformable Comparison.
-    float cX = 57.0f;
-    float cY = 384.0f;
+    int cX = 57;
+    int cY = 384;
     
     pTK::Position pos;
     pos.setPosition(cX, cY);

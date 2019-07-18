@@ -6,18 +6,18 @@
 TEST_CASE("Constructors")
 {
     // Testing Constructors with correct data.
-    float cWidth = 50.0f;
-    float cHeight = 300.0f;
+    int cWidth = 50;
+    int cHeight = 300;
     
     SECTION("Size()")
     {
         pTK::Size size;
         
-        REQUIRE(size.width == 0.0f);
-        REQUIRE(size.height == 0.0f);
+        REQUIRE(size.width == 0);
+        REQUIRE(size.height == 0);
     }
     
-    SECTION("Size(float width, float height)")
+    SECTION("Size(int width, int height)")
     {
         pTK::Size size{cWidth, cHeight};
         
@@ -29,10 +29,10 @@ TEST_CASE("Constructors")
 TEST_CASE("Getters and Setters")
 {
     // Testing Getters and Setters.
-    float cWidth = 55.0f;
-    float cHeight = 350.0f;
+    int cWidth = 55;
+    int cHeight = 350;
     
-    SECTION("setSize(float width, float height)")
+    SECTION("setSize(int width, int height)")
     {
         pTK::Size size;
         size.setSize(cWidth, cHeight);
@@ -44,8 +44,8 @@ TEST_CASE("Getters and Setters")
 TEST_CASE("Copy and Assignment")
 {
     // Testing Rectangle Copy and Assignment.
-    float cWidth = 949.0f;
-    float cHeight = 84.0f;
+    int cWidth = 949;
+    int cHeight = 84;
     
     pTK::Size size;
     size.setSize(cWidth, cHeight);
@@ -69,8 +69,8 @@ TEST_CASE("Copy and Assignment")
 TEST_CASE ("Comparison")
 {
     // Testing Transformable Comparison.
-    float cWidth = 57.0f;
-    float cHeight = 384.0f;
+    int cWidth = 57;
+    int cHeight = 384;
     
     pTK::Size size;
     size.setSize(cWidth, cHeight);

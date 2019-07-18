@@ -18,7 +18,7 @@ namespace pTK
          This class is low level class handling size.
          */
         Size();
-        Size(float t_width, float t_height);
+        Size(int t_width, int t_height);
         ~Size() = default;
         
         /** Function for setting size.
@@ -26,10 +26,10 @@ namespace pTK
          @param width   new width
          @param height  new height
          */
-        void setSize(float t_width, float t_height);
+        void setSize(int t_width, int t_height);
         
-        float width;
-        float height;
+        int width;
+        int height;
     };
     
     // Comparison operators.

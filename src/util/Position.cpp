@@ -11,18 +11,18 @@
 namespace pTK
 {
     Position::Position()
-        : x{0.0f}, y{0.0f}
+        : x{0}, y{0}
     {
         
     }
     
-    Position::Position(float t_x, float t_y)
+    Position::Position(int t_x, int t_y)
         : x{t_x}, y{t_y}
     {
         
     }
 
-    void Position::setPosition(float t_x, float t_y)
+    void Position::setPosition(int t_x, int t_y)
     {
         x = t_x;
         y = t_y;
