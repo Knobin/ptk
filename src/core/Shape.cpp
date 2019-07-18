@@ -11,7 +11,7 @@
 namespace pTK
 {
     Shape::Shape()
-        : Widget(), m_color{0, 0, 0}, m_outlineColor{0, 0, 0}, m_outlineThickness{0}
+        : Widget(), m_color{0xf5f5f5ff}, m_outlineColor{0xf5f5f5ff}, m_outlineThickness{0}
     {
     }
     

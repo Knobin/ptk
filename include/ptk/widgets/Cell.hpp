@@ -21,7 +21,7 @@ namespace pTK
      Derived from Widget, this class for a Widget for controlling
      padding and layout style inside of the Cell.
      */
-    class Cell : public Widget
+    class Cell : public Rectangle
     {
     public:
         /** Constructs Cell with default values.

@@ -74,9 +74,9 @@ namespace pTK
             if ((wSize.width > bSize.width) || (wSize.height > bSize.height))
             {
                 // Apparently, this looks good.
-                uint dMargin = (m_margin*2);
-                uint hMargin = ((bSize.height - wSize.height) > dMargin) ? 0 : dMargin;
-                uint wMargin = ((bSize.width - wSize.width) > dMargin) ? 0 : dMargin;
+                int dMargin = (m_margin*2);
+                int hMargin = ((bSize.height - wSize.height) > dMargin) ? 0 : dMargin;
+                int wMargin = ((bSize.width - wSize.width) > dMargin) ? 0 : dMargin;
                 wSize.width = ((wSize.width > bSize.width) ? wSize.width : bSize.width) + (wMargin);
                 wSize.height = ((wSize.height > bSize.height) ? wSize.height : bSize.height) + (hMargin);
                 Widget::setSize(wSize);

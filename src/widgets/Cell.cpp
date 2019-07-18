@@ -12,7 +12,7 @@
 namespace pTK
 {
     Cell::Cell()
-        : Widget(), m_widget{nullptr}, m_widgetSize{}, m_widgetPos{}, m_clicked{false}, m_hover{false}
+        : Rectangle(), m_widget{nullptr}, m_widgetSize{}, m_widgetPos{}, m_clicked{false}, m_hover{false}
     {
     }
     
@@ -44,7 +44,7 @@ namespace pTK
     
     void Cell::onDraw(SkCanvas* canvas)
     {
-        //Rectangle::onDraw(canvas);
+        Rectangle::onDraw(canvas);
         m_widget->onDraw(canvas);
     }
     
