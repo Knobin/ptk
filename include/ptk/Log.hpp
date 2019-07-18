@@ -39,7 +39,7 @@ namespace pTK
 #endif
 
 #ifdef PTK_ENABLE_ASSERT
-    #define PTK_ASSERT(x, ...)   if(!(x)) { PTK_ERROR("Assertion Failed: {0}", __VA_ARGS__); }
+    #define PTK_ASSERT(x, ...)   if(!(x)) { PTK_ERROR("Assertion Failed: {0}", __VA_ARGS__); abort(); }
 #else
     #define PTK_ASSERT(...)
 #endif
