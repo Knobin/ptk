@@ -36,10 +36,12 @@ endif()
 # Options
 option(BUILD_TESTS "Build test programs" OFF)
 option(BUILD_EXAMPLES "Build example programs" ON)
+option(BUILD_SANDBOX "Build sandbox application" ON)
 
 # Print Options
 message(STATUS "Build Tests: ${BUILD_TESTS}")
 message(STATUS "Build Examples: ${BUILD_EXAMPLES}")
+message(STATUS "Build Sandbox: ${BUILD_SANDBOX}")
 
 # Source files
 file(GLOB_RECURSE SOURCE_FILES
@@ -93,6 +95,11 @@ endif (BUILD_EXAMPLES)
 
 # Tests
 if (BUILD_TESTS)
-enable_testing()
+    enable_testing()
     add_subdirectory(${CMAKE_SOURCE_DIR}/tests)
 endif (BUILD_TESTS)
+
+# Sandbox
+if (BUILD_SANDBOX)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/sandbox)
+endif(BUILD_SANDBOX)
