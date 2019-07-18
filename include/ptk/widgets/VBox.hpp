@@ -72,6 +72,9 @@ namespace pTK
         Size calculateMaxSize() const override;
         
         Size calculateMinSize() const override;
+        
+        void shrink(const Size& newSize) const;
+        void grow(const Size& newSize) const;
     };
 }
 
