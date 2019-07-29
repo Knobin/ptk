@@ -11,6 +11,9 @@
 // Local Headers
 #include "ptk/core/Box.hpp"
 
+// C++ Headers
+#include <utility>
+
 namespace pTK
 {
     /** VBox class implementation.
@@ -75,6 +78,10 @@ namespace pTK
         
         void shrink(const Size& newSize) const;
         void grow(const Size& newSize) const;
+        
+        void getSortedHeightDiffs(std::vector<std::pair<uint, int>>& data);
+        void addRemainder(std::vector<std::pair<uint, int>>& data, int32 remainder, int32 add);
+        void applySizes(std::vector<std::pair<uint, int>>& data);
     };
 }
 
