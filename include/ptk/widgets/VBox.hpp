@@ -9,7 +9,7 @@
 #define PTK_WIDGETS_VBOX_HPP
 
 // Local Headers
-#include "ptk/core/Box.hpp"
+#include "ptk/core/Container.hpp"
 
 // C++ Headers
 #include <utility>
@@ -21,7 +21,7 @@ namespace pTK
      Derived from Box, this class for holding Cells in
      order of displaying them in a vertical style.
      */
-    class VBox : public Box
+    class VBox : public Container
     {
     public:
         /** Constructs VBox with default values.
@@ -73,15 +73,12 @@ namespace pTK
         
     protected:
         Size calculateMaxSize() const override;
-        
         Size calculateMinSize() const override;
         
-        void shrink(const Size& newSize) const;
-        void grow(const Size& newSize) const;
+        void shrink(const Size& newSize);
+        void grow(const Size& newSize);
         
-        void getSortedHeightDiffs(std::vector<std::pair<uint, int>>& data);
-        void addRemainder(std::vector<std::pair<uint, int>>& data, int32 remainder, int32 add);
-        void applySizes(std::vector<std::pair<uint, int>>& data);
+        int alignChild(uint index,  const Size& childSize);
     };
 }
 
