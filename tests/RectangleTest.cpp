@@ -11,8 +11,8 @@ TEST_CASE("Constructors")
     {
         pTK::Rectangle rect;
         
-        REQUIRE(rect.getColor() == pTK::Color(0, 0, 0));
-        REQUIRE(rect.getOutlineColor() == pTK::Color(0, 0, 0));
+        REQUIRE(rect.getColor() == pTK::Color(0xf5f5f5ff));
+        REQUIRE(rect.getOutlineColor() == pTK::Color(0xf5f5f5ff));
         REQUIRE(rect.getOutlineThickness() == 0);
     }
 }

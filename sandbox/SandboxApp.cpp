@@ -14,12 +14,12 @@ int main(int argc, char *argv[])
     
     std::shared_ptr<pTK::Button> defaultBtn = std::make_shared<pTK::Button>(pTK::Button::Style::Default);
     defaultBtn->setText("Default Button");
+    defaultBtn->setMarginTop(40);
     window.add(defaultBtn);
     defaultBtn->onClick([&defaultBtn](pTK::MouseButton, const pTK::Position&){
         std::cout << defaultBtn->getText() << " clicked!\n";
         return true;
     });
-    window.back()->setColor(pTK::Color(0xF0F000FF));
     
     std::shared_ptr<pTK::Button> successBtn = std::make_shared<pTK::Button>(pTK::Button::Style::Success);
     successBtn->setText("Success Button");
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
         std::cout << successBtn->getText() << " clicked!\n";
         return true;
     });
-    window.back()->setColor(pTK::Color(0x0F00F0FF));
+    
     
     std::shared_ptr<pTK::Button> dangerBtn = std::make_shared<pTK::Button>(pTK::Button::Style::Danger);
     dangerBtn->setText("Danger Button");
@@ -37,7 +37,6 @@ int main(int argc, char *argv[])
         std::cout << dangerBtn->getText() << " clicked!\n";
         return true;
     });
-    window.back()->setColor(pTK::Color(0x00FF00FF));
     
     std::shared_ptr<pTK::Button> customBtn = std::make_shared<pTK::Button>();
     customBtn->setText("Custom Button");
@@ -51,7 +50,6 @@ int main(int argc, char *argv[])
         std::cout << customBtn->getText() << " clicked!\n";
         return true;
     });
-    window.back()->setColor(pTK::Color(0x0FF000FF));
     
     std::shared_ptr<pTK::Button> customStyleBtn = std::make_shared<pTK::Button>();
     pTK::Button::Style style = pTK::Button::Style::Default;
@@ -65,7 +63,6 @@ int main(int argc, char *argv[])
         std::cout << customStyleBtn->getText() << " clicked!\n";
         return true;
     });
-    window.back()->setColor(pTK::Color(0xFF0000FF));
     
     std::shared_ptr<pTK::Button> customSizeBtn = std::make_shared<pTK::Button>(style);
     customSizeBtn->setSize(pTK::Size(250, 100));
@@ -75,7 +72,6 @@ int main(int argc, char *argv[])
         std::cout << customSizeBtn->getText() << " clicked!\n";
         return true;
     });
-    window.back()->setColor(pTK::Color(0x000FF0FF));
     
     std::shared_ptr<pTK::Button> customLabelSizeBtn = std::make_shared<pTK::Button>(style);
     customLabelSizeBtn->setFontSize(24);
@@ -85,8 +81,6 @@ int main(int argc, char *argv[])
         std::cout << customLabelSizeBtn->getText() << " clicked!\n";
         return true;
     });
-    window.back()->setColor(pTK::Color(0x00ff00FF));
     
     return app.exec(&window);
 }
-

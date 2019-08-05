@@ -10,7 +10,7 @@ TEST_CASE("Shape Constructors")
     SECTION("Shape()")
     {
         pTK::Shape s;
-        pTK::Color correctColors{0, 0, 0, 255};
+        pTK::Color correctColors{0xf5f5f5ff};
         REQUIRE(s.getColor() == correctColors);
         REQUIRE(s.getOutlineColor() == correctColors);
         REQUIRE(s.getOutlineThickness() == 0);
