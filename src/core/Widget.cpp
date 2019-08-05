@@ -12,7 +12,9 @@
 namespace pTK
 {
     Widget::Widget()
-        : Drawable(), EventHandling(), Sizable(), m_parent{nullptr}, m_name{}
+        : Drawable(), EventHandling(), Sizable(), m_parent{nullptr}, m_name{},
+            m_margin{Margin::Auto}, m_alignVertical{Align::Vertical::Center},
+            m_alignHorizontal{Align::Horizontal::Center}
     {
         setMinSize(Size(-1.0f, -1.0f));
         setMaxSize(Size(-1.0f, -1.0f));
@@ -55,6 +57,123 @@ namespace pTK
         return m_name;
     }
     
+    void Widget::setMargin(const Margin& margin)
+    {
+        if ((margin.top > -2)
+            && (margin.bottom > -2)
+            && (margin.left > -2)
+            && (margin.right > -2))
+        {
+            m_margin = margin;
+            draw();
+        }
+    }
+    
+    void Widget::setMarginTop(int32 topMargin)
+    {
+        if (topMargin > -2)
+        {
+            m_margin.top = topMargin;
+            draw();
+        }
+    }
+    
+    void Widget::setMarginBottom(int32 bottomMargin)
+    {
+        if (bottomMargin > -2)
+        {
+            m_margin.bottom = bottomMargin;
+            draw();
+        }
+    }
+    
+    void Widget::setMarginLeft(int32 leftMargin)
+    {
+        if (leftMargin > -2)
+        {
+            m_margin.left = leftMargin;
+            draw();
+        }
+    }
+    
+    void Widget::setMarginRight(int32 rightMargin)
+    {
+        if (rightMargin > -2)
+        {
+            m_margin.right = rightMargin;
+            draw();
+        }
+    }
+    
+    void Widget::setMarginTopBottom(int32 topMargin, int32 bottomMargin)
+    {
+        if ((topMargin > -2)
+            && (bottomMargin > -2))
+        {
+            m_margin.top = topMargin;
+            m_margin.bottom = bottomMargin;
+            draw();
+        }
+    }
+    
+    void Widget::setMarginLeftRight(int32 leftMargin, int32 rightMargin)
+    {
+        if ((leftMargin > -2)
+            && (rightMargin > -2))
+        {
+            m_margin.left = leftMargin;
+            m_margin.right = rightMargin;
+            draw();
+        }
+    }
+    
+    const Margin& Widget::getMargin() const
+    {
+        return m_margin;
+    }
+    
+    int32 Widget::getMarginTop() const
+    {
+        return m_margin.top;
+    }
+    
+    int32 Widget::getMarginBottom() const
+    {
+        return m_margin.bottom;
+    }
+    
+    int32 Widget::getMarginLeft() const
+    {
+        return m_margin.left;
+    }
+    
+    int32 Widget::getMarginRight() const
+    {
+        return m_margin.right;
+    }
+    
+    void Widget::setAlignVertical(const Align::Vertical& verticalAlign)
+    {
+        m_alignVertical = verticalAlign;
+        draw();
+    }
+    
+    const Align::Vertical& Widget::getAlignVertical() const
+    {
+        return m_alignVertical;
+    }
+    
+    void Widget::setAlignHorizontal(const Align::Horizontal& horizontalAlign)
+    {
+        m_alignHorizontal = horizontalAlign;
+        draw();
+    }
+    
+    const Align::Horizontal& Widget::getAlignHorizontal() const
+    {
+        return m_alignHorizontal;
+    }
+    
     bool Widget::drawChild(Widget*)
     {
         return true;
@@ -67,6 +186,8 @@ namespace pTK
         
         return false;
     }
+    
+    ///////////////////////////////////////////////////////////////////////////////
     
     // Comparison operators.
     bool operator==(const Widget& lhs, const Widget& rhs)

@@ -13,6 +13,7 @@
 #include "ptk/core/EventHandling.hpp"
 #include "ptk/core/Sizable.hpp"
 #include "ptk/util/Position.hpp"
+#include "ptk/util/Align.hpp"
 
 // C++ Headers
 #include <string>
@@ -76,6 +77,26 @@ namespace pTK
          */
         const std::string& getName() const;
         
+        void setMargin(const Margin& margin);
+        void setMarginTop(int32 topMargin);
+        void setMarginBottom(int32 bottomMargin);
+        void setMarginLeft(int32 leftMargin);
+        void setMarginRight(int32 rightMargin);
+        void setMarginTopBottom(int32 topMargin, int32 bottomMargin);
+        void setMarginLeftRight(int32 leftMargin, int32 rightMargin);
+        
+        const Margin& getMargin() const;
+        int32 getMarginTop() const;
+        int32 getMarginBottom() const;
+        int32 getMarginLeft() const;
+        int32 getMarginRight() const;
+        
+        void setAlignVertical(const Align::Vertical& verticalAlign);
+        const Align::Vertical& getAlignVertical() const;
+        
+        void setAlignHorizontal(const Align::Horizontal& horizontalAlign);
+        const Align::Horizontal& getAlignHorizontal() const;
+        
     protected:
         /** Function for redrawing the child.
          
@@ -93,6 +114,10 @@ namespace pTK
         Position m_pos;
         
         std::string m_name;
+        
+        Margin m_margin;
+        Align::Vertical m_alignVertical;
+        Align::Horizontal m_alignHorizontal;
     };
     
     // Comparison operators.
