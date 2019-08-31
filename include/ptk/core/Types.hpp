@@ -24,4 +24,9 @@ typedef int64_t     int64;
 typedef uint8       byte;
 typedef uint32      uint;
 
+namespace pTK
+{
+    static int Auto = -1;
+}
+
 #endif // PTK_CORE_TYPES_HPP
