@@ -1,5 +1,4 @@
-#include "ptk/Application.hpp"
-#include "ptk/widgets/Button.hpp"
+#include "ptk/ptk.hpp"
 
 #include <iostream>
 
