@@ -320,7 +320,7 @@ namespace pTK
         /** Funtion for drawing all the childs in the Container.
          
          */
-        void drawChilds(SkCanvas* canvas);
+        void drawChildren(SkCanvas* canvas);
         
     private:
         container_type m_holder;

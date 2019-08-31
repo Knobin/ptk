@@ -172,7 +172,7 @@ namespace pTK
         SkMatrix matrix;
         matrix.setScale(m_scale.x, m_scale.y);
         canvas->setMatrix(matrix);
-        drawChilds(canvas);
+        drawChildren(canvas);
         canvas->flush();
         swapBuffers();
     }

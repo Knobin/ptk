@@ -222,10 +222,10 @@ namespace pTK
         paint.setStyle(SkPaint::kStrokeAndFill_Style);
         canvas->drawRoundRect(rect, 0, 0, paint);
         
-        drawChilds(canvas);
+        drawChildren(canvas);
     }
     
-    void Container::drawChilds(SkCanvas* canvas)
+    void Container::drawChildren(SkCanvas* canvas)
     {
         for (iterator it = begin(); it != end(); it++)
             (*it)->onDraw(canvas);
