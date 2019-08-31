@@ -82,14 +82,15 @@ namespace pTK
         void sortByIndex(std::pair<uint, Size>* data) const;
         
         int expandChildren(std::pair<uint, Size>* data, int add, const Size& layoutSize);
-        void createMargins(int* data, int unusedHeight);
+        
+        int readInternalMargins(int* data);
+        void readMargins(int* data);
+        void createMarginsOnAdd(int* data, int unusedHeight);
+        void extendMargins(int* data, int unusedHeight);
         
         void shrink(const Size& newSize);
+        void layoutShrink();
         void grow(const Size& newSize);
-        void growSpacing(int* spaceData, uint spaceCount, int32 height);
-        void growMargin(int* spaceData, uint spaceCount, int* marginData, int32 height);
-        void growRemainder(int* spaceData, uint spaceCount, int32 remainder);
-        int growChilds(int totalHeight);
         
         int alignChildH(uint index,  const Size& childSize);
         

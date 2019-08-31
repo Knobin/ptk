@@ -90,6 +90,14 @@ namespace pTK
         return m_holder.at(index);
     }
     
+    Container::type Container::at(unsigned int index) const
+    {
+        if (index < 0 || index >= size())
+            throw std::out_of_range("Index is out of range!");
+        
+        return m_holder.at(index);
+    }
+    
     Container::type Container::operator[](unsigned int index) const
     {
         if (index < 0 || index >= size())

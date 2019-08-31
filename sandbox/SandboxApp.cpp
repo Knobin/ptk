@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     
     std::shared_ptr<pTK::Button> defaultBtn = std::make_shared<pTK::Button>(pTK::Button::Style::Default);
     defaultBtn->setText("Default Button");
-    defaultBtn->setMargin(pTK::Margin::Auto);
+    defaultBtn->setMarginBottom(pTK::Auto);
     window.add(defaultBtn);
     defaultBtn->onClick([&defaultBtn](pTK::MouseButton, const pTK::Position&){
         std::cout << defaultBtn->getText() << " clicked!\n";
@@ -32,13 +32,13 @@ int main(int argc, char *argv[])
     
     std::shared_ptr<pTK::Button> dangerBtn = std::make_shared<pTK::Button>(pTK::Button::Style::Danger);
     dangerBtn->setText("Danger Button");
-    dangerBtn->setMargin(pTK::Margin::Auto);
+    dangerBtn->setMarginTop(50);
     window.add(dangerBtn);
     dangerBtn->onClick([&dangerBtn](pTK::MouseButton, const pTK::Position&){
         std::cout << dangerBtn->getText() << " clicked!\n";
         return true;
     });
-    /*
+    
     std::shared_ptr<pTK::Button> customBtn = std::make_shared<pTK::Button>();
     customBtn->setText("Custom Button");
     customBtn->setColor(pTK::Color(0x808080FF));
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
         std::cout << customBtn->getText() << " clicked!\n";
         return true;
     });
-    
+    /*
     std::shared_ptr<pTK::Button> customStyleBtn = std::make_shared<pTK::Button>();
     pTK::Button::Style style = pTK::Button::Style::Default;
     style.color = pTK::Color(0x808080FF);

@@ -70,7 +70,7 @@ namespace pTK
     
     void Widget::setMarginTop(int32 topMargin)
     {
-        if (topMargin > -2)
+        if (topMargin > -3)
         {
             m_margin.top = topMargin;
             draw();
@@ -79,7 +79,7 @@ namespace pTK
     
     void Widget::setMarginBottom(int32 bottomMargin)
     {
-        if (bottomMargin > -2)
+        if (bottomMargin > -3)
         {
             m_margin.bottom = bottomMargin;
             draw();
@@ -88,7 +88,7 @@ namespace pTK
     
     void Widget::setMarginLeft(int32 leftMargin)
     {
-        if (leftMargin > -2)
+        if (leftMargin > -3)
         {
             m_margin.left = leftMargin;
             draw();
@@ -97,7 +97,7 @@ namespace pTK
     
     void Widget::setMarginRight(int32 rightMargin)
     {
-        if (rightMargin > -2)
+        if (rightMargin > -3)
         {
             m_margin.right = rightMargin;
             draw();
@@ -106,8 +106,8 @@ namespace pTK
     
     void Widget::setMarginTopBottom(int32 topMargin, int32 bottomMargin)
     {
-        if ((topMargin > -2)
-            && (bottomMargin > -2))
+        if ((topMargin > -3)
+            && (bottomMargin > -3))
         {
             m_margin.top = topMargin;
             m_margin.bottom = bottomMargin;
@@ -117,8 +117,8 @@ namespace pTK
     
     void Widget::setMarginLeftRight(int32 leftMargin, int32 rightMargin)
     {
-        if ((leftMargin > -2)
-            && (rightMargin > -2))
+        if ((leftMargin > -3)
+            && (rightMargin > -3))
         {
             m_margin.left = leftMargin;
             m_margin.right = rightMargin;

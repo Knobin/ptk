@@ -89,6 +89,13 @@ namespace pTK
          */
         type at(unsigned int index);
         
+        /** Function for retrieving the element at the index in the Container.
+         
+         @param index   Index
+         @return        element in Container
+         */
+        type at(unsigned int index) const;
+        
         /** Operator for retrieving the element at the index in the Container.
          
          @param index   Index
