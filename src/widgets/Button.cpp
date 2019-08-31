@@ -16,21 +16,21 @@ namespace pTK
     const Button::Style Button::Style::Danger{Color(0xDC3545FF), Color(0xce2331FF), Color(0xBC202DFF), Color(0xFFFFFFFF), 5};
     
     Button::Button()
-        : Rectangle(), m_text{std::make_shared<Label>()}, m_labelPos{}, m_margin{15},
+        : Rectangle(), m_text{std::make_shared<Label>()}, m_labelPos{}, m_borderSize{14},
             m_hoverColor{}, m_clickColor{}, m_colorCopy{}, m_hover{false}, m_click{false}
     {
         setStyle(Style::Default);
         m_text->setParent(this);
-        m_text->setFontSize(16);
+        m_text->setFontSize(14);
     }
     
     Button::Button(const Style& style)
-        : Rectangle(), m_text{std::make_shared<Label>()}, m_labelPos{}, m_margin{15},
+        : Rectangle(), m_text{std::make_shared<Label>()}, m_labelPos{}, m_borderSize{14},
             m_hoverColor{}, m_clickColor{}, m_colorCopy{}, m_hover{false}, m_click{false}
     {
         setStyle(style);
         m_text->setParent(this);
-        m_text->setFontSize(16);
+        m_text->setFontSize(14);
     }
     
     void Button::setPosHint(const Position& pos)
@@ -49,8 +49,8 @@ namespace pTK
     void Button::setSize(const Size& newSize)
     {
         Size textSize = m_text->getSize();
-        textSize.width += (m_margin*2);
-        textSize.height += (m_margin*2);
+        textSize.width += (m_borderSize*2);
+        textSize.height += (m_borderSize*2);
         
         textSize.width = (newSize.width > textSize.width) ? newSize.width : textSize.width;
         textSize.height = (newSize.height > textSize.height) ? newSize.height : textSize.height;
@@ -74,7 +74,7 @@ namespace pTK
             if ((wSize.width > bSize.width) || (wSize.height > bSize.height))
             {
                 // Apparently, this looks good.
-                int dMargin = (m_margin*2);
+                int dMargin = (m_borderSize*2);
                 int hMargin = ((bSize.height - wSize.height) > dMargin) ? 0 : dMargin;
                 int wMargin = ((bSize.width - wSize.width) > dMargin) ? 0 : dMargin;
                 wSize.width = ((wSize.width > bSize.width) ? wSize.width : bSize.width) + (wMargin);
@@ -181,14 +181,14 @@ namespace pTK
         return m_clickColor;
     }
     
-    void Button::setMargin(uint margin)
+    void Button::setBorderSize(uint size)
     {
-        m_margin = margin;
+        m_borderSize = size;
     }
     
-    uint Button::getMargin() const
+    uint Button::getBorderSize() const
     {
-        return m_margin;
+        return m_borderSize;
     }
     
     void Button::setStyle(const Style& style)

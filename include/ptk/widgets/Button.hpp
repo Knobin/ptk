@@ -173,17 +173,17 @@ namespace pTK
          */
         const Color& getClickColor() const;
         
-        /** Function for setting the margin to the text.
+        /** Function for setting the border size to the text.
          
          @param margin   text margin
          */
-        void setMargin(uint margin);
+        void setBorderSize(uint size);
         
         /** Function for retrieving the margin to the text.
          
          @return    Current margin
          */
-        uint getMargin() const;
+        uint getBorderSize() const;
         
         /** Function for setting the style of the Button.
          
@@ -231,7 +231,7 @@ namespace pTK
         std::shared_ptr<Label> m_text;
         Position m_labelPos;
         Size m_labelSize;
-        uint m_margin;
+        uint m_borderSize;
         Color m_hoverColor;
         Color m_clickColor;
         Color m_colorCopy;
