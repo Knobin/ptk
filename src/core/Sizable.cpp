@@ -15,14 +15,31 @@ namespace pTK
     {
     }
     
+    Sizable::Sizable(const Size& size)
+        : m_minSize{}, m_size{size}, m_maxSize{}
+    {
+    }
+    
     void Sizable::setMinSize(const Size& size)
     {
         m_minSize = size;
     }
     
-    const Size& Sizable::getMinSize() const
+    Size Sizable::getMinSize() const
     {
-        return m_minSize;
+        Size size;
+        
+        if (m_minSize.height == pTK::Auto)
+            size.height = m_size.height;
+        else
+            size.height = (m_minSize.height <= m_size.height) ? m_minSize.height : m_size.height;
+        
+        if (m_maxSize.width == pTK::Auto)
+            size.width = m_size.width;
+        else
+            size.width = (m_minSize.width <= m_size.width) ? m_minSize.width : m_size.width;
+        
+        return size;
     }
     
     void Sizable::setSize(const Size& size)
@@ -40,9 +57,21 @@ namespace pTK
         m_maxSize = size;
     }
     
-    const Size& Sizable::getMaxSize() const
+    Size Sizable::getMaxSize() const
     {
-        return m_maxSize;
+        Size size;
+        
+        if (m_maxSize.height == pTK::Auto)
+            size.height = m_size.height;
+        else
+            size.height = (m_maxSize.height >= m_size.height) ? m_maxSize.height : m_size.height;
+        
+        if (m_maxSize.width == pTK::Auto)
+            size.width = m_size.width;
+        else
+            size.width = (m_maxSize.width >= m_size.width) ? m_maxSize.width : m_size.width;
+        
+        return size;
     }
     
     // Comparison operators.

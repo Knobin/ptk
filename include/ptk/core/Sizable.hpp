@@ -10,6 +10,7 @@
 
 // Local Headers
 #include "ptk/util/Size.hpp"
+#include "ptk/core/Types.hpp"
 
 namespace pTK
 {
@@ -25,6 +26,12 @@ namespace pTK
          @return  default initialized Sizable
          */
         Sizable();
+        
+        /** Constructs Sizable with default values with size.
+         
+         @return  default initialized Sizable
+         */
+        Sizable(const Size& size);
         virtual ~Sizable() = default;
         
         /** Funtion for setting minimal size.
@@ -37,7 +44,7 @@ namespace pTK
          
          @param size    minimal size
          */
-        const Size& getMinSize() const;
+        Size getMinSize() const;
         
         /** Funtion for setting size.
          
@@ -61,7 +68,7 @@ namespace pTK
          
          @param size    maximal size
          */
-        const Size& getMaxSize() const;
+        Size getMaxSize() const;
         
     private:
         Size m_minSize;
