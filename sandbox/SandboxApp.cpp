@@ -11,10 +11,11 @@ int main(int argc, char *argv[])
 {
     pTK::Application app(argc, argv);
     pTK::Window window("pTK Sandbox", SCR_WIDTH, SCR_HEIGHT);
+    window.setBackground(pTK::Color(0x232323FF));
     
     std::shared_ptr<pTK::Button> defaultBtn = std::make_shared<pTK::Button>(pTK::Button::Style::Default);
     defaultBtn->setText("Default Button");
-    defaultBtn->setMarginTop(40);
+    defaultBtn->setMargin(pTK::Margin::Auto);
     window.add(defaultBtn);
     defaultBtn->onClick([&defaultBtn](pTK::MouseButton, const pTK::Position&){
         std::cout << defaultBtn->getText() << " clicked!\n";
@@ -23,21 +24,22 @@ int main(int argc, char *argv[])
     
     std::shared_ptr<pTK::Button> successBtn = std::make_shared<pTK::Button>(pTK::Button::Style::Success);
     successBtn->setText("Success Button");
+    successBtn->setMargin(pTK::Margin::Auto);
     window.add(successBtn);
     successBtn->onClick([&successBtn](pTK::MouseButton, const pTK::Position&){
         std::cout << successBtn->getText() << " clicked!\n";
         return true;
     });
     
-    
     std::shared_ptr<pTK::Button> dangerBtn = std::make_shared<pTK::Button>(pTK::Button::Style::Danger);
     dangerBtn->setText("Danger Button");
+    dangerBtn->setMargin(pTK::Margin::Auto);
     window.add(dangerBtn);
     dangerBtn->onClick([&dangerBtn](pTK::MouseButton, const pTK::Position&){
         std::cout << dangerBtn->getText() << " clicked!\n";
         return true;
     });
-    
+    /*
     std::shared_ptr<pTK::Button> customBtn = std::make_shared<pTK::Button>();
     customBtn->setText("Custom Button");
     customBtn->setColor(pTK::Color(0x808080FF));
@@ -67,6 +69,7 @@ int main(int argc, char *argv[])
     std::shared_ptr<pTK::Button> customSizeBtn = std::make_shared<pTK::Button>(style);
     customSizeBtn->setSize(pTK::Size(250, 100));
     customSizeBtn->setText("Custom Size Button");
+    customSizeBtn->pTK::Widget::setMargin(pTK::Margin::Auto);
     window.add(customSizeBtn);
     customSizeBtn->onClick([&customSizeBtn](pTK::MouseButton, const pTK::Position&){
         std::cout << customSizeBtn->getText() << " clicked!\n";
@@ -76,11 +79,12 @@ int main(int argc, char *argv[])
     std::shared_ptr<pTK::Button> customLabelSizeBtn = std::make_shared<pTK::Button>(style);
     customLabelSizeBtn->setFontSize(24);
     customLabelSizeBtn->setText("Custom Label Size Button");
+    //customLabelSizeBtn->pTK::Widget::setMargin(pTK::Margin::Auto);
     window.add(customLabelSizeBtn);
     customLabelSizeBtn->onClick([&customLabelSizeBtn](pTK::MouseButton, const pTK::Position&){
         std::cout << customLabelSizeBtn->getText() << " clicked!\n";
         return true;
     });
-    
+    */
     return app.exec(&window);
 }

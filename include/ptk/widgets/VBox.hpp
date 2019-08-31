@@ -29,7 +29,7 @@ namespace pTK
          @return    default initialized VBox
          */
         VBox();
-        virtual ~VBox() = default;
+        virtual ~VBox();
         
         /** Function for adding a Widget
          This will create a cell and put the Widget in it.
@@ -71,14 +71,32 @@ namespace pTK
          */
         void setSize(const Size& newSize) override;
         
-    protected:
         Size calculateMaxSize() const override;
         Size calculateMinSize() const override;
         
+    private:
+        void expandOnAdd(const Size& newSize);
+        void refitOnAdd(const Size& newSize);
+        
+        void sortByHeight(std::pair<uint, Size>* data) const;
+        void sortByIndex(std::pair<uint, Size>* data) const;
+        
+        int expandChildren(std::pair<uint, Size>* data, int add, const Size& layoutSize);
+        void createMargins(int* data, int unusedHeight);
+        
         void shrink(const Size& newSize);
         void grow(const Size& newSize);
+        void growSpacing(int* spaceData, uint spaceCount, int32 height);
+        void growMargin(int* spaceData, uint spaceCount, int* marginData, int32 height);
+        void growRemainder(int* spaceData, uint spaceCount, int32 remainder);
+        int growChilds(int totalHeight);
         
-        int alignChild(uint index,  const Size& childSize);
+        int alignChildH(uint index,  const Size& childSize);
+        
+        void internalUpdate();
+        
+    private:
+        std::vector<void*> m_data;
     };
 }
 
