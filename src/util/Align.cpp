@@ -20,6 +20,5 @@ namespace pTK
     {
     }
     
-    const int32 Margin::Style::Auto{-1};
-    const Margin Margin::Auto{Style::Auto, Style::Auto, Style::Auto, Style::Auto};
+    const Margin Margin::Auto{pTK::Auto, pTK::Auto, pTK::Auto, pTK::Auto};
 }

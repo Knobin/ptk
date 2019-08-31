@@ -91,12 +91,6 @@ namespace pTK
         int32 getMarginLeft() const;
         int32 getMarginRight() const;
         
-        void setAlignVertical(const Align::Vertical& verticalAlign);
-        const Align::Vertical& getAlignVertical() const;
-        
-        void setAlignHorizontal(const Align::Horizontal& horizontalAlign);
-        const Align::Horizontal& getAlignHorizontal() const;
-        
     protected:
         /** Function for redrawing the child.
          
@@ -116,8 +110,6 @@ namespace pTK
         std::string m_name;
         
         Margin m_margin;
-        Align::Vertical m_alignVertical;
-        Align::Horizontal m_alignHorizontal;
     };
     
     // Comparison operators.

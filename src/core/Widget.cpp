@@ -13,8 +13,7 @@ namespace pTK
 {
     Widget::Widget()
         : Drawable(), EventHandling(), Sizable(), m_parent{nullptr}, m_name{},
-            m_margin{Margin::Auto}, m_alignVertical{Align::Vertical::Center},
-            m_alignHorizontal{Align::Horizontal::Center}
+            m_margin{}
     {
         setMinSize(Size(-1.0f, -1.0f));
         setMaxSize(Size(-1.0f, -1.0f));
@@ -150,28 +149,6 @@ namespace pTK
     int32 Widget::getMarginRight() const
     {
         return m_margin.right;
-    }
-    
-    void Widget::setAlignVertical(const Align::Vertical& verticalAlign)
-    {
-        m_alignVertical = verticalAlign;
-        draw();
-    }
-    
-    const Align::Vertical& Widget::getAlignVertical() const
-    {
-        return m_alignVertical;
-    }
-    
-    void Widget::setAlignHorizontal(const Align::Horizontal& horizontalAlign)
-    {
-        m_alignHorizontal = horizontalAlign;
-        draw();
-    }
-    
-    const Align::Horizontal& Widget::getAlignHorizontal() const
-    {
-        return m_alignHorizontal;
     }
     
     bool Widget::drawChild(Widget*)

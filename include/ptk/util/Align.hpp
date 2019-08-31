@@ -22,20 +22,6 @@ namespace pTK
             int32 left;
             int32 right;
         };
-        
-        enum class Vertical
-        {
-            Top,
-            Center,
-            Bottom
-        };
-        
-        enum class Horizontal
-        {
-            Left,
-            Center,
-            Right
-        };
     }
     
     struct Margin : public Align::Directions
@@ -43,11 +29,6 @@ namespace pTK
         Margin();
         Margin(int32 mTop, int32 mBottom, int32 mLeft, int32 mRight);
         ~Margin() = default;
-        
-        struct Style
-        {
-            static const int32 Auto;
-        };
         
         static const Margin Auto;
     };
