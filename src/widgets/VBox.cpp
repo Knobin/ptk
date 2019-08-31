@@ -40,6 +40,7 @@ namespace pTK
     VBox::VBox()
         : Container(), m_data{}
     {
+        
     }
     
     VBox::~VBox()
@@ -140,18 +141,18 @@ namespace pTK
             int height = maxSize.height - minSize.height;
             
             // Width
-            if (maxSize.width == pTK::Auto)
-                width = pTK::Auto;
+            if (maxSize.width == pTK::Infinite)
+                width = pTK::Infinite;
             
             // Height
-            if (maxSize.height == pTK::Auto)
-                height = pTK::Auto;
+            if (maxSize.height == pTK::Infinite)
+                height = pTK::Infinite;
             
             data[i] = std::make_pair(i, Size(width, height));
             maxHeightAdd += height;
         }
         
-        // Sort by data[].second.height and put all pTK::Auto at the end.
+        // Sort by data[].second.height and put all pTK::Infinite at the end.
         sortByHeight(data);
         
         // Expand children to its max sizes possible.
@@ -252,7 +253,7 @@ namespace pTK
             auto child = at(data[i].first);
             Size minSize = child->getMinSize();
             
-            if (height == pTK::Auto)
+            if (height == pTK::Infinite)
             {
                 if (!autoFound)
                 {
@@ -282,7 +283,7 @@ namespace pTK
             }
             
             Size maxSize = child->getMaxSize();
-            if (maxSize.width != pTK::Auto)
+            if (maxSize.width != pTK::Infinite)
             {
                 if (maxSize.width > layoutSize.width)
                     data[i].second.width = layoutSize.width;

@@ -15,8 +15,8 @@ namespace pTK
         : Drawable(), EventHandling(), Sizable(), m_parent{nullptr}, m_name{},
             m_margin{}
     {
-        setMinSize(Size(-1.0f, -1.0f));
-        setMaxSize(Size(-1.0f, -1.0f));
+        setMinSize(Size(pTK::Auto, pTK::Auto));
+        setMaxSize(Size(pTK::Auto, pTK::Auto));
     }
     
     void Widget::setParent(Widget* parent)
@@ -58,10 +58,10 @@ namespace pTK
     
     void Widget::setMargin(const Margin& margin)
     {
-        if ((margin.top > -2)
-            && (margin.bottom > -2)
-            && (margin.left > -2)
-            && (margin.right > -2))
+        if ((margin.top > -3)
+            && (margin.bottom > -3)
+            && (margin.left > -3)
+            && (margin.right > -3))
         {
             m_margin = margin;
             draw();

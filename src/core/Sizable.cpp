@@ -34,7 +34,7 @@ namespace pTK
         else
             size.height = (m_minSize.height <= m_size.height) ? m_minSize.height : m_size.height;
         
-        if (m_maxSize.width == pTK::Auto)
+        if (m_minSize.width == pTK::Auto)
             size.width = m_size.width;
         else
             size.width = (m_minSize.width <= m_size.width) ? m_minSize.width : m_size.width;
@@ -63,11 +63,15 @@ namespace pTK
         
         if (m_maxSize.height == pTK::Auto)
             size.height = m_size.height;
+        else if (m_maxSize.height == pTK::Infinite)
+            size.height = pTK::Infinite;
         else
             size.height = (m_maxSize.height >= m_size.height) ? m_maxSize.height : m_size.height;
         
         if (m_maxSize.width == pTK::Auto)
             size.width = m_size.width;
+        else if (m_maxSize.width == pTK::Infinite)
+            size.width = pTK::Infinite;
         else
             size.width = (m_maxSize.width >= m_size.width) ? m_maxSize.width : m_size.width;
         

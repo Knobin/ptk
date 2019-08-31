@@ -26,7 +26,8 @@ typedef uint32      uint;
 
 namespace pTK
 {
-    static int Auto = -1;
+    static int Auto     = -2;
+    static int Infinite = -1;
 }
 
 #endif // PTK_CORE_TYPES_HPP

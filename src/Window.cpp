@@ -338,13 +338,13 @@ namespace pTK
                 Size contentMinSize = calculateMinSize();
                 Size currentMinSize = getMinSize();
                 if ((currentMinSize.width < contentMinSize.width) || (currentMinSize.height < contentMinSize.height))
-                setMinSize(contentMinSize);
+                    setMinSize(contentMinSize);
                 
                 // TODO: May conflict with eventThread.
                 Size contentMaxSize = calculateMaxSize();
                 Size currentMaxSize = getMaxSize();
                 if ((currentMaxSize.width > contentMaxSize.width) || (currentMaxSize.height > contentMaxSize.height))
-                setMaxSize(contentMaxSize);
+                    setMaxSize(contentMaxSize);
                 
                 // Send draw event.
                 sendEvent<Event>(EventCategory::Window, EventType::WindowDraw);
