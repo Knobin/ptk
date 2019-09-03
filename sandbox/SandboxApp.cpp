@@ -5,7 +5,7 @@
 // settings
 const unsigned int SCR_WIDTH = 960;
 const unsigned int SCR_HEIGHT = 540;
-
+// 270 230
 int main(int argc, char *argv[])
 {
     pTK::Application app(argc, argv);
@@ -14,7 +14,8 @@ int main(int argc, char *argv[])
     
     std::shared_ptr<pTK::Button> defaultBtn = std::make_shared<pTK::Button>(pTK::Button::Style::Default);
     defaultBtn->setText("Default Button");
-    defaultBtn->setMarginBottom(pTK::Auto);
+    // defaultBtn->setMarginBottom(pTK::Auto);
+    defaultBtn->setMarginLeftRight(pTK::Auto, pTK::Auto);
     window.add(defaultBtn);
     defaultBtn->onClick([&defaultBtn](pTK::MouseButton, const pTK::Position&){
         std::cout << defaultBtn->getText() << " clicked!\n";
@@ -23,7 +24,8 @@ int main(int argc, char *argv[])
     
     std::shared_ptr<pTK::Button> successBtn = std::make_shared<pTK::Button>(pTK::Button::Style::Success);
     successBtn->setText("Success Button");
-    successBtn->setMargin(pTK::Margin::Auto);
+    successBtn->setMarginTopBottom(pTK::Auto, pTK::Auto);
+    successBtn->setMarginLeftRight(pTK::Auto, pTK::Auto);
     window.add(successBtn);
     successBtn->onClick([&successBtn](pTK::MouseButton, const pTK::Position&){
         std::cout << successBtn->getText() << " clicked!\n";
@@ -32,7 +34,8 @@ int main(int argc, char *argv[])
     
     std::shared_ptr<pTK::Button> dangerBtn = std::make_shared<pTK::Button>(pTK::Button::Style::Danger);
     dangerBtn->setText("Danger Button");
-    dangerBtn->setMarginTop(50);
+    //dangerBtn->setMarginTop(50);
+    dangerBtn->setMarginLeftRight(pTK::Auto, pTK::Auto);
     window.add(dangerBtn);
     dangerBtn->onClick([&dangerBtn](pTK::MouseButton, const pTK::Position&){
         std::cout << dangerBtn->getText() << " clicked!\n";
@@ -46,6 +49,7 @@ int main(int argc, char *argv[])
     customBtn->setCornerRadius(5);
     customBtn->setClickColor(pTK::Color(0x656565FF));
     customBtn->setHoverColor(pTK::Color(0x707070FF));
+    customBtn->setMarginLeftRight(pTK::Auto, pTK::Auto);
     window.add(customBtn);
     customBtn->onClick([&customBtn](pTK::MouseButton, const pTK::Position&){
         std::cout << customBtn->getText() << " clicked!\n";

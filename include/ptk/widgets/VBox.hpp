@@ -77,20 +77,21 @@ namespace pTK
     private:
         void expandOnAdd(const Size& newSize);
         void refitOnAdd(const Size& newSize);
+        void createMarginsOnAdd(int* data, int unusedHeight);
         
         void sortByHeight(std::pair<uint, Size>* data) const;
         void sortByIndex(std::pair<uint, Size>* data) const;
         
-        int expandChildren(std::pair<uint, Size>* data, int add, const Size& layoutSize);
-        
         int readInternalMargins(int* data);
         void readMargins(int* data);
-        void createMarginsOnAdd(int* data, int unusedHeight);
-        void extendMargins(int* data, int unusedHeight);
         
         void shrink(const Size& newSize);
-        void layoutShrink();
+        int shrinkChildren(std::pair<uint, Size>* data, int sub, const Size& layoutSize);
+        void shrinkMargins(int* data, int unusedHeight);
+        
         void grow(const Size& newSize);
+        int expandChildren(std::pair<uint, Size>* data, int add, const Size& layoutSize);
+        void extendMargins(int* data, int unusedHeight);
         
         int alignChildH(uint index,  const Size& childSize);
         

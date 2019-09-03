@@ -189,9 +189,22 @@ namespace pTK
                     int temp = std::floor((float)marginData[i+1] / 2.0f);
                     cell->setMarginBottom(temp);
                     at(i+1)->setMarginTop(marginData[i+1] - temp);
+                }else if (top->margin.bottom == pTK::Auto)
+                {
+                    cell->setMarginBottom(marginData[i+1]);
+                    at(i+1)->setMarginTop(0);
+                }else if (bottom->margin.bottom == pTK::Auto)
+                {
+                    at(i+1)->setMarginTop(marginData[i+1]);
+                    cell->setMarginBottom(0);
                 }
             }
         }
+        
+        for (auto it = cbegin(); it != cend(); ++it)
+            PTK_INFO("top: {0} bottom: {1}", (*it)->getMarginTop(), (*it)->getMarginBottom());
+        
+        PTK_INFO("");
         
         delete [] marginData;
         delete [] data;
@@ -279,7 +292,7 @@ namespace pTK
             }else if (height == 0)
             {
                 // Child cannot grow.
-                data[i].second.height = at(i)->getSize().height;
+                data[i].second.height = child->getSize().height;
                 eachAdd = std::floor((float)totalAdd / (float)(children - i));
             }else if (height < eachAdd)
             {
@@ -488,10 +501,13 @@ namespace pTK
         int height = newSize.height - boxSize.height;
         int width = newSize.width - boxSize.width;
         
-        if ((height > 0) || (width > 0))
-            grow(newSize);
-        else if ((height < 0) || (width < 0))
-            shrink(newSize);
+        if (size() > 0)
+        {
+            if ((height > 0) || (width > 0))
+                grow(newSize);
+            else if ((height < 0) || (width < 0))
+                shrink(newSize);
+        }
         
         Widget::setSize(newSize);
     }
@@ -539,7 +555,184 @@ namespace pTK
         PTK_ASSERT((getMinSize().width <= newSize.width), "Exceeded min width of VBox");
         PTK_ASSERT((getMinSize().height <= newSize.height), "Exceeded min height of VBox");
         
-        // TODO
+        Size layoutSize = newSize;
+        Size vbSize = getSize();
+        const uint children = size();
+        
+        std::pair<uint, Size>* data = new std::pair<uint, Size>[children];
+        PTK_ASSERT(data, "error obtaining memory on heap");
+        
+        // Get height diffs on content.
+        for (uint i = 0; i < children; ++i)
+        {
+            Size minSize = at(i)->getMinSize();
+            Size size = at(i)->getSize();
+            
+            int width = size.width - minSize.width;
+            int height = size.height - minSize.height;
+            
+            data[i] = std::make_pair(i, Size(width, height));
+        }
+        
+        // Sort by data[].second.height and put all pTK::Infinite at the end.
+        sortByHeight(data);
+        
+        // Expand children to its max sizes possible.
+        int heightLeft  = vbSize.height - layoutSize.height;
+        int eachSub     = std::floor((float)heightLeft / (float)children);
+        int totalSub    = shrinkChildren(data, eachSub, layoutSize);
+        
+        // Sort by data[].first
+        sortByIndex(data);
+        
+        // Create Margins
+        uint spaces = children + 1;
+        int* marginData = new int[spaces];
+        PTK_ASSERT(marginData, "error obtaining memory on heap");
+        int remainder       = (vbSize.height - ((eachSub * children) + layoutSize.height)) % children;
+        int unusedHeight    = remainder + totalSub;
+        shrinkMargins(marginData, unusedHeight);
+        
+        PTK_INFO("Start");
+        for (uint i = 0; i < spaces; ++i)
+            PTK_INFO("{0} {1}", i, marginData[i]);
+            
+        // Set sizes to childs and spaces.
+        Position vbPos = getPosition();
+        int hotfix = 0;
+        for (uint i = 0; i != children; i++)
+        {
+            auto cell = at(i);
+            cell->setSize(data[i].second);
+            Position pos = cell->getPosition();
+            hotfix += marginData[i];
+            pos.y -= hotfix; // Add margin
+            cell->setPosHint(Position(vbPos.x + alignChildH(i, data[i].second), pos.y));
+            VBoxData* oldData = (VBoxData*)m_data.at(i);
+            hotfix += (data[i].second.height < oldData->size.height) ? oldData->size.height - data[i].second.height : 0;
+            
+            if (i == 0)
+            {
+                cell->setMarginTop(cell->getMarginTop() - marginData[0]);
+            }
+            
+            if (i == (children - 1))
+            {
+                cell->setMarginBottom(cell->getMarginBottom() - marginData[i+1]);
+            }else
+            {
+                VBoxData* top = (VBoxData*)m_data.at(i);
+                VBoxData* bottom = (VBoxData*)m_data.at(i+1);
+                
+                if ((top->margin.bottom == pTK::Auto) && (bottom->margin.top == pTK::Auto))
+                {
+                    int temp = std::floor((float)marginData[i+1] / 2.0f);
+                    cell->setMarginBottom(cell->getMarginBottom() - temp);
+                    at(i+1)->setMarginTop(at(i+1)->getMarginTop() - marginData[i+1] - temp);
+                }else if (top->margin.bottom == pTK::Auto)
+                {
+                    cell->setMarginBottom(cell->getMarginBottom() - marginData[i+1]);
+                    at(i+1)->setMarginTop(0);
+                }else if (bottom->margin.bottom == pTK::Auto)
+                {
+                    at(i+1)->setMarginTop(at(i+1)->getMarginTop() - marginData[i+1]);
+                    cell->setMarginBottom(0);
+                }
+            }
+        }
+        
+        internalUpdate();
+        
+        delete [] marginData;
+        delete [] data;
+    }
+    
+    int VBox::shrinkChildren(std::pair<uint, Size>* data, int sub, const Size& layoutSize)
+    {
+        uint children   = size();
+        int eachSub     = sub;
+        int totalSub    = eachSub * children;
+        
+        for (uint i = 0; i < children; ++i)
+        {
+            int height = data[i].second.height;
+            auto child = at(data[i].first);
+            Size size = child->getSize();
+            
+            if (height == 0)
+            {
+                // Child cannot grow.
+                data[i].second.height = child->getSize().height;
+                eachSub = std::floor((float)totalSub / (float)(children - i));
+            }else if (height >= eachSub)
+            {
+                // Child can shrink.
+                data[i].second.height = size.height - eachSub;
+                totalSub -= eachSub;
+            }else if (height < eachSub)
+            {
+                // Child can grow a little.
+                totalSub -= height;
+                data[i].second.height = size.height - height;
+                eachSub = std::floor((float)totalSub / (float)(children - i));
+            }
+            
+            if (size.width > layoutSize.width)
+                data[i].second.width = layoutSize.width;
+            else
+                data[i].second.width = size.width;
+        }
+        
+        return totalSub;
+    }
+    
+    void VBox::shrinkMargins(int* data, int unusedHeight)
+    {
+        uint children   = size();
+        uint spaces     = children + 1;
+        
+        readInternalMargins(data);
+        
+        int marginAutoCount = 0;
+        for (uint i = 0; i < spaces; ++i)
+            if (data[i] == pTK::Auto)
+                ++marginAutoCount;
+            else
+                data[i] = 0;
+        
+        int marginLeft = unusedHeight;
+        int dist = std::floor((float)marginLeft / (float)marginAutoCount);
+        
+        for (uint i = 0; i < spaces; ++i)
+            if (data[i] == pTK::Auto)
+                data[i] = dist;
+        
+        marginLeft -= (dist * marginAutoCount);
+        if (marginLeft > 0)
+        {
+            int* marginData = new int[spaces];
+            PTK_ASSERT(marginData, "error obtaining memory on heap");
+            readMargins(marginData);
+            
+            for (int i = 0; i < marginLeft; ++i)
+            {
+                uint index = 0;
+                int max = marginData[index];
+                for (uint j = 1; j < spaces; ++j)
+                {
+                    if ((marginData[j] > max) && (marginData[j] != 0))
+                    {
+                        max = marginData[j];
+                        index = j;
+                    }
+                }
+                
+                marginData[index] -= 1;
+                data[index] += 1;
+            }
+            
+            delete [] marginData;
+        }
     }
     
     void VBox::grow(const Size& newSize)
@@ -558,7 +751,6 @@ namespace pTK
         PTK_ASSERT(data, "error obtaining memory on heap");
         
         // Get height diffs on content.
-        int maxHeightAdd = 0;
         for (uint i = 0; i < children; ++i)
         {
             Size size = at(i)->getSize();
@@ -576,7 +768,6 @@ namespace pTK
                 height = pTK::Infinite;
             
             data[i] = std::make_pair(i, Size(width, height));
-            maxHeightAdd += height;
         }
         
         // Sort by data[].second.height and put all pTK::Infinite at the end.
@@ -643,6 +834,9 @@ namespace pTK
         }
         
         internalUpdate();
+        
+        for (auto it = cbegin(); it != cend(); ++it)
+            PTK_INFO("top: {0} bottom: {1}", (*it)->getMarginTop(), (*it)->getMarginBottom());
         
         delete [] marginData;
         delete [] data;
