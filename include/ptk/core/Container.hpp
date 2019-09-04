@@ -29,7 +29,7 @@ namespace pTK
     public:
         /** typedefs for Container.
          */
-        using type                      = std::shared_ptr<Widget>;
+        using type                      = Ref<Widget>;
         using container_type            = std::vector<type>;
         using iterator                  = container_type::iterator;
         using reverse_iterator          = container_type::reverse_iterator;
@@ -74,13 +74,13 @@ namespace pTK
          
          @param widget  widget to add
          */
-        virtual bool add(const std::shared_ptr<Widget>& widget);
+        virtual bool add(const Ref<Widget>& widget);
         
         /** Funtion for removing a widget in the Container.
          
          @param widget  widget to remove
          */
-        virtual void remove(const std::shared_ptr<Widget>& widget);
+        virtual void remove(const Ref<Widget>& widget);
         
         /** Function for retrieving the element at the index in the Container.
          

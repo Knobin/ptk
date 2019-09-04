@@ -61,7 +61,7 @@ namespace pTK
         return *this;
     }
     
-    bool Container::add(const std::shared_ptr<Widget>& widget)
+    bool Container::add(const Ref<Widget>& widget)
     {
         if (find(widget.get()) == cend())
         {
@@ -72,7 +72,7 @@ namespace pTK
         return false;
     }
     
-    void Container::remove(const std::shared_ptr<Widget>& widget)
+    void Container::remove(const Ref<Widget>& widget)
     {
         const_iterator it = find(widget.get());
         if (it != cend())

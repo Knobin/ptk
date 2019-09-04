@@ -16,7 +16,7 @@ namespace pTK
     const Button::Style Button::Style::Danger{Color(0xDC3545FF), Color(0xce2331FF), Color(0xBC202DFF), Color(0xFFFFFFFF), 5};
     
     Button::Button()
-        : Rectangle(), m_text{std::make_shared<Label>()}, m_labelPos{}, m_borderSize{14},
+        : Rectangle(), m_text{create<Label>()}, m_labelPos{}, m_borderSize{14},
             m_hoverColor{}, m_clickColor{}, m_colorCopy{}, m_hover{false}, m_click{false}
     {
         setStyle(Style::Default);
@@ -25,7 +25,7 @@ namespace pTK
     }
     
     Button::Button(const Style& style)
-        : Rectangle(), m_text{std::make_shared<Label>()}, m_labelPos{}, m_borderSize{14},
+        : Rectangle(), m_text{create<Label>()}, m_labelPos{}, m_borderSize{14},
             m_hoverColor{}, m_clickColor{}, m_colorCopy{}, m_hover{false}, m_click{false}
     {
         setStyle(style);
@@ -147,7 +147,7 @@ namespace pTK
         return m_text->getColor();
     }
     
-    void Button::setLabel(const std::shared_ptr<Label> label)
+    void Button::setLabel(const Ref<Label> label)
     {
         PTK_ASSERT(label, "Label is nullptr");
         m_text->setParent(nullptr);
@@ -156,7 +156,7 @@ namespace pTK
         draw();
     }
     
-    std::shared_ptr<Label> Button::getLabel() const
+    Ref<Label> Button::getLabel() const
     {
         return m_text;
     }

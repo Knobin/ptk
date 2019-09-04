@@ -10,6 +10,7 @@
 
 // C++ Headers
 #include <cstdint>
+#include <memory>
 
 typedef uint8_t     uint8;
 typedef uint16_t    uint16;
@@ -28,6 +29,15 @@ namespace pTK
 {
     static int Auto     = -2;
     static int Infinite = -1;
+    
+    template<typename T>
+    using Ref = std::shared_ptr<T>;
+    
+    template<typename T, typename... Args>
+    inline auto create(Args&&... args) -> decltype(std::make_shared<T>(std::forward<Args>(args)...))
+    {
+        return std::make_shared<T>(std::forward<Args>(args)...);
+    }
 }
 
 #endif // PTK_CORE_TYPES_HPP

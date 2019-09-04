@@ -57,7 +57,7 @@ namespace pTK
         template<typename T, typename... Args>
         void sendEvent(Args&& ...args)
         {
-            std::shared_ptr<T> event = std::make_shared<T>(std::forward<Args>(args)...);
+            Ref<T> event = create<T>(std::forward<Args>(args)...);
             if (event->category() == EventCategory::Window)
             {
                 if (std::this_thread::get_id() == m_mainThreadID)
@@ -79,8 +79,8 @@ namespace pTK
         GLFWwindow* m_window;
         Vec2f m_scale;
         std::unique_ptr<Canvas> m_drawCanvas;
-        SafeQueue<std::shared_ptr<Event>> m_handleThreadEvents;
-        SafeQueue<std::shared_ptr<Event>> m_mainThreadEvents;
+        SafeQueue<Ref<Event>> m_handleThreadEvents;
+        SafeQueue<Ref<Event>> m_mainThreadEvents;
         std::thread m_handleThread;
         std::atomic<bool> m_runThreads;
         std::thread::id m_mainThreadID;

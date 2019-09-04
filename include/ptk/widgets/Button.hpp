@@ -141,13 +141,13 @@ namespace pTK
          
          @param label   New label
          */
-        void setLabel(const std::shared_ptr<Label> label);
+        void setLabel(const Ref<Label> label);
         
         /** Function for retrieving the Label of the Button.
          
          @return    Current set label
          */
-        std::shared_ptr<Label> getLabel() const;
+        Ref<Label> getLabel() const;
         
         /** Function for setting the Hover Color of the Button.
          
@@ -228,7 +228,7 @@ namespace pTK
         bool onReleaseEvent(MouseButton, const Position&) override;
         
     private:
-        std::shared_ptr<Label> m_text;
+        Ref<Label> m_text;
         Position m_labelPos;
         Size m_labelSize;
         uint m_borderSize;

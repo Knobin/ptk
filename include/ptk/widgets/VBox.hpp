@@ -39,7 +39,7 @@ namespace pTK
          @param widget  Widget to add
          @return        Status (true if added)
          */
-        bool add(const std::shared_ptr<Widget>& widget) override;
+        bool add(const Ref<Widget>& widget) override;
         
         // TODO: override remove
         

@@ -16,7 +16,7 @@ namespace pTK
     {
     }
     
-    Cell::Cell(const std::shared_ptr<Widget>& widget)
+    Cell::Cell(const Ref<Widget>& widget)
         : m_widget{widget}, m_widgetSize{}, m_widgetPos{}, m_clicked{false}, m_hover{false}
     {
         PTK_ASSERT(widget, "Widget is nullptr");
@@ -27,7 +27,7 @@ namespace pTK
         setMinSize(m_widgetSize);
     }
     
-    void Cell::setWidget(const std::shared_ptr<Widget>& widget)
+    void Cell::setWidget(const Ref<Widget>& widget)
     {
         PTK_ASSERT(widget, "Widget is nullptr");
         m_widget->setParent(nullptr);
@@ -37,7 +37,7 @@ namespace pTK
         widget->setParent(this);
     }
     
-    std::shared_ptr<Widget> Cell::getWidget() const
+    Ref<Widget> Cell::getWidget() const
     {
         return m_widget;
     }

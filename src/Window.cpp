@@ -197,7 +197,7 @@ namespace pTK
         bool drawEventHandled = false;
         for (uint i = 0; i < eventCount; i++)
         {
-            std::shared_ptr<Event> wEvent = m_mainThreadEvents.front();
+            Ref<Event> wEvent = m_mainThreadEvents.front();
             m_mainThreadEvents.pop();
             
             if (!drawEventHandled || wEvent->type() != EventType::WindowDraw)
@@ -356,7 +356,7 @@ namespace pTK
     {
         while (m_runThreads)
         {
-            std::shared_ptr<Event> event = m_handleThreadEvents.front();
+            Ref<Event> event = m_handleThreadEvents.front();
             m_handleThreadEvents.pop();
             if (event->category() == EventCategory::Window)
                 handleWindowEvent(event.get());

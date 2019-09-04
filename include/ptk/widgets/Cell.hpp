@@ -34,20 +34,20 @@ namespace pTK
          
          @return    default initialized Cell
          */
-        Cell(const std::shared_ptr<Widget>& widget);
+        Cell(const Ref<Widget>& widget);
         ~Cell() = default;
         
         /** Function for setting the Widget of the Cell.
 
          @param widget  Widget to set
          */
-        void setWidget(const std::shared_ptr<Widget>& widget);
+        void setWidget(const Ref<Widget>& widget);
         
         /** Function for setting the Widget of the Cell.
          
          @return    current set Widget
          */
-        std::shared_ptr<Widget> getWidget() const;
+        Ref<Widget> getWidget() const;
         
         /** Function for a child Widget to call the Parent when it
          need to be drawn.
@@ -142,7 +142,7 @@ namespace pTK
     private:
         void calculatePosition();
         
-        std::shared_ptr<Widget> m_widget;
+        Ref<Widget> m_widget;
         Size m_widgetSize;
         Position m_widgetPos;
         bool m_clicked;

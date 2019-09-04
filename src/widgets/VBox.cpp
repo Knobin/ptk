@@ -41,7 +41,7 @@ namespace pTK
             delete (VBoxData*)ptr;
     }
     
-    bool VBox::add(const std::shared_ptr<Widget>& widget)
+    bool VBox::add(const Ref<Widget>& widget)
     {
         if (Container::add(widget))
         {
@@ -200,11 +200,6 @@ namespace pTK
                 }
             }
         }
-        
-        for (auto it = cbegin(); it != cend(); ++it)
-            PTK_INFO("top: {0} bottom: {1}", (*it)->getMarginTop(), (*it)->getMarginBottom());
-        
-        PTK_INFO("");
         
         delete [] marginData;
         delete [] data;
@@ -870,7 +865,7 @@ namespace pTK
         for (uint i = 0; i < size(); ++i)
         {
             VBoxData* data = (VBoxData*)m_data.at(i);
-            std::shared_ptr<Widget> child = at(i);
+            Ref<Widget> child = at(i);
             
             data->pos = child->getPosition();
             data->size = child->getSize();
