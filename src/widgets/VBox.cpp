@@ -586,11 +586,7 @@ namespace pTK
         PTK_ASSERT(marginData, "error obtaining memory on heap");
         int remainder       = (vbSize.height - ((eachSub * children) + layoutSize.height)) % children;
         int unusedHeight    = remainder + totalSub;
-        shrinkMargins(marginData, unusedHeight);
-        
-        PTK_INFO("Start");
-        for (uint i = 0; i < spaces; ++i)
-            PTK_INFO("{0} {1}", i, marginData[i]);
+        shrinkMargins(marginData, unusedHeight);    
             
         // Set sizes to childs and spaces.
         Position vbPos = getPosition();
@@ -703,7 +699,7 @@ namespace pTK
                 data[i] = dist;
         
         marginLeft -= (dist * marginAutoCount);
-        if (marginLeft > 0)
+        if ((marginLeft > 0) && (marginAutoCount != 0))
         {
             int* marginData = new int[spaces];
             PTK_ASSERT(marginData, "error obtaining memory on heap");
@@ -829,9 +825,6 @@ namespace pTK
         }
         
         internalUpdate();
-        
-        for (auto it = cbegin(); it != cend(); ++it)
-            PTK_INFO("top: {0} bottom: {1}", (*it)->getMarginTop(), (*it)->getMarginBottom());
         
         delete [] marginData;
         delete [] data;

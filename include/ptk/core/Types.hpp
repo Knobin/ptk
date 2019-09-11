@@ -27,8 +27,8 @@ typedef uint32      uint;
 
 namespace pTK
 {
-    static int Auto     = -2;
-    static int Infinite = -1;
+    const int Auto     = -2;
+    const int Infinite = -1;
     
     template<typename T>
     using Ref = std::shared_ptr<T>;
