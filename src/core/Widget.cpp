@@ -35,13 +35,13 @@ namespace pTK
         draw();
     }
     
-    void Widget::setPosHint(const Position& pos)
+    void Widget::setPosHint(const Point& pos)
     {
         m_pos = pos;
         draw();
     }
     
-    const Position& Widget::getPosition() const
+    const Point& Widget::getPosition() const
     {
         return m_pos;
     }

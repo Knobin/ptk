@@ -20,7 +20,7 @@ TEST_CASE("Constructors")
     {
         pTK::Widget t;
         pTK::Size cSize{0, 0};
-        pTK::Position cPos{0, 0};
+        pTK::Point cPos{0, 0};
         REQUIRE(t.getSize() == cSize);
         REQUIRE(t.getPosition() == cPos);
     }
@@ -30,7 +30,7 @@ TEST_CASE("Getters and Setters")
 {
     // Testing Setters.
     pTK::Size cSize{10, 20};
-    pTK::Position cPos{55, 85};
+    pTK::Point cPos{55, 85};
     
     SECTION("setSize(const Size& size)")
     {
@@ -60,7 +60,7 @@ TEST_CASE("Copy and Assignment")
     pTK::Size cSize{145, 235};
     pTK::Size cMinSize{25, 55};
     pTK::Size cMaxSize{95, 35};
-    pTK::Position cPos{430, 1050};
+    pTK::Point cPos{430, 1050};
     pTK::Widget t;
     t.setSize(cSize);
     t.setPosHint(cPos);

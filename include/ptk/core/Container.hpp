@@ -217,7 +217,7 @@ namespace pTK
          @param pos     pos to find
          @return        const_iterator to widget or end const_iterator
          */
-        const_iterator find(const Position& pos);
+        const_iterator find(const Point& pos);
         
         /** Funtion for finding a widget in the Container.
          In reverse order.
@@ -225,7 +225,7 @@ namespace pTK
          @param pos     pos to find
          @return        const_iterator to widget or end const_iterator
          */
-        reverse_iterator rfind(const Position& pos);
+        reverse_iterator rfind(const Point& pos);
         
         /** Function for looping over the widgets in the container.
          
@@ -258,7 +258,7 @@ namespace pTK
          
          @param pos     position
          */
-        bool onHoverEvent(const Position& pos) override;
+        bool onHoverEvent(const Point& pos) override;
         
         /** Function for handling when mouse is entering.
          
@@ -287,7 +287,7 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        bool onClickEvent(MouseButton btn, const Position& pos) override;
+        bool onClickEvent(MouseButton btn, const Point& pos) override;
         
         /** Function for handling when mouse is released.
          
@@ -296,7 +296,7 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        bool onReleaseEvent(MouseButton btn, const Position& pos) override;
+        bool onReleaseEvent(MouseButton btn, const Point& pos) override;
         
         /** Funtion for setting the background of the Container.
          

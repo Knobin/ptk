@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     label->setOutlineThickness(1.5f);
     label->setOutlineColor(pTK::Color(0xF4A950FF));
     window.add(label);
-    label->onClick([&label](pTK::MouseButton, const pTK::Position&){
+    label->onClick([&label](pTK::MouseButton, const pTK::Point&){
         std::cout << label->getName() << " clicked!\n";
         return true;
     });

@@ -66,7 +66,7 @@ namespace pTK
          
          @param pos     Position to set
          */
-        void setPosHint(const Position& pos) override;
+        void setPosHint(const Point& pos) override;
         
         /** Function for setting the size of the VBox and its
          children.
@@ -100,7 +100,7 @@ namespace pTK
          
          @param pos     position
          */
-        bool onHoverEvent(const Position& pos) override;
+        bool onHoverEvent(const Point& pos) override;
         
         /** Function for handling when mouse is entering.
          
@@ -129,7 +129,7 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        bool onClickEvent(MouseButton btn, const Position& pos) override;
+        bool onClickEvent(MouseButton btn, const Point& pos) override;
         
         /** Function for handling when mouse is released.
          
@@ -138,13 +138,13 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        bool onReleaseEvent(MouseButton btn, const Position& pos) override;
+        bool onReleaseEvent(MouseButton btn, const Point& pos) override;
     private:
         void calculatePosition();
         
         Ref<Widget> m_widget;
         Size m_widgetSize;
-        Position m_widgetPos;
+        Point m_widgetPos;
         bool m_clicked;
         bool m_hover;
     };

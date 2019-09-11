@@ -176,11 +176,11 @@ namespace pTK
         return cend();
     }
     
-    Container::const_iterator Container::find(const Position& pos)
+    Container::const_iterator Container::find(const Point& pos)
     {
         for (auto it{cbegin()}; it != cend(); ++it)
         {
-            Position wPos = (*it)->getPosition();
+            Point wPos = (*it)->getPosition();
             Size wSize = (*it)->getSize();
             
             if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
@@ -191,11 +191,11 @@ namespace pTK
         return cend();
     }
     
-    Container::reverse_iterator Container::rfind(const Position& pos)
+    Container::reverse_iterator Container::rfind(const Point& pos)
     {
         for (auto it{rbegin()}; it != rend(); ++it)
         {
-            Position wPos = (*it)->getPosition();
+            Point wPos = (*it)->getPosition();
             Size wSize = (*it)->getSize();
             
             if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
@@ -214,7 +214,7 @@ namespace pTK
     
     void Container::onDraw(SkCanvas* canvas)
     {
-        // Set Size and Position
+        // Set Size and Point
         SkPoint pos{convertToSkPoint(getPosition())};
         SkPoint size{convertToSkPoint(getSize())};
         size += pos; // skia needs the size to be pos+size.
@@ -239,11 +239,11 @@ namespace pTK
             (*it)->onDraw(canvas);
     }
     
-    bool Container::onClickEvent(MouseButton btn, const Position& pos)
+    bool Container::onClickEvent(MouseButton btn, const Point& pos)
     {
         for (auto it = begin(); it != end(); it++)
         {
-            Position wPos = (*it)->getPosition();
+            Point wPos = (*it)->getPosition();
             Size wSize = (*it)->getSize();
             if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
             {
@@ -259,7 +259,7 @@ namespace pTK
         return false;
     }
     
-    bool Container::onReleaseEvent(MouseButton btn, const Position& pos)
+    bool Container::onReleaseEvent(MouseButton btn, const Point& pos)
     {
         if (m_lastClickedWidget != nullptr)
         {
@@ -279,11 +279,11 @@ namespace pTK
         return false;
     }
     
-    bool Container::onHoverEvent(const Position& pos)
+    bool Container::onHoverEvent(const Point& pos)
     {
         for (auto it = begin(); it != end(); it++)
         {
-            Position wPos = (*it)->getPosition();
+            Point wPos = (*it)->getPosition();
             Size wSize = (*it)->getSize();
             if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
             {

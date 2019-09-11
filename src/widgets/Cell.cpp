@@ -76,12 +76,12 @@ namespace pTK
         return false;
     }
     
-    void Cell::setPosHint(const Position& pos)
+    void Cell::setPosHint(const Point& pos)
     {
-        Position currentPos = getPosition();
-        Position deltaPos = pos - currentPos;
+        Point currentPos = getPosition();
+        Point deltaPos = pos - currentPos;
         
-        Position wPos = m_widget->getPosition();
+        Point wPos = m_widget->getPosition();
         wPos += deltaPos;
         m_widgetPos = wPos;
         m_widget->setPosHint(wPos);
@@ -100,19 +100,19 @@ namespace pTK
     void Cell::calculatePosition()
     {
         Size size = getSize();
-        Position currentPos = getPosition();
+        Point currentPos = getPosition();
         Size widgetSize = m_widget->getSize();
-        currentPos += Position{size.width/2, size.height/2};
-        currentPos -= Position{widgetSize.width/2, widgetSize.height/2};
+        currentPos += Point{size.width/2, size.height/2};
+        currentPos -= Point{widgetSize.width/2, widgetSize.height/2};
         currentPos.x = (currentPos.x < 0) ? 0 : currentPos.x;
         currentPos.y = (currentPos.y < 0) ? 0 : currentPos.y;
         m_widgetPos = currentPos;
         m_widget->setPosHint(currentPos);
     }
     
-    bool Cell::onClickEvent(MouseButton btn, const Position& pos)
+    bool Cell::onClickEvent(MouseButton btn, const Point& pos)
     {
-        Position wPos = m_widget->getPosition();
+        Point wPos = m_widget->getPosition();
         Size wSize = m_widget->getSize();
         if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
         {
@@ -127,7 +127,7 @@ namespace pTK
         return false;
     }
     
-    bool Cell::onReleaseEvent(MouseButton btn, const Position& pos)
+    bool Cell::onReleaseEvent(MouseButton btn, const Point& pos)
     {
         if (m_clicked)
         {
@@ -147,9 +147,9 @@ namespace pTK
         return false;
     }
     
-    bool Cell::onHoverEvent(const Position& pos)
+    bool Cell::onHoverEvent(const Point& pos)
     {
-        Position wPos = m_widget->getPosition();
+        Point wPos = m_widget->getPosition();
         Size wSize = m_widget->getSize();
         if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
         {

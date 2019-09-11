@@ -90,7 +90,7 @@ namespace pTK
     }
     
     // Functions for converting utility classes to SkPoint for drawing.
-    SkPoint convertToSkPoint(const Position& pos, const Vec2f& scale)
+    SkPoint convertToSkPoint(const Point& pos, const Vec2f& scale)
     {
         return SkPoint{pos.x*scale.x, pos.y*scale.y};
     }

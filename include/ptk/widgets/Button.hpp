@@ -56,7 +56,7 @@ namespace pTK
          
          @param pos     Position to set
          */
-        void setPosHint(const Position& pos) override;
+        void setPosHint(const Point& pos) override;
         
         /** Function for setting the size of the VBox and its
          children.
@@ -216,7 +216,7 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        bool onClickEvent(MouseButton, const Position&) override;
+        bool onClickEvent(MouseButton, const Point&) override;
         
         /** Function for handling when mouse is released.
          
@@ -225,11 +225,11 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        bool onReleaseEvent(MouseButton, const Position&) override;
+        bool onReleaseEvent(MouseButton, const Point&) override;
         
     private:
         Ref<Label> m_text;
-        Position m_labelPos;
+        Point m_labelPos;
         Size m_labelSize;
         uint m_borderSize;
         Color m_hoverColor;

@@ -34,7 +34,7 @@ namespace pTK
          
          @param callback    function to call on hover event
          */
-        void onHover(const std::function<bool(const Position&)>& callback);
+        void onHover(const std::function<bool(const Point&)>& callback);
         
         /** Function for handling when mouse is entering.
          
@@ -59,23 +59,23 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        void onClick(const std::function<bool(MouseButton, const Position&)>& callback);
+        void onClick(const std::function<bool(MouseButton, const Point&)>& callback);
         
         /** Function for handling when mouse is released.
          
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        void onRelease(const std::function<bool(MouseButton, const Position&)>& callback);
+        void onRelease(const std::function<bool(MouseButton, const Point&)>& callback);
         
     protected:
         std::function<bool(EventType, int32)> m_keyCallback;
-        std::function<bool(const Position& pos)> m_hoverCallback;
+        std::function<bool(const Point& pos)> m_hoverCallback;
         std::function<bool()> m_enterCallback;
         std::function<bool()> m_leaveCallback;
         std::function<bool(const Vec2f&)> m_scrollCallback;
-        std::function<bool(MouseButton, const Position&)> m_clickCallback;
-        std::function<bool(MouseButton, const Position&)> m_releaseCallback;
+        std::function<bool(MouseButton, const Point&)> m_clickCallback;
+        std::function<bool(MouseButton, const Point&)> m_releaseCallback;
     };
 }
 

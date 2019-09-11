@@ -37,7 +37,7 @@
 #include "ptk/util/Color.hpp"
 #include "ptk/util/NonCopyable.hpp"
 #include "ptk/util/NonMovable.hpp"
-#include "ptk/util/Position.hpp"
+#include "ptk/util/Point.hpp"
 #include "ptk/util/SafeQueue.hpp"
 #include "ptk/util/Semaphore.hpp"
 #include "ptk/util/Size.hpp"
@@ -47,6 +47,7 @@
 // --- Widgets -----------------------
 #include "ptk/widgets/Button.hpp"
 #include "ptk/widgets/Cell.hpp"
+#include "ptk/widgets/Checkbox.hpp"
 #include "ptk/widgets/Label.hpp"
 #include "ptk/widgets/Rectangle.hpp"
 #include "ptk/widgets/VBox.hpp"

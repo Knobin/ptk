@@ -12,7 +12,7 @@
 #include "ptk/util/NonMovable.hpp"
 #include "ptk/util/NonCopyable.hpp"
 #include "ptk/util/Vec2.hpp"
-#include "ptk/util/Position.hpp"
+#include "ptk/util/Point.hpp"
 #include "ptk/util/Size.hpp"
 #include "ptk/util/Color.hpp"
 
@@ -104,7 +104,7 @@ namespace pTK
     
     
     // Functions for converting utility classes to SkPoint for drawing.
-    SkPoint convertToSkPoint(const Position& pos, const Vec2f& scale = {1.0f, 1.0f});
+    SkPoint convertToSkPoint(const Point& pos, const Vec2f& scale = {1.0f, 1.0f});
     SkPoint convertToSkPoint(const Size& size, const Vec2f& scale = {1.0f, 1.0f});
 }
 

@@ -21,7 +21,7 @@ namespace pTK
         m_keyCallback = callback;
     }
     
-    void EventCallbacks::onHover(const std::function<bool(const Position&)>& callback)
+    void EventCallbacks::onHover(const std::function<bool(const Point&)>& callback)
     {
         m_hoverCallback = callback;
     }
@@ -41,12 +41,12 @@ namespace pTK
         m_scrollCallback = callback;
     }
     
-    void EventCallbacks::onClick(const std::function<bool(MouseButton, const Position&)>& callback)
+    void EventCallbacks::onClick(const std::function<bool(MouseButton, const Point&)>& callback)
     {
         m_clickCallback = callback;
     }
     
-    void EventCallbacks::onRelease(const std::function<bool(MouseButton, const Position&)>& callback)
+    void EventCallbacks::onRelease(const std::function<bool(MouseButton, const Point&)>& callback)
     {
         m_releaseCallback = callback;
     }

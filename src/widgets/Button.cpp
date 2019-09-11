@@ -33,12 +33,12 @@ namespace pTK
         m_text->setFontSize(14);
     }
     
-    void Button::setPosHint(const Position& pos)
+    void Button::setPosHint(const Point& pos)
     {
         // TODO: Possibly wrong
         Size textSize = m_text->getSize();
         Size rectSize = getSize();
-        Position textPos = pos;
+        Point textPos = pos;
         textPos.x += ((rectSize.width - textSize.width) / 2);
         textPos.y += ((rectSize.height - textSize.height) / 2);
         m_labelPos = textPos;
@@ -70,7 +70,7 @@ namespace pTK
         {
             Size bSize = getSize();
             Size wSize = widget->getSize();
-            Position textPos = widget->getPosition();
+            Point textPos = widget->getPosition();
             if ((wSize.width > bSize.width) || (wSize.height > bSize.height))
             {
                 // Apparently, this looks good.
@@ -84,7 +84,7 @@ namespace pTK
             
             if (m_labelPos != textPos)
             {
-                Position pos = getPosition();
+                Point pos = getPosition();
                 Size textSize = m_text->getSize();
                 pos.x += ((bSize.width - textSize.width) / 2);
                 pos.y += ((bSize.height - textSize.height) / 2);
@@ -218,14 +218,14 @@ namespace pTK
         return true;
     }
     
-    bool Button::onClickEvent(MouseButton, const Position&)
+    bool Button::onClickEvent(MouseButton, const Point&)
     {
         setColor(m_clickColor);
         m_click = true;
         return true;
     }
     
-    bool Button::onReleaseEvent(MouseButton, const Position&)
+    bool Button::onReleaseEvent(MouseButton, const Point&)
     {
         if (m_hover)
             setColor(m_hoverColor);

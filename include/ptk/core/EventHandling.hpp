@@ -45,7 +45,7 @@ namespace pTK
          the event internally.
          
          */
-        bool handleHoverEvent(const Position&);
+        bool handleHoverEvent(const Point&);
         
         /** Function for handling when mouse is entering.
          
@@ -85,7 +85,7 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        bool handleClickEvent(MouseButton button, const Position& position);
+        bool handleClickEvent(MouseButton button, const Point& position);
         
         /** Function for handling when mouse is released.
          
@@ -96,7 +96,7 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        bool handleReleaseEvent(MouseButton button, const Position& position);
+        bool handleReleaseEvent(MouseButton button, const Point& position);
         
     private:
         using EventCallbacks::m_keyCallback;

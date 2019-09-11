@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include "catch2/catch.hpp"
 
-#include "ptk/util/Position.hpp"
+#include "ptk/util/Point.hpp"
 
 TEST_CASE("Constructors")
 {
@@ -11,7 +11,7 @@ TEST_CASE("Constructors")
     
     SECTION("Position()")
     {
-        pTK::Position pos;
+        pTK::Point pos;
         
         REQUIRE(pos.x == 0);
         REQUIRE(pos.y == 0);
@@ -19,7 +19,7 @@ TEST_CASE("Constructors")
     
     SECTION("Position(int width, int height)")
     {
-        pTK::Position pos{cX, cY};
+        pTK::Point pos{cX, cY};
         
         REQUIRE(pos.x == cX);
         REQUIRE(pos.y == cY);
@@ -34,30 +34,30 @@ TEST_CASE("Getters and Setters")
     
     SECTION("x (int x)")
     {
-        pTK::Position pos;
+        pTK::Point pos;
         pos.x = cX;
         REQUIRE(pos.x == cX);
     }
     
     SECTION("y (int y)")
     {
-        pTK::Position pos;
+        pTK::Point pos;
         pos.y = cY;
         REQUIRE(pos.y == cY);
     }
     
     SECTION("setPosition(int x, int y)")
     {
-        pTK::Position pos;
-        pos.setPosition(cX, cY);
+        pTK::Point pos;
+        pos.set(cX, cY);
         REQUIRE(pos.x == cX);
         REQUIRE(pos.y == cY);
     }
     
     SECTION("setPosition(const Position& pos)")
     {
-        pTK::Position pos;
-        pos.setPosition(cX, cY);
+        pTK::Point pos;
+        pos.set(cX, cY);
         REQUIRE(pos.x == cX);
         REQUIRE(pos.y == cY);
     }
@@ -69,19 +69,19 @@ TEST_CASE("Copy and Assignment")
     int cX = 949;
     int cY = 84;
     
-    pTK::Position pos;
-    pos.setPosition(cX, cY);
+    pTK::Point pos;
+    pos.set(cX, cY);
     
     SECTION("Copy")
     {
-        pTK::Position tmp = pos;
+        pTK::Point tmp = pos;
         REQUIRE(tmp.x == cX);
         REQUIRE(tmp.y == cY);
     }
     
     SECTION("Assignment")
     {
-        pTK::Position tmp;
+        pTK::Point tmp;
         tmp = pos;
         REQUIRE(tmp.x == cX);
         REQUIRE(tmp.y == cY);
@@ -94,15 +94,15 @@ TEST_CASE ("Comparison")
     int cX = 57;
     int cY = 384;
     
-    pTK::Position pos;
-    pos.setPosition(cX, cY);
+    pTK::Point pos;
+    pos.set(cX, cY);
     
-    pTK::Position p1 = pos;
+    pTK::Point p1 = pos;
     
-    pTK::Position p2;
+    pTK::Point p2;
     p2.y = cY;
     
-    pTK::Position p3;
+    pTK::Point p3;
     p3.x = cX;
     
     SECTION("Equal")

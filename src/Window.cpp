@@ -386,7 +386,7 @@ namespace pTK
         } else if (type == EventType::MouseButtonPressed || type == EventType::MouseButtonReleased)
         {
             ButtonEvent* bEvent = (ButtonEvent*)event;
-            Position pos{bEvent->getPos()};
+            Point pos{bEvent->getPos()};
             MouseButton btn = bEvent->getButton();
             if (type == EventType::MouseButtonPressed)
                 handleClickEvent(btn, pos);

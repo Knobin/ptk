@@ -24,7 +24,7 @@ namespace pTK
 {
     struct VBoxData
     {
-        Position pos;
+        Point pos;
         Size size;
         Margin margin;
     };
@@ -82,7 +82,7 @@ namespace pTK
     {
         Size layoutSize = newSize;
         Size vbSize = getSize();
-        Position vbPos = getPosition();
+        Point vbPos = getPosition();
         uint children = size();
         
         layoutSize.height   = (vbSize.height > layoutSize.height) ? vbSize.height : layoutSize.height;
@@ -108,7 +108,7 @@ namespace pTK
             cell->setSize(cSize);
             Margin cMargin = cell->getMargin();
             vbPos.y += ((cMargin.top < 0) ? 0 : cMargin.top);
-            cell->setPosHint(Position(vbPos.x + alignChildH(i, cSize), vbPos.y));
+            cell->setPosHint(Point(vbPos.x + alignChildH(i, cSize), vbPos.y));
             vbPos.y += cSize.height + ((cMargin.bottom < 0) ? 0 : cMargin.bottom);
         }
     }
@@ -117,7 +117,7 @@ namespace pTK
     {
         Size layoutSize = newSize;
         Size vbSize = getSize();
-        Position vbPos = getPosition();
+        Point vbPos = getPosition();
         uint children = size();
         
         std::pair<uint, Size>* data = new std::pair<uint, Size>[children];
@@ -168,7 +168,7 @@ namespace pTK
             auto cell = at(i);
             cell->setSize(data[i].second);
             vbPos.y += marginData[i]; // Add margin
-            cell->setPosHint(Position(vbPos.x + alignChildH(i, data[i].second), vbPos.y));
+            cell->setPosHint(Point(vbPos.x + alignChildH(i, data[i].second), vbPos.y));
             vbPos.y += data[i].second.height; // Add margin
             
             if (i == 0)
@@ -475,14 +475,14 @@ namespace pTK
         return false;
     }
     
-    void VBox::setPosHint(const Position& pos)
+    void VBox::setPosHint(const Point& pos)
     {
-        Position currentPos = getPosition();
-        Position deltaPos = pos - currentPos;
+        Point currentPos = getPosition();
+        Point deltaPos = pos - currentPos;
         
         for (auto it = begin(); it != end(); it++)
         {
-            Position wPos = (*it)->getPosition();
+            Point wPos = (*it)->getPosition();
             wPos += deltaPos;
             (*it)->setPosHint(wPos);
         }
@@ -589,16 +589,16 @@ namespace pTK
         shrinkMargins(marginData, unusedHeight);    
             
         // Set sizes to childs and spaces.
-        Position vbPos = getPosition();
+        Point vbPos = getPosition();
         int hotfix = 0;
         for (uint i = 0; i != children; i++)
         {
             auto cell = at(i);
             cell->setSize(data[i].second);
-            Position pos = cell->getPosition();
+            Point pos = cell->getPosition();
             hotfix += marginData[i];
             pos.y -= hotfix; // Add margin
-            cell->setPosHint(Position(vbPos.x + alignChildH(i, data[i].second), pos.y));
+            cell->setPosHint(Point(vbPos.x + alignChildH(i, data[i].second), pos.y));
             VBoxData* oldData = (VBoxData*)m_data.at(i);
             hotfix += (data[i].second.height < oldData->size.height) ? oldData->size.height - data[i].second.height : 0;
             
@@ -781,16 +781,16 @@ namespace pTK
         extendMargins(marginData, unusedHeight);
 
         // Set sizes to childs and spaces.
-        Position vbPos = getPosition();
+        Point vbPos = getPosition();
         int hotfix = 0;
         for (uint i = 0; i != children; i++)
         {
             auto cell = at(i);
             cell->setSize(data[i].second);
-            Position pos = cell->getPosition();
+            Point pos = cell->getPosition();
             hotfix += marginData[i];
             pos.y += hotfix; // Add margin
-            cell->setPosHint(Position(vbPos.x + alignChildH(i, data[i].second), pos.y));
+            cell->setPosHint(Point(vbPos.x + alignChildH(i, data[i].second), pos.y));
             VBoxData* oldData = (VBoxData*)m_data.at(i);
             pos.y += (data[i].second.height > oldData->size.height) ? data[i].second.height - oldData->size.height : 0;
             

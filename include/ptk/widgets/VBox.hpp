@@ -60,7 +60,7 @@ namespace pTK
          
          @param pos     Position to set
          */
-        void setPosHint(const Position& pos) override;
+        void setPosHint(const Point& pos) override;
         
         /** Function for setting the size of the VBox and its
          children.

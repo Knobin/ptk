@@ -105,7 +105,7 @@ namespace pTK
         void setLimits(const Size& minSize, const Size& maxSize);
         
         // Hide functions
-        void setPosHint(const Position&) override {}
+        void setPosHint(const Point&) override {}
         using Widget::setParent;
         using Widget::getParent;
     };

@@ -12,7 +12,7 @@
 #include "ptk/core/Drawable.hpp"
 #include "ptk/core/EventHandling.hpp"
 #include "ptk/core/Sizable.hpp"
-#include "ptk/util/Position.hpp"
+#include "ptk/util/Point.hpp"
 #include "ptk/util/Align.hpp"
 
 // C++ Headers
@@ -57,13 +57,13 @@ namespace pTK
          
          @param pos  requested position of the Widget.
          */
-        virtual void setPosHint(const Position& pos);
+        virtual void setPosHint(const Point& pos);
         
         /** Function for retrieving the current position of the Widget.
          
          @return  current position
          */
-        const Position& getPosition() const;
+        const Point& getPosition() const;
         
         /** Function for setting the name of the Widget.
          
@@ -105,7 +105,7 @@ namespace pTK
     private:
         Widget* m_parent;
         
-        Position m_pos;
+        Point m_pos;
         
         std::string m_name;
         

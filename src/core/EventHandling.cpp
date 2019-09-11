@@ -25,7 +25,7 @@ namespace pTK
         return rValue;
     }
     
-    bool EventHandling::handleHoverEvent(const Position& pos)
+    bool EventHandling::handleHoverEvent(const Point& pos)
     {
         bool rValue = onHoverEvent(pos);
         if (m_hoverCallback != nullptr)
@@ -61,7 +61,7 @@ namespace pTK
         return rValue;
     }
     
-    bool EventHandling::handleClickEvent(MouseButton button, const Position& position)
+    bool EventHandling::handleClickEvent(MouseButton button, const Point& position)
     {
         bool rValue = onClickEvent(button, position);
         rValue = false;
@@ -71,7 +71,7 @@ namespace pTK
         return rValue;
     }
     
-    bool EventHandling::handleReleaseEvent(MouseButton button, const Position& position)
+    bool EventHandling::handleReleaseEvent(MouseButton button, const Point& position)
     {
         bool rValue = onReleaseEvent(button, position);
         if (m_releaseCallback != nullptr)

@@ -10,7 +10,7 @@
 
 // Local Headers
 #include "ptk/core/Event.hpp"
-#include "ptk/util/Position.hpp"
+#include "ptk/util/Point.hpp"
 #include "ptk/util/Vec2.hpp"
 
 namespace pTK
@@ -52,7 +52,7 @@ namespace pTK
          @param pos     associated x and y position
          @return        default initialized MotionEvent
          */
-        MotionEvent(const Position& pos)
+        MotionEvent(const Point& pos)
             : Event(EventCategory::Mouse, EventType::MouseMoved), m_pos{pos}
         {
         }
@@ -74,9 +74,9 @@ namespace pTK
          
          @return    y position
          */
-        const Position& getPos() const { return m_pos; }
+        const Point& getPos() const { return m_pos; }
     private:
-        Position m_pos;
+        Point m_pos;
     };
 
     /** ScrollEvent class implementation.

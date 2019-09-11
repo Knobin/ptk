@@ -33,7 +33,7 @@ namespace pTK
         /** Function for handling when mouse is hovering.
          
          */
-        virtual bool onHoverEvent(const Position&) { return true; }
+        virtual bool onHoverEvent(const Point&) { return true; }
         
         /** Function for handling when mouse is entering.
          
@@ -56,14 +56,14 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        virtual bool onClickEvent(MouseButton, const Position&) { return true; }
+        virtual bool onClickEvent(MouseButton, const Point&) { return true; }
         
         /** Function for handling when mouse is released.
          
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        virtual bool onReleaseEvent(MouseButton, const Position&) { return true; }
+        virtual bool onReleaseEvent(MouseButton, const Point&) { return true; }
     };
 }
 
