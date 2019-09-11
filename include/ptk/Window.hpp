@@ -25,8 +25,6 @@
 // GLFW Headers
 #include <GLFW/glfw3.h>
 
-#include "ptk/Log.hpp"
-
 namespace pTK
 {
     class Window : public VBox, public NonMovable, public NonCopyable

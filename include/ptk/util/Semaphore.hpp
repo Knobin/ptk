@@ -8,9 +8,13 @@
 #ifndef PTK_UTIL_SEMAPHORE_HPP
 #define PTK_UTIL_SEMAPHORE_HPP
 
+// Local Headers
+#include "ptk/util/Singleton.hpp"
+
 // C++ Headers
 #include <mutex>
 #include <condition_variable>
+#include <chrono>
 
 namespace pTK
 {
@@ -18,7 +22,7 @@ namespace pTK
      
      A basic class for synchronizing threads.
      */
-    class Semaphore
+    class Semaphore : public Singleton
     {
     public:
         Semaphore() = delete;
@@ -28,20 +32,38 @@ namespace pTK
          @return  default initialized Semaphore
          */
         Semaphore(unsigned int count);
-        ~Semaphore() = default;
+        virtual ~Semaphore() = default;
         
         /** Funtion for incrementing count and notify a waiting
         thread (if any).
          
          */
-        void up();
+        int post();
         
         /** Funtion for decrementing count, if count is zero, the
-         thread will wait until up is called by another thread, then
+         thread will wait until post() is called by another thread, then
          decrement count.
          
          */
-        void down();
+        int wait();
+        
+        /** Same as wait() except if count is zero, it does not block but
+            returns an error.
+         
+         */
+        int trywait();
+        
+        /** Same as wait() except if count is zero, function will block and if
+            specified time is reached, it will return an error. If count is greater
+            than zero, the specified time will be skipped.
+         
+         */
+        int timedwait(std::chrono::duration<double> duration);
+        
+        /** Function for returning the current value of count.
+         
+         */
+        int getvalue();
         
     private:
         std::mutex m_mutex;

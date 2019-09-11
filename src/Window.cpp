@@ -67,7 +67,7 @@ namespace pTK
             
             // Init finished
             PTK_INFO("Event Thread Initialized");
-            sema.up();
+            sema.post();
             
             handleThreadEvents();
             
@@ -75,7 +75,7 @@ namespace pTK
         });
         
         // Wait for m_handleThread to init.
-        sema.down();
+        sema.wait();
         PTK_INFO("Window Initialization finished");
     }
     
@@ -414,3 +414,5 @@ namespace pTK
         }
     }
 }
+
+
