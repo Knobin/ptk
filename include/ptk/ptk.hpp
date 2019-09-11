@@ -41,7 +41,7 @@
 #include "ptk/util/SafeQueue.hpp"
 #include "ptk/util/Semaphore.hpp"
 #include "ptk/util/Size.hpp"
-#include "ptk/util/Time.hpp"
+#include "ptk/util/Clock.hpp"
 #include "ptk/util/Vec2.hpp"
 
 // --- Widgets -----------------------
