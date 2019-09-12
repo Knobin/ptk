@@ -22,9 +22,10 @@ int main(int argc, char *argv[])
     checkbox->setMargin(pTK::Margin::Auto);
     checkbox->setCornerRadius(3); // 10% of size
     checkbox->setOutlineThickness(1.5f); // 5% of size
-    checkbox->setColor(pTK::Color(0, 0, 0, 0));
+    checkbox->setColor(pTK::Color(0x00FF00FF));
+    checkbox->setOutlineColor(pTK::Color(0xFF00FFFF));
     // checkbox->setOutlineColor(pTK::Color(0, 0, 0, 0))
-    //checkbox->set(true);
+    // checkbox->set(true);
     window.add(checkbox);
     
     return app.exec(&window);

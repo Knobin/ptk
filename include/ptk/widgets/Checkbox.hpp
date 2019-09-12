@@ -61,12 +61,16 @@ namespace pTK
         bool onReleaseEvent(MouseButton, const Point&) override;
         
     private:
-        bool m_checked;
+        bool m_checked = false;
+        bool m_hover = false;
+        bool m_click = false;
+        int m_state = 0;
         Color m_checkColor;
-        bool m_hover;
-        bool m_click;
         
         void drawChecked(SkCanvas* canvas);
+        void drawStates(SkCanvas* canvas);
+        
+        void internalToggle();
     };
     
 }

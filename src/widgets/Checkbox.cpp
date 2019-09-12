@@ -8,33 +8,62 @@
 // Local Headers
 #include "ptk/widgets/Checkbox.hpp"
 
-// Skia Headers
-#include "include/core/SkRegion.h"
+// TODO: Fix m_click or just delete it.
 
 namespace pTK
 {
     Checkbox::Checkbox()
-        : Rectangle(), m_checked{false}, m_checkColor{0x007BFFFF}
+        : Rectangle(), m_checkColor{0x007BFFFF}
     {
+        Shape::setColor(Color(0x00000000));
     }
     
     void Checkbox::onDraw(SkCanvas* canvas)
     {
-        if (status())
-            drawChecked(canvas);
-        else
+        drawStates(canvas);
+    }
+    
+    void Checkbox::drawStates(SkCanvas* canvas)
+    {
+        Widget* parent = getParent();
+        setParent(nullptr);
+        
+        if (m_state == 0)
+        {
+            Color temp = getColor();
+            
+            setColor(Color(0, 0, 0, 0));
             Rectangle::onDraw(canvas);
+            
+            setColor(temp);
+        }else
+        {
+            Color outlineTemp = getOutlineColor();
+            
+            if (!status()) // State 1
+            {
+                setOutlineColor(getColor());
+                Rectangle::onDraw(canvas);
+            }else // State 2 and 3
+            {
+                Color temp = getColor();
+                Color color = (m_state == 3) ? m_checkColor : temp; // Depends on this.
+                
+                setOutlineColor(color);
+                setColor(color);
+                
+                drawChecked(canvas);
+                setColor(temp);
+            }
+            
+            setOutlineColor(outlineTemp);
+        }
+        
+        setParent(parent);
     }
     
     void Checkbox::drawChecked(SkCanvas* canvas)
     {
-        // Set Color
-        SkPaint paint;
-        paint.setAntiAlias(true);
-        Color color = getOutlineColor();
-        paint.setARGB(color.a, color.r, color.g, color.b);
-        paint.setStyle(SkPaint::kStrokeAndFill_Style);
-        
         Size size = getSize();
         Point pos = getPosition();
         
@@ -78,6 +107,11 @@ namespace pTK
         if (m_checked != status)
         {
             m_checked = status;
+            if (status)
+                m_state = 3;
+            else
+                m_state = 0;
+            
             draw();
         }
     }
@@ -96,61 +130,74 @@ namespace pTK
     
     bool Checkbox::onEnterEvent()
     {
-        // TODO
-        if (status())
-        {
-            setOutlineColor(Color{255, 255, 255, 255});
-            setColor(Color{255, 255, 255, 255});
-        }else
-        {
-            setColor(getOutlineColor());
-        }
+        int temp = m_state;
+        if (m_state == 3)
+            m_state = 2;
+        else
+            m_state = 1;
         
         m_hover = true;
+        if (temp != m_state)
+            draw();
         
         return true;
     }
     
     bool Checkbox::onLeaveEvent()
     {
-        // TODO
-        if ((!m_click) && (!status()))
-            setColor(Color{0, 0, 0, 0});
-        else if ((!m_click) && (status()))
-        {
-            setOutlineColor(m_checkColor);
-            setColor(m_checkColor);
-        }
+        int temp = m_state;
+        if ((m_state == 2) && (status()))
+            m_state = 3;
+        else if ((m_state == 2) && (!status()))
+            m_state = 0;
+        else if (m_state == 1)
+            m_state = 0;
+        
         m_hover = false;
+        if (temp != m_state)
+            draw();
         
         return true;
     }
     
     bool Checkbox::onClickEvent(MouseButton, const Point&)
     {
+        int temp = m_state;
         m_click = true;
+        if (status())
+            m_state = 1;
+        else
+            m_state = 2;
+        
+        internalToggle();
+        
+        if (temp != m_state)
+            draw();
+        
         return true;
     }
     
     bool Checkbox::onReleaseEvent(MouseButton, const Point&)
     {
-        toggle();
+        int temp = m_state;
         
-        if (status())
-        {
-            setColor(m_checkColor);
-            setOutlineColor(m_checkColor);
-        }else
-        {
-            setOutlineColor(Color{255, 255, 255, 255});
+        if (!status())
             if (m_hover)
-                setColor(Color{255, 255, 255, 255});
-            else
-                setColor(Color{0, 0, 0, 0});
-        }
+                m_state = 1;
         
         m_click = false;
         
+        if (temp != m_state)
+            draw();
+        
         return true;
+    }
+    
+    void Checkbox::internalToggle()
+    {
+        if (status())
+            m_checked = false;
+        else
+            m_checked = true;
     }
 }
