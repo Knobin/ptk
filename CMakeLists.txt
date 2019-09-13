@@ -19,7 +19,7 @@ message(STATUS "pTK build: ${PTK_BUILD_TYPE}")
 # OS
 if (UNIX AND NOT APPLE)
     # for Linux, BSD, Solaris, Minix
-    set(SKIA_PLATFORM_DEPENDENCIES "fontconfig")
+    set(SKIA_PLATFORM_DEPENDENCIES "-lfreetype -lfontconfig")
 else()
     set(SKIA_PLATFORM_DEPENDENCIES "")
 endif()
@@ -59,6 +59,7 @@ set(SKIA_LIB_PATH "${SKIA_PATH}/out/${PTK_BUILD_TYPE}")
 message(STATUS "Skia include path: ${SKIA_PATH}")
 message(STATUS "Skia build: ${PTK_BUILD_TYPE}")
 message(STATUS "Skia lib path: ${SKIA_LIB_PATH}")
+message(STATUS "Skia platform dependencies: ${SKIA_PLATFORM_DEPENDENCIES}")
 
 # Skia library
 add_library(skia STATIC IMPORTED)

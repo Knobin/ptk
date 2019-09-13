@@ -100,6 +100,7 @@ namespace pTK
         
         void onDraw(SkCanvas* canvas) override;
         bool drawChild(Widget* widget) override;
+        void forceDrawAll();
         
         void swapBuffers();
         void setLimits(const Size& minSize, const Size& maxSize);

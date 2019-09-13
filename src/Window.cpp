@@ -196,6 +196,27 @@ namespace pTK
         return false;
     }
     
+    // Will be called when all children will need to redraw.
+    // For example, window.show();
+    void Window::forceDrawAll()
+    {
+        SkCanvas* canvas = m_drawCanvas->skCanvas();
+        
+        Color color = getBackground();
+        m_drawCanvas->clear(color);
+        
+        // Apply monitor scale.
+        SkMatrix matrix;
+        matrix.setScale(m_scale.x, m_scale.y);
+        canvas->setMatrix(matrix);
+        
+        for (iterator it = begin(); it != end(); it++)
+            (*it)->onDraw(canvas);
+        
+        canvas->flush();
+        swapBuffers();
+    }
+    
     void Window::pollEvents()
     {
         glfwWaitEvents();
@@ -315,6 +336,7 @@ namespace pTK
     void Window::show()
     {
         glfwShowWindow(m_window);
+        forceDrawAll();
     }
     
     void Window::hide()
@@ -421,5 +443,3 @@ namespace pTK
         }
     }
 }
-
-
