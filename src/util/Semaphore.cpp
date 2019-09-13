@@ -7,7 +7,7 @@
 
 // Local Headers
 #include "ptk/util/Semaphore.hpp"
-#include <iostream>
+
 namespace pTK
 {
     Semaphore::Semaphore(unsigned int count)

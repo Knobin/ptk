@@ -15,8 +15,6 @@
 
 // C++ Headers
 #include <exception>
-#include <sstream>
-#include <iostream>
 
 namespace pTK
 {
@@ -112,6 +110,15 @@ namespace pTK
     
     void Window::setMouseCallbacks()
     {
+        // void cursor_enter_callback(GLFWwindow* window, int entered)
+        glfwSetCursorEnterCallback(m_window,[](GLFWwindow* t_window, int entered){
+            if (!entered)
+            {
+                auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
+                window->sendEvent<MotionEvent>(-1, -1);
+            }
+        });
+        
         // void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
         glfwSetCursorPosCallback(m_window, [](GLFWwindow* t_window, double t_xpos, double t_ypos){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));

@@ -84,7 +84,7 @@ namespace pTK
     
     Container::type Container::at(unsigned int index)
     {
-        if (index < 0 || index >= size())
+        if (index >= size())
             throw std::out_of_range("Index is out of range!");
         
         return m_holder.at(index);
@@ -92,7 +92,7 @@ namespace pTK
     
     Container::type Container::at(unsigned int index) const
     {
-        if (index < 0 || index >= size())
+        if (index >= size())
             throw std::out_of_range("Index is out of range!");
         
         return m_holder.at(index);
@@ -100,7 +100,7 @@ namespace pTK
     
     Container::type Container::operator[](unsigned int index) const
     {
-        if (index < 0 || index >= size())
+        if (index >= size())
             throw std::out_of_range("Index is out of range!");
         
         return m_holder[index];

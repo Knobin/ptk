@@ -12,7 +12,6 @@
 
 // C++ Headers
 #include <thread>
-#include <iostream>
 
 namespace pTK
 {
