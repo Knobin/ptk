@@ -18,65 +18,91 @@ namespace pTK
     
     bool EventHandling::handleKeyEvent(EventType type, int32 keycode)
     {
-        bool rValue = onKeyEvent(type, keycode);
+        bool status = true;
         if (m_keyCallback != nullptr)
-            rValue |= m_keyCallback(type, keycode);
+            status = m_keyCallback(type, keycode);
         
-        return rValue;
+        if (status)
+            status = onKeyEvent(type, keycode);
+        
+        return status;
     }
     
     bool EventHandling::handleHoverEvent(const Point& pos)
     {
-        bool rValue = onHoverEvent(pos);
-        if (m_hoverCallback != nullptr)
-            rValue |= m_hoverCallback(pos);
+        bool status = true;
         
-        return rValue;
+        if (m_hoverCallback != nullptr)
+            status = m_hoverCallback(pos);
+        
+        if (status)
+            status = onHoverEvent(pos);
+        
+        return status;
     }
     
     bool EventHandling::handleEnterEvent()
     {
-        bool rValue = onEnterEvent();
-        if (m_enterCallback != nullptr)
-            rValue |= m_enterCallback();
+        bool status = true;
         
-        return rValue;
+        if (m_enterCallback != nullptr)
+            status = m_enterCallback();
+        
+        if (status)
+            status = onEnterEvent();
+        
+        return status;
     }
     
     bool EventHandling::handleLeaveEvent()
     {
-        bool rValue = onLeaveEvent();
-        if (m_leaveCallback != nullptr)
-            rValue |= m_leaveCallback();
+        bool status = true;
         
-        return rValue;
+        if (m_leaveCallback != nullptr)
+            status = m_leaveCallback();
+        
+        if (status)
+            status = onLeaveEvent();
+        
+        return status;
     }
     
     bool EventHandling::handleScrollEvent(const Vec2f& offset)
     {
-        bool rValue = onScrollEvent(offset);
-        if (m_scrollCallback != nullptr)
-            rValue |= m_scrollCallback(offset);
+        bool status = true;
         
-        return rValue;
+        if (m_scrollCallback != nullptr)
+            status = m_scrollCallback(offset);
+        
+        if (status)
+            status = onScrollEvent(offset);
+        
+        return status;
     }
     
     bool EventHandling::handleClickEvent(MouseButton button, const Point& position)
     {
-        bool rValue = onClickEvent(button, position);
-        rValue = false;
-        if (m_clickCallback != nullptr)
-            rValue |= m_clickCallback(button, position);
+        bool status = true;
         
-        return rValue;
+        if (m_clickCallback != nullptr)
+            status = m_clickCallback(button, position);
+        
+        if (status)
+            status = onClickEvent(button, position);
+        
+        return status;
     }
     
     bool EventHandling::handleReleaseEvent(MouseButton button, const Point& position)
     {
-        bool rValue = onReleaseEvent(button, position);
-        if (m_releaseCallback != nullptr)
-            rValue |= m_releaseCallback(button, position);
+        bool status = true;
         
-        return rValue;
+        if (m_releaseCallback != nullptr)
+            status = m_releaseCallback(button, position);
+        
+        if (status)
+            status = onReleaseEvent(button, position);
+        
+        return status;
     }
 }
