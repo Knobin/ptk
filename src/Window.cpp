@@ -96,9 +96,7 @@ namespace pTK
         // void window_size_callback(GLFWwindow* window, int width, int height)
         glfwSetWindowSizeCallback(m_window, [](GLFWwindow* t_window, int t_width, int t_height){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
-            Vec2u windowSize{(uint)t_width, (uint)t_height};
-            Size contentSize = window->getContentSize();
-            window->sendEvent<ResizeEvent>(windowSize, Vec2u(contentSize.width, contentSize.height));
+            window->sendEvent<ResizeEvent>(Size{t_width, t_height}, window->getContentSize());
         });
         
         // void window_close_callback(GLFWwindow* window)
@@ -221,7 +219,7 @@ namespace pTK
     {
         glfwWaitEvents();
         
-        uint eventCount = m_mainThreadEvents.size();
+        size_t eventCount = m_mainThreadEvents.size();
         bool drawEventHandled = false;
         for (uint i = 0; i < eventCount; i++)
         {
@@ -356,12 +354,11 @@ namespace pTK
             }else if (event->type() == EventType::WindowResize)
             {
                 ResizeEvent* rEvent = (ResizeEvent*)event;
-                Vec2u cSize = rEvent->getContentSize();
+                Size cSize = rEvent->getContentSize();
                 
                 // Set Framebuffer Size.
-                Size fbSize{(int)cSize.x, (int)cSize.y};
-                if (fbSize != m_drawCanvas->getSize())
-                    m_drawCanvas->resize(fbSize);
+                if (cSize != m_drawCanvas->getSize())
+                    m_drawCanvas->resize(cSize);
                 
                 // TODO: May conflict with eventThread.
                 Size contentMinSize = calculateMinSize();
@@ -435,8 +432,7 @@ namespace pTK
         else if (type == EventType::WindowResize)
         {
             ResizeEvent* rEvent = (ResizeEvent*)event;
-            Vec2u size = rEvent->getSize();
-            VBox::setSize(Size(size.x, size.y));
+            VBox::setSize(rEvent->getSize());
         }else if (type == EventType::WindowClose)
         {
             m_runThreads = false;

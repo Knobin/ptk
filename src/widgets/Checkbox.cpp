@@ -67,10 +67,10 @@ namespace pTK
         Size size = getSize();
         Point pos = getPosition();
         
-        float posy = pos.y + size.height/2 + size.height*0.25;
-        float posx = pos.x + size.width/2 - size.height*0.20;
-        float longy = size.height*0.7*0.9;
-        float shortx = size.height*0.3*0.9;
+        float posy = pos.y + size.height/2 + size.height*0.25f;
+        float posx = pos.x + size.width/2 - size.height*0.20f;
+        float longy = size.height*0.7f*0.9f;
+        float shortx = size.height*0.3f*0.9f;
         float cornerRadius = getCornerRadius();
         float outline = getOutlineThickness()*2;
         

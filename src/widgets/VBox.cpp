@@ -83,7 +83,7 @@ namespace pTK
         Size layoutSize = newSize;
         Size vbSize = getSize();
         Point vbPos = getPosition();
-        uint children = size();
+        size_t children = size();
         
         layoutSize.height   = (vbSize.height > layoutSize.height) ? vbSize.height : layoutSize.height;
         layoutSize.width    = (vbSize.width > layoutSize.width) ? vbSize.width : layoutSize.width;
@@ -118,7 +118,7 @@ namespace pTK
         Size layoutSize = newSize;
         Size vbSize = getSize();
         Point vbPos = getPosition();
-        uint children = size();
+        size_t children = size();
         
         std::pair<uint, Size>* data = new std::pair<uint, Size>[children];
         PTK_ASSERT(data, "error obtaining memory on heap");
@@ -148,17 +148,17 @@ namespace pTK
         
         // Expand children to its max sizes possible.
         int heightLeft  = vbSize.height - layoutSize.height;
-        int eachAdd     = std::floor((float)heightLeft / (float)children);
+        int eachAdd     = (int)std::floor((float)heightLeft / (float)children);
         int totalAdd    = expandChildren(data, eachAdd, layoutSize);
         
         // Sort by data[].first
         sortByIndex(data);
         
         // Create Margins
-        int spaces = children + 1;
+        size_t spaces = children + 1;
         int* marginData = new int[spaces];
         PTK_ASSERT(marginData, "error obtaining memory on heap");
-        int remainder       = (vbSize.height - ((eachAdd * children) + layoutSize.height)) % children;
+        int remainder       = (vbSize.height - ((eachAdd * (int)children) + layoutSize.height)) % (int)children;
         int unusedHeight    = remainder + totalAdd;
         createMarginsOnAdd(marginData, unusedHeight);
         
@@ -186,7 +186,7 @@ namespace pTK
                 
                 if ((top->margin.bottom == pTK::Auto) && (bottom->margin.top == pTK::Auto))
                 {
-                    int temp = std::floor((float)marginData[i+1] / 2.0f);
+                    int temp = (int)std::floor((float)marginData[i+1] / 2.0f);
                     cell->setMarginBottom(temp);
                     at(i+1)->setMarginTop(marginData[i+1] - temp);
                 }else if (top->margin.bottom == pTK::Auto)
@@ -207,7 +207,7 @@ namespace pTK
     
     void VBox::sortByHeight(std::pair<uint, Size>* data) const
     {
-        uint children = size();
+        size_t children = size();
         
         // Sort
         std::pair<uint, Size> temp;
@@ -243,7 +243,7 @@ namespace pTK
     
     void VBox::sortByIndex(std::pair<uint, Size>* data) const
     {
-        uint children = size();
+        size_t children = size();
         std::pair<uint, Size> temp;
         
         for (uint i = 0; i < children; ++i)
@@ -262,9 +262,9 @@ namespace pTK
     
     int VBox::expandChildren(std::pair<uint, Size>* data, int add, const Size& layoutSize)
     {
-        uint children   = size();
+        size_t children   = size();
         int eachAdd     = add;
-        int totalAdd    = eachAdd * children;
+        int totalAdd    = eachAdd * (int)children;
         
         bool autoFound = false;
         for (uint i = 0; i < children; ++i)
@@ -277,7 +277,7 @@ namespace pTK
             {
                 if (!autoFound)
                 {
-                    eachAdd = std::floor((float)totalAdd / (float)(children - i));
+                    eachAdd = (int)std::floor((float)totalAdd / (float)(children - i));
                     autoFound = true;
                 }
                 
@@ -288,13 +288,13 @@ namespace pTK
             {
                 // Child cannot grow.
                 data[i].second.height = child->getSize().height;
-                eachAdd = std::floor((float)totalAdd / (float)(children - i));
+                eachAdd = (int)std::floor((float)totalAdd / (float)(children - i));
             }else if (height < eachAdd)
             {
                 // Child can grow a little.
                 totalAdd -= height;
                 data[i].second.height += minSize.height;
-                eachAdd = std::floor((float)totalAdd / (float)(children - i));
+                eachAdd = (int)std::floor((float)totalAdd / (float)(children - i));
             }else if (height >= eachAdd)
             {
                 // Child can grow.
@@ -320,7 +320,7 @@ namespace pTK
     
     int VBox::readInternalMargins(int* data)
     {
-        uint children   = size();
+        size_t children   = size();
         
         VBoxData* front = (VBoxData*)m_data.front();
         data[0] = front->margin.top;
@@ -345,7 +345,7 @@ namespace pTK
     
     void VBox::readMargins(int* data)
     {
-        uint children   = size();
+        size_t children   = size();
         
         auto first = front();
         data[0] = first->getMarginTop();
@@ -366,8 +366,8 @@ namespace pTK
     
     void VBox::createMarginsOnAdd(int* data, int unusedHeight)
     {
-        uint children   = size();
-        uint spaces     = children + 1;
+        size_t children   = size();
+        size_t spaces     = children + 1;
         
         int marginLost = readInternalMargins(data);
         
@@ -377,7 +377,7 @@ namespace pTK
                 ++marginAutoCount;
         
         int marginLeft = unusedHeight + marginLost;
-        int dist = std::floor((float)marginLeft / (float)marginAutoCount);
+        int dist = (int)std::floor((float)marginLeft / (float)marginAutoCount);
         
         if (dist != 0)
         {
@@ -408,8 +408,8 @@ namespace pTK
     
     void VBox::extendMargins(int* data, int unusedHeight)
     {
-        uint children   = size();
-        uint spaces     = children + 1;
+        size_t children   = size();
+        size_t spaces     = children + 1;
         
         readInternalMargins(data);
         
@@ -421,7 +421,7 @@ namespace pTK
                 data[i] = 0;
         
         int marginLeft = unusedHeight;// + marginLost;
-        int dist = std::floor((float)marginLeft / (float)marginAutoCount);
+        int dist = (int)std::floor((float)marginLeft / (float)marginAutoCount);
         
         for (uint i = 0; i < spaces; ++i)
             if (data[i] == pTK::Auto)
@@ -437,7 +437,7 @@ namespace pTK
         
             for (int i = 0; i < marginLeft; ++i)
             {
-                uint index = children;
+                size_t index = children;
                 int min = 0;
                 for (uint j = 0; j < spaces; ++j)
                 {
@@ -552,7 +552,7 @@ namespace pTK
         
         Size layoutSize = newSize;
         Size vbSize = getSize();
-        const uint children = size();
+        const size_t children = size();
         
         std::pair<uint, Size>* data = new std::pair<uint, Size>[children];
         PTK_ASSERT(data, "error obtaining memory on heap");
@@ -574,17 +574,17 @@ namespace pTK
         
         // Expand children to its max sizes possible.
         int heightLeft  = vbSize.height - layoutSize.height;
-        int eachSub     = std::floor((float)heightLeft / (float)children);
+        int eachSub     = (int)std::floor((float)heightLeft / (float)children);
         int totalSub    = shrinkChildren(data, eachSub, layoutSize);
         
         // Sort by data[].first
         sortByIndex(data);
         
         // Create Margins
-        uint spaces = children + 1;
+        size_t spaces = children + 1;
         int* marginData = new int[spaces];
         PTK_ASSERT(marginData, "error obtaining memory on heap");
-        int remainder       = (vbSize.height - ((eachSub * children) + layoutSize.height)) % children;
+        int remainder       = (vbSize.height - ((eachSub * (int)children) + layoutSize.height)) % (int)children;
         int unusedHeight    = remainder + totalSub;
         shrinkMargins(marginData, unusedHeight);    
             
@@ -617,7 +617,7 @@ namespace pTK
                 
                 if ((top->margin.bottom == pTK::Auto) && (bottom->margin.top == pTK::Auto))
                 {
-                    int temp = std::floor((float)marginData[i+1] / 2.0f);
+                    int temp = (int)std::floor((float)marginData[i+1] / 2.0f);
                     cell->setMarginBottom(cell->getMarginBottom() - temp);
                     at(i+1)->setMarginTop(at(i+1)->getMarginTop() - marginData[i+1] - temp);
                 }else if (top->margin.bottom == pTK::Auto)
@@ -640,9 +640,9 @@ namespace pTK
     
     int VBox::shrinkChildren(std::pair<uint, Size>* data, int sub, const Size& layoutSize)
     {
-        uint children   = size();
+        size_t children   = size();
         int eachSub     = sub;
-        int totalSub    = eachSub * children;
+        int totalSub    = eachSub * (int)children;
         
         for (uint i = 0; i < children; ++i)
         {
@@ -654,7 +654,7 @@ namespace pTK
             {
                 // Child cannot grow.
                 data[i].second.height = child->getSize().height;
-                eachSub = std::floor((float)totalSub / (float)(children - i));
+                eachSub = (int)std::floor((float)totalSub / (float)(children - i));
             }else if (height >= eachSub)
             {
                 // Child can shrink.
@@ -665,7 +665,7 @@ namespace pTK
                 // Child can grow a little.
                 totalSub -= height;
                 data[i].second.height = size.height - height;
-                eachSub = std::floor((float)totalSub / (float)(children - i));
+                eachSub = (int)std::floor((float)totalSub / (float)(children - i));
             }
             
             if (size.width > layoutSize.width)
@@ -679,8 +679,8 @@ namespace pTK
     
     void VBox::shrinkMargins(int* data, int unusedHeight)
     {
-        uint children   = size();
-        uint spaces     = children + 1;
+        size_t children   = size();
+        size_t spaces     = children + 1;
         
         readInternalMargins(data);
         
@@ -692,7 +692,7 @@ namespace pTK
                 data[i] = 0;
         
         int marginLeft = unusedHeight;
-        int dist = std::floor((float)marginLeft / (float)marginAutoCount);
+        int dist = (int)std::floor((float)marginLeft / (float)marginAutoCount);
         
         for (uint i = 0; i < spaces; ++i)
             if (data[i] == pTK::Auto)
@@ -736,7 +736,7 @@ namespace pTK
         
         Size layoutSize = newSize;
         Size vbSize = getSize();
-        const uint children = size();
+        const size_t children = size();
         
         std::pair<uint, Size>* data = new std::pair<uint, Size>[children];
         PTK_ASSERT(data, "error obtaining memory on heap");
@@ -766,17 +766,17 @@ namespace pTK
         
         // Expand children to its max sizes possible.
         int heightLeft  = layoutSize.height - vbSize.height;
-        int eachAdd     = std::floor((float)heightLeft / (float)children);
+        int eachAdd     = (int)std::floor((float)heightLeft / (float)children);
         int totalAdd    = expandChildren(data, eachAdd, layoutSize);
         
         // Sort by data[].first
         sortByIndex(data);
         
         // Create Margins
-        uint spaces = children + 1;
+        size_t spaces = children + 1;
         int* marginData = new int[spaces];
         PTK_ASSERT(marginData, "error obtaining memory on heap");
-        int remainder       = (layoutSize.height - ((eachAdd * children) + vbSize.height)) % children;
+        int remainder       = (layoutSize.height - ((eachAdd * (int)children) + vbSize.height)) % (int)children;
         int unusedHeight    = remainder + totalAdd;
         extendMargins(marginData, unusedHeight);
 
@@ -809,7 +809,7 @@ namespace pTK
                 
                 if ((top->margin.bottom == pTK::Auto) && (bottom->margin.top == pTK::Auto))
                 {
-                    int temp = std::floor((float)marginData[i+1] / 2.0f);
+                    int temp = (int)std::floor((float)marginData[i+1] / 2.0f);
                     cell->setMarginBottom(cell->getMarginBottom() + temp);
                     at(i+1)->setMarginTop(at(i+1)->getMarginTop() + marginData[i+1] - temp);
                 }else if (top->margin.bottom == pTK::Auto)

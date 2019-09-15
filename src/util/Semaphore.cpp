@@ -59,6 +59,6 @@ namespace pTK
     int Semaphore::getvalue()
     {
         std::unique_lock<std::mutex> lock(m_mutex);
-        return m_count;
+        return (int)m_count;
     }
 }

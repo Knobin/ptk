@@ -10,7 +10,7 @@
 
 // Local Headers
 #include "ptk/core/Event.hpp"
-#include "ptk/util/Vec2.hpp"
+#include "ptk/util/Size.hpp"
 
 namespace pTK
 {
@@ -28,7 +28,7 @@ namespace pTK
          @param height  associated height
          @return        default initialized ResizeEvent
          */
-        ResizeEvent(uint width, uint height, uint contentWidth, uint contentHeight)
+        ResizeEvent(int width, int height, int contentWidth, int contentHeight)
             : Event(EventCategory::Window, EventType::WindowResize), m_size{width, height},
                 m_contentSize{contentWidth, contentHeight}
         {
@@ -39,40 +39,28 @@ namespace pTK
          @param size    associated width and height
          @return        default initialized ResizeEvent
          */
-        ResizeEvent(const Vec2u& size, const Vec2u& contentSize)
+        ResizeEvent(const Size& size, const Size& contentSize)
             : Event(EventCategory::Window, EventType::WindowResize), m_size{size},
                 m_contentSize{contentSize}
         {
         }
         ~ResizeEvent() final = default;
-
-        /** Function for retrieving the associated width.
-         
-         @return    width
-         */
-        uint getWidth() const { return m_size.x; }
-        
-        /** Function for retrieving the associated height.
-         
-         @return    height
-         */
-        uint getHeight() const { return m_size.y; }
         
         /** Function for retrieving the associated size.
          
          @return    size
          */
-        const Vec2u& getSize() const { return m_size; }
+        const Size& getSize() const { return m_size; }
         
         /** Function for retrieving the associated content size.
          
          @return    size
          */
-        const Vec2u& getContentSize() const { return m_contentSize; }
+        const Size& getContentSize() const { return m_contentSize; }
 
     private:
-        Vec2u m_size;
-        Vec2u m_contentSize;
+        Size m_size;
+        Size m_contentSize;
     };
 }
 

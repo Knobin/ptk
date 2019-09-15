@@ -35,10 +35,10 @@ namespace pTK
     uint Color::to_int() const
     {
         uint r_value = 0;
-        r_value |= (r << 24);
-        r_value |= (g << 16);
-        r_value |= (b << 8);
-        r_value |= a;
+        r_value |= (uint)(r << 24);
+        r_value |= (uint)(g << 16);
+        r_value |= (uint)(b << 8);
+        r_value |= (uint)a;
         
         return r_value;
     }
@@ -89,10 +89,10 @@ namespace pTK
     Color operator+(const Color& lhs, const Color& rhs)
     {
         Color new_Color;
-        new_Color.r = std::min(lhs.r + rhs.r, 255);
-        new_Color.g = std::min(lhs.g + rhs.g, 255);
-        new_Color.b = std::min(lhs.b + rhs.b, 255);
-        new_Color.a = std::min(lhs.a + rhs.a, 255);
+        new_Color.r = (byte)std::min(lhs.r + rhs.r, 255);
+        new_Color.g = (byte)std::min(lhs.g + rhs.g, 255);
+        new_Color.b = (byte)std::min(lhs.b + rhs.b, 255);
+        new_Color.a = (byte)std::min(lhs.a + rhs.a, 255);
         
         return new_Color;
     }
@@ -100,10 +100,10 @@ namespace pTK
     Color operator-(const Color& lhs, const Color& rhs)
     {
         Color new_Color;
-        new_Color.r = std::max(lhs.r - rhs.r, 0);
-        new_Color.g = std::max(lhs.g - rhs.g, 0);
-        new_Color.b = std::max(lhs.b - rhs.b, 0);
-        new_Color.a = std::max(lhs.a - rhs.a, 0);
+        new_Color.r = (byte)std::max(lhs.r - rhs.r, 0);
+        new_Color.g = (byte)std::max(lhs.g - rhs.g, 0);
+        new_Color.b = (byte)std::max(lhs.b - rhs.b, 0);
+        new_Color.a = (byte)std::max(lhs.a - rhs.a, 0);
         
         return new_Color;
     }

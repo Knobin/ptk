@@ -35,7 +35,7 @@ namespace pTK
         using reverse_iterator          = container_type::reverse_iterator;
         using const_iterator            = container_type::const_iterator;
         using const_reverse_iterator    = container_type::const_reverse_iterator;
-        using size_type                 = uint;
+        using size_type                 = size_t;
         
         /** Constructs Container with default values.
          
