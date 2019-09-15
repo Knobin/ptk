@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(ptk)
+project(ptk VERSION 1 DESCRIPTION "C++ library for building user interfaces.")
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -pthread")
@@ -80,6 +80,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES})
 
 # GLFW
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GLFW_INSTALL ON CACHE BOOL "" FORCE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/GLFW)
 include_directories(${CMAKE_SOURCE_DIR}/third_party/glfw/include)
 target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
@@ -87,6 +91,7 @@ target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
 # spdlog
 set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
 add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/spdlog)
+spdlog_enable_warnings(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
 
 # Example
