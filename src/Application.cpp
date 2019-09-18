@@ -16,13 +16,13 @@
 namespace pTK
 {
     Application::Application()
-        : Singleton()
+        : Singleton(), m_waitTime(8000000)
     {
         Log::init();
     }
     
     Application::Application(int, char* [])
-        : Singleton()
+        : Singleton(), m_waitTime(8000000)
     {
         Log::init();
         // TODO: Check arguments.
@@ -41,11 +41,17 @@ namespace pTK
             window->pollEvents();
 
             // To lower cpu usage, we wait.
-            std::this_thread::sleep_for(std::chrono::milliseconds(32));
+            std::this_thread::sleep_for(m_waitTime);
         }
         
         window->hide();
 
         return 0;
+    }
+    
+    void Application::delayPoll(std::chrono::duration<uint64> const& duration)
+    {
+        using namespace std::chrono;
+        m_waitTime = duration_cast<nanoseconds>(duration);
     }
 }

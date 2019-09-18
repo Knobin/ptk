@@ -11,6 +11,7 @@
 // Local Headers
 #include "ptk/util/Singleton.hpp"
 #include "ptk/Window.hpp"
+#include "ptk/core/Types.hpp"
 
 namespace pTK
 {
@@ -44,10 +45,21 @@ namespace pTK
          */
         int exec(Window* window);
         
+        /** Function for setting the delay between polling events.
+         
+        Default is currently 8ms, about 120 times / second.
+         
+         @param duration  time to wait
+         */
+        void delayPoll(std::chrono::duration<uint64> const& duration);
+        
         // TODO: Menubar
         // TODO: Thread safe option
         // TODO: Support multiple windows
         // TODO: window id
+        
+    private:
+        std::chrono::nanoseconds m_waitTime;
     };
 }
 

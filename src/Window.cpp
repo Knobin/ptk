@@ -342,7 +342,7 @@ namespace pTK
         glfwHideWindow(m_window);
     }
     
-    // Event
+    // Event, Only called by main thread.
     void Window::handleMainThreadEvents(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
@@ -378,6 +378,7 @@ namespace pTK
         }
     }
     
+    // Run loop for event thread.
     void Window::handleThreadEvents()
     {
         while (m_runThreads)
@@ -393,7 +394,7 @@ namespace pTK
         }
     }
 
-    // Event processing
+    // Called by event thread.
     void Window::handleKeyboardEvent(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
@@ -401,6 +402,7 @@ namespace pTK
         handleKeyEvent(kEvent->type(), kEvent->get_keycode());
     }
 
+    // Called by event thread.
     void Window::handleMouseEvent(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
@@ -421,6 +423,7 @@ namespace pTK
         }
     }
 
+    // Called by event thread.
     void Window::handleWindowEvent(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
