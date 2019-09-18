@@ -16,13 +16,13 @@
 namespace pTK
 {
     Application::Application()
-        : NonMovable(), NonCopyable()
+        : Singleton()
     {
         Log::init();
     }
     
     Application::Application(int, char* [])
-        : NonMovable(), NonCopyable()
+        : Singleton()
     {
         Log::init();
         // TODO: Check arguments.

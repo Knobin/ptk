@@ -9,8 +9,8 @@
 #define PTK_CORE_CANVAS_HPP
 
 // Local Headers
-#include "ptk/util/NonMovable.hpp"
-#include "ptk/util/NonCopyable.hpp"
+#include "ptk/Core.hpp"
+#include "ptk/util/Singleton.hpp"
 #include "ptk/util/Vec2.hpp"
 #include "ptk/util/Point.hpp"
 #include "ptk/util/Size.hpp"
@@ -51,7 +51,7 @@ namespace pTK
      This class is to handle the SkCanvas for easy access with
      functions for common operations.
      */
-    class Canvas : public NonMovable, public NonCopyable
+    class Canvas : public Singleton
     {
     public:
         /** Constructs Canvas with default values.

@@ -9,8 +9,7 @@
 #define PTK_WINDOW_HPP
 
 // Local Headers
-#include "ptk/util/NonMovable.hpp"
-#include "ptk/util/NonCopyable.hpp"
+#include "ptk/util/Singleton.hpp"
 #include "ptk/widgets/VBox.hpp"
 #include "ptk/core/Canvas.hpp"
 #include "ptk/core/Event.hpp"
@@ -27,7 +26,8 @@
 
 namespace pTK
 {
-    class Window : public VBox, public NonMovable, public NonCopyable
+    // TODO: Should not be a Singleton in the future.
+    class Window : public VBox, public Singleton
     {
     public:
         Window() = delete;

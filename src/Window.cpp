@@ -19,7 +19,7 @@
 namespace pTK
 {
     Window::Window(const std::string& name, uint width, uint height)
-        : VBox(), NonMovable(), NonCopyable(),
+        : VBox(), Singleton(),
             m_window{nullptr}, m_scale{1.0f, 1.0f},
             m_drawCanvas{nullptr}, m_handleThreadEvents{}, m_mainThreadEvents{}, m_handleThread{},
             m_runThreads{false}, m_mainThreadID{std::this_thread::get_id()}

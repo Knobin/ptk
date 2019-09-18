@@ -29,7 +29,7 @@
 namespace pTK
 {
     Canvas::Canvas(const Size& size)
-        : NonMovable(), NonCopyable(), m_context{nullptr}, m_surface{nullptr}, m_canvas{nullptr}, m_info{},
+        : Singleton(), m_context{nullptr}, m_surface{nullptr}, m_canvas{nullptr}, m_info{},
             m_colorType{}, m_size{size}
     {
         auto interface = GrGLMakeNativeInterface();

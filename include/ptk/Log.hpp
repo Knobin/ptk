@@ -28,49 +28,18 @@ namespace pTK
     };
 }
 
-// PTK_DEBUG will enable all debug defines.
+// Enable Logging
 #ifdef PTK_DEBUG
-    #define PTK_ENABLE_ASSERT
-    #define PTK_ENABLE_WARNING
-    #define PTK_ENABLE_ERROR
-    #define PTK_ENABLE_TRACE
-    #define PTK_ENABLE_INFO
-    #define PTK_ENABLE_FATAL
-#endif
-
-#ifdef PTK_ENABLE_ASSERT
-    #define PTK_ASSERT(x, ...)   if(!(x)) { PTK_ERROR("Assertion Failed: {0}", __VA_ARGS__); abort(); }
-#else
-    #define PTK_ASSERT(...)
-#endif
-
-#ifdef PTK_ENABLE_WARNING
-#define PTK_WARN(...)       pTK::Log::getLogger()->warn(__VA_ARGS__)
-#else
-    #define PTK_WARN(...)
-#endif
-
-#ifdef PTK_ENABLE_ERROR
+    #define PTK_WARN(...)   pTK::Log::getLogger()->warn(__VA_ARGS__)
     #define PTK_ERROR(...)  pTK::Log::getLogger()->error(__VA_ARGS__)
-#else
-    #define PTK_ERROR(...)
-#endif
-
-#ifdef PTK_ENABLE_TRACE
     #define PTK_TRACE(...)  pTK::Log::getLogger()->trace(__VA_ARGS__)
-#else
-    #define PTK_TRACE(...)
-#endif
-
-#ifdef PTK_ENABLE_INFO
     #define PTK_INFO(...)   pTK::Log::getLogger()->info(__VA_ARGS__)
-#else
-    #define PTK_INFO(...)
-#endif
-
-#ifdef PTK_ENABLE_FATAL
     #define PTK_FATAL(...)  pTK::Log::getLogger()->fatal(__VA_ARGS__)
 #else
+    #define PTK_WARN(...)
+    #define PTK_ERROR(...)
+    #define PTK_TRACE(...)
+    #define PTK_INFO(...)
     #define PTK_FATAL(...)
 #endif
 
