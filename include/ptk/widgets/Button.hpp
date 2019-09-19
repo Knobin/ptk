@@ -29,7 +29,7 @@ namespace pTK
             Color hoverColor;
             Color clickColor;
             Color textColor;
-            uint cornerRadius;
+            float cornerRadius;
             
             static const Style Default;
             static const Style Success;

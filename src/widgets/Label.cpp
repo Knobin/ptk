@@ -48,7 +48,7 @@ namespace pTK
     void Label::calculateBounds()
     {
         std::string fontFamily = getFontFamily();
-        uint fontSize = getFontSize();
+        float fontSize = (float)getFontSize();
         
         // Font
         SkFont font;
@@ -72,7 +72,7 @@ namespace pTK
         
         SkFont font;
         std::string fontFamily = getFontFamily();
-        uint fontSize = getFontSize();
+        float fontSize = (float)getFontSize();
         if (fontFamily == "")
             font = SkFont(SkTypeface::MakeDefault(), fontSize);
         else
