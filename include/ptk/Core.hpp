@@ -11,6 +11,10 @@
 // C++ Headers
 #include <memory>
 
+#ifdef PTK_DEBUG
+    #define PTK_ENABLE_ASSERT
+#endif
+
 // Enable Asserts
 #ifdef PTK_ENABLE_ASSERT
     #define PTK_ASSERT(x, ...)   if(!(x)) { PTK_ERROR("Assertion Failed: {0}", __VA_ARGS__); abort(); }
