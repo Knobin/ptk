@@ -25,7 +25,7 @@ namespace pTK
         
         // Outline
         float outlineThickness = getOutlineThickness();
-        float halfOutlineThickness = outlineThickness/2;
+        float halfOutlineThickness = outlineThickness/2.0f;
         pos.fX += halfOutlineThickness;
         pos.fY += halfOutlineThickness;
         size.fX -= halfOutlineThickness;

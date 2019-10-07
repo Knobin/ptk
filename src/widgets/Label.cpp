@@ -48,7 +48,7 @@ namespace pTK
     void Label::calculateBounds()
     {
         std::string fontFamily = getFontFamily();
-        float fontSize = (float)getFontSize();
+        float fontSize = static_cast<float>(getFontSize());
         
         // Font
         SkFont font;
@@ -59,7 +59,7 @@ namespace pTK
         
         SkRect bounds;
         font.measureText(m_text.c_str(), m_text.size(), SkTextEncoding::kUTF8, &bounds);
-        setSize(Size((int)std::ceil(bounds.width()), (int)std::ceil(bounds.height()))); // This will call redraw.
+        setSize(Size(static_cast<int>(std::ceil(bounds.width())), static_cast<int>(std::ceil(bounds.height())))); // This will call redraw.
     }
     
     void Label::onDraw(SkCanvas* canvas)
@@ -72,7 +72,7 @@ namespace pTK
         
         SkFont font;
         std::string fontFamily = getFontFamily();
-        float fontSize = (float)getFontSize();
+        float fontSize = static_cast<float>(getFontSize());
         if (fontFamily == "")
             font = SkFont(SkTypeface::MakeDefault(), fontSize);
         else

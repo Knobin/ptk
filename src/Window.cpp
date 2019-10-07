@@ -25,7 +25,7 @@ namespace pTK
             m_runThreads{false}, m_mainThreadID{std::this_thread::get_id()}
     {
         // Set Widget properties.
-        Widget::setSize({(int)width, (int)height});
+        Widget::setSize({static_cast<int>(width), static_cast<int>(height)});
         Sizable::setMinSize(Size(GLFW_DONT_CARE, GLFW_DONT_CARE));
         Sizable::setMaxSize(Size(GLFW_DONT_CARE, GLFW_DONT_CARE));
         setName(name);
@@ -33,9 +33,9 @@ namespace pTK
         initGLFW();
 
         // Create Window.
-        m_window = glfwCreateWindow((int)width, (int)height, name.c_str(), nullptr, nullptr);
+        m_window = glfwCreateWindow(static_cast<int>(width), static_cast<int>(height), name.c_str(), nullptr, nullptr);
         PTK_ASSERT(m_window, "Failed to create GLFW Window");
-        PTK_INFO("GLFW Window Created, {0:d}x{1:d}", (int)width, (int)height);
+        PTK_INFO("GLFW Window Created, {0:d}x{1:d}", static_cast<int>(width), static_cast<int>(height));
         
         // Get Monitor Scale
         glfwGetWindowContentScale(m_window, &m_scale.x, &m_scale.y);
@@ -315,7 +315,7 @@ namespace pTK
     
     void Window::setLimits(const Size& minSize, const Size& maxSize)
     {
-        glfwSetWindowSizeLimits(m_window, (int)minSize.width, (int)minSize.height, (int)maxSize.width, (int)maxSize.height);
+        glfwSetWindowSizeLimits(m_window, static_cast<int>(minSize.width), static_cast<int>(minSize.height), static_cast<int>(maxSize.width), static_cast<int>(maxSize.height));
     }
 
     // Close
@@ -398,7 +398,7 @@ namespace pTK
     void Window::handleKeyboardEvent(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
-        KeyEvent* kEvent = (KeyEvent*)event;
+        KeyEvent* kEvent = static_cast<KeyEvent*>(event);
         handleKeyEvent(kEvent->type(), kEvent->get_keycode());
     }
 
@@ -409,11 +409,11 @@ namespace pTK
         EventType type = event->type();
         if (type == EventType::MouseMoved)
         {
-            MotionEvent* mEvent = (MotionEvent*)event;
+            MotionEvent* mEvent = static_cast<MotionEvent*>(event);
             handleHoverEvent(mEvent->getPos());
         } else if (type == EventType::MouseButtonPressed || type == EventType::MouseButtonReleased)
         {
-            ButtonEvent* bEvent = (ButtonEvent*)event;
+            ButtonEvent* bEvent = static_cast<ButtonEvent*>(event);
             Point pos{bEvent->getPos()};
             MouseButton btn = bEvent->getButton();
             if (type == EventType::MouseButtonPressed)
@@ -434,7 +434,7 @@ namespace pTK
         }
         else if (type == EventType::WindowResize)
         {
-            ResizeEvent* rEvent = (ResizeEvent*)event;
+            ResizeEvent* rEvent = static_cast<ResizeEvent*>(event);
             VBox::setSize(rEvent->getSize());
         }else if (type == EventType::WindowClose)
         {

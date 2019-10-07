@@ -35,10 +35,10 @@ namespace pTK
     uint Color::to_int() const
     {
         uint r_value = 0;
-        r_value |= (uint)(r << 24);
-        r_value |= (uint)(g << 16);
-        r_value |= (uint)(b << 8);
-        r_value |= (uint)a;
+        r_value |= static_cast<uint>(r << 24);
+        r_value |= static_cast<uint>(g << 16);
+        r_value |= static_cast<uint>(b << 8);
+        r_value |= static_cast<uint>(a);
         
         return r_value;
     }
@@ -53,9 +53,9 @@ namespace pTK
     
     void Color::set_rgb(uint color)
     {
-        r = (byte)((color >> 24) & 0xFF);
-        g = (byte)((color >> 16) & 0xFF);
-        b = (byte)((color >> 8) & 0xFF);
+        r = static_cast<byte>((color >> 24) & 0xFF);
+        g = static_cast<byte>((color >> 16) & 0xFF);
+        b = static_cast<byte>((color >> 8) & 0xFF);
     }
     
     void Color::set_rgba(byte red, byte green, byte blue, byte alpha)
@@ -68,10 +68,10 @@ namespace pTK
     
     void Color::set_rgba(uint color)
     {
-        r = (byte)((color >> 24) & 0xFF);
-        g = (byte)((color >> 16) & 0xFF);
-        b = (byte)((color >> 8) & 0xFF);
-        a = (byte)(color & 0xFF);
+        r = static_cast<byte>((color >> 24) & 0xFF);
+        g = static_cast<byte>((color >> 16) & 0xFF);
+        b = static_cast<byte>((color >> 8) & 0xFF);
+        a = static_cast<byte>(color & 0xFF);
     }
     
     // Comparison operators.
@@ -89,10 +89,10 @@ namespace pTK
     Color operator+(const Color& lhs, const Color& rhs)
     {
         Color new_Color;
-        new_Color.r = (byte)std::min(lhs.r + rhs.r, 255);
-        new_Color.g = (byte)std::min(lhs.g + rhs.g, 255);
-        new_Color.b = (byte)std::min(lhs.b + rhs.b, 255);
-        new_Color.a = (byte)std::min(lhs.a + rhs.a, 255);
+        new_Color.r = static_cast<byte>(std::min(lhs.r + rhs.r, 255));
+        new_Color.g = static_cast<byte>(std::min(lhs.g + rhs.g, 255));
+        new_Color.b = static_cast<byte>(std::min(lhs.b + rhs.b, 255));
+        new_Color.a = static_cast<byte>(std::min(lhs.a + rhs.a, 255));
         
         return new_Color;
     }
@@ -100,10 +100,10 @@ namespace pTK
     Color operator-(const Color& lhs, const Color& rhs)
     {
         Color new_Color;
-        new_Color.r = (byte)std::max(lhs.r - rhs.r, 0);
-        new_Color.g = (byte)std::max(lhs.g - rhs.g, 0);
-        new_Color.b = (byte)std::max(lhs.b - rhs.b, 0);
-        new_Color.a = (byte)std::max(lhs.a - rhs.a, 0);
+        new_Color.r = static_cast<byte>(std::max(lhs.r - rhs.r, 0));
+        new_Color.g = static_cast<byte>(std::max(lhs.g - rhs.g, 0));
+        new_Color.b = static_cast<byte>(std::max(lhs.b - rhs.b, 0));
+        new_Color.a = static_cast<byte>(std::max(lhs.a - rhs.a, 0));
         
         return new_Color;
     }
