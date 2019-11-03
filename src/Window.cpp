@@ -104,6 +104,15 @@ namespace pTK
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
             window->sendEvent<Event>(EventCategory::Window, EventType::WindowClose);
         });
+
+        // void window_maximize_callback(GLFWwindow* window, int maximized)
+        glfwSetWindowMaximizeCallback(m_window, [](GLFWwindow* t_window, int){
+            // TODO: Should create a resize EventFunction. 
+            auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
+            int width, height;
+            glfwGetWindowSize(t_window, &width, &height);
+            window->sendEvent<ResizeEvent>(Size{width, height}, window->getContentSize());
+        });
     }
     
     void Window::setMouseCallbacks()
