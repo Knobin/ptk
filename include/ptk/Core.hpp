@@ -8,6 +8,9 @@
 #ifndef PTK_CORE_HPP
 #define PTK_CORE_HPP
 
+// Local Headers
+#include "ptk/Log.hpp"
+
 // C++ Headers
 #include <memory>
 

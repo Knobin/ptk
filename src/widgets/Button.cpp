@@ -118,7 +118,7 @@ namespace pTK
         m_text->setFontFamily(fontFamily);
     }
     
-    const std::string& Button::getFontFamily() const
+    std::string Button::getFontFamily() const
     {
         return m_text->getFontFamily();
     }

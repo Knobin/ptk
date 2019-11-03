@@ -109,7 +109,7 @@ namespace pTK
          
          @return  current font family
          */
-        const std::string& getFontFamily() const;
+        std::string getFontFamily() const;
         
         /** Function for setting the font size of the Label.
          

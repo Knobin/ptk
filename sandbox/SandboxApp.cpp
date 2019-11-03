@@ -23,5 +23,23 @@ int main(int argc, char *argv[])
     checkbox->set(true);
     window.add(checkbox);
     
+    pTK::Ref<pTK::Label> label = pTK::create<pTK::Label>();
+    label->setText("Toggled: 0 times!");
+    label->setFontFamily("PingFang HK");
+    label->setFontSize(32);
+    label->setMargin(pTK::Margin::Auto);
+    window.add(label);
+    
+    uint toggleCount = 0;
+    checkbox->onToggle([&](bool){
+        toggleCount++;
+        if (toggleCount == 1)
+            label->setText("Toggled: " + std::to_string(toggleCount) + " time!" );
+        else
+            label->setText("Toggled: " + std::to_string(toggleCount) + " times!" );
+        
+        return true;
+    });
+    
     return app.exec(&window);
 }

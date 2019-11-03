@@ -9,9 +9,8 @@
 #define PTK_WIDGETS_LABEL_HPP
 
 // Local Headers
-#include "ptk/core/Font.hpp"
+#include "ptk/core/Text.hpp"
 #include "ptk/core/Shape.hpp"
-#include "ptk/core/Types.hpp"
 
 namespace pTK
 {
@@ -22,7 +21,7 @@ namespace pTK
      is for the unique properties that Shape has that Label
      can also use. Such as Color and outline.
      */
-    class Label : public Shape, public Font
+    class Label : public Shape, public Text
     {
     public:
         /** Constructs Label with default values.
@@ -30,7 +29,7 @@ namespace pTK
          @return    default initialized Label
          */
         Label();
-        ~Label() = default;
+        virtual ~Label() = default;
         
         /** Function for setting the font family of the Label.
          
@@ -52,13 +51,7 @@ namespace pTK
          
          @param text    text for Label
          */
-        void setText(const std::string& text);
-        
-        /** Function for retrieving the current text used by Label.
-         
-         @return  current text
-         */
-        const std::string& getText() const;
+        void setText(const std::string& text) override;
         
         /** Draw function.
          Function is called when it is time to draw.
@@ -68,9 +61,6 @@ namespace pTK
         void onDraw(SkCanvas* canvas) override;
         
     private:
-        std::string m_text;
-        
-        void calculateBounds();
         
         // Keep these private, for internal use.
         using Widget::setSize;

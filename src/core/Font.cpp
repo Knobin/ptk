@@ -8,30 +8,59 @@
 // Local Headers
 #include "ptk/core/Font.hpp"
 
+// C++ Headers
+#include <cmath>
+
 namespace pTK
 {
     Font::Font()
-        : m_fontFamily{}, m_fontSize{12}
+        : m_fontSize{12}
     {
     }
     
-    void Font::setFontFamily(const std::string& fontFamily)
+    void Font::setFamily(const std::string& fontFamily)
     {
-        m_fontFamily = fontFamily;
+        if (fontFamily == "")
+            m_typeface.reset(SkTypeface::MakeDefault().get());
+        else
+            m_typeface.reset(SkTypeface::MakeFromName(fontFamily.c_str(), SkFontStyle::Normal()).get());
+        
+        m_font = SkFont(m_typeface, m_fontSize);
     }
     
-    const std::string& Font::getFontFamily() const
+    std::string Font::getFamily() const
     {
-        return m_fontFamily;
+        SkString str;
+        m_typeface->getFamilyName(&str);
+        
+        return std::string(str.c_str());
     }
     
-    void Font::setFontSize(uint fontSize)
+    void Font::setSize(uint fontSize)
     {
         m_fontSize = fontSize;
+        m_font = SkFont(m_typeface, m_fontSize);
     }
     
-    uint Font::getFontSize() const
+    uint Font::getSize() const
     {
         return m_fontSize;
+    }
+    
+    Size Font::getBounds(const std::string& str) const
+    {
+        SkRect bounds;
+        m_font.measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &bounds);
+        return Size(static_cast<int>(std::ceil(bounds.width())), static_cast<int>(std::ceil(bounds.height())));
+    }
+    
+    const SkFont* Font::skFont() const
+    {
+        return &m_font;
+    }
+    
+    sk_sp<SkTypeface> Font::skTypeface() const
+    {
+        return m_typeface;
     }
 }

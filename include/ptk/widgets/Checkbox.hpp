@@ -60,12 +60,25 @@ namespace pTK
          */
         bool onReleaseEvent(MouseButton, const Point&) override;
         
+        /** Function for handling when the checkbox is toggled.
+         
+         @param status    status on toggle.
+         */
+        virtual void onToggleEvent(bool status);
+        
+        /** Function for handling when the checkbox is toggled.
+         
+         @param callback    function to call on toggle.
+         */
+        void onToggle(const std::function<bool(bool status)>& callback);
+        
     private:
         bool m_checked = false;
         bool m_hover = false;
         bool m_click = false;
         int m_state = 0;
         Color m_checkColor;
+        std::function<bool(bool status)> m_toggleCallback;
         
         void drawChecked(SkCanvas* canvas);
         void drawStates(SkCanvas* canvas);

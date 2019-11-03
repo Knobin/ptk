@@ -10,9 +10,14 @@
 
 // Local Headers
 #include "ptk/core/Types.hpp"
+#include "ptk/util/Size.hpp"
 
 // C++ Headers
 #include <string>
+
+// Skia Headers
+#include "include/core/SkFont.h"
+#include "include/core/SkTypeface.h"
 
 namespace pTK
 {
@@ -34,28 +39,48 @@ namespace pTK
          
          @param font    font family for Label to use
          */
-        virtual void setFontFamily(const std::string& fontFamily);
+        void setFamily(const std::string& fontFamily);
         
         /** Function for retrieving the current font family used by Label.
          
          @return  current font family
          */
-        const std::string& getFontFamily() const;
+        std::string getFamily() const;
         
         /** Function for setting the font size of the Label
          
          @param fontSize    size of the font
          */
-        virtual void setFontSize(uint fontSize);
+        void setSize(uint fontSize);
         
         /** Function for retrieving the current font size used by Label.
          
          @return  current font size
          */
-        uint getFontSize() const;
+        uint getSize() const;
+        
+        /** Function for retrieving the bounds of a specific text.
+         
+         @param str     text to calculate bounds on
+         @return        bounds of the text
+         */
+        Size getBounds(const std::string& str) const;
+        
+        /** Function for retrieving the raw SkFont.
+         
+         @return  raw SkFont
+         */
+        const SkFont* skFont() const;
+        
+        /** Function for retrieving the SkTypeface used.
+         
+         @return  shared pointer to SkTypeface
+         */
+        sk_sp<SkTypeface> skTypeface() const;
 
     private:
-        std::string m_fontFamily;
+        SkFont m_font;
+        sk_sp<SkTypeface> m_typeface;
         uint m_fontSize;
     };
 }

@@ -193,11 +193,28 @@ namespace pTK
         return true;
     }
     
+    void Checkbox::onToggleEvent(bool)
+    {
+        
+    }
+    
+    void Checkbox::onToggle(const std::function<bool(bool status)>& callback)
+    {
+        m_toggleCallback = callback;
+    }
+    
     void Checkbox::internalToggle()
     {
         if (status())
             m_checked = false;
         else
             m_checked = true;
+        
+        bool status = true;
+        if (m_toggleCallback != nullptr)
+            status = m_toggleCallback(m_checked);
+        
+        if (status)
+            onToggleEvent(m_checked);
     }
 }

@@ -44,12 +44,12 @@ message(STATUS "Build Examples: ${BUILD_EXAMPLES}")
 message(STATUS "Build Sandbox: ${BUILD_SANDBOX}")
 
 # Source files
-file(GLOB_RECURSE SOURCE_FILES
-        ${CMAKE_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE SOURCE_FILES ${CMAKE_SOURCE_DIR}/src/*.cpp)
+source_group(TREE "${CMAKE_SOURCE_DIR}/src" PREFIX "Source Files" FILES ${SOURCE_FILES})
 
 # Header files
-file(GLOB_RECURSE HEADER_FILES
-        ${CMAKE_SOURCE_DIR}/include/*.hpp)
+file(GLOB_RECURSE HEADER_FILES ${CMAKE_SOURCE_DIR}/include/*.hpp)
+source_group(TREE "${CMAKE_SOURCE_DIR}/include/ptk" PREFIX "Header Files" FILES ${HEADER_FILES})
 
 include_directories(${CMAKE_SOURCE_DIR}/include/)
 
