@@ -93,7 +93,7 @@ namespace pTK
         int expandChildren(std::pair<uint, Size>* data, int add, const Size& layoutSize);
         void extendMargins(int* data, int unusedHeight);
         
-        int alignChildH(uint index,  const Size& childSize);
+        int alignChildH(uint index, const Size& parentSize, const Size& childSize);
         
         void internalUpdate();
         

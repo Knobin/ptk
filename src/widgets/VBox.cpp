@@ -108,7 +108,7 @@ namespace pTK
             cell->setSize(cSize);
             Margin cMargin = cell->getMargin();
             vbPos.y += ((cMargin.top < 0) ? 0 : cMargin.top);
-            cell->setPosHint(Point(vbPos.x + alignChildH(i, cSize), vbPos.y));
+            cell->setPosHint(Point(vbPos.x + alignChildH(i, newSize, cSize), vbPos.y));
             vbPos.y += cSize.height + ((cMargin.bottom < 0) ? 0 : cMargin.bottom);
         }
     }
@@ -168,7 +168,7 @@ namespace pTK
             auto cell = at(i);
             cell->setSize(data[i].second);
             vbPos.y += marginData[i]; // Add margin
-            cell->setPosHint(Point(vbPos.x + alignChildH(i, data[i].second), vbPos.y));
+            cell->setPosHint(Point(vbPos.x + alignChildH(i, vbSize, data[i].second), vbPos.y));
             vbPos.y += data[i].second.height; // Add margin
             
             if (i == 0)
@@ -598,7 +598,7 @@ namespace pTK
             Point pos = cell->getPosition();
             hotfix += marginData[i];
             pos.y -= hotfix; // Add margin
-            cell->setPosHint(Point(vbPos.x + alignChildH(i, data[i].second), pos.y));
+            cell->setPosHint(Point(vbPos.x + alignChildH(i, newSize, data[i].second), pos.y));
             VBoxData* oldData = (VBoxData*)m_data.at(i);
             hotfix += (data[i].second.height < oldData->size.height) ? oldData->size.height - data[i].second.height : 0;
             
@@ -790,7 +790,7 @@ namespace pTK
             Point pos = cell->getPosition();
             hotfix += marginData[i];
             pos.y += hotfix; // Add margin
-            cell->setPosHint(Point(vbPos.x + alignChildH(i, data[i].second), pos.y));
+            cell->setPosHint(Point(vbPos.x + alignChildH(i, newSize, data[i].second), pos.y));
             VBoxData* oldData = (VBoxData*)m_data.at(i);
             pos.y += (data[i].second.height > oldData->size.height) ? data[i].second.height - oldData->size.height : 0;
             
@@ -830,9 +830,8 @@ namespace pTK
         delete [] data;
     }
     
-    int VBox::alignChildH(uint index, const Size& childSize)
+    int VBox::alignChildH(uint index, const Size& parentSize, const Size& childSize)
     {
-        Size pSize = getSize();
         Margin cMargin = ((VBoxData*)m_data.at(index))->margin;
         
         int posx = cMargin.left;
@@ -840,11 +839,11 @@ namespace pTK
         {
             if (cMargin.right == pTK::Auto)
             {
-                posx += pSize.width/2;
+                posx += parentSize.width/2;
                 posx -= childSize.width/2;
             }else
             {
-                posx = pSize.width - childSize.width;
+                posx = parentSize.width - childSize.width;
             }
         }
         
