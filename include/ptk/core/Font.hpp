@@ -34,12 +34,20 @@ namespace pTK
          */
         Font();
         virtual ~Font() = default;
-        
+       
+        /** Function for setting the font from a given file.
+         
+         @param path    font file to load
+         @return        status
+         */
+        bool loadFromFile(const std::string& path);
+
         /** Function for setting the font family of the Label.
          
          @param font    font family for Label to use
+         @return        status
          */
-        void setFamily(const std::string& fontFamily);
+        bool setFamily(const std::string& fontFamily);
         
         /** Function for retrieving the current font family used by Label.
          

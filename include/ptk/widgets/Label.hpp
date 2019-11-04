@@ -31,17 +31,27 @@ namespace pTK
         Label();
         virtual ~Label() = default;
         
+        /** Function for setting the font from a given file.
+         
+         Derived from Text.
+         
+         @param path    font file to load
+         @return        status
+         */
+        bool setFontFromFile(const std::string& path) override;
+        
         /** Function for setting the font family of the Label.
          
-         Derived from Font.
+         Derived from Text.
          
          @param font    font family for Label to use
+         @return        status
          */
-        void setFontFamily(const std::string& fontFamily) override;
+        bool setFontFamily(const std::string& fontFamily) override;
         
         /** Function for setting the font size of the Label.
          
-         Derived from Font.
+         Derived from Text.
          
          @param fontSize    size of the font
          */

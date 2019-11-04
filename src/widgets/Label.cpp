@@ -22,10 +22,22 @@ namespace pTK
     {
     }
     
-    void Label::setFontFamily(const std::string& fontFamily)
+    bool Label::setFontFromFile(const std::string& path)
     {
-        Text::setFontFamily(fontFamily);
-        setSize(getBounds());
+        bool status = Text::setFontFromFile(path);
+        if (status)
+            setSize(getBounds());
+
+        return status;
+    }
+
+    bool Label::setFontFamily(const std::string& fontFamily)
+    {
+        bool status = Text::setFontFamily(fontFamily);
+        if (status)
+            setSize(getBounds());
+
+        return status;
     }
     
     void Label::setFontSize(uint fontSize)

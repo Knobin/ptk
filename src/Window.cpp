@@ -175,6 +175,7 @@ namespace pTK
     {
         m_handleThread.join();
         PTK_INFO("Event Thread joined");
+        glfwDestroyWindow(m_window);
         glfwTerminate();
         PTK_INFO("Window Destroyed");
     }
@@ -400,6 +401,10 @@ namespace pTK
                 handleKeyboardEvent(event.get());
             else if (event->category() == EventCategory::Mouse)
                 handleMouseEvent(event.get());
+#ifdef PTK_DEBUG
+            else
+                PTK_WARN("Unknown event");
+#endif
         }
     }
 

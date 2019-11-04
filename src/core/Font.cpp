@@ -7,6 +7,7 @@
 
 // Local Headers
 #include "ptk/core/Font.hpp"
+#include "ptk/Log.hpp"
 
 // C++ Headers
 #include <cmath>
@@ -17,15 +18,54 @@ namespace pTK
         : m_fontSize{12}
     {
     }
-    
-    void Font::setFamily(const std::string& fontFamily)
+
+
+    bool Font::loadFromFile(const std::string& path)
     {
-        if (fontFamily == "")
-            m_typeface.reset(SkTypeface::MakeDefault().get());
-        else
-            m_typeface.reset(SkTypeface::MakeFromName(fontFamily.c_str(), SkFontStyle::Normal()).get());
+        bool status = false;
+        if (path != "")
+        {
+            sk_sp<SkTypeface> tf = SkTypeface::MakeFromFile(path.c_str());
+            if (tf)
+            {
+                m_typeface.reset(tf.get());
+                PTK_INFO("loadFromFile: family \"{0}\"", getFamily());
+                status = true;
+            } else
+            {
+                m_typeface.reset(SkTypeface::MakeDefault().get());
+                PTK_WARN("Failed to load \"{0}\", fell back to \"{1}\"", path, getFamily());            
+            }
+            m_font = SkFont(m_typeface, m_fontSize);
+        }
         
+        return status;
+    }
+
+    bool Font::setFamily(const std::string& fontFamily)
+    {
+        bool status = false;
+        if (fontFamily == "")
+        {
+            m_typeface.reset(SkTypeface::MakeDefault().get());
+            PTK_INFO("Loaded default font \"{0}\"", getFamily());
+        } else
+        {
+            m_typeface.reset(SkTypeface::MakeFromName(fontFamily.c_str(), SkFontStyle::Normal()).get());
+
+            if (fontFamily == getFamily())
+            {
+                status = true;
+                PTK_INFO("Loaded {0} successfully.", getFamily());
+            }
+#ifdef PTK_DEBUG
+            else
+                PTK_WARN("Failed to load \"{0}\", fell back to \"{1}\"", fontFamily, getFamily());            
+#endif
+        }
+
         m_font = SkFont(m_typeface, m_fontSize);
+        return status;
     }
     
     std::string Font::getFamily() const

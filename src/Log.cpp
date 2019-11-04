@@ -19,7 +19,7 @@ namespace pTK
     {
         spdlog::set_pattern("%^[%Y-%m-%d %T] %n: %v%$");
         s_logger = spdlog::stdout_color_mt("pTK");
-        s_logger->set_level(spdlog::level::trace);
+        s_logger->set_level(spdlog::level::debug);
     }
         
     std::shared_ptr<spdlog::logger>& Log::getLogger()

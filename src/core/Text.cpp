@@ -7,7 +7,7 @@
 
 // Local Headers
 #include "ptk/core/Text.hpp"
-
+#include "ptk/Log.hpp"
 namespace pTK
 {
     Text::Text()
@@ -15,9 +15,14 @@ namespace pTK
     {
     }
     
-    void Text::setFontFamily(const std::string& fontFamily)
+    bool Text::setFontFromFile(const std::string& path)
     {
-        m_font.setFamily(fontFamily);
+        return m_font.loadFromFile(path);
+    }
+
+    bool Text::setFontFamily(const std::string& fontFamily)
+    {
+        return m_font.setFamily(fontFamily);
     }
     
     std::string Text::getFontFamily() const

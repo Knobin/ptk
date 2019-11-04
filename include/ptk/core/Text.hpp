@@ -25,12 +25,14 @@ namespace pTK
          */
         Text();
         virtual ~Text() = default;
-        
+
+        virtual bool setFontFromFile(const std::string& path);
+
         /** Function for setting the font family.
          
          @param font    font family to use.
          */
-        virtual void setFontFamily(const std::string& fontFamily);
+        virtual bool setFontFamily(const std::string& fontFamily);
         
         /** Function for retrieving the font family.
          
