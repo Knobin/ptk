@@ -15,8 +15,8 @@
 namespace pTK
 {
     Font::Font()
-        : m_fontSize{12}
     {
+        m_font.setEdging(SkFont::Edging::kAntiAlias);
     }
 
 
@@ -28,15 +28,14 @@ namespace pTK
             sk_sp<SkTypeface> tf = SkTypeface::MakeFromFile(path.c_str());
             if (tf)
             {
-                m_typeface.reset(tf.get());
-                PTK_INFO("loadFromFile: family \"{0}\"", getFamily());
+                m_font.setTypeface(tf);
+                PTK_INFO("Loaded font family \"{0}\" from file \"{1}\"", getFamily(), path);
                 status = true;
             } else
             {
-                m_typeface.reset(SkTypeface::MakeDefault().get());
+                m_font.setTypeface(SkTypeface::MakeDefault());
                 PTK_WARN("Failed to load \"{0}\", fell back to \"{1}\"", path, getFamily());            
             }
-            m_font = SkFont(m_typeface, m_fontSize);
         }
         
         return status;
@@ -47,11 +46,11 @@ namespace pTK
         bool status = false;
         if (fontFamily == "")
         {
-            m_typeface.reset(SkTypeface::MakeDefault().get());
+            m_font.setTypeface(SkTypeface::MakeDefault());
             PTK_INFO("Loaded default font \"{0}\"", getFamily());
         } else
         {
-            m_typeface.reset(SkTypeface::MakeFromName(fontFamily.c_str(), SkFontStyle::Normal()).get());
+            m_font.setTypeface(SkTypeface::MakeFromName(fontFamily.c_str(), SkFontStyle::Normal()));
 
             if (fontFamily == getFamily())
             {
@@ -64,27 +63,25 @@ namespace pTK
 #endif
         }
 
-        m_font = SkFont(m_typeface, m_fontSize);
         return status;
     }
     
     std::string Font::getFamily() const
     {
         SkString str;
-        m_typeface->getFamilyName(&str);
+        m_font.getTypeface()->getFamilyName(&str);
         
         return std::string(str.c_str());
     }
     
     void Font::setSize(uint fontSize)
     {
-        m_fontSize = fontSize;
-        m_font = SkFont(m_typeface, m_fontSize);
+        m_font.setSize(fontSize);
     }
     
     uint Font::getSize() const
     {
-        return m_fontSize;
+        return static_cast<uint>(m_font.getSize());
     }
     
     Size Font::getBounds(const std::string& str) const
@@ -97,10 +94,5 @@ namespace pTK
     const SkFont* Font::skFont() const
     {
         return &m_font;
-    }
-    
-    sk_sp<SkTypeface> Font::skTypeface() const
-    {
-        return m_typeface;
     }
 }

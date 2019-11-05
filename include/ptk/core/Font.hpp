@@ -79,17 +79,9 @@ namespace pTK
          @return  raw SkFont
          */
         const SkFont* skFont() const;
-        
-        /** Function for retrieving the SkTypeface used.
-         
-         @return  shared pointer to SkTypeface
-         */
-        sk_sp<SkTypeface> skTypeface() const;
 
     private:
         SkFont m_font;
-        sk_sp<SkTypeface> m_typeface;
-        uint m_fontSize;
     };
 }
 
