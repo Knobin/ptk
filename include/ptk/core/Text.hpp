@@ -9,6 +9,7 @@
 #define PTK_CORE_TEXT_HPP
 
 // Local Headers
+#include "ptk/Core.hpp"
 #include "ptk/core/Font.hpp"
 
 namespace pTK
@@ -24,8 +25,32 @@ namespace pTK
          @return    default initialized Text
          */
         Text();
+
+        /** Constructs Text with default values.
+        
+         @param font    Font to use 
+         @return        default initialized Text with Font
+         */
+        Text(const Ref<Font>& font);
         virtual ~Text() = default;
 
+        /** Function for setting the Font.
+         
+         @param font    Font to set
+         */
+        void setFont(const Ref<Font>& font);
+
+        /** Function for retrieving the Font.
+         
+         @return  Font
+         */
+        Ref<Font> getFont() const;
+        
+        /** Function for setting the font from a given file.
+         
+         @param path    font file to load
+         @return        status
+         */
         virtual bool setFontFromFile(const std::string& path);
 
         /** Function for setting the font family.
@@ -64,12 +89,6 @@ namespace pTK
          */
         const std::string& getText() const;
         
-        /** Function for retrieving the Font.
-         
-         @return  Font
-         */
-        const Font* getFont() const;
-        
         /** Function for retrieving the bounds of the text.
          
          @return  bounds of the text
@@ -78,7 +97,7 @@ namespace pTK
         
     private:
         std::string m_text;
-        Font m_font;
+        Ref<Font> m_font;
     };
 }
 
