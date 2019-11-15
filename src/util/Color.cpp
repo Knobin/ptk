@@ -7,7 +7,6 @@
 
 // Local Headers
 #include "ptk/util/Color.hpp"
-#include "ptk/Log.hpp"
 
 // C++ Headers
 #include <algorithm>

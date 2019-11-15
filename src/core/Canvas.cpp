@@ -7,7 +7,7 @@
 
 // Local Headers
 #include "ptk/core/Canvas.hpp"
-#include "ptk/Log.hpp"
+#include "ptk/Core.hpp"
 
 // Skia Headers
 #ifdef PTK_COMPILER_GCC

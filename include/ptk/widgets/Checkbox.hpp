@@ -13,9 +13,28 @@
 
 namespace pTK
 {
+    /** Checkbox class implementation.
+     
+     This class implements a basic Checkbox.
+     It includes all the necessary function for
+     it to work.
+
+     Checkbox specific functions implemented are:
+        bool status();
+        void set(bool status):
+        bool toggle();
+
+     An extra callback is also present for overriding when
+     the checkbox is toggled.
+
+     */
     class Checkbox : public Rectangle
     {
     public:
+        /** Checkbox Button with default values.
+         
+         @return    default initialized Checkbox
+         */
         Checkbox();
         virtual ~Checkbox() = default;
         
@@ -23,11 +42,27 @@ namespace pTK
          Function is called when it is time to draw.
          
          Derived from Drawable.
+
+         @param canvas  Canvas to draw to
          */
         void onDraw(SkCanvas* canvas) override;
         
+        /** Function for retrieving the status.
+         
+         @return    status
+         */
         bool status() const;
+
+        /** Function for setting the status.
+         
+         @param status  he status toggled to.
+         */
         void set(bool status);
+
+        /** Function for toggling the status.
+         
+         @return    the status toggled to.
+         */
         bool toggle();
         
         /** Function for handling when mouse is entering.

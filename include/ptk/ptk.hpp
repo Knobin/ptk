@@ -12,7 +12,6 @@
 #include "ptk/Application.hpp"
 #include "ptk/Core.hpp"
 #include "ptk/Window.hpp"
-#include "ptk/Log.hpp"
 
 // --- Core --------------------------
 #include "ptk/core/Canvas.hpp"

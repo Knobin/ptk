@@ -21,10 +21,15 @@ namespace pTK
     class Drawable
     {
     public:
+        /** Constructs Drawable with default values.
+         
+         @return    default initialized Drawable
+         */
         Drawable()
             : m_visible{true}
         {
         }
+
         virtual ~Drawable() = default;
         
         /** Draw function.
@@ -35,16 +40,26 @@ namespace pTK
          */
         virtual void onDraw(SkCanvas*) {}
         
-        void show()
+        /** Function to enable drawing.
+
+         */
+        virtual void show()
         {
             m_visible = true;
         }
         
-        void hide()
+        /** Function to disable drawing and hide it.
+         
+         */
+        virtual void hide()
         {
             m_visible = true;
         }
         
+        /** Function for checking if it is visible.
+         
+         @return    status
+         */
         bool visible() const
         {
             return m_visible;

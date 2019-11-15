@@ -13,26 +13,55 @@
 
 namespace pTK
 {
+    /** Vec2 class implementation.
+         
+     This is a basic template class for holding two 
+     coordinates (or values) x and y.
+     */
     template <typename T>
     class Vec2
     {
     public:
+        /** Constructs Vec2 with default values.
+         
+         @return    default initialized Vec2
+         */
         Vec2()
-            : x{0}, y{0}
+            : x{}, y{}
         {
         }
         
+        /** Constructs Vec2 with default values with x and y.
+         
+         @return    default initialized Vec2
+         */
         Vec2(T t_x, T t_y)
             : x{t_x}, y{t_y}
         {
         }
         
+        /** Constructs Vec2 with default values from another Vec2. (Copy)
+         
+         This constructor can copy ant templated Vec2, as long as static_cast
+         can do it. If not, you will get a compile error.
+         
+         @param vec     Vec2 to copy from
+         @return        default initialized Vec2
+         */
         template <typename S>
         explicit Vec2(const Vec2<S>& vec)
             : x{static_cast<T>(vec.x)}, y{static_cast<T>(vec.y)}
         {
         }
         
+        /** Constructs Vec2 with default values from another Vec2. (Copy)
+         
+         This constructor can copy ant templated Vec2, as long as static_cast
+         can do it. If not, you will get a compile error.
+         
+         @param vec     Vec2 to copy from
+         @return        default initialized Vec2
+         */
         template <typename S>
         Vec2<T>& operator=( const Vec2<S>& vec )
         {

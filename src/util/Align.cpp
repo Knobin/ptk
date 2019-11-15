@@ -14,6 +14,11 @@ namespace pTK
         : Directions{0, 0, 0, 0}
     {
     }
+
+    Margin::Margin(Align::Directions directions)
+        : Directions{directions}
+    {
+    }
     
     Margin::Margin(int32 mTop, int32 mBottom, int32 mLeft, int32 mRight)
         : Directions{mTop, mBottom, mLeft, mRight}

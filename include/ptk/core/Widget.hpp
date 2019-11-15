@@ -77,18 +77,78 @@ namespace pTK
          */
         const std::string& getName() const;
         
+        /** Function for setting the margin of the Widget.
+         
+         @param margin  Margin to apply.
+         */
         void setMargin(const Margin& margin);
+
+        /** Function for setting the top margin of the Widget.
+         
+         @param topMargin  value to apply for top margin.
+         */
         void setMarginTop(int32 topMargin);
+
+        /** Function for setting the bottom margin of the Widget.
+         
+         @param bottomMargin  value to apply for bottom margin.
+         */
         void setMarginBottom(int32 bottomMargin);
+
+        /** Function for setting the left margin of the Widget.
+         
+         @param leftMargin  value to apply for left margin.
+         */
         void setMarginLeft(int32 leftMargin);
+
+        /** Function for setting the right margin of the Widget.
+         
+         @param rightMargin  value to apply for right margin.
+         */
         void setMarginRight(int32 rightMargin);
+
+        /** Function for setting the top and bottom margin of the Widget.
+         
+         @param topMargin  value to apply for top margin.
+         @param bottomMargin  value to apply for bottom margin.
+         */
         void setMarginTopBottom(int32 topMargin, int32 bottomMargin);
+
+        /** Function for setting the left and right margin of the Widget.
+         
+         @param leftMargin  value to apply for left margin.
+         @param rightMargin  value to apply for right margin.
+         */
         void setMarginLeftRight(int32 leftMargin, int32 rightMargin);
         
+        /** Function for retrieving the margin of the Widget.
+         
+         @return  current margin
+         */
         const Margin& getMargin() const;
+
+        /** Function for retrieving the top margin of the Widget.
+         
+         @return  current top margin
+         */
         int32 getMarginTop() const;
+
+        /** Function for retrieving the bottom margin of the Widget.
+         
+         @return  current bottom margin
+         */
         int32 getMarginBottom() const;
+
+        /** Function for retrieving the left margin of the Widget.
+         
+         @return  current left margin
+         */
         int32 getMarginLeft() const;
+
+        /** Function for retrieving the right margin of the Widget.
+         
+         @return  current right margin
+         */
         int32 getMarginRight() const;
         
     protected:
@@ -104,11 +164,8 @@ namespace pTK
         
     private:
         Widget* m_parent;
-        
         Point m_pos;
-        
         std::string m_name;
-        
         Margin m_margin;
     };
     

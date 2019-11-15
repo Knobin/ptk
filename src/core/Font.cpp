@@ -19,7 +19,6 @@ namespace pTK
         m_font.setEdging(SkFont::Edging::kAntiAlias);
     }
 
-
     bool Font::loadFromFile(const std::string& path)
     {
         bool status = false;

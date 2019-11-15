@@ -10,14 +10,25 @@
 
 namespace pTK
 {
+    /** Size class implementation.
+         
+     This class is low level class handling size (width and height).
+    */
     class Size
     {
     public:
-        /** Size class implementation.
+        /** Constructs Size with default values.
          
-         This class is low level class handling size.
+         @return    default initialized Size
          */
         Size();
+
+        /** Constructs Size with default values width and height.
+         * 
+         @param t_width     width
+         @param t_height    height
+         @return            default initialized Size
+         */
         Size(int t_width, int t_height);
         ~Size() = default;
         

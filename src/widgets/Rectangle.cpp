@@ -7,7 +7,6 @@
 
 // Local Headers
 #include "ptk/widgets/Rectangle.hpp"
-#include "ptk/Log.hpp"
 
 namespace pTK
 {

@@ -7,7 +7,6 @@
 
 // Local Headers
 #include "ptk/core/Widget.hpp"
-#include "ptk/Log.hpp"
 
 namespace pTK
 {

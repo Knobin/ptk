@@ -7,7 +7,7 @@
 
 // Local Headers
 #include "ptk/core/Text.hpp"
-#include "ptk/Log.hpp"
+
 namespace pTK
 {
     Text::Text()

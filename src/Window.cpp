@@ -11,7 +11,7 @@
 #include "ptk/events/MouseEvent.hpp"
 #include "ptk/events/WindowEvent.hpp"
 #include "ptk/util/Semaphore.hpp"
-#include "ptk/Log.hpp"
+#include "ptk/Core.hpp"
 
 // C++ Headers
 #include <exception>

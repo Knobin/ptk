@@ -8,7 +8,7 @@
 // Local Headers
 #include "ptk/Application.hpp"
 #include "ptk/util/Clock.hpp"
-#include "ptk/Log.hpp"
+#include "ptk/Core.hpp"
 
 // C++ Headers
 #include <thread>

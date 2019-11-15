@@ -23,6 +23,16 @@ namespace pTK
     class Button : public Rectangle
     {
     public:
+
+        /** Style struct for Button styling implementation.
+     
+         This struct is for setting various styiling options for 
+         a Button to make it easier for the user to style a button.
+         Button class can ofcourse be styled without this struct.
+         
+         It also includes 3 pre-assigned styles (Default,
+         Success, Danger).
+        */
         struct Style
         {
             Color color;
