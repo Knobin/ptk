@@ -160,7 +160,7 @@ namespace pTK
         return true;
     }
     
-    bool Checkbox::onClickEvent(MouseButton, const Point&)
+    bool Checkbox::onClickEvent(Mouse::Button, const Point&)
     {
         int temp = m_state;
         m_click = true;
@@ -177,7 +177,7 @@ namespace pTK
         return true;
     }
     
-    bool Checkbox::onReleaseEvent(MouseButton, const Point&)
+    bool Checkbox::onReleaseEvent(Mouse::Button, const Point&)
     {
         int temp = m_state;
         

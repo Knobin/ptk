@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     rect->setOutlineThickness(2);
     rect->setOutlineColor(pTK::Color(0xF4A950FF));
     window.add(rect);
-    rect->onClick([&rect](pTK::MouseButton, const pTK::Point&){
+    rect->onClick([&rect](pTK::Mouse::Button, const pTK::Point&){
         std::cout << rect->getName() << " clicked!\n";
         return true;
     });

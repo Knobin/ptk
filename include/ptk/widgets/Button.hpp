@@ -226,7 +226,7 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        bool onClickEvent(MouseButton, const Point&) override;
+        bool onClickEvent(Mouse::Button, const Point&) override;
         
         /** Function for handling when mouse is released.
          
@@ -235,7 +235,7 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        bool onReleaseEvent(MouseButton, const Point&) override;
+        bool onReleaseEvent(Mouse::Button, const Point&) override;
         
     private:
         Ref<Label> m_text;

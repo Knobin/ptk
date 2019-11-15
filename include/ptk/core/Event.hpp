@@ -10,51 +10,52 @@
 
 namespace pTK
 {
-    /** EventType enum class implementation.
-     
-     This enum class is to specify the event type of the event.
-     */
-    enum class EventType
-    {
-        NONE = 0,
-        WindowClose, WindowLostFocus, WindowFocus, WindowDraw, WindowResize,
-        KeyPressed, KeyReleased,
-        MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
-    };
-
-    /** EventCategory enum class implementation.
-     
-     This enum class is to specify the category type of the event.
-     */
-    enum class EventCategory
-    {
-        NONE = 0,
-        Window,
-        Key,
-        Mouse
-    };
-
     /** Event class implementation.
      
      This class is the base class for events.
      It specifies which event that occured and cannot be
      created without specifying the category and type.
      
-     EventCategory and EventType cannot be changed after the
+     Event::Category and Event::Type cannot be changed after the
      event is created.
      */
     class Event
     {
     public:
+        /** Event::Type enum class implementation.
+     
+         This enum class is to specify the event type of the event.
+         */
+        enum class Type
+        {
+            NONE = 0,
+            WindowClose, WindowLostFocus, WindowFocus, WindowDraw, WindowResize,
+            KeyPressed, KeyReleased,
+            MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
+        };
+
+        /** Event::Category enum class implementation.
+        
+         This enum class is to specify the category type of the event.
+         */
+        enum class Category
+        {
+            NONE = 0,
+            Window,
+            Key,
+            Mouse
+        };
+
+    public:
         /** Constructs Event with default values with t_category
          and t_type.
          
-         @param t_category  category of event
-         @param t_type      type of event
+         @param category  category of event
+         @param type      type of event
          @return            default initialized Event
          */
-        Event(EventCategory t_category, EventType t_type)
-            : m_type{t_type}, m_category{t_category}
+        Event(Category category, Type type)
+            : m_type{type}, m_category{category}
         {
         }
         virtual ~Event() = default;
@@ -63,17 +64,17 @@ namespace pTK
          
          @return    Type of event
          */
-        EventType type() const { return m_type; }
+        Type type() const { return m_type; }
         
         /** Function for retrieving the category of the event.
          
          @return    Type of event
          */
-        EventCategory category() const { return m_category; }
+        Category category() const { return m_category; }
 
     protected:
-        EventType m_type;
-        EventCategory m_category;
+        Type m_type;
+        Category m_category;
     };
 }
 

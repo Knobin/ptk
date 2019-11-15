@@ -218,14 +218,14 @@ namespace pTK
         return true;
     }
     
-    bool Button::onClickEvent(MouseButton, const Point&)
+    bool Button::onClickEvent(Mouse::Button, const Point&)
     {
         setColor(m_clickColor);
         m_click = true;
         return true;
     }
     
-    bool Button::onReleaseEvent(MouseButton, const Point&)
+    bool Button::onReleaseEvent(Mouse::Button, const Point&)
     {
         if (m_hover)
             setColor(m_hoverColor);

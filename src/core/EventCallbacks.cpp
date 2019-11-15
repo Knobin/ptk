@@ -16,7 +16,7 @@ namespace pTK
     {
     }
     
-    void EventCallbacks::onKey(const std::function<bool(EventType, int32)>& callback)
+    void EventCallbacks::onKey(const std::function<bool(Event::Type, int32)>& callback)
     {
         m_keyCallback = callback;
     }
@@ -41,12 +41,12 @@ namespace pTK
         m_scrollCallback = callback;
     }
     
-    void EventCallbacks::onClick(const std::function<bool(MouseButton, const Point&)>& callback)
+    void EventCallbacks::onClick(const std::function<bool(Mouse::Button, const Point&)>& callback)
     {
         m_clickCallback = callback;
     }
     
-    void EventCallbacks::onRelease(const std::function<bool(MouseButton, const Point&)>& callback)
+    void EventCallbacks::onRelease(const std::function<bool(Mouse::Button, const Point&)>& callback)
     {
         m_releaseCallback = callback;
     }

@@ -239,7 +239,7 @@ namespace pTK
             (*it)->onDraw(canvas);
     }
     
-    bool Container::onClickEvent(MouseButton btn, const Point& pos)
+    bool Container::onClickEvent(Mouse::Button btn, const Point& pos)
     {
         for (auto it = begin(); it != end(); it++)
         {
@@ -259,7 +259,7 @@ namespace pTK
         return false;
     }
     
-    bool Container::onReleaseEvent(MouseButton btn, const Point& pos)
+    bool Container::onReleaseEvent(Mouse::Button btn, const Point& pos)
     {
         if (m_lastClickedWidget != nullptr)
         {
@@ -269,7 +269,7 @@ namespace pTK
         return false;
     }
     
-    bool Container::onKeyEvent(EventType type, int32 keycode)
+    bool Container::onKeyEvent(Event::Type type, int32 keycode)
     {
         if (m_lastClickedWidget != nullptr)
         {

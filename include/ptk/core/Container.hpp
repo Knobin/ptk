@@ -250,7 +250,7 @@ namespace pTK
          @param type    Key event (press or release)
          @param int     Keycode
          */
-        bool onKeyEvent(EventType type, int32 keycode) override;
+        bool onKeyEvent(Event::Type type, int32 keycode) override;
         
         /** Function for handling when mouse is hovering.
          
@@ -287,7 +287,7 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        bool onClickEvent(MouseButton btn, const Point& pos) override;
+        bool onClickEvent(Mouse::Button btn, const Point& pos) override;
         
         /** Function for handling when mouse is released.
          
@@ -296,7 +296,7 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        bool onReleaseEvent(MouseButton btn, const Point& pos) override;
+        bool onReleaseEvent(Mouse::Button btn, const Point& pos) override;
         
         /** Funtion for setting the background of the Container.
          

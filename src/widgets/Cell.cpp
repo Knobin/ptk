@@ -110,7 +110,7 @@ namespace pTK
         m_widget->setPosHint(currentPos);
     }
     
-    bool Cell::onClickEvent(MouseButton btn, const Point& pos)
+    bool Cell::onClickEvent(Mouse::Button btn, const Point& pos)
     {
         Point wPos = m_widget->getPosition();
         Size wSize = m_widget->getSize();
@@ -127,7 +127,7 @@ namespace pTK
         return false;
     }
     
-    bool Cell::onReleaseEvent(MouseButton btn, const Point& pos)
+    bool Cell::onReleaseEvent(Mouse::Button btn, const Point& pos)
     {
         if (m_clicked)
         {
@@ -137,7 +137,7 @@ namespace pTK
         return false;
     }
     
-    bool Cell::onKeyEvent(EventType type, int32 keycode)
+    bool Cell::onKeyEvent(Event::Type type, int32 keycode)
     {
         if (m_clicked)
         {

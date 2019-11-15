@@ -124,7 +124,7 @@ namespace pTK
         void sendEvent(Args&& ...args)
         {
             Ref<T> event = create<T>(std::forward<Args>(args)...);
-            if (event->category() == EventCategory::Window)
+            if (event->category() == Event::Category::Window)
             {
                 if (std::this_thread::get_id() == m_mainThreadID)
                 {

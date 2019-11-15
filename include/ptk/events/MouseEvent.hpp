@@ -15,19 +15,22 @@
 
 namespace pTK
 {
-    /** MouseButton enum class implementation.
-     
-     This enum class is to specify which button on the mouse
-     if pressed or released.
-     */
-    enum class MouseButton
+    namespace Mouse
     {
-        NONE = 0,
-        Left,
-        Middle,
-        Right
-    };
-
+        /** Mouse::Button enum class implementation.
+        
+         This enum class is to specify which button on the mouse
+         if pressed or released.
+         */
+        enum class Button
+        {
+            NONE = 0,
+            Left,
+            Middle,
+            Right
+        };
+    }
+    
     /** MotionEvent class implementation.
      
      Derived from Event, this class if for creating
@@ -43,7 +46,7 @@ namespace pTK
          @return        default initialized MotionEvent
          */
         MotionEvent(int posx, int posy)
-            : Event(EventCategory::Mouse, EventType::MouseMoved), m_pos{posx, posy}
+            : Event(Event::Category::Mouse, Event::Type::MouseMoved), m_pos{posx, posy}
         {
         }
         
@@ -53,7 +56,7 @@ namespace pTK
          @return        default initialized MotionEvent
          */
         MotionEvent(const Point& pos)
-            : Event(EventCategory::Mouse, EventType::MouseMoved), m_pos{pos}
+            : Event(Event::Category::Mouse, Event::Type::MouseMoved), m_pos{pos}
         {
         }
         virtual ~MotionEvent() = default;
@@ -94,7 +97,7 @@ namespace pTK
          @return            default initialized ScrollEvent
          */
         ScrollEvent(float x_offset, float y_offset)
-            : Event(EventCategory::Mouse, EventType::MouseScrolled), m_offset{x_offset, y_offset}
+            : Event(Event::Category::Mouse, Event::Type::MouseScrolled), m_offset{x_offset, y_offset}
         {
         }
         
@@ -104,7 +107,7 @@ namespace pTK
          @return        default initialized ScrollEvent
          */
         ScrollEvent(const Vec2f& offset)
-            : Event(EventCategory::Mouse, EventType::MouseScrolled), m_offset{offset}
+            : Event(Event::Category::Mouse, Event::Type::MouseScrolled), m_offset{offset}
         {
         }
         virtual ~ScrollEvent() = default;
@@ -149,7 +152,7 @@ namespace pTK
          @param posy    associated y position
          @return        default initialized ButtonEvent
          */
-        ButtonEvent(EventType type, MouseButton button, int posx, int posy)
+        ButtonEvent(Event::Type type, Mouse::Button button, int posx, int posy)
             : MotionEvent(posx, posy), m_button{button}
         {
             m_type = type;
@@ -160,9 +163,9 @@ namespace pTK
          
          @return    Pressed or Released button
          */
-        MouseButton getButton() const { return m_button; }
+        Mouse::Button getButton() const { return m_button; }
     private:
-        MouseButton m_button;
+        Mouse::Button m_button;
     };
 }
 

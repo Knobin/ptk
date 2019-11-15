@@ -16,7 +16,7 @@ namespace pTK
     {
     }
     
-    bool EventHandling::handleKeyEvent(EventType type, int32 keycode)
+    bool EventHandling::handleKeyEvent(Event::Type type, int32 keycode)
     {
         bool status = true;
         if (m_keyCallback != nullptr)
@@ -80,7 +80,7 @@ namespace pTK
         return status;
     }
     
-    bool EventHandling::handleClickEvent(MouseButton button, const Point& position)
+    bool EventHandling::handleClickEvent(Mouse::Button button, const Point& position)
     {
         bool status = true;
         
@@ -93,7 +93,7 @@ namespace pTK
         return status;
     }
     
-    bool EventHandling::handleReleaseEvent(MouseButton button, const Point& position)
+    bool EventHandling::handleReleaseEvent(Mouse::Button button, const Point& position)
     {
         bool status = true;
         

@@ -29,8 +29,8 @@ namespace pTK
          @param keycode     associated keycode
          @return            default initialized KeyEvent
          */
-        KeyEvent(EventType type, int32 keycode)
-            : Event(EventCategory::Key, type), m_keycode{keycode}
+        KeyEvent(Event::Type type, int32 keycode)
+            : Event(Event::Category::Key, type), m_keycode{keycode}
         {
         }
         ~KeyEvent() final = default;

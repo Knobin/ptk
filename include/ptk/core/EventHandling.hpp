@@ -36,7 +36,7 @@ namespace pTK
          @param type    Key event (press or release)
          @param int     Keycode
          */
-        bool handleKeyEvent(EventType type, int32 keycode);
+        bool handleKeyEvent(Event::Type type, int32 keycode);
         
         /** Function for handling when mouse is hovering.
          
@@ -85,7 +85,7 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        bool handleClickEvent(MouseButton button, const Point& position);
+        bool handleClickEvent(Mouse::Button button, const Point& position);
         
         /** Function for handling when mouse is released.
          
@@ -96,7 +96,7 @@ namespace pTK
          @param button      which button on mouse triggered the event.
          @param position    x and y position
          */
-        bool handleReleaseEvent(MouseButton button, const Point& position);
+        bool handleReleaseEvent(Mouse::Button button, const Point& position);
         
     private:
         using EventCallbacks::m_keyCallback;

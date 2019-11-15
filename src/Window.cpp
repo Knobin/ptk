@@ -102,7 +102,7 @@ namespace pTK
         // void window_close_callback(GLFWwindow* window)
         glfwSetWindowCloseCallback(m_window, [](GLFWwindow* t_window){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
-            window->sendEvent<Event>(EventCategory::Window, EventType::WindowClose);
+            window->sendEvent<Event>(Event::Category::Window, Event::Type::WindowClose);
         });
 
         // void window_maximize_callback(GLFWwindow* window, int maximized)
@@ -142,20 +142,20 @@ namespace pTK
             double xpos, ypos;
             glfwGetCursorPos(t_window, &xpos, &ypos);
             
-            MouseButton button;
+            Mouse::Button button;
             if (t_button == GLFW_MOUSE_BUTTON_LEFT)
-                button = MouseButton::Left;
+                button = Mouse::Button::Left;
             else if (t_button == GLFW_MOUSE_BUTTON_MIDDLE)
-                button = MouseButton::Middle;
+                button = Mouse::Button::Middle;
             else if (t_button == GLFW_MOUSE_BUTTON_RIGHT)
-                button = MouseButton::Right;
+                button = Mouse::Button::Right;
             else
-                button = MouseButton::NONE;
+                button = Mouse::Button::NONE;
             
             if (t_action == GLFW_PRESS)
-                window->sendEvent<ButtonEvent>(EventType::MouseButtonPressed, button, xpos, ypos);
+                window->sendEvent<ButtonEvent>(Event::Type::MouseButtonPressed, button, xpos, ypos);
             else if (t_action == GLFW_RELEASE)
-                window->sendEvent<ButtonEvent>(EventType::MouseButtonReleased, button, xpos, ypos);
+                window->sendEvent<ButtonEvent>(Event::Type::MouseButtonReleased, button, xpos, ypos);
         });
     }
     
@@ -165,9 +165,9 @@ namespace pTK
         glfwSetKeyCallback(m_window, [](GLFWwindow* t_window, int t_key, int, int t_action, int){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
             if (t_action == GLFW_PRESS)
-                window->sendEvent<KeyEvent>(EventType::KeyPressed, t_key);
+                window->sendEvent<KeyEvent>(Event::Type::KeyPressed, t_key);
             else if (t_action == GLFW_RELEASE)
-                window->sendEvent<KeyEvent>(EventType::KeyReleased, t_key);
+                window->sendEvent<KeyEvent>(Event::Type::KeyReleased, t_key);
         });
     }
 
@@ -196,7 +196,7 @@ namespace pTK
     {
         if (find(widget) != cend())
         {
-            sendEvent<Event>(EventCategory::Window, EventType::WindowDraw);
+            sendEvent<Event>(Event::Category::Window, Event::Type::WindowDraw);
             return true;
         }
         
@@ -236,10 +236,10 @@ namespace pTK
             Ref<Event> wEvent = m_mainThreadEvents.front();
             m_mainThreadEvents.pop();
             
-            if (!drawEventHandled || wEvent->type() != EventType::WindowDraw)
+            if (!drawEventHandled || wEvent->type() != Event::Type::WindowDraw)
                 handleMainThreadEvents(wEvent.get());
             
-            if (wEvent->type() == EventType::WindowDraw)
+            if (wEvent->type() == Event::Type::WindowDraw)
                 drawEventHandled = true;
         }
     }
@@ -337,7 +337,7 @@ namespace pTK
     void Window::close()
     {
         glfwSetWindowShouldClose(m_window, GLFW_TRUE);
-        sendEvent<Event>(EventCategory::Window, EventType::WindowClose);
+        sendEvent<Event>(Event::Category::Window, Event::Type::WindowClose);
     }
     
     // Visible
@@ -356,12 +356,12 @@ namespace pTK
     void Window::handleMainThreadEvents(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
-        if (event->category() == EventCategory::Window)
+        if (event->category() == Event::Category::Window)
         {
-            if (event->type() == EventType::WindowDraw)
+            if (event->type() == Event::Type::WindowDraw)
             {
                 onDraw(m_drawCanvas->skCanvas());
-            }else if (event->type() == EventType::WindowResize)
+            }else if (event->type() == Event::Type::WindowResize)
             {
                 ResizeEvent* rEvent = (ResizeEvent*)event;
                 Size cSize = rEvent->getContentSize();
@@ -383,7 +383,7 @@ namespace pTK
                     setMaxSize(contentMaxSize);
                 
                 // Send draw event.
-                sendEvent<Event>(EventCategory::Window, EventType::WindowDraw);
+                sendEvent<Event>(Event::Category::Window, Event::Type::WindowDraw);
             }
         }
     }
@@ -395,11 +395,11 @@ namespace pTK
         {
             Ref<Event> event = m_handleThreadEvents.front();
             m_handleThreadEvents.pop();
-            if (event->category() == EventCategory::Window)
+            if (event->category() == Event::Category::Window)
                 handleWindowEvent(event.get());
-            else if (event->category() == EventCategory::Key)
+            else if (event->category() == Event::Category::Key)
                 handleKeyboardEvent(event.get());
-            else if (event->category() == EventCategory::Mouse)
+            else if (event->category() == Event::Category::Mouse)
                 handleMouseEvent(event.get());
 #ifdef PTK_DEBUG
             else
@@ -420,19 +420,19 @@ namespace pTK
     void Window::handleMouseEvent(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
-        EventType type = event->type();
-        if (type == EventType::MouseMoved)
+        Event::Type type = event->type();
+        if (type == Event::Type::MouseMoved)
         {
             MotionEvent* mEvent = static_cast<MotionEvent*>(event);
             handleHoverEvent(mEvent->getPos());
-        } else if (type == EventType::MouseButtonPressed || type == EventType::MouseButtonReleased)
+        } else if (type == Event::Type::MouseButtonPressed || type == Event::Type::MouseButtonReleased)
         {
             ButtonEvent* bEvent = static_cast<ButtonEvent*>(event);
             Point pos{bEvent->getPos()};
-            MouseButton btn = bEvent->getButton();
-            if (type == EventType::MouseButtonPressed)
+            Mouse::Button btn = bEvent->getButton();
+            if (type == Event::Type::MouseButtonPressed)
                 handleClickEvent(btn, pos);
-            else if (type == EventType::MouseButtonReleased)
+            else if (type == Event::Type::MouseButtonReleased)
                 handleReleaseEvent(btn, pos);
         }
     }
@@ -441,16 +441,16 @@ namespace pTK
     void Window::handleWindowEvent(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
-        EventType type = event->type();
-        if (type == EventType::WindowDraw)
+        Event::Type type = event->type();
+        if (type == Event::Type::WindowDraw)
         {
             ; // TODO: ?
         }
-        else if (type == EventType::WindowResize)
+        else if (type == Event::Type::WindowResize)
         {
             ResizeEvent* rEvent = static_cast<ResizeEvent*>(event);
             VBox::setSize(rEvent->getSize());
-        }else if (type == EventType::WindowClose)
+        }else if (type == Event::Type::WindowClose)
         {
             m_runThreads = false;
         }

@@ -29,7 +29,7 @@ namespace pTK
          @return        default initialized ResizeEvent
          */
         ResizeEvent(int width, int height, int contentWidth, int contentHeight)
-            : Event(EventCategory::Window, EventType::WindowResize), m_size{width, height},
+            : Event(Event::Category::Window, Event::Type::WindowResize), m_size{width, height},
                 m_contentSize{contentWidth, contentHeight}
         {
         }
@@ -40,7 +40,7 @@ namespace pTK
          @return        default initialized ResizeEvent
          */
         ResizeEvent(const Size& size, const Size& contentSize)
-            : Event(EventCategory::Window, EventType::WindowResize), m_size{size},
+            : Event(Event::Category::Window, Event::Type::WindowResize), m_size{size},
                 m_contentSize{contentSize}
         {
         }
