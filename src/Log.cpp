@@ -9,7 +9,7 @@
 #include "ptk/Log.hpp"
 
 // spdlog Headers
-#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/stdout_sinks.h"
 
 namespace pTK
 {

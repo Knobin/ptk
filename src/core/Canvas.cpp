@@ -19,7 +19,6 @@
 #endif
 #include "include/gpu/GrBackendSurface.h"
 #include "include/gpu/gl/GrGLInterface.h"
-#include "include/gpu/GrRenderTarget.h"
 #ifdef PTK_COMPILER_GCC
     #pragma GCC diagnostic pop
 #elif PTK_COMPILER_CLANG
