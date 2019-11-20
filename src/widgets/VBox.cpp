@@ -30,7 +30,7 @@ namespace pTK
     };
         
     VBox::VBox()
-        : Container(), m_data{}
+        : Box(), m_data{}
     {
         
     }
@@ -43,7 +43,7 @@ namespace pTK
     
     bool VBox::add(const Ref<Widget>& widget)
     {
-        if (Container::add(widget))
+        if (Box::add(widget))
         {
             m_data.push_back(new VBoxData{});
             (static_cast<VBoxData*>(m_data.back()))->margin = widget->getMargin();
@@ -465,8 +465,7 @@ namespace pTK
     
     bool VBox::drawChild(Widget* widget)
     {
-        // TODO: Check internal
-        if (find(widget) != cend())
+        if (findRaw(widget) != cend())
         {
             draw();
             return true;

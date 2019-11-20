@@ -10,8 +10,6 @@
 
 // Local Headers
 #include "ptk/core/Types.hpp"
-#include "ptk/core/Widget.hpp"
-#include "ptk/util/Color.hpp"
 
 // C++ Headers
 #include <vector>
@@ -22,97 +20,159 @@ namespace pTK
 {
     /** Container class implementation.
      
-     Base class for handling a collection of Widgets.
+     Base class for handling a collection of items.
      */
-    class Container : public Widget
+    template<typename T> 
+    class Container
     {
     public:
         /** typedefs for Container.
          */
-        using type                      = Ref<Widget>;
+        using type                      = T;
         using container_type            = std::vector<type>;
-        using iterator                  = container_type::iterator;
-        using reverse_iterator          = container_type::reverse_iterator;
-        using const_iterator            = container_type::const_iterator;
-        using const_reverse_iterator    = container_type::const_reverse_iterator;
+        using iterator                  = typename container_type::iterator;
+        using reverse_iterator          = typename container_type::reverse_iterator;
+        using const_iterator            = typename container_type::const_iterator;
+        using const_reverse_iterator    = typename container_type::const_reverse_iterator;
         using size_type                 = size_t;
         
         /** Constructs Container with default values.
          
          @return    default initialized Container
          */
-        Container();
+        Container()
+            : m_holder{}
+        {
+        }
         
         /** Constructs Container with default values with item.
          
          @return    default initialized Container
          */
-        Container(const type& item);
+        Container(const type& item)
+            : m_holder{}
+        {
+            add(item);
+        }
         
         /** Constructs Container with default values with list.
          
          @return    default initialized Container
          */
-        Container(std::initializer_list<type> list);
+        Container(std::initializer_list<type> list)
+            : m_holder{}
+        {
+            m_holder.reserve(list.size());
+            for (const type& item : list)
+                add(item);
+        }
         
         /** Constructs Container with default values with Container.
          
          @return    default initialized Container
          */
-        Container(const Container& rhs);
+        Container(const Container& rhs)
+        {
+            m_holder.reserve(rhs.size());
+            for (auto it{rhs.cbegin()}; it != rhs.cend(); it++)
+                add((*it));
+        }
         
-        virtual ~Container();
+        virtual ~Container() {}
         
         /** Container assignment operator.
          
          @param rhs     Container to copy from
          @return        Container with values from rhs
          */
-        Container& operator=(const Container& rhs);
+        Container& operator=(const Container& rhs)
+        {
+            if (this == &rhs)
+                return *this;
+            
+            m_holder.reserve(rhs.size());
+            for (auto it{rhs.cbegin()}; it != rhs.cend(); it++)
+                add((*it));
+            
+            return *this;
+        }
         
         /** Funtion for adding a widget to the Container.
          
-         @param widget  widget to add
+         @param item  item to add
          */
-        virtual bool add(const Ref<Widget>& widget);
+        virtual bool add(const type& item)
+        {
+            m_holder.push_back(item);
+            return true;
+        }
         
         /** Funtion for removing a widget in the Container.
          
-         @param widget  widget to remove
+         @param item  item to remove
          */
-        virtual void remove(const Ref<Widget>& widget);
+        virtual void remove(const type& item)
+        {
+            const_iterator it = find(item);
+            if (it != cend())
+                m_holder.erase(it);
+        }
+
+        /** Function for retrieving the element at the index in the Container.
+         
+         @param index   Index
+         @return        element in Container
+         */
+        type at(unsigned int index)
+        {
+            if (index >= size())
+                throw std::out_of_range("Index is out of range!");
+            
+            return m_holder.at(index);
+        }
         
         /** Function for retrieving the element at the index in the Container.
          
          @param index   Index
          @return        element in Container
          */
-        type at(unsigned int index);
-        
-        /** Function for retrieving the element at the index in the Container.
-         
-         @param index   Index
-         @return        element in Container
-         */
-        type at(unsigned int index) const;
+        type at(unsigned int index) const
+        {
+            if (index >= size())
+                throw std::out_of_range("Index is out of range!");
+            
+            return m_holder.at(index);
+        }
         
         /** Operator for retrieving the element at the index in the Container.
          
          @param index   Index
          @return        element in Container
          */
-        type operator[](unsigned int index) const;
+        type operator[](unsigned int index) const
+        {
+            if (index >= size())
+                throw std::out_of_range("Index is out of range!");
+            
+            return m_holder[index];
+        }
         
         /** Function for retrieving the size of the Container.
          
          */
-        size_type size() const;
+        size_type size() const
+        {
+            return m_holder.size();
+        }
         
         /** Function for checking if the Container is empty.
          
          @return    empty
          */
-        bool empty() const;
+        bool empty() const
+        {
+            return m_holder.empty();
+        }
         
         /** Function for retrieving the first element in the container.
          
@@ -121,7 +181,10 @@ namespace pTK
          
          @return    first element in Container
          */
-        type front() const;
+        type front() const
+        {
+            return m_holder.front();
+        }
         
         /** Function for retrieving the last element in the container.
          
@@ -130,7 +193,10 @@ namespace pTK
          
          @return    last element in container
          */
-        type back() const;
+        type back() const
+        {
+            return m_holder.back();
+        }
         
         /** Function for retrieving the an iterator that points to the first
          value in the Container.
@@ -139,7 +205,10 @@ namespace pTK
          
          @return    iterator
          */
-        iterator begin();
+        iterator begin()
+        {
+            return m_holder.begin();
+        }
         
         /** Function for retrieving the special iterator referring to
          the past-the-end of the Container.
@@ -149,7 +218,10 @@ namespace pTK
          
          @return    iterator
          */
-        iterator end();
+        iterator end()
+        {
+            return m_holder.end();
+        }
         
         /** Function for retrieving the an const iterator that points to the first
          value in the Container.
@@ -158,7 +230,10 @@ namespace pTK
          
          @return    const iterator
          */
-        const_iterator cbegin() const;
+        const_iterator cbegin() const
+        {
+            return m_holder.cbegin();
+        }
         
         /** Function for retrieving the special const iterator referring to
          the past-the-end of the Container.
@@ -168,7 +243,10 @@ namespace pTK
          
          @return    const iterator
          */
-        const_iterator cend() const;
+        const_iterator cend() const
+        {
+            return m_holder.cend();
+        }
         
         /** Function for retrieving the an iterator that points to the last
          value in the Container.
@@ -180,7 +258,10 @@ namespace pTK
          
          @return    const iterator
          */
-        reverse_iterator rbegin();
+        reverse_iterator rbegin()
+        {
+            return m_holder.rbegin();
+        }
         
         /** Function for retrieving the special const iterator referring to
          the past-the-end of the Container.
@@ -190,152 +271,38 @@ namespace pTK
          
          @return    const iterator
          */
-        reverse_iterator rend();
-        
-        /** Funtion for finding a widget in the Container.
-         Function will look for a widget with the specified name and it
-         will grab the first with the matching name.
-         
-         Meaning that if two Widgets or more have the same name, only the
-         first added will be found.
-         
-         @param name    name to find
-         @return        const_iterator to widget or end const_iterator
-         */
-        const_iterator find(const std::string& name);
-        
+        reverse_iterator rend()
+        {
+            return m_holder.rend();
+        }
+
         /** Funtion for finding a widget in the Container.
          Function can be used to check if a pointer to Widget exists.
          
          @param widget  widget to find
          @return        const_iterator to widget or end const_iterator
          */
-        const_iterator find(const Widget* widget);
+        const_iterator find(const type& item) const
+        {
+            for (auto it{cbegin()}; it != cend(); ++it)
+                if ((*it) == item)
+                    return it;
         
-        /** Funtion for finding a widget in the Container.
+            return cend();
+        }
+        
+        /** Function for looping over the items in the container.
          
-         @param pos     pos to find
-         @return        const_iterator to widget or end const_iterator
+         @param func    function to call for each item.
          */
-        const_iterator find(const Point& pos);
-        
-        /** Funtion for finding a widget in the Container.
-         In reverse order.
-         
-         @param pos     pos to find
-         @return        const_iterator to widget or end const_iterator
-         */
-        reverse_iterator rfind(const Point& pos);
-        
-        /** Function for looping over the widgets in the container.
-         
-         @param func    function to call for each widget.
-         */
-        void forEach(const std::function<void(const type& item)>& func) const;
-        
-        /** Draw function.
-         Function is called when it is time to draw.
-         
-         Derived from Drawable.
-         @param canvas  canvas to draw to
-         */
-        void onDraw(SkCanvas* canvas) override;
-        
-        // Event handling
-        
-        /** Function for handling when a key is pressed or released.
-         
-         Derived from EventFunctions.
-         
-         @param type    Key event (press or release)
-         @param int     Keycode
-         */
-        bool onKeyEvent(Event::Type type, int32 keycode) override;
-        
-        /** Function for handling when mouse is hovering.
-         
-         Derived from EventFunctions.
-         
-         @param pos     position
-         */
-        bool onHoverEvent(const Point& pos) override;
-        
-        /** Function for handling when mouse is entering.
-         
-         Derived from EventFunctions.
-         */
-        bool onEnterEvent() override;
-        
-        /** Function for handling when mouse is leaving.
-         
-         Derived from EventFunctions.
-         */
-        bool onLeaveEvent() override;
-        
-        /** Function for handling when mouse is scrolling.
-         
-         Derived from EventFunctions.
-         
-         @param offset     x and y offset
-         */
-        bool onScrollEvent(const Vec2f& offset) override;
-        
-        /** Function for handling when mouse is clicking.
-         
-         Derived from EventFunctions.
-         
-         @param button      which button on mouse triggered the event.
-         @param position    x and y position
-         */
-        bool onClickEvent(Mouse::Button btn, const Point& pos) override;
-        
-        /** Function for handling when mouse is released.
-         
-         Derived from EventFunctions.
-         
-         @param button      which button on mouse triggered the event.
-         @param position    x and y position
-         */
-        bool onReleaseEvent(Mouse::Button btn, const Point& pos) override;
-        
-        /** Funtion for setting the background of the Container.
-         
-         @param color   background color
-         */
-        void setBackground(const Color& color);
-        
-        /** Funtion for getting the background of the Container.
-         
-         @return    current background color
-         */
-        const Color& getBackground() const;
-        
-    protected:
-        
-        /** Funtion for getting the minimal size of all childs in Container.
-         
-         @return    minimal size of all childs
-         */
-        virtual Size calculateMinSize() const;
-        
-        /** Funtion for getting the miximal size of all childs in Container.
-         
-         @return    miximal size of all childs
-         */
-        virtual Size calculateMaxSize() const;
-        
-        /** Funtion for drawing all the childs in the Container.
-         
-         */
-        void drawChildren(SkCanvas* canvas);
+        void forEach(const std::function<void(const type& item)>& func) const
+        {
+            for (const_iterator it = cbegin(); it != cend(); it++)
+                func((*it));
+        }
         
     private:
         container_type m_holder;
-        
-        // Variables
-        Color m_background;
-        Widget* m_lastClickedWidget;
-        Widget* m_currentHoverWidget;
     };
 }
 

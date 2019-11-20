@@ -166,7 +166,7 @@ namespace pTK
         void handleMouseEvent(Event* event);
         void handleWindowEvent(Event* event);
         
-        void onDraw(SkCanvas* canvas) override;
+        void drawContent(SkCanvas* canvas) override;
         bool drawChild(Widget* widget) override;
         void forceDrawAll();
         

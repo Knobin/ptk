@@ -180,21 +180,17 @@ namespace pTK
         PTK_INFO("Window Destroyed");
     }
     
-    void Window::onDraw(SkCanvas* canvas)
+    void Window::drawContent(SkCanvas*)
     {
-        Color color = getBackground();
-        m_drawCanvas->clear(color);
-        SkMatrix matrix;
-        matrix.setScale(m_scale.x, m_scale.y);
-        canvas->setMatrix(matrix);
-        drawChildren(canvas);
-        canvas->flush();
-        swapBuffers();
+        // This should only redraw Widgets that need it.
+        // For now, we will redraw all.
+        // TODO: Fix render queue.
+        forceDrawAll();
     }
     
     bool Window::drawChild(Widget* widget)
     {
-        if (find(widget) != cend())
+        if (findRaw(widget) != cend())
         {
             sendEvent<Event>(Event::Category::Window, Event::Type::WindowDraw);
             return true;
@@ -274,7 +270,7 @@ namespace pTK
     void Window::setMinSize(const Size& size)
     {
         Size wSize = getSize();
-        Size contentMinSize = calculateMinSize();
+        Size contentMinSize = VBox::getMinSize();
         Size newMinSize;
         
         if (size.width != GLFW_DONT_CARE)
@@ -295,7 +291,7 @@ namespace pTK
     {
         Size maxSize = getMaxSize();
         Size wSize = getSize();
-        Size contentMaxSize = calculateMaxSize();
+        Size contentMaxSize = VBox::getMaxSize();
         Size newMaxSize(GLFW_DONT_CARE, GLFW_DONT_CARE);
         
         // TODO: Fix this
@@ -371,13 +367,13 @@ namespace pTK
                     m_drawCanvas->resize(cSize);
                 
                 // TODO: May conflict with eventThread.
-                Size contentMinSize = calculateMinSize();
+                Size contentMinSize = VBox::getMinSize();
                 Size currentMinSize = getMinSize();
                 if ((currentMinSize.width < contentMinSize.width) || (currentMinSize.height < contentMinSize.height))
                     setMinSize(contentMinSize);
                 
                 // TODO: May conflict with eventThread.
-                Size contentMaxSize = calculateMaxSize();
+                Size contentMaxSize = VBox::getMaxSize();
                 Size currentMaxSize = getMaxSize();
                 if ((currentMaxSize.width > contentMaxSize.width) || (currentMaxSize.height > contentMaxSize.height))
                     setMaxSize(contentMaxSize);
