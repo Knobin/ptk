@@ -44,7 +44,7 @@ namespace pTK
          @param widget  Widget to add
          @return        Status (true if added)
          */
-        bool add(const Ref<Widget>& widget) override;
+        bool add(const Ref<Widget>& widget) final;
         
         /** Function for removing a Widget
          
@@ -52,7 +52,7 @@ namespace pTK
          
          @param widget  Widget to remove
          */
-        void remove(const Ref<Widget>& widget) override;
+        void remove(const Ref<Widget>& widget) final;
         
         /** Draw function.
          Function is called when it is time to draw.
@@ -62,8 +62,6 @@ namespace pTK
          */
         void onDraw(SkCanvas* canvas) final;
 
-        virtual void drawContent(SkCanvas *) = 0;
-
         /** Function for a child Widget to call the Parent when it
          need to be drawn.
          
@@ -72,7 +70,17 @@ namespace pTK
          @param widget  Child Widget
          @return        Status (true if handled)
          */
-        bool drawChild(Widget* widget) override;
+        bool updateChild(Widget* widget) final;
+        
+        /** Function for a child Widget to call the Parent when it
+         need to be drawn.
+         
+         Derived from Widget.
+         
+         @param widget  Child Widget
+         @return        Status (true if handled)
+         */
+        bool drawChild(Widget* widget) final;
 
         /** Funtion for finding a widget in the Container.
          Function will look for a widget with the specified name and it
@@ -175,6 +183,12 @@ namespace pTK
          @return    current background color
          */
         const Color& getBackground() const;
+        
+    private:
+        virtual void onAdd(const Ref<Widget>&) {}
+        virtual void onRemove(const Ref<Widget>&) {}
+        virtual void onChildUpdate(uint) {}
+        virtual void onChildDraw(uint) {}
         
     private:
         // Variables

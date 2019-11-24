@@ -52,6 +52,12 @@ namespace pTK
          */
         virtual void setSize(const Size& size);
         
+        /** Funtion for setting size.
+         
+         @param size    size
+         */
+        virtual void setConstSize(const Size& size);
+        
         /** Funtion for getting the size.
          
          @param size    size
@@ -74,6 +80,9 @@ namespace pTK
         Size m_minSize;
         Size m_size;
         Size m_maxSize;
+        
+        bool m_minLock;
+        bool m_maxLock;
     };
     
     // Comparison operators.

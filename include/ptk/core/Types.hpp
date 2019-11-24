@@ -25,10 +25,4 @@ typedef int64_t     int64;
 typedef uint8       byte;
 typedef uint32      uint;
 
-namespace pTK
-{
-    const int Auto     = -2;
-    const int Infinite = -1;
-}
-
 #endif // PTK_CORE_TYPES_HPP

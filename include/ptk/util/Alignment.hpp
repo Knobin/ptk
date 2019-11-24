@@ -13,20 +13,29 @@
 
 namespace pTK
 {
-    namespace Align
+    enum class Align
     {
-        /** Directions struct implementation.
+        Top     = 0x0001,
+        Bottom  = 0x0002,
+        Left    = 0x0004,
+        Right   = 0x0008,
+
+        HCenter = 0x0020,
+        VCenter = 0x0040,
+        Center  = 0x0080
+    };
+
+    /** Directions struct implementation.
      
-         Pretty self-explanatory.
-         */
-        struct Directions
-        {
-            int32 top;
-            int32 bottom;
-            int32 left;
-            int32 right;
-        };
-    }
+     Pretty self-explanatory.
+     */
+    struct Directions
+    {
+        int32 top;
+        int32 bottom;
+        int32 left;
+        int32 right;
+    };
     
     /** Margin class implementation.
      
@@ -36,7 +45,7 @@ namespace pTK
      some point, change. For now it works.
      
     */
-    class Margin : public Align::Directions
+    class Margin : public Directions
     {
     public:
         /** Constructs Margin with default values.
@@ -50,7 +59,7 @@ namespace pTK
          @param directions  margin for all directions
          @return            default initialized Margin
          */
-        Margin(Align::Directions directions);
+        Margin(Directions directions);
 
         /** Constructs Margin with default values with directions.
          
@@ -61,12 +70,8 @@ namespace pTK
          @return        default initialized Margin
          */
         Margin(int32 mTop, int32 mBottom, int32 mLeft, int32 mRight);
-        ~Margin() = default;
         
-        /** Constructs Margin with auto values.
-         
-         */
-        static const Margin Auto;
+        ~Margin() = default;
     };
 
     // TODO: Padding

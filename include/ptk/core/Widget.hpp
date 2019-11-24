@@ -13,7 +13,7 @@
 #include "ptk/core/EventHandling.hpp"
 #include "ptk/core/Sizable.hpp"
 #include "ptk/util/Point.hpp"
-#include "ptk/util/Align.hpp"
+#include "ptk/util/Alignment.hpp"
 
 // C++ Headers
 #include <string>
@@ -150,8 +150,22 @@ namespace pTK
          @return  current right margin
          */
         int32 getMarginRight() const;
+
+        void setAlign(Align alignment);
+
+        Align getAlign() const;
         
     protected:
+        /** Function for updating the child.
+         
+         */
+        virtual bool updateChild(Widget*);
+        
+        /** Function for notifying the parent of a change and
+         to put it on an internal render queue.
+         */
+        bool update();
+        
         /** Function for redrawing the child.
          
          */
@@ -167,6 +181,7 @@ namespace pTK
         Point m_pos;
         std::string m_name;
         Margin m_margin;
+        Align m_align;
     };
     
     // Comparison operators.

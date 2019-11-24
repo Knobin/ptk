@@ -39,6 +39,7 @@ namespace pTK
         {
             // Events
             window->pollEvents();
+            //window->sendEvent<Event>(Event::Category::Window, Event::Type::WindowDraw);
 
             // To lower cpu usage, we wait.
             std::this_thread::sleep_for(m_waitTime);

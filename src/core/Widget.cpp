@@ -12,10 +12,9 @@ namespace pTK
 {
     Widget::Widget()
         : Drawable(), EventHandling(), Sizable(), m_parent{nullptr}, m_name{},
-            m_margin{}
+            m_margin{}, m_align{}
     {
-        setMinSize(Size(pTK::Auto, pTK::Auto));
-        setMaxSize(Size(pTK::Auto, pTK::Auto));
+        
     }
     
     void Widget::setParent(Widget* parent)
@@ -31,13 +30,13 @@ namespace pTK
     void Widget::setSize(const Size& size)
     {
         Sizable::setSize(size);
-        draw();
+        update();
     }
     
     void Widget::setPosHint(const Point& pos)
     {
         m_pos = pos;
-        draw();
+        update();
     }
     
     const Point& Widget::getPosition() const
@@ -63,7 +62,7 @@ namespace pTK
             && (margin.right > -3))
         {
             m_margin = margin;
-            draw();
+            update();
         }
     }
     
@@ -72,7 +71,7 @@ namespace pTK
         if (topMargin > -3)
         {
             m_margin.top = topMargin;
-            draw();
+            update();
         }
     }
     
@@ -81,7 +80,7 @@ namespace pTK
         if (bottomMargin > -3)
         {
             m_margin.bottom = bottomMargin;
-            draw();
+            update();
         }
     }
     
@@ -90,7 +89,7 @@ namespace pTK
         if (leftMargin > -3)
         {
             m_margin.left = leftMargin;
-            draw();
+            update();
         }
     }
     
@@ -99,7 +98,7 @@ namespace pTK
         if (rightMargin > -3)
         {
             m_margin.right = rightMargin;
-            draw();
+            update();
         }
     }
     
@@ -110,7 +109,7 @@ namespace pTK
         {
             m_margin.top = topMargin;
             m_margin.bottom = bottomMargin;
-            draw();
+            update();
         }
     }
     
@@ -121,7 +120,7 @@ namespace pTK
         {
             m_margin.left = leftMargin;
             m_margin.right = rightMargin;
-            draw();
+            update();
         }
     }
     
@@ -148,6 +147,30 @@ namespace pTK
     int32 Widget::getMarginRight() const
     {
         return m_margin.right;
+    }
+
+    void Widget::setAlign(Align alignment)
+    {
+        m_align = alignment;
+        update();
+    }
+
+    Align Widget::getAlign() const
+    {
+        return m_align;
+    }
+    
+    bool Widget::updateChild(Widget*)
+    {
+        return true;
+    }
+    
+    bool Widget::update()
+    {
+        if (m_parent != nullptr)
+            return m_parent->updateChild(this);
+        
+        return false;
     }
     
     bool Widget::drawChild(Widget*)

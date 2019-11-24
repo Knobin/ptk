@@ -71,9 +71,11 @@ namespace pTK
         void onDraw(SkCanvas* canvas) override;
         
     private:
-        
-        // Keep these private, for internal use.
+        // Label should only change size on setFontSize!
+        using Widget::setMinSize;
         using Widget::setSize;
+        using Widget::setConstSize;
+        using Widget::setMaxSize;
     };
 }
 

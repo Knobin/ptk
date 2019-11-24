@@ -30,6 +30,8 @@ namespace pTK
         {
             widget->setParent(this);
             Container<Ref<Widget>>::add(widget);
+            onAdd(widget);
+            draw();
             return true;
         }
         return false;
@@ -42,6 +44,8 @@ namespace pTK
         {
             widget->setParent(nullptr);
             Container<Ref<Widget>>::remove(widget);
+            onRemove(widget);
+            draw();
         }
     }
     
@@ -63,13 +67,28 @@ namespace pTK
         paint.setStyle(SkPaint::kStrokeAndFill_Style);
         canvas->drawRoundRect(rect, 0, 0, paint);
         
-        drawContent(canvas);
+        for (auto it = begin(); it != end(); ++it)
+            (*it)->onDraw(canvas);
     }
 
+    bool Box::updateChild(Widget* widget)
+    {
+        Box::const_iterator it = findRaw(widget);
+        if (it != cend())
+        {
+            onChildUpdate(it - cbegin());
+            draw();
+            return true;
+        }
+        return false;
+    }
+    
     bool Box::drawChild(Widget* widget)
     {
-        if (findRaw(widget) != cend())
+        Box::const_iterator it = findRaw(widget);
+        if (it != cend())
         {
+            onChildDraw(it - cbegin());
             draw();
             return true;
         }

@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "ptk/util/Align.hpp"
+#include "ptk/util/Alignment.hpp"
 
 namespace pTK
 {
@@ -15,7 +15,7 @@ namespace pTK
     {
     }
 
-    Margin::Margin(Align::Directions directions)
+    Margin::Margin(Directions directions)
         : Directions{directions}
     {
     }
@@ -24,6 +24,4 @@ namespace pTK
         : Directions{mTop, mBottom, mLeft, mRight}
     {
     }
-    
-    const Margin Margin::Auto{pTK::Auto, pTK::Auto, pTK::Auto, pTK::Auto};
 }

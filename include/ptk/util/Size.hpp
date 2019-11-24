@@ -8,6 +8,9 @@
 #ifndef PTK_UTIL_SIZE_HPP
 #define PTK_UTIL_SIZE_HPP
 
+// C++ Headers
+#include <limits>
+
 namespace pTK
 {
     /** Size class implementation.
@@ -16,6 +19,16 @@ namespace pTK
     */
     class Size
     {
+    public:
+        struct Limits
+        {
+            static const int Min;
+            static const int Max;
+        };
+        
+        static const Size Max;
+        static const Size Min;
+        
     public:
         /** Constructs Size with default values.
          

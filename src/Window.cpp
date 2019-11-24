@@ -180,26 +180,6 @@ namespace pTK
         PTK_INFO("Window Destroyed");
     }
     
-    void Window::drawContent(SkCanvas*)
-    {
-        // This should only redraw Widgets that need it.
-        // For now, we will redraw all.
-        // TODO: Fix render queue.
-        forceDrawAll();
-    }
-    
-    bool Window::drawChild(Widget* widget)
-    {
-        if (findRaw(widget) != cend())
-        {
-            sendEvent<Event>(Event::Category::Window, Event::Type::WindowDraw);
-            return true;
-        }
-        
-        PTK_WARN("Unknown Child");
-        return false;
-    }
-    
     // Will be called when all children will need to redraw.
     // For example, window.show();
     void Window::forceDrawAll()
@@ -219,6 +199,11 @@ namespace pTK
         
         canvas->flush();
         swapBuffers();
+    }
+    
+    void Window::onChildDraw(uint)
+    {
+        sendEvent<Event>(Event::Category::Window, Event::Type::WindowDraw);
     }
     
     void Window::pollEvents()
@@ -356,7 +341,7 @@ namespace pTK
         {
             if (event->type() == Event::Type::WindowDraw)
             {
-                onDraw(m_drawCanvas->skCanvas());
+                forceDrawAll();
             }else if (event->type() == Event::Type::WindowResize)
             {
                 ResizeEvent* rEvent = (ResizeEvent*)event;

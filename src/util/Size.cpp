@@ -10,6 +10,12 @@
 
 namespace pTK
 {
+    const int Size::Limits::Min = 0;
+    const int Size::Limits::Max = std::numeric_limits<int>::max();
+    
+    const Size Size::Min(Size::Limits::Min, Size::Limits::Min);
+    const Size Size::Max(Size::Limits::Max, Size::Limits::Max);
+    
     Size::Size()
         : width{0}, height{0}
     {

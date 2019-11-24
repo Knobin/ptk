@@ -11,7 +11,8 @@
 namespace pTK
 {
     Sizable::Sizable()
-        : m_minSize{}, m_size{}, m_maxSize{}
+        : m_minSize{pTK::Size::Min}, m_size{0, 0}, m_maxSize{pTK::Size::Max},
+            m_minLock{false}, m_maxLock{false}
     {
     }
     
@@ -22,29 +23,41 @@ namespace pTK
     
     void Sizable::setMinSize(const Size& size)
     {
-        m_minSize = size;
+        if ((size.height >= Size::Limits::Min) && (size.height <= m_size.height))
+        {
+            m_minSize.height = size.height;
+            m_minLock = false;
+        }
+        
+        if ((size.width >= Size::Limits::Min) && (size.width <= m_size.width))
+        {
+            m_minSize.width = size.width;
+            m_minLock = false;
+        }
     }
     
     Size Sizable::getMinSize() const
     {
-        Size size;
+        if (m_minLock)
+            return m_size;
         
-        if (m_minSize.height == pTK::Auto)
-            size.height = m_size.height;
-        else
-            size.height = (m_minSize.height <= m_size.height) ? m_minSize.height : m_size.height;
-        
-        if (m_minSize.width == pTK::Auto)
-            size.width = m_size.width;
-        else
-            size.width = (m_minSize.width <= m_size.width) ? m_minSize.width : m_size.width;
-        
-        return size;
+        return m_minSize;
     }
     
     void Sizable::setSize(const Size& size)
     {
+        if ((size.width >= m_minSize.width) && (size.width <= m_maxSize.width))
+            m_size.width = size.width;
+        
+        if ((size.height >= m_minSize.height) && (size.height <= m_maxSize.height))
+            m_size.height = size.height;
+    }
+    
+    void Sizable::setConstSize(const Size& size)
+    {
         m_size = size;
+        m_minLock = true;
+        m_maxLock = true;
     }
     
     const Size& Sizable::getSize() const
@@ -54,28 +67,25 @@ namespace pTK
     
     void Sizable::setMaxSize(const Size& size)
     {
-        m_maxSize = size;
+        if ((size.height >= m_size.height) && (size.height <= Size::Limits::Max))
+        {
+            m_maxSize.height = size.height;
+            m_maxLock = false;
+        }
+        
+        if ((size.width >= m_size.width) && (size.width <= Size::Limits::Max))
+        {
+            m_maxSize.width = size.width;
+            m_maxLock = false;
+        }
     }
     
     Size Sizable::getMaxSize() const
     {
-        Size size;
+        if (m_maxLock)
+            return m_size;
         
-        if (m_maxSize.height == pTK::Auto)
-            size.height = m_size.height;
-        else if (m_maxSize.height == pTK::Infinite)
-            size.height = pTK::Infinite;
-        else
-            size.height = (m_maxSize.height >= m_size.height) ? m_maxSize.height : m_size.height;
-        
-        if (m_maxSize.width == pTK::Auto)
-            size.width = m_size.width;
-        else if (m_maxSize.width == pTK::Infinite)
-            size.width = pTK::Infinite;
-        else
-            size.width = (m_maxSize.width >= m_size.width) ? m_maxSize.width : m_size.width;
-        
-        return size;
+        return m_maxSize;
     }
     
     // Comparison operators.

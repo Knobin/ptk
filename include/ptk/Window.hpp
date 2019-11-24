@@ -165,10 +165,9 @@ namespace pTK
         void handleKeyboardEvent(Event* event);
         void handleMouseEvent(Event* event);
         void handleWindowEvent(Event* event);
-        
-        void drawContent(SkCanvas* canvas) override;
-        bool drawChild(Widget* widget) override;
+
         void forceDrawAll();
+        void onChildDraw(uint) override;
         
         void swapBuffers();
         void setLimits(const Size& minSize, const Size& maxSize);

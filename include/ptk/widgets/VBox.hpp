@@ -29,31 +29,7 @@ namespace pTK
          @return    default initialized VBox
          */
         VBox();
-        virtual ~VBox();
-        
-        /** Function for adding a Widget
-         This will create a cell and put the Widget in it.
-         
-         Derived from Box.
-         
-         @param widget  Widget to add
-         @return        Status (true if added)
-         */
-        bool add(const Ref<Widget>& widget) override;
-        
-        // TODO: override remove
-
-        // void drawContent(SkCanvas *canvas) override;
-        
-        /** Function for a child Widget to call the Parent when it
-         need to be drawn.
-         
-         Derived from Widget.
-         
-         @param widget  Child Widget
-         @return        Status (true if handled)
-         */
-        bool drawChild(Widget* widget) override;
+        virtual ~VBox() = default;
         
         /** Function for setting the position of the VBox and its
          children.
@@ -72,33 +48,23 @@ namespace pTK
          @param newSize     Size to set
          */
         void setSize(const Size& newSize) override;
+        
+    private:
+        void onAdd(const Ref<Widget>&) override;
+        void onRemove(const Ref<Widget>&) override;
+        void onChildUpdate(uint) override;
+        
     private:
         void expandOnAdd(const Size& newSize);
         void refitOnAdd(const Size& newSize);
-        void createMarginsOnAdd(int* data, int unusedHeight);
-        
-        void sortByHeight(std::pair<uint, Size>* data) const;
-        void sortByIndex(std::pair<uint, Size>* data) const;
-        
-        int readInternalMargins(int* data);
-        void readMargins(int* data);
         
         void shrink(const Size& newSize);
-        int shrinkChildren(std::pair<uint, Size>* data, int sub, const Size& layoutSize);
-        void shrinkMargins(int* data, int unusedHeight);
-        
         void grow(const Size& newSize);
-        int expandChildren(std::pair<uint, Size>* data, int add, const Size& layoutSize);
-        void extendMargins(int* data, int unusedHeight);
         
         int alignChildH(uint index, const Size& parentSize, const Size& childSize);
         
-        void internalUpdate();
-        
         Size calculateMinSize() const;
         Size calculateMaxSize() const;
-    private:
-        std::vector<void*> m_data;
     };
 }
 

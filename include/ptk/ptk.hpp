@@ -33,7 +33,7 @@
 #include "ptk/events/WindowEvent.hpp"
 
 // --- Util --------------------------
-#include "ptk/util/Align.hpp"
+#include "ptk/util/Alignment.hpp"
 #include "ptk/util/Color.hpp"
 #include "ptk/util/NonCopyable.hpp"
 #include "ptk/util/NonMovable.hpp"
