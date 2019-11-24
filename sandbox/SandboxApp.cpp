@@ -11,11 +11,11 @@ int main(int argc, char *argv[])
     pTK::Application app(argc, argv);
     pTK::Window window("pTK Sandbox", SCR_WIDTH, SCR_HEIGHT);
     window.setBackground(pTK::Color(0x232323FF));
-    
+    std::cout << "Limits: " << pTK::Size::Limits::Min << ", " << pTK::Size::Limits::Max << std::endl;
     pTK::Ref<pTK::Checkbox> checkbox = pTK::create<pTK::Checkbox>();
     checkbox->setName("Checkbox Name");
-    checkbox->setSize(pTK::Size(30, 30));
-    checkbox->setMargin(pTK::Margin::Auto);
+    checkbox->setConstSize(pTK::Size(30, 30));
+    checkbox->setAlign(pTK::Align::Top | pTK::Align::HCenter);
     checkbox->setCornerRadius(3); // 10% of size
     checkbox->setOutlineThickness(1.5f); // 5% of size
     checkbox->setColor(pTK::Color(0x00FF00FF));
@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     label->setText("Toggled: 0 times!");
     label->setFontFamily("PingFang HK");
     label->setFontSize(32);
-    label->setMargin(pTK::Margin::Auto);
+    label->setAlign(pTK::Align::Bottom | pTK::Align::HCenter);
     window.add(label);
     
     uint toggleCount = 0;

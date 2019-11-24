@@ -145,7 +145,8 @@ namespace pTK
         }
         
         // TODO: Fix if we break in while loop (size left unused).
-        PTK_INFO("UNUSED SPACE = {}", totalEachLeft);
+        std::vector<int> spaces = calcSpaces(totalEachLeft);
+        
         
         // Set sizes to childs and spaces.
         for (uint i = 0; i != children; i++)
@@ -154,7 +155,7 @@ namespace pTK
             Size cSize = sizes.at(i);
             child->setSize(cSize);
             Margin cMargin = child->getMargin();
-            vbPos.y += cMargin.top;
+            vbPos.y += cMargin.top + spaces.at(i);
             child->setPosHint(Point(vbPos.x + alignChildH(i, vbSize, cSize), vbPos.y));
             vbPos.y += cSize.height + cMargin.bottom;
         }
@@ -373,14 +374,54 @@ namespace pTK
         }
     }
     
+    std::vector<int> VBox::calcSpaces(uint height)
+    {
+        const uint children = size();
+        const size_t spaceCount = size() + 1;
+        std::vector<int> spaces(spaceCount);
+        
+        for (uint i = 0; i != children; i++)
+        {
+            int32 cAlign = at(i)->getAlign();
+            
+            if (isAlignSet(cAlign, Align::Top))
+            {
+                spaces.at(i) = 0;
+                spaces.at(i+1) = 1;
+            }
+            else if (isAlignSet(cAlign, Align::Bottom))
+            {
+                spaces.at(i) = 1;
+                spaces.at(i+1) = 0;
+            }
+            else if (isAlignSet(cAlign, Align::Center) || isAlignSet(cAlign, Align::VCenter))
+            {
+                spaces.at(i) = 1;
+                spaces.at(i+1) = 1;
+            }
+        }
+        
+        uint spacesToUse = 0;
+        for (uint i = 0; i != spaceCount; i++)
+            if (spaces.at(i) == 1)
+                ++spacesToUse;
+        
+        uint spaceHeight = (spacesToUse != 0) ? height / spacesToUse : 0;
+        for (uint i = 0; i != spaceCount; i++)
+            if (spaces.at(i) == 1)
+                spaces.at(i) = spaceHeight;
+            
+        return spaces;
+    }
+    
     int VBox::alignChildH(uint index, const Size& parentSize, const Size& childSize)
     {
         int posx = 0;
-        Align cAlign = at(index)->getAlign();
+        int32 cAlign = at(index)->getAlign();
         
-        if (cAlign == Align::Right)
+        if (isAlignSet(cAlign, Align::Right))
             posx = parentSize.width - childSize.width;
-        else if ((cAlign == Align::Center) || (cAlign == Align::HCenter))
+        else if (isAlignSet(cAlign, Align::Center) || isAlignSet(cAlign, Align::HCenter))
             posx = (parentSize.width/2) - (childSize.width/2);
 
         return posx;

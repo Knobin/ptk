@@ -10,6 +10,11 @@
 
 namespace pTK
 {
+    bool isAlignSet(int32 number, Align align)
+    {
+        return ((number & align) == align);
+    }
+    
     Margin::Margin()
         : Directions{0, 0, 0, 0}
     {

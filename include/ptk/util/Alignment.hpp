@@ -5,15 +5,15 @@
 //  Created by Robin Gustafsson on 2019-07-29s.
 //
 
-#ifndef PTK_UTIL_LAYOUT_HPPs
-#define PTK_UTIL_LAYOUT_HPPs
+#ifndef PTK_UTIL_ALIGNMENT_HPP
+#define PTK_UTIL_ALIGNMENT_HPP
 
 // Local Headers
 #include "ptk/core/Types.hpp"
 
 namespace pTK
 {
-    enum class Align
+    enum Align
     {
         Top     = 0x0001,
         Bottom  = 0x0002,
@@ -24,6 +24,8 @@ namespace pTK
         VCenter = 0x0040,
         Center  = 0x0080
     };
+    
+    bool isAlignSet(int32 number, Align align);
 
     /** Directions struct implementation.
      
@@ -78,4 +80,4 @@ namespace pTK
     // using Padding = Directions;
 }
 
-#endif // PTK_UTIL_LAYOUT_HPPs
+#endif // PTK_UTIL_ALIGNMENT_HPP

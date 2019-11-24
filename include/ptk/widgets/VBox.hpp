@@ -61,6 +61,7 @@ namespace pTK
         void shrink(const Size& newSize);
         void grow(const Size& newSize);
         
+        std::vector<int> calcSpaces(uint height);
         int alignChildH(uint index, const Size& parentSize, const Size& childSize);
         
         Size calculateMinSize() const;

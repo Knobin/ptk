@@ -12,7 +12,7 @@ namespace pTK
 {
     Widget::Widget()
         : Drawable(), EventHandling(), Sizable(), m_parent{nullptr}, m_name{},
-            m_margin{}, m_align{}
+            m_margin{}, m_align{Align::Center}
     {
         
     }
@@ -149,13 +149,13 @@ namespace pTK
         return m_margin.right;
     }
 
-    void Widget::setAlign(Align alignment)
+    void Widget::setAlign(int32 alignment)
     {
         m_align = alignment;
         update();
     }
 
-    Align Widget::getAlign() const
+    int32 Widget::getAlign() const
     {
         return m_align;
     }

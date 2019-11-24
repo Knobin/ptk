@@ -151,9 +151,9 @@ namespace pTK
          */
         int32 getMarginRight() const;
 
-        void setAlign(Align alignment);
+        void setAlign(int32 alignment);
 
-        Align getAlign() const;
+        int32 getAlign() const;
         
     protected:
         /** Function for updating the child.
@@ -181,7 +181,7 @@ namespace pTK
         Point m_pos;
         std::string m_name;
         Margin m_margin;
-        Align m_align;
+        int32 m_align;
     };
     
     // Comparison operators.
