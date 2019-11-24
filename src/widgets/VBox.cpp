@@ -306,13 +306,13 @@ namespace pTK
         // We should not really have to do anything with width.
         // The smallest Cell in VBox should be the max size possible
         // for the parent of this.
-        PTK_ASSERT(((getMaxSize().width <= newSize.width) && (getMaxSize().width == -1)), "Exceeded max width of VBox");
-        PTK_ASSERT(((getMaxSize().height <= newSize.height) && (getMaxSize().height == -1)), "Exceeded max height of VBox");
+        PTK_ASSERT(getMaxSize().width > newSize.width, "Exceeded max width of VBox");
+        PTK_ASSERT(getMaxSize().height > newSize.height, "Exceeded max height of VBox");
         
         Size layoutSize = newSize;
         Size vbSize = getSize();
         const size_t children = size();
-        std::vector<Size> sizes;
+        std::vector<Size> sizes(children);
         
         // Initialize sizes.
         for (uint i = 0; i < children; ++i)

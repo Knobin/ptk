@@ -26,8 +26,6 @@ namespace pTK
     {
         // Set Widget properties.
         Widget::setSize({static_cast<int>(width), static_cast<int>(height)});
-        Sizable::setMinSize(Size(GLFW_DONT_CARE, GLFW_DONT_CARE));
-        Sizable::setMaxSize(Size(GLFW_DONT_CARE, GLFW_DONT_CARE));
         setName(name);
         
         initGLFW();
@@ -274,31 +272,14 @@ namespace pTK
     
     void Window::setMaxSize(const Size& size)
     {
-        Size maxSize = getMaxSize();
         Size wSize = getSize();
-        Size contentMaxSize = VBox::getMaxSize();
-        Size newMaxSize(GLFW_DONT_CARE, GLFW_DONT_CARE);
+        Size newMaxSize;
         
-        // TODO: Fix this
-        contentMaxSize.height = (contentMaxSize.height < -1) ? -1 : contentMaxSize.height;
+        newMaxSize.width = ((size.height >= wSize.height) && (size.height <= Size::Limits::Max)) ? size.width : Size::Limits::Max;
+        newMaxSize.height = ((size.width >= wSize.width) && (size.width <= Size::Limits::Max)) ? size.width : Size::Limits::Max;
         
-        if (size.width != GLFW_DONT_CARE)
-        {
-            newMaxSize.width = ((size.width > contentMaxSize.width) && (size.width <= wSize.width)) ? size.width : contentMaxSize.width;
-            newMaxSize.width = (maxSize.width > newMaxSize.width) ? maxSize.width : newMaxSize.width;
-        }else
-        {
-            newMaxSize.width = (maxSize.width != GLFW_DONT_CARE) ? maxSize.width : contentMaxSize.width;
-        }
-        
-        if (size.height != GLFW_DONT_CARE)
-        {
-            newMaxSize.height = ((size.height > contentMaxSize.height) && (size.height <= wSize.height)) ? size.height : contentMaxSize.height;
-            newMaxSize.height = (maxSize.height > newMaxSize.height) ? maxSize.height : newMaxSize.height;
-        }else
-        {
-            newMaxSize.height = (maxSize.height != GLFW_DONT_CARE) ? maxSize.height : contentMaxSize.height;
-        }
+        newMaxSize.width = (size.width == Size::Limits::Max) ? GLFW_DONT_CARE : size.width;
+        newMaxSize.height = (size.height == Size::Limits::Max) ? GLFW_DONT_CARE : size.height;
         
         Sizable::setMaxSize(newMaxSize);
         setLimits(getMinSize(), newMaxSize);
