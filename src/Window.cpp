@@ -24,7 +24,7 @@ namespace pTK
             m_drawCanvas{nullptr}, m_eventQueue{}, m_draw{false}
     {
         // Set Widget properties.
-        Widget::setSize({static_cast<int>(width), static_cast<int>(height)});
+        Sizable::setSize({static_cast<int>(width), static_cast<int>(height)});
         setName(name);
         
         initGLFW();

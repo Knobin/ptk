@@ -56,6 +56,7 @@ namespace pTK
         textSize.height = (newSize.height > textSize.height) ? newSize.height : textSize.height;
         
         Widget::setSize(textSize);
+        setBounds();
     }
     
     void Button::onDraw(SkCanvas* canvas)
@@ -104,6 +105,7 @@ namespace pTK
         // This will call draw in Label.
         // So we handle it in drawChild.
         m_text->setText(text);
+        setBounds();
     }
     
     const std::string& Button::getText() const
@@ -116,6 +118,7 @@ namespace pTK
         // This will call draw in Label.
         // So we handle it in drawChild.
         m_text->setFontFamily(fontFamily);
+        setBounds();
     }
     
     std::string Button::getFontFamily() const
@@ -128,6 +131,7 @@ namespace pTK
         // This will call draw in Label.
         // So we handle it in drawChild.
         m_text->setFontSize(fontSize);
+        setBounds();
     }
     
     uint Button::getFontSize() const
@@ -153,6 +157,7 @@ namespace pTK
         m_text->setParent(nullptr);
         m_text = label;
         m_text->setParent(this);
+        setBounds();
         draw();
     }
     
@@ -184,6 +189,7 @@ namespace pTK
     void Button::setBorderSize(uint size)
     {
         m_borderSize = size;
+        setBounds();
     }
     
     uint Button::getBorderSize() const
@@ -198,6 +204,7 @@ namespace pTK
         m_text->setColor(style.textColor);
         setCornerRadius(style.cornerRadius);
         setColor(style.color); // Will call draw.
+        setBounds();
     }
     
     bool Button::onEnterEvent()
@@ -236,5 +243,17 @@ namespace pTK
         
         
         return true;
+    }
+    
+    void Button::setBounds()
+    {
+        Size textBounds = m_text->getBounds();
+        textBounds.height += 2*m_borderSize;
+        textBounds.width += 2*m_borderSize;
+        
+        if ((textBounds.height > getSize().height) || (textBounds.width > getSize().width))
+            setSize(textBounds);
+        
+        setMinSize(textBounds);
     }
 }

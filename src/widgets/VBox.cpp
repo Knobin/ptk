@@ -48,6 +48,7 @@ namespace pTK
              Only need to resize and position children.
              */
             refitContent();
+            //setSize(getSize());
         }
     }
     
@@ -92,7 +93,8 @@ namespace pTK
     
     void VBox::refitContent()
     {
-        Size layoutSize = getMinSize();
+        Size layoutSize = calculateMinSize();
+        setMinSize(layoutSize);
         Size vbSize = getSize();
         Point vbPos = getPosition();
         size_t children = size();

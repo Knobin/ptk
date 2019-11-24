@@ -238,6 +238,9 @@ namespace pTK
         bool onReleaseEvent(Mouse::Button, const Point&) override;
         
     private:
+        void setBounds();
+        
+    private:
         Ref<Label> m_text;
         Point m_labelPos;
         Size m_labelSize;
