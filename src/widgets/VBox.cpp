@@ -15,10 +15,6 @@
 #include <utility>
 #include <iostream>
 
-// TODO: add and grow needs to be refactored...
-// TODO: Fix Auto align for children...
-
-// TODO: Maybe improve grow, so it doesn't need 3 allocations...
 
 namespace pTK
 {       
@@ -48,18 +44,17 @@ namespace pTK
              Only need to resize and position children.
              */
             refitContent();
-            //setSize(getSize());
         }
     }
     
     void VBox::onRemove(const Ref<Widget>&)
     {
-        // TODO
+        refitContent();
     }
     
     void VBox::onChildUpdate(uint)
     {
-        // TODO
+        refitContent();
     }
     
     void VBox::expandOnAdd(const Size& newSize)

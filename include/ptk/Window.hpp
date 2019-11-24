@@ -154,6 +154,7 @@ namespace pTK
 
         void forceDrawAll();
         void onChildDraw(uint) override;
+        void onChildUpdate(uint) override {}
         
         void swapBuffers();
         void setLimits(const Size& minSize, const Size& maxSize);
