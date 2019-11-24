@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     std::cout << "Limits: " << pTK::Size::Limits::Min << ", " << pTK::Size::Limits::Max << std::endl;
     pTK::Ref<pTK::Checkbox> checkbox = pTK::create<pTK::Checkbox>();
     checkbox->setName("Checkbox Name");
-    checkbox->setConstSize(pTK::Size(30, 30));
+    checkbox->setSize(pTK::Size(30, 30));
     checkbox->setAlign(pTK::Align::Top | pTK::Align::HCenter);
     checkbox->setCornerRadius(3); // 10% of size
     checkbox->setOutlineThickness(1.5f); // 5% of size

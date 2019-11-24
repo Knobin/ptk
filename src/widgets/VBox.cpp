@@ -47,7 +47,7 @@ namespace pTK
              
              Only need to resize and position children.
              */
-            refitOnAdd(minLayoutSize);
+            refitContent();
         }
     }
     
@@ -90,9 +90,9 @@ namespace pTK
         }
     }
     
-    void VBox::refitOnAdd(const Size& newSize)
+    void VBox::refitContent()
     {
-        Size layoutSize = newSize;
+        Size layoutSize = getMinSize();
         Size vbSize = getSize();
         Point vbPos = getPosition();
         size_t children = size();
@@ -116,6 +116,7 @@ namespace pTK
         while (totalEachLeft > 0)
         {
             int eachAdd = static_cast<int>(std::floor(static_cast<float>(totalEachLeft) / static_cast<float>(children)));
+            eachAdd = (totalEachLeft < (int)children) ? 1 : eachAdd;
             bool done = true;
             for (uint i = 0; i < children; ++i)
             {
@@ -123,7 +124,7 @@ namespace pTK
                 int max = at(i)->getMaxSize().height;
                 int delta = max - min;
                 
-                if (delta != 0)
+                if (delta > 0)
                 {
                     if (eachAdd > delta)
                     {
@@ -136,6 +137,12 @@ namespace pTK
                         totalEachLeft -= (eachAdd);
                         done = false;
                     }
+                }
+                
+                if (totalEachLeft == 0)
+                {
+                    done = true;
+                    break;
                 }
             }
             
@@ -177,19 +184,8 @@ namespace pTK
     
     void VBox::setSize(const Size& newSize)
     {
-        Size boxSize = getSize();
-        int height = newSize.height - boxSize.height;
-        int width = newSize.width - boxSize.width;
-        
-        if (size() > 0)
-        {
-            if ((height > 0) || (width > 0))
-                grow(newSize);
-            else if ((height < 0) || (width < 0))
-                shrink(newSize);
-        }
-        
         Widget::setSize(newSize);
+        refitContent();
     }
     
     Size VBox::calculateMinSize() const
@@ -227,191 +223,46 @@ namespace pTK
         return contentMaxSize;
     }
     
-    void VBox::shrink(const Size& newSize)
-    {
-        // We should not really have to do anything with width.
-        // The largest Cell in VBox should be the min size possible
-        // for the parent of this.
-        PTK_ASSERT((getMinSize().width <= newSize.width), "Exceeded min width of VBox");
-        PTK_ASSERT((getMinSize().height <= newSize.height), "Exceeded min height of VBox");
-        
-        Size layoutSize = newSize;
-        Size vbSize = getSize();
-        const size_t children = size();
-        std::vector<Size> sizes(children);
-        
-        // Initialize sizes.
-        for (uint i = 0; i < children; ++i)
-        {
-            sizes.at(i) = at(i)->getMinSize();
-            int maxWidth = at(i)->getMaxSize().width;
-            sizes.at(i).width = (layoutSize.width > maxWidth) ? maxWidth : layoutSize.width;
-        }
-        
-        // Expand children to its max sizes possible.
-        int heightLeft  = vbSize.height - layoutSize.height;
-        int totalSub    = heightLeft;
-        
-        // Distribute heightLeft.
-        while (totalSub > 0)
-        {
-            int eachSub = static_cast<int>(std::floor(static_cast<float>(totalSub) / static_cast<float>(children)));
-            bool done = true;
-            for (uint i = 0; i < children; ++i)
-            {
-                int min = sizes.at(i).height;
-                int max = at(i)->getSize().height;
-                int delta = max - min;
-                
-                if (delta != 0)
-                {
-                    if (eachSub > delta)
-                    {
-                        sizes.at(i).height -= delta;
-                        totalSub -= (delta);
-                        done = false;
-                    }else
-                    {
-                        sizes.at(i).height -= eachSub;
-                        totalSub -= (eachSub);
-                        done = false;
-                    }
-                }
-            }
-            
-            // We cannot add more to the widgets.
-            if ((done) || (eachSub == 0))
-                break;
-        }
-        
-        // TODO: Fix if we break in while loop (size left unused).
-        std::vector<int> spaces = calcSpaces(totalSub);
-        
-        // Set sizes to childs and spaces.
-        Point vbPos = getPosition();
-        for (uint i = 0; i != children; i++)
-        {
-            auto child = at(i);
-            Point cPos = child->getPosition();
-            Size cSize = sizes.at(i);
-            child->setSize(cSize);
-            Margin cMargin = child->getMargin();
-            cPos.y -= cMargin.top + spaces.at(i);
-            child->setPosHint(Point(vbPos.x + alignChildH(i, vbSize, cSize), cPos.y));
-        }
-    }
-    
-    void VBox::grow(const Size& newSize)
-    {
-        // We should not really have to do anything with width.
-        // The smallest Cell in VBox should be the max size possible
-        // for the parent of this.
-        PTK_ASSERT(getMaxSize().width > newSize.width, "Exceeded max width of VBox");
-        PTK_ASSERT(getMaxSize().height > newSize.height, "Exceeded max height of VBox");
-        
-        Size layoutSize = newSize;
-        Size vbSize = getSize();
-        const size_t children = size();
-        std::vector<Size> sizes(children);
-        
-        // Initialize sizes.
-        for (uint i = 0; i < children; ++i)
-        {
-            sizes.at(i) = at(i)->getSize();
-            int maxWidth = at(i)->getMaxSize().width;
-            sizes.at(i).width = (layoutSize.width > maxWidth) ? maxWidth : layoutSize.width;
-        }
-        
-        // Expand children to its max sizes possible.
-        int heightLeft  = layoutSize.height - vbSize.height;
-        int totalEachLeft = heightLeft;
-        
-        // Distribute heightLeft.
-        while (totalEachLeft > 0)
-        {
-            int eachAdd = static_cast<int>(std::floor(static_cast<float>(totalEachLeft) / static_cast<float>(children)));
-            bool done = true;
-            for (uint i = 0; i < children; ++i)
-            {
-                int min = sizes.at(i).height;
-                int max = at(i)->getMaxSize().height;
-                int delta = max - min;
-                
-                if (delta != 0)
-                {
-                    if (eachAdd > delta)
-                    {
-                        sizes.at(i).height += delta;
-                        totalEachLeft -= (delta);
-                        done = false;
-                    }else
-                    {
-                        sizes.at(i).height += eachAdd;
-                        totalEachLeft -= (eachAdd);
-                        done = false;
-                    }
-                }
-            }
-            
-            // We cannot add more to the widgets.
-            if ((done) || (eachAdd == 0))
-                break;
-        }
-        
-        // TODO: Fix if we break in while loop (size left unused).
-        std::vector<int> spaces = calcSpaces(totalEachLeft);
-        
-        // Set sizes to childs and spaces.
-        Point vbPos = getPosition();
-        for (uint i = 0; i != children; i++)
-        {
-            auto child = at(i);
-            Point cPos = child->getPosition();
-            Size cSize = sizes.at(i);
-            child->setSize(cSize);
-            Margin cMargin = child->getMargin();
-            cPos.y += cMargin.top + spaces.at(i);
-            child->setPosHint(Point(vbPos.x + alignChildH(i, vbSize, cSize), cPos.y));
-        }
-    }
-    
     std::vector<int> VBox::calcSpaces(uint height)
     {
         const uint children = size();
         const size_t spaceCount = size() + 1;
         std::vector<int> spaces(spaceCount);
-        
-        for (uint i = 0; i != children; i++)
+        if (height != 0)
         {
-            int32 cAlign = at(i)->getAlign();
+            for (uint i = 0; i != children; i++)
+            {
+                int32 cAlign = at(i)->getAlign();
+                
+                if (isAlignSet(cAlign, Align::Top))
+                {
+                    spaces.at(i) = 0;
+                    spaces.at(i+1) = 1;
+                }
+                else if (isAlignSet(cAlign, Align::Bottom))
+                {
+                    spaces.at(i) = 1;
+                    spaces.at(i+1) = 0;
+                }
+                else if (isAlignSet(cAlign, Align::Center) || isAlignSet(cAlign, Align::VCenter))
+                {
+                    spaces.at(i) = 1;
+                    spaces.at(i+1) = 1;
+                }
+            }
             
-            if (isAlignSet(cAlign, Align::Top))
-            {
-                spaces.at(i) = 0;
-                spaces.at(i+1) = 1;
-            }
-            else if (isAlignSet(cAlign, Align::Bottom))
-            {
-                spaces.at(i) = 1;
-                spaces.at(i+1) = 0;
-            }
-            else if (isAlignSet(cAlign, Align::Center) || isAlignSet(cAlign, Align::VCenter))
-            {
-                spaces.at(i) = 1;
-                spaces.at(i+1) = 1;
-            }
+            uint spacesToUse = 0;
+            for (uint i = 0; i != spaceCount; i++)
+                if (spaces.at(i) == 1)
+                    ++spacesToUse;
+            
+            uint spaceHeight = (spacesToUse != 0) ? height / spacesToUse : 0;
+            for (uint i = 0; i != spaceCount; i++)
+                if (spaces.at(i) == 1)
+                    spaces.at(i) = spaceHeight;
+            
         }
         
-        uint spacesToUse = 0;
-        for (uint i = 0; i != spaceCount; i++)
-            if (spaces.at(i) == 1)
-                ++spacesToUse;
-        
-        uint spaceHeight = (spacesToUse != 0) ? height / spacesToUse : 0;
-        for (uint i = 0; i != spaceCount; i++)
-            if (spaces.at(i) == 1)
-                spaces.at(i) = spaceHeight;
-            
         return spaces;
     }
     

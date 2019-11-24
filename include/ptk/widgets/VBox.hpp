@@ -56,10 +56,7 @@ namespace pTK
         
     private:
         void expandOnAdd(const Size& newSize);
-        void refitOnAdd(const Size& newSize);
-        
-        void shrink(const Size& newSize);
-        void grow(const Size& newSize);
+        void refitContent();
         
         std::vector<int> calcSpaces(uint height);
         int alignChildH(uint index, const Size& parentSize, const Size& childSize);
