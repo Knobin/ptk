@@ -110,11 +110,15 @@ namespace pTK
          */
         void hide() override;
         
-        /** Function for polling the window events and
-         handling them.
+        /** Function for polling the window events.
 
          */
         void pollEvents();
+        
+        /** Function for handling the window events.
+         
+         */
+        void handleEvents();
         
         /** Templated function for sending events to the window to
          be handled.
@@ -124,20 +128,7 @@ namespace pTK
         void sendEvent(Args&& ...args)
         {
             Ref<T> event = create<T>(std::forward<Args>(args)...);
-            if (event->category() == Event::Category::Window)
-            {
-                if (std::this_thread::get_id() == m_mainThreadID)
-                {
-                    handleMainThreadEvents(event.get());
-                }else
-                {
-                    m_mainThreadEvents.push(event);
-                    glfwPostEmptyEvent();
-                }
-            }
-            
-            // Push event to other thread.
-            m_handleThreadEvents.push(event);
+            m_eventQueue.push(event);
         }
         
     private:
@@ -145,11 +136,8 @@ namespace pTK
         GLFWwindow* m_window;
         Vec2f m_scale;
         std::unique_ptr<Canvas> m_drawCanvas;
-        SafeQueue<Ref<Event>> m_handleThreadEvents;
-        SafeQueue<Ref<Event>> m_mainThreadEvents;
-        std::thread m_handleThread;
-        std::atomic<bool> m_runThreads;
-        std::thread::id m_mainThreadID;
+        std::queue<Ref<Event>> m_eventQueue;
+        bool m_draw;
 
         // Init Functions
         void initGLFW();
@@ -160,8 +148,6 @@ namespace pTK
         void setKeyCallbacks();
         
         // Event processing
-        void handleMainThreadEvents(Event* event);
-        void handleThreadEvents();
         void handleKeyboardEvent(Event* event);
         void handleMouseEvent(Event* event);
         void handleWindowEvent(Event* event);

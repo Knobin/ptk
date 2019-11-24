@@ -147,7 +147,6 @@ namespace pTK
         // TODO: Fix if we break in while loop (size left unused).
         std::vector<int> spaces = calcSpaces(totalEachLeft);
         
-        
         // Set sizes to childs and spaces.
         for (uint i = 0; i != children; i++)
         {
@@ -286,18 +285,19 @@ namespace pTK
         }
         
         // TODO: Fix if we break in while loop (size left unused).
+        std::vector<int> spaces = calcSpaces(totalSub);
         
         // Set sizes to childs and spaces.
         Point vbPos = getPosition();
         for (uint i = 0; i != children; i++)
         {
             auto child = at(i);
+            Point cPos = child->getPosition();
             Size cSize = sizes.at(i);
             child->setSize(cSize);
             Margin cMargin = child->getMargin();
-            vbPos.y += cMargin.top;
-            child->setPosHint(Point(vbPos.x + alignChildH(i, newSize, cSize), vbPos.y));
-            vbPos.y += cSize.height + cMargin.bottom;
+            cPos.y -= cMargin.top + spaces.at(i);
+            child->setPosHint(Point(vbPos.x + alignChildH(i, vbSize, cSize), cPos.y));
         }
     }
     
@@ -323,7 +323,7 @@ namespace pTK
         }
         
         // Expand children to its max sizes possible.
-        int heightLeft  = vbSize.height - layoutSize.height;
+        int heightLeft  = layoutSize.height - vbSize.height;
         int totalEachLeft = heightLeft;
         
         // Distribute heightLeft.
@@ -359,18 +359,19 @@ namespace pTK
         }
         
         // TODO: Fix if we break in while loop (size left unused).
-
+        std::vector<int> spaces = calcSpaces(totalEachLeft);
+        
         // Set sizes to childs and spaces.
         Point vbPos = getPosition();
         for (uint i = 0; i != children; i++)
         {
             auto child = at(i);
+            Point cPos = child->getPosition();
             Size cSize = sizes.at(i);
             child->setSize(cSize);
             Margin cMargin = child->getMargin();
-            vbPos.y += cMargin.top;
-            child->setPosHint(Point(vbPos.x + alignChildH(i, newSize, cSize), vbPos.y));
-            vbPos.y += cSize.height + cMargin.bottom;
+            cPos.y += cMargin.top + spaces.at(i);
+            child->setPosHint(Point(vbPos.x + alignChildH(i, vbSize, cSize), cPos.y));
         }
     }
     

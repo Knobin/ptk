@@ -21,8 +21,7 @@ namespace pTK
     Window::Window(const std::string& name, uint width, uint height)
         : VBox(), Singleton(),
             m_window{nullptr}, m_scale{1.0f, 1.0f},
-            m_drawCanvas{nullptr}, m_handleThreadEvents{}, m_mainThreadEvents{}, m_handleThread{},
-            m_runThreads{false}, m_mainThreadID{std::this_thread::get_id()}
+            m_drawCanvas{nullptr}, m_eventQueue{}, m_draw{false}
     {
         // Set Widget properties.
         Widget::setSize({static_cast<int>(width), static_cast<int>(height)});
@@ -53,25 +52,6 @@ namespace pTK
         setMouseCallbacks();
         setKeyCallbacks();
         
-        // Start Event handler thread
-        Semaphore sema(0);
-        m_runThreads = true;
-        m_handleThread = std::thread([&](){
-            PTK_INFO("Event Thread Started");
-            
-            // TODO: Init handleThread if necessary.
-            
-            // Init finished
-            PTK_INFO("Event Thread Initialized");
-            sema.post();
-            
-            handleThreadEvents();
-            
-            PTK_INFO("Event Thread Ended");
-        });
-        
-        // Wait for m_handleThread to init.
-        sema.wait();
         PTK_INFO("Window Initialization finished");
     }
     
@@ -95,6 +75,7 @@ namespace pTK
         glfwSetWindowSizeCallback(m_window, [](GLFWwindow* t_window, int t_width, int t_height){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
             window->sendEvent<ResizeEvent>(Size{t_width, t_height}, window->getContentSize());
+            window->handleEvents();
         });
         
         // void window_close_callback(GLFWwindow* window)
@@ -171,8 +152,6 @@ namespace pTK
 
     Window::~Window()
     {
-        m_handleThread.join();
-        PTK_INFO("Event Thread joined");
         glfwDestroyWindow(m_window);
         glfwTerminate();
         PTK_INFO("Window Destroyed");
@@ -207,19 +186,32 @@ namespace pTK
     void Window::pollEvents()
     {
         glfwWaitEvents();
-        
-        size_t eventCount = m_mainThreadEvents.size();
-        bool drawEventHandled = false;
+    }
+    
+    void Window::handleEvents()
+    {
+        size_t eventCount = m_eventQueue.size();
         for (uint i = 0; i < eventCount; i++)
         {
-            Ref<Event> wEvent = m_mainThreadEvents.front();
-            m_mainThreadEvents.pop();
+            Ref<Event> event = m_eventQueue.front();
+            m_eventQueue.pop();
             
-            if (!drawEventHandled || wEvent->type() != Event::Type::WindowDraw)
-                handleMainThreadEvents(wEvent.get());
-            
-            if (wEvent->type() == Event::Type::WindowDraw)
-                drawEventHandled = true;
+            if (event->category() == Event::Category::Window)
+                handleWindowEvent(event.get());
+            else if (event->category() == Event::Category::Key)
+                handleKeyboardEvent(event.get());
+            else if (event->category() == Event::Category::Mouse)
+                handleMouseEvent(event.get());
+#ifdef PTK_DEBUG
+            else
+                PTK_WARN("Unknown event");
+#endif
+        }
+        
+        if (m_draw)
+        {
+            forceDrawAll();
+            m_draw = false;
         }
     }
 
@@ -313,62 +305,6 @@ namespace pTK
     {
         glfwHideWindow(m_window);
     }
-    
-    // Event, Only called by main thread.
-    void Window::handleMainThreadEvents(Event* event)
-    {
-        PTK_ASSERT(event, "Undefined Event");
-        if (event->category() == Event::Category::Window)
-        {
-            if (event->type() == Event::Type::WindowDraw)
-            {
-                forceDrawAll();
-            }else if (event->type() == Event::Type::WindowResize)
-            {
-                ResizeEvent* rEvent = (ResizeEvent*)event;
-                Size cSize = rEvent->getContentSize();
-                
-                // Set Framebuffer Size.
-                if (cSize != m_drawCanvas->getSize())
-                    m_drawCanvas->resize(cSize);
-                
-                // TODO: May conflict with eventThread.
-                Size contentMinSize = VBox::getMinSize();
-                Size currentMinSize = getMinSize();
-                if ((currentMinSize.width < contentMinSize.width) || (currentMinSize.height < contentMinSize.height))
-                    setMinSize(contentMinSize);
-                
-                // TODO: May conflict with eventThread.
-                Size contentMaxSize = VBox::getMaxSize();
-                Size currentMaxSize = getMaxSize();
-                if ((currentMaxSize.width > contentMaxSize.width) || (currentMaxSize.height > contentMaxSize.height))
-                    setMaxSize(contentMaxSize);
-                
-                // Send draw event.
-                sendEvent<Event>(Event::Category::Window, Event::Type::WindowDraw);
-            }
-        }
-    }
-    
-    // Run loop for event thread.
-    void Window::handleThreadEvents()
-    {
-        while (m_runThreads)
-        {
-            Ref<Event> event = m_handleThreadEvents.front();
-            m_handleThreadEvents.pop();
-            if (event->category() == Event::Category::Window)
-                handleWindowEvent(event.get());
-            else if (event->category() == Event::Category::Key)
-                handleKeyboardEvent(event.get());
-            else if (event->category() == Event::Category::Mouse)
-                handleMouseEvent(event.get());
-#ifdef PTK_DEBUG
-            else
-                PTK_WARN("Unknown event");
-#endif
-        }
-    }
 
     // Called by event thread.
     void Window::handleKeyboardEvent(Event* event)
@@ -406,15 +342,31 @@ namespace pTK
         Event::Type type = event->type();
         if (type == Event::Type::WindowDraw)
         {
-            ; // TODO: ?
+            m_draw = true;
         }
         else if (type == Event::Type::WindowResize)
         {
-            ResizeEvent* rEvent = static_cast<ResizeEvent*>(event);
+            ResizeEvent* rEvent = (ResizeEvent*)event;
+            Size cSize = rEvent->getContentSize();
+            
+            // Set Framebuffer Size.
+            if (cSize != m_drawCanvas->getSize())
+                m_drawCanvas->resize(cSize);
+            
+            // TODO: May conflict with eventThread.
+            Size contentMinSize = VBox::getMinSize();
+            Size currentMinSize = getMinSize();
+            if ((currentMinSize.width < contentMinSize.width) || (currentMinSize.height < contentMinSize.height))
+                setMinSize(contentMinSize);
+            
+            // TODO: May conflict with eventThread.
+            Size contentMaxSize = VBox::getMaxSize();
+            Size currentMaxSize = getMaxSize();
+            if ((currentMaxSize.width > contentMaxSize.width) || (currentMaxSize.height > contentMaxSize.height))
+                setMaxSize(contentMaxSize);
+            
             VBox::setSize(rEvent->getSize());
-        }else if (type == Event::Type::WindowClose)
-        {
-            m_runThreads = false;
+            m_draw = true;
         }
     }
 }
