@@ -52,6 +52,12 @@ namespace pTK
             @param size  requested size of the Widget.
         */
         void setSize(const Size& size) override;
+
+        /** Function for requesting the const size of the Widget.
+            
+            @param size  requested const size of the Widget.
+        */
+        void setConstSize(const Size& size) override;
         
         /** Function for requesting the position of the Widget.
          

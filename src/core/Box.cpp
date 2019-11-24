@@ -13,7 +13,7 @@ namespace pTK
     Box::Box()
         : Container(), Widget(),
             m_background{0xf5f5f5ff}, m_lastClickedWidget{nullptr},
-            m_currentHoverWidget{nullptr}
+            m_currentHoverWidget{nullptr}, m_busy{false}
     {
     }
     
@@ -73,25 +73,37 @@ namespace pTK
 
     bool Box::updateChild(Widget* widget)
     {
-        Box::const_iterator it = findRaw(widget);
-        if (it != cend())
+        if (!m_busy)
         {
-            onChildUpdate(it - cbegin());
-            draw();
-            return true;
+            m_busy = true;
+            Box::const_iterator it = findRaw(widget);
+            if (it != cend())
+            {
+                onChildUpdate(it - cbegin());
+                draw();
+                m_busy = false;
+                return true;
+            }
         }
+        
         return false;
     }
     
     bool Box::drawChild(Widget* widget)
     {
-        Box::const_iterator it = findRaw(widget);
-        if (it != cend())
+        if (!m_busy)
         {
-            onChildDraw(it - cbegin());
-            draw();
-            return true;
+            m_busy = true;
+            Box::const_iterator it = findRaw(widget);
+            if (it != cend())
+            {
+                onChildDraw(it - cbegin());
+                draw();
+                m_busy = false;
+                return true;
+            }
         }
+
         return false;
     }
 

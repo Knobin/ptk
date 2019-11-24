@@ -32,6 +32,12 @@ namespace pTK
         Sizable::setSize(size);
         update();
     }
+
+    void Widget::setConstSize(const Size& size)
+    {
+        Sizable::setConstSize(size);
+        update();
+    }
     
     void Widget::setPosHint(const Point& pos)
     {

@@ -195,6 +195,7 @@ namespace pTK
         Color m_background;
         Widget* m_lastClickedWidget;
         Widget* m_currentHoverWidget;
+        bool m_busy;
     };
 }
 
