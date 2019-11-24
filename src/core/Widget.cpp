@@ -56,72 +56,46 @@ namespace pTK
     
     void Widget::setMargin(const Margin& margin)
     {
-        if ((margin.top > -3)
-            && (margin.bottom > -3)
-            && (margin.left > -3)
-            && (margin.right > -3))
-        {
-            m_margin = margin;
-            update();
-        }
+        m_margin = margin;
+        update();
     }
     
     void Widget::setMarginTop(int32 topMargin)
     {
-        if (topMargin > -3)
-        {
-            m_margin.top = topMargin;
-            update();
-        }
+        m_margin.top = topMargin;
+        update();
     }
     
     void Widget::setMarginBottom(int32 bottomMargin)
     {
-        if (bottomMargin > -3)
-        {
-            m_margin.bottom = bottomMargin;
-            update();
-        }
+        m_margin.bottom = bottomMargin;
+        update();
     }
     
     void Widget::setMarginLeft(int32 leftMargin)
     {
-        if (leftMargin > -3)
-        {
-            m_margin.left = leftMargin;
-            update();
-        }
+        m_margin.left = leftMargin;
+        update();
     }
     
     void Widget::setMarginRight(int32 rightMargin)
     {
-        if (rightMargin > -3)
-        {
-            m_margin.right = rightMargin;
-            update();
-        }
+        m_margin.right = rightMargin;
+        update();
     }
     
     void Widget::setMarginTopBottom(int32 topMargin, int32 bottomMargin)
     {
-        if ((topMargin > -3)
-            && (bottomMargin > -3))
-        {
-            m_margin.top = topMargin;
-            m_margin.bottom = bottomMargin;
-            update();
-        }
+        m_margin.top = topMargin;
+        m_margin.bottom = bottomMargin;
+        update();
     }
     
     void Widget::setMarginLeftRight(int32 leftMargin, int32 rightMargin)
     {
-        if ((leftMargin > -3)
-            && (rightMargin > -3))
-        {
-            m_margin.left = leftMargin;
-            m_margin.right = rightMargin;
-            update();
-        }
+        m_margin.left = leftMargin;
+        m_margin.right = rightMargin;
+        update();
     }
     
     const Margin& Widget::getMargin() const
