@@ -17,7 +17,8 @@ namespace pTK
     }
     
     Sizable::Sizable(const Size& size)
-        : m_minSize{}, m_size{size}, m_maxSize{}
+        : m_minSize{pTK::Size::Min}, m_size{size}, m_maxSize{pTK::Size::Max},
+            m_minLock{false}, m_maxLock{false}
     {
     }
     

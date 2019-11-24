@@ -17,18 +17,23 @@ TEST_CASE("Constructors")
     SECTION("Sizable()")
     {
         pTK::Sizable size;
-        REQUIRE(size.getMinSize() == ZERO);
+        REQUIRE(size.getMinSize() == pTK::Size::Min);
         REQUIRE(size.getSize() == ZERO);
-        REQUIRE(size.getMaxSize() == ZERO);
+        REQUIRE(size.getMaxSize() == pTK::Size::Max);
     }
     
     SECTION("Sizable(const Size& size)")
     {
         pTK::Size s1(10, 20);
         pTK::Sizable size(s1);
-        REQUIRE(size.getMinSize() == ZERO);
+        REQUIRE(size.getMinSize() == pTK::Size::Min);
         REQUIRE(size.getSize() == pTK::Size(10, 20));
-        REQUIRE(size.getMaxSize() == pTK::Size(10, 20)); // Max size not set.
+        REQUIRE(size.getMaxSize() == pTK::Size::Max);
+        
+        size.setMaxSize(pTK::Size(50, 100));
+        REQUIRE(size.getMinSize() == pTK::Size::Min);
+        REQUIRE(size.getSize() == pTK::Size(10, 20));
+        REQUIRE(size.getMaxSize() == pTK::Size(50, 100));
     }
 }
 
@@ -50,7 +55,7 @@ TEST_CASE("Getters and Setters")
         shouldWork.setMinSize(minSize);
         REQUIRE(shouldWork.getMinSize() == minSize);
         REQUIRE(shouldWork.getSize() == pTK::Size(20, 10));
-        REQUIRE(shouldWork.getMaxSize() == pTK::Size(20, 10));
+        REQUIRE(shouldWork.getMaxSize() == pTK::Size::Max);
     }
     
     SECTION("size")
@@ -58,9 +63,9 @@ TEST_CASE("Getters and Setters")
         pTK::Size s(1200, 142);
         size.setSize(s);
         
-        REQUIRE(size.getMinSize() == ZERO);
+        REQUIRE(size.getMinSize() == pTK::Size::Min);
         REQUIRE(size.getSize() == s);
-        REQUIRE(size.getMaxSize() == s);
+        REQUIRE(size.getMaxSize() == pTK::Size::Max);
     }
     
     SECTION("maxSize")
