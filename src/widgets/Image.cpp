@@ -15,12 +15,12 @@
 namespace pTK
 {
     Image::Image()
-        : Widget(), m_path{}, m_image{nullptr}
+        : Widget(), m_path{}, m_image{nullptr}, m_scale{1.0f, 1.0f}
     {
     }
     
     Image::Image(const std::string& path)
-        : Widget(), m_path{path}, m_image{nullptr}
+        : Widget(), m_path{path}, m_image{nullptr}, m_scale{1.0f, 1.0f}
     {
         loadFromFile(path);
     }
@@ -35,7 +35,7 @@ namespace pTK
             if (m_image)
             {
                 m_path = path;
-                setConstSize(Size(m_image->width(), m_image->height()));
+                setConstSize(Size(static_cast<int>(m_image->width()*m_scale.x), static_cast<int>(m_image->height()*m_scale.y)));
                 return true;
             }
         }
@@ -45,7 +45,24 @@ namespace pTK
     
     void Image::onDraw(SkCanvas* canvas)
     {
-        Point pos = getPosition();
-        canvas->drawImage(m_image, pos.x, pos.y);
+        // Set Size and Position
+        SkPoint pos{convertToSkPoint(getPosition())};
+        SkPoint size{convertToSkPoint(getSize())};
+        size += pos; // skia needs the size to be pos+size.
+        
+        SkRect dst;
+        dst.set(pos, size);
+        
+        canvas->drawImageRect(m_image, dst, nullptr);
+        
+    }
+    
+    void Image::scale(float x, float y)
+    {
+        m_scale = {x, y};
+        Size size;
+        size.width = static_cast<int>(m_image->width()*x);
+        size.height = static_cast<int>(m_image->height()*y);
+        setConstSize(size);
     }
 }

@@ -7,6 +7,7 @@
 
 // Local Headers
 #include "ptk/core/Widget.hpp"
+#include "ptk/util/Vec2.hpp"
 
 // C++ Headers
 #include <string>
@@ -25,9 +26,11 @@ namespace pTK
         
         bool loadFromFile(const std::string& path);
         void onDraw(SkCanvas* canvas) override;
+        void scale(float x, float y);
         
     private:
         std::string m_path;
         sk_sp<SkImage> m_image;
+        Vec2f m_scale;
     };
 }
