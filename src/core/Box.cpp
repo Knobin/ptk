@@ -156,8 +156,9 @@ namespace pTK
             {
                 if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
                 {
+                    Widget *temp = (*it).get(); // Iterator might change, when passing the event.
                     (*it)->handleClickEvent(btn, pos);
-                    m_lastClickedWidget = (*it).get();
+                    m_lastClickedWidget = temp;
                     return true;
                 }
             }
@@ -199,11 +200,13 @@ namespace pTK
                     // Send Leave Event.
                     if (m_currentHoverWidget != (*it).get() || m_currentHoverWidget == nullptr)
                     {
+                        Widget *temp = (*it).get(); // Iterator might change, when passing the event.
+
                         if (m_currentHoverWidget != nullptr)
                             m_currentHoverWidget->handleLeaveEvent();
                         
                         // New current hovered Widget.
-                        m_currentHoverWidget = (*it).get();
+                        m_currentHoverWidget = temp;
                         
                         // Fire Enter event on this and on to child.
                         handleEnterEvent();

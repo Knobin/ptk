@@ -18,8 +18,6 @@
 
 // C++ Headers
 #include <string>
-#include <thread>
-#include <atomic>
 
 // GLFW Headers
 #include <GLFW/glfw3.h>

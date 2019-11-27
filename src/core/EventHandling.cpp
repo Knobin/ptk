@@ -96,7 +96,7 @@ namespace pTK
     bool EventHandling::handleReleaseEvent(Mouse::Button button, const Point& position)
     {
         bool status = true;
-        
+
         if (m_releaseCallback != nullptr)
             status = m_releaseCallback(button, position);
         
