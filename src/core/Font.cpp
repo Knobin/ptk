@@ -54,7 +54,7 @@ namespace pTK
             if (fontFamily == getFamily())
             {
                 status = true;
-                PTK_INFO("Loaded {0} successfully.", getFamily());
+                PTK_INFO("Loaded \"{0}\" successfully.", getFamily());
             }
 #ifdef PTK_DEBUG
             else

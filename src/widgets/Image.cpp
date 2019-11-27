@@ -32,9 +32,11 @@ namespace pTK
         sk_sp<SkData> data = SkData::MakeFromFileName(path.c_str());
         if (data)
         {
+            PTK_INFO("Loaded \"{}\" successfully.", path);
             m_image = SkImage::MakeFromEncoded(data);
             if (m_image)
             {
+                PTK_INFO("Created image from \"{}\" successfully.", path);
                 m_path = path;
                 setConstSize(Size(static_cast<int>(m_image->width()*m_scale.x), static_cast<int>(m_image->height()*m_scale.y)));
                 return true;
