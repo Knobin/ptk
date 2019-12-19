@@ -157,6 +157,7 @@ namespace pTK
             auto child = at(i);
             Size cSize = sizes.at(i);
             child->setSize(cSize);
+
             Margin cMargin = child->getMargin();
             vbPos.y += cMargin.top + spaces.at(i);
             child->setPosHint(Point(vbPos.x + alignChildH(i, vbSize, cSize), vbPos.y));
@@ -191,8 +192,8 @@ namespace pTK
         for (uint i = 0; i < size(); ++i)
         {
             Margin cMargin = at(i)->getMargin();
-            int vMargin = cMargin.top + cMargin.bottom;
-            int hMargin = cMargin.left + cMargin.right;
+            int hMargin = cMargin.top + cMargin.bottom;
+            int vMargin = cMargin.left + cMargin.right;
             
             Size cMinSize = at(i)->getMinSize();
             contentMinSize.height += (vMargin + cMinSize.height);
@@ -266,12 +267,19 @@ namespace pTK
     int VBox::alignChildH(uint index, const Size& parentSize, const Size& childSize)
     {
         int posx = 0;
+        Margin cMargin = at(index)->getMargin();
+
+        // Align
         int32 cAlign = at(index)->getAlign();
-        
         if (isAlignSet(cAlign, Align::Right))
             posx = parentSize.width - childSize.width;
         else if (isAlignSet(cAlign, Align::Center) || isAlignSet(cAlign, Align::HCenter))
             posx = (parentSize.width/2) - (childSize.width/2);
+        else if (cMargin.left > 0)
+            posx = cMargin.left;
+
+        // Apply negative margin.
+        posx += (cMargin.left < 0) ? cMargin.left : 0;
 
         return posx;
     }

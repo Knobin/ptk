@@ -6,6 +6,11 @@
 const unsigned int SCR_WIDTH = 960;
 const unsigned int SCR_HEIGHT = 540;
 
+// Label sizes
+const unsigned int FLARGE = 24;
+const unsigned int FSIDEBAR = 16;
+const unsigned int FNORMAL = 14;
+
 int main(int argc, char *argv[])
 {
     // Application and Window.
@@ -19,63 +24,126 @@ int main(int argc, char *argv[])
             window.close();
         return true;
     });
-
-    // Checkbox.
-    pTK::Ref<pTK::Checkbox> checkbox = pTK::create<pTK::Checkbox>();
-    checkbox->setName("Checkbox Name");
-    checkbox->setConstSize(pTK::Size(30, 30));
-    //checkbox->setAlign(pTK::Align::Top | pTK::Align::HCenter);
-    checkbox->setCornerRadius(3); // 10% of size
-    checkbox->setOutlineThickness(1.5f); // 5% of size
-    checkbox->setColor(pTK::Color(0x00FF00FF));
-    checkbox->setOutlineColor(pTK::Color(0xFF00FFFF));
-    checkbox->set(true);
-    //checkbox->setMarginTop(-50);
     
-    // Label.
-    pTK::Ref<pTK::Label> label = pTK::create<pTK::Label>();
-    label->setText("Toggle Checkbox");
-    label->setFontFamily("Roboto");
-    label->setFontSize(32);
-    label->setMarginTopBottom(5, 5);
-    //label->setAlign(pTK::Align::Right | pTK::Align::Bottom);
-
-    // Button.
-    pTK::Ref<pTK::Button> button = pTK::create<pTK::Button>(pTK::Button::Style::Danger);
-    button->setText("Reset Label Button");
-    button->setFontFamily("Roboto");
-    button->setFontSize(14);
-    button->setConstSize(button->getSize());
-    // button->setAlign(pTK::Align::Top | pTK::Align::HCenter);
+    // HBox.
+    pTK::Ref<pTK::HBox> hbox = pTK::create<pTK::HBox>();
+    hbox->setSize({SCR_WIDTH, SCR_HEIGHT});
     
-    // Change Label Text on Checkbox toggle.
-    uint toggleCount = 0;
-    checkbox->onToggle([&](bool){
-        toggleCount++;
-        if (toggleCount == 1)
-        {
-            label->setText("Toggled: " + std::to_string(toggleCount) + " time!" );
-            window.add(button);
-        } else
-            label->setText("Toggled: " + std::to_string(toggleCount) + " times!" );
-        
+    // VBox as sidebar.
+    pTK::Ref<pTK::VBox> sidebar = pTK::create<pTK::VBox>();
+    sidebar->setSize({static_cast<int>(SCR_WIDTH*0.225f), pTK::Size::Limits::Max});
+    sidebar->setAlign(pTK::Align::Left);
+    sidebar->setBackground(pTK::Color(0x303030FF));
+    
+    // Sidebar title.
+    pTK::Ref<pTK::Label> sTitle = pTK::create<pTK::Label>();
+    sTitle->setText("SandboxApp");
+    sTitle->setName("SandboxApp");
+    sTitle->setFontFamily("Roboto");
+    sTitle->setFontSize(FLARGE);
+    sTitle->setAlign(pTK::Align::Top | pTK::Align::HCenter);
+    sTitle->setMargin({18, 18, 18, 18});
+    
+    // Button style for sidebar.
+    pTK::Button::Style sbBtnStyle;
+    sbBtnStyle.color = pTK::Color(0x252525FF);
+    sbBtnStyle.clickColor = pTK::Color(0x151515FF);
+    sbBtnStyle.hoverColor = pTK::Color(0x202020FF);
+    sbBtnStyle.textColor = pTK::Color(0xFFFFFFFF);
+    sbBtnStyle.cornerRadius = 0.0f;
+    
+    // First button in sidebar.
+    pTK::Ref<pTK::Button> b1 = pTK::create<pTK::Button>(sbBtnStyle);
+    b1->setText("Button 1");
+    b1->setFontFamily("Roboto");
+    b1->setFontSize(FSIDEBAR);
+    b1->setCornerRadius(0.0f);
+    b1->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
+    b1->setAlign(pTK::Top);
+    
+    // Second button in sidebar.
+    pTK::Ref<pTK::Button> b2 = pTK::create<pTK::Button>(sbBtnStyle);
+    b2->setText("Button 2");
+    b2->setFontFamily("Roboto");
+    b2->setFontSize(FSIDEBAR);
+    b2->setCornerRadius(0.0f);
+    b2->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
+    b2->setAlign(pTK::Top);
+    
+    // Third button in sidebar.
+    pTK::Ref<pTK::Button> b3 = pTK::create<pTK::Button>(sbBtnStyle);
+    b3->setText("Button 3");
+    b3->setFontFamily("Roboto");
+    b3->setFontSize(FSIDEBAR);
+    b3->setCornerRadius(0.0f);
+    b3->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
+    b3->setAlign(pTK::Top);
+    
+    // Bottom button in sidebar.
+    pTK::Ref<pTK::Button> b4 = pTK::create<pTK::Button>(pTK::Button::Style::Danger);
+    b4->setText("Close");
+    b4->setFontFamily("Roboto");
+    b4->setFontSize(FSIDEBAR);
+    b4->setCornerRadius(0.0f);
+    b4->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
+    b4->setAlign(pTK::Bottom);
+    b4->onRelease([&](pTK::Mouse::Button, const pTK::Point&){
+        window.close();
         return true;
     });
+    
+    // VBox as right side content. (TODO: should be a scrollable area).
+    pTK::Ref<pTK::VBox> content = pTK::create<pTK::VBox>();
+    content->setAlign(pTK::Align::Left);
+    content->setBackground(pTK::Color(0xF0F0F0FF));
+    
+    // Title of right side content.
+    pTK::Ref<pTK::Label> cTitle = pTK::create<pTK::Label>();
+    cTitle->setText("Content");
+    cTitle->setName("Content label");
+    cTitle->setFontFamily("Roboto");
+    cTitle->setFontSize(FLARGE);
+    cTitle->setMargin({18, 9, 18, 18});
+    cTitle->setColor(pTK::Color());
+    cTitle->setAlign(pTK::Align::Left | pTK::Align::Top);
 
-    // Reset Label Text on Button click.
-    button->onClick([&](pTK::Mouse::Button, const pTK::Point&) {
-        toggleCount = 0;
-        label->setText("Toggle Checkbox");
-        window.remove(button);
+    // This should be a pTK::TextArea (when that is implemented).
+    pTK::Ref<pTK::Label> cText = pTK::create<pTK::Label>();
+    cText->setText("This should be a multiline text!");
+    cText->setName("TextArea");
+    cText->setFontFamily("Roboto");
+    cText->setFontSize(FNORMAL);
+    cText->setMargin({9, 18, 18, 18});
+    cText->setColor(pTK::Color());
+    cText->setAlign(pTK::Align::Left | pTK::Align::Top);
 
-        // TODO: Fix bug when removing a Widget from Window.
-        window.sendEvent<pTK::Event>(pTK::Event::Category::Window, pTK::Event::Type::WindowDraw);
-        return true;
-    });
+    // Just a rectangle. Nothing special about it.
+    pTK::Ref<pTK::Rectangle> rect = pTK::create<pTK::Rectangle>();
+    rect->setName("rect");
+    rect->setColor(pTK::Color(0xC0C0C0FF));
+    rect->setConstSize({250, 125});
+    
+    // Add content to sidebar.
+    sidebar->add(sTitle);
+    sidebar->add(b1);
+    sidebar->add(b2);
+    sidebar->add(b3);
+    sidebar->add(b4);
 
-    window.add(checkbox);
-    window.add(label);
-    // window.add(button);
+    // Set Maxsize of sidebar.
+    sidebar->setMaxSize({sidebar->getSize().width, pTK::Size::Limits::Max});
+    
+    // Add content to right side.
+    content->add(cTitle);
+    content->add(cText);
+    content->add(rect);
+    
+    // Add content to hbox.
+    hbox->add(sidebar);
+    hbox->add(content);
+
+    // Add hbox to window.
+    window.add(hbox);
     
     return app.exec(&window);
 }

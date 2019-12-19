@@ -44,7 +44,7 @@ namespace pTK
          @param widget  Widget to add
          @return        Status (true if added)
          */
-        bool add(const Ref<Widget>& widget) final;
+        bool add(const Ref<Widget>& widget) override;
         
         /** Function for removing a Widget
          
@@ -52,7 +52,7 @@ namespace pTK
          
          @param widget  Widget to remove
          */
-        void remove(const Ref<Widget>& widget) final;
+        void remove(const Ref<Widget>& widget) override;
         
         /** Draw function.
          Function is called when it is time to draw.
@@ -60,7 +60,7 @@ namespace pTK
          Derived from Drawable.
          @param canvas  canvas to draw to
          */
-        void onDraw(SkCanvas* canvas) final;
+        void onDraw(SkCanvas* canvas) override;
 
         /** Function for a child Widget to call the Parent when it
          need to be drawn.
@@ -70,7 +70,7 @@ namespace pTK
          @param widget  Child Widget
          @return        Status (true if handled)
          */
-        bool updateChild(Widget* widget) final;
+        bool updateChild(Widget* widget) override;
         
         /** Function for a child Widget to call the Parent when it
          need to be drawn.
@@ -80,7 +80,7 @@ namespace pTK
          @param widget  Child Widget
          @return        Status (true if handled)
          */
-        bool drawChild(Widget* widget) final;
+        bool drawChild(Widget* widget) override;
 
         /** Funtion for finding a widget in the Container.
          Function will look for a widget with the specified name and it

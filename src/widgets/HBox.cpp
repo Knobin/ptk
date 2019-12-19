@@ -73,9 +73,9 @@ namespace pTK
              */
             child->setSize(cSize);
             Margin cMargin = child->getMargin();
-            vbPos.y += cMargin.top;
-            child->setPosHint(Point(vbPos.x + alignChildV(i, newSize, cSize), vbPos.y));
-            vbPos.y += cSize.height + cMargin.bottom;
+            vbPos.x += cMargin.left;
+            child->setPosHint(Point(vbPos.x, vbPos.y + alignChildV(i, vbSize, cSize)));
+            vbPos.x += cSize.width;
         }
     }
     
@@ -259,15 +259,22 @@ namespace pTK
     
     int HBox::alignChildV(uint index, const Size& parentSize, const Size& childSize)
     {
-        int posx = 0;
-        int32 cAlign = at(index)->getAlign();
-        
-        if (isAlignSet(cAlign, Align::Bottom))
-            posx = parentSize.height - childSize.height;
-        else if (isAlignSet(cAlign, Align::Center) || isAlignSet(cAlign, Align::VCenter))
-            posx = (parentSize.height/2) - (childSize.height/2);
+        int posy = 0;
+        Margin cMargin = at(index)->getMargin();
 
-        return posx;
+        // Align
+        int32 cAlign = at(index)->getAlign();
+        if (isAlignSet(cAlign, Align::Bottom))
+            posy = parentSize.height - childSize.height;
+        else if (isAlignSet(cAlign, Align::Center) || isAlignSet(cAlign, Align::VCenter))
+            posy = (parentSize.height/2) - (childSize.height/2);
+        else if (cMargin.top > 0)
+            posy = cMargin.top;
+
+        // Apply negative margin.
+        posy += (cMargin.top < 0) ? cMargin.top : 0;
+
+        return posy;
     }
 }
 
