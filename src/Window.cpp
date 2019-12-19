@@ -208,6 +208,17 @@ namespace pTK
 #endif
         }
         
+        // Quick fix when previous event cause a draw event.
+        if (m_eventQueue.size() > 0)
+        {
+            Ref<Event> event = m_eventQueue.front();
+            if (event->category() == Event::Category::Window)
+            {
+                handleWindowEvent(event.get());
+                m_eventQueue.pop();
+            }
+        }
+
         if (m_draw)
         {
             forceDrawAll();
