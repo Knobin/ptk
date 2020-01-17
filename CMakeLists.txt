@@ -2,7 +2,15 @@ cmake_minimum_required(VERSION 3.10)
 project(ptk VERSION 1 DESCRIPTION "C++ library for building user interfaces.")
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -pthread")
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+
+# General Compiler flags
+if (MSVC)
+    #set(CMAKE_CXX_FLAGS "/Wall")
+else (MSVC)
+     set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic")
+endif (MSVC)
 
 # Build Type
 if (CMAKE_BUILD_TYPE MATCHES Debug)
@@ -20,8 +28,12 @@ message(STATUS "pTK build: ${PTK_BUILD_TYPE}")
 if (UNIX AND NOT APPLE)
     # for Linux, BSD, Solaris, Minix
     set(SKIA_PLATFORM_DEPENDENCIES "-lfreetype -lfontconfig")
+	set(SKIA_FILENAME "libskia.a")
+elseif (WIN32)
+	set(SKIA_FILENAME "skia.lib")
 else()
     set(SKIA_PLATFORM_DEPENDENCIES "")
+	set(SKIA_FILENAME "libskia.a")
 endif()
 
 # Compiler
@@ -31,6 +43,11 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     add_definitions(-DPTK_COMPILER_GCC)
     message(STATUS "Compiler: GCC")
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+	add_definitions(-DPTK_COMPILER_MSVC)
+	set(CMAKE_CXX_FLAGS_RELEASE "/MT")
+	set(CMAKE_CXX_FLAGS_DEBUG "/MTd")
+	message(STATUS "Compiler: MSVC")
 endif()
 
 # Options
@@ -56,15 +73,18 @@ include_directories(${CMAKE_SOURCE_DIR}/include/)
 # Skia properties
 set(SKIA_PATH "${CMAKE_SOURCE_DIR}/third_party/skia")
 set(SKIA_LIB_PATH "${SKIA_PATH}/out/${PTK_BUILD_TYPE}")
-message(STATUS "Skia include path: ${SKIA_PATH}")
 message(STATUS "Skia build: ${PTK_BUILD_TYPE}")
+if (SKIA_PLATFORM_DEPENDENCIES)
+	message(STATUS "Skia platform dependencies: ${SKIA_PLATFORM_DEPENDENCIES}")
+endif()
+message(STATUS "Skia filename: ${SKIA_FILENAME}")
+message(STATUS "Skia include path: ${SKIA_PATH}")
 message(STATUS "Skia lib path: ${SKIA_LIB_PATH}")
-message(STATUS "Skia platform dependencies: ${SKIA_PLATFORM_DEPENDENCIES}")
 
 # Skia library
 add_library(skia STATIC IMPORTED)
 set_target_properties(skia PROPERTIES
-    IMPORTED_LOCATION "${SKIA_LIB_PATH}/libskia.a"
+    IMPORTED_LOCATION "${SKIA_LIB_PATH}/${SKIA_FILENAME}"
     INTERFACE_INCLUDE_DIRECTORIES "${SKIA_PATH}"
 )
 
@@ -84,12 +104,17 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL ON CACHE BOOL "" FORCE)
+set(USE_MSVC_RUNTIME_LIBRARY_DLL OFF CACHE BOOL "" FORCE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/GLFW)
 include_directories(${CMAKE_SOURCE_DIR}/third_party/glfw/include)
 target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
 
 # spdlog
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/third_party/spdlog/include)
+
+# Threads
+find_package (Threads REQUIRED)
+target_link_libraries(${PROJECT_NAME} Threads::Threads)
 
 # Example
 if (BUILD_EXAMPLES)

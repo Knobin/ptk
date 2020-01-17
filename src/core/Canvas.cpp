@@ -16,13 +16,18 @@
 #elif PTK_COMPILER_CLANG
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wgnu-anonymous-struct"
+#elif PTK_COMPILER_MSVC
+	#pragma warning( push, 0 )
 #endif
 #include "include/gpu/GrBackendSurface.h"
 #include "include/gpu/gl/GrGLInterface.h"
+#include "src/gpu/gl/GrGLUtil.h"
 #ifdef PTK_COMPILER_GCC
     #pragma GCC diagnostic pop
 #elif PTK_COMPILER_CLANG
     #pragma clang diagnostic pop
+#elif PTK_COMPILER_MSVC
+	#pragma warning( pop )
 #endif
 
 namespace pTK
@@ -31,19 +36,26 @@ namespace pTK
         : Singleton(), m_context{nullptr}, m_surface{nullptr}, m_canvas{nullptr}, m_info{},
             m_colorType{}, m_size{size}
     {
-        auto interface = GrGLMakeNativeInterface();
-        m_context.reset(GrContext::MakeGL(interface).release());
+		auto glInterface = GrGLMakeNativeInterface();
+		m_context.reset(GrContext::MakeGL(glInterface).release());
 
-        GrGLint buffer;
-        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &buffer);
-        m_info.fFBOID = (GrGLuint) buffer;
-        m_info.fFormat = GL_RGBA8;
-        
-        if (kRGBA_8888_GrPixelConfig == kSkia8888_GrPixelConfig)
-            m_colorType = kRGBA_8888_SkColorType;
-        else
-            m_colorType = kBGRA_8888_SkColorType;
-            
+		GrGLint buffer;
+		GR_GL_GetIntegerv(glInterface.get(), GR_GL_FRAMEBUFFER_BINDING, &buffer);
+		GrGLFramebufferInfo info;
+		info.fFBOID = (GrGLuint)buffer;
+		m_info.fFormat = GL_RGBA8;
+
+#ifdef PTK_COMPILER_MSVC
+#pragma warning( push )
+#pragma warning( disable : 4127)
+#endif
+		if (kRGBA_8888_GrPixelConfig == kSkia8888_GrPixelConfig)
+			m_colorType = kRGBA_8888_SkColorType;
+		else
+			m_colorType = kBGRA_8888_SkColorType;
+#ifdef PTK_COMPILER_MSVC
+#pragma warning (pop )
+#endif
         resize(size);
     }
     

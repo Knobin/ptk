@@ -152,8 +152,10 @@ namespace pTK
 
     Window::~Window()
     {
+		// Free canvas before glfw to avoid OpenGL errors.
+		m_drawCanvas.reset(nullptr);
         glfwDestroyWindow(m_window);
-        glfwTerminate();
+		glfwTerminate();
         PTK_INFO("Window Destroyed");
     }
     
@@ -249,6 +251,7 @@ namespace pTK
     {
         // TODO: Some checking in layout to confirm if size change
         // is doable.
+		PTK_WARN("Window::setSize");
         glfwSetWindowSize(m_window, size.width, size.height);
         Widget::setSize(size);
     }
@@ -281,16 +284,15 @@ namespace pTK
         newMaxSize.width = ((size.height >= wSize.height) && (size.height <= Size::Limits::Max)) ? size.width : Size::Limits::Max;
         newMaxSize.height = ((size.width >= wSize.width) && (size.width <= Size::Limits::Max)) ? size.width : Size::Limits::Max;
         
-        newMaxSize.width = (size.width == Size::Limits::Max) ? GLFW_DONT_CARE : size.width;
-        newMaxSize.height = (size.height == Size::Limits::Max) ? GLFW_DONT_CARE : size.height;
-        
         Sizable::setMaxSize(newMaxSize);
         setLimits(getMinSize(), newMaxSize);
     }
     
     void Window::setLimits(const Size& minSize, const Size& maxSize)
     {
-        glfwSetWindowSizeLimits(m_window, static_cast<int>(minSize.width), static_cast<int>(minSize.height), static_cast<int>(maxSize.width), static_cast<int>(maxSize.height));
+		int width = (maxSize.width == Size::Limits::Max) ? GLFW_DONT_CARE : maxSize.width;
+		int height = (maxSize.height == Size::Limits::Max) ? GLFW_DONT_CARE : maxSize.height;
+		glfwSetWindowSizeLimits(m_window, static_cast<int>(minSize.width), static_cast<int>(minSize.height), width, height);
     }
 
     // Close
@@ -358,7 +360,7 @@ namespace pTK
         else if (type == Event::Type::WindowResize)
         {
             ResizeEvent* rEvent = (ResizeEvent*)event;
-            Size cSize = rEvent->getContentSize();
+			Size cSize = rEvent->getContentSize();
             
             // Set Framebuffer Size.
             if (cSize != m_drawCanvas->getSize())

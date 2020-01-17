@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     
     // HBox.
     pTK::Ref<pTK::HBox> hbox = pTK::create<pTK::HBox>();
-    hbox->setSize({SCR_WIDTH, SCR_HEIGHT});
+    hbox->setSize({static_cast<int>(SCR_WIDTH), static_cast<int>(SCR_HEIGHT)});
     
     // VBox as sidebar.
     pTK::Ref<pTK::VBox> sidebar = pTK::create<pTK::VBox>();
@@ -39,7 +39,6 @@ int main(int argc, char *argv[])
     pTK::Ref<pTK::Label> sTitle = pTK::create<pTK::Label>();
     sTitle->setText("SandboxApp");
     sTitle->setName("SandboxApp");
-    sTitle->setFontFamily("Roboto");
     sTitle->setFontSize(FLARGE);
     sTitle->setAlign(pTK::Align::Top | pTK::Align::HCenter);
     sTitle->setMargin({18, 18, 18, 18});
@@ -55,7 +54,6 @@ int main(int argc, char *argv[])
     // First button in sidebar.
     pTK::Ref<pTK::Button> b1 = pTK::create<pTK::Button>(sbBtnStyle);
     b1->setText("Button 1");
-    b1->setFontFamily("Roboto");
     b1->setFontSize(FSIDEBAR);
     b1->setCornerRadius(0.0f);
     b1->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
@@ -64,7 +62,6 @@ int main(int argc, char *argv[])
     // Second button in sidebar.
     pTK::Ref<pTK::Button> b2 = pTK::create<pTK::Button>(sbBtnStyle);
     b2->setText("Button 2");
-    b2->setFontFamily("Roboto");
     b2->setFontSize(FSIDEBAR);
     b2->setCornerRadius(0.0f);
     b2->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
@@ -73,8 +70,7 @@ int main(int argc, char *argv[])
     // Third button in sidebar.
     pTK::Ref<pTK::Button> b3 = pTK::create<pTK::Button>(sbBtnStyle);
     b3->setText("Button 3");
-    b3->setFontFamily("Roboto");
-    b3->setFontSize(FSIDEBAR);
+	b3->setFontSize(FSIDEBAR);
     b3->setCornerRadius(0.0f);
     b3->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
     b3->setAlign(pTK::Top);
@@ -82,7 +78,6 @@ int main(int argc, char *argv[])
     // Bottom button in sidebar.
     pTK::Ref<pTK::Button> b4 = pTK::create<pTK::Button>(pTK::Button::Style::Danger);
     b4->setText("Close");
-    b4->setFontFamily("Roboto");
     b4->setFontSize(FSIDEBAR);
     b4->setCornerRadius(0.0f);
     b4->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
@@ -101,7 +96,6 @@ int main(int argc, char *argv[])
     pTK::Ref<pTK::Label> cTitle = pTK::create<pTK::Label>();
     cTitle->setText("Content");
     cTitle->setName("Content label");
-    cTitle->setFontFamily("Roboto");
     cTitle->setFontSize(FLARGE);
     cTitle->setMargin({18, 9, 18, 18});
     cTitle->setColor(pTK::Color());
@@ -111,7 +105,6 @@ int main(int argc, char *argv[])
     pTK::Ref<pTK::Label> cText = pTK::create<pTK::Label>();
     cText->setText("This should be a multiline text!");
     cText->setName("TextArea");
-    cText->setFontFamily("Roboto");
     cText->setFontSize(FNORMAL);
     cText->setMargin({9, 18, 18, 18});
     cText->setColor(pTK::Color());
@@ -122,6 +115,30 @@ int main(int argc, char *argv[])
     rect->setName("rect");
     rect->setColor(pTK::Color(0xC0C0C0FF));
     rect->setConstSize({250, 125});
+
+	pTK::Ref<pTK::Checkbox> checkbox = pTK::create<pTK::Checkbox>();
+	checkbox->setConstSize({ 25, 25 });
+	checkbox->setCornerRadius(3); // 10% of size
+	checkbox->setOutlineThickness(1.5f); // 5% of size
+	checkbox->setColor(pTK::Color(0x00FF00FF));
+	checkbox->setOutlineColor(pTK::Color(0xFF00FFFF));
+	checkbox->setAlign(pTK::Align::Left | pTK::Align::Bottom);
+	checkbox->setMargin({ 18, 9, 18, 18 });
+
+	pTK::Ref<pTK::Label> cStatus = pTK::create<pTK::Label>();
+	cStatus->setText("Checkbox Status: false");
+	cStatus->setName("Checkbox Status label");
+	cStatus->setFontSize(25);
+	cStatus->setMargin({ 18, 9, 18, 18 });
+	cStatus->setColor(pTK::Color());
+	cStatus->setAlign(pTK::Align::Left | pTK::Align::Top);
+
+	checkbox->onToggle([&](bool status) {
+		std::string statusText = "Checkbox Status: ";
+		statusText.append((status) ? "true" : "false");
+		cStatus->setText(statusText);
+		return true;
+	});
     
     // Add content to sidebar.
     sidebar->add(sTitle);
@@ -137,6 +154,8 @@ int main(int argc, char *argv[])
     content->add(cTitle);
     content->add(cText);
     content->add(rect);
+	content->add(checkbox);
+	content->add(cStatus);
     
     // Add content to hbox.
     hbox->add(sidebar);

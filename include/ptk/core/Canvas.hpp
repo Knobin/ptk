@@ -23,8 +23,12 @@
 #ifdef __APPLE__
     #define GL_SILENCE_DEPRECATION
     #include <OpenGL/gl.h>
-#elif __linux__
-    #include <GL/gl.h>
+#else
+	#ifdef _WIN32
+	#define NOMINMAX
+		#include <windows.h>
+	#endif
+	#include <GL/gl.h>
 #endif
 
 // Skia Headers
@@ -34,6 +38,8 @@
 #elif PTK_COMPILER_CLANG
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wgnu-anonymous-struct"
+#elif PTK_COMPILER_MSVC
+	#pragma warning( push, 0 )
 #endif
 #include "include/gpu/GrContext.h"
 #include "include/core/SkCanvas.h"
@@ -42,6 +48,8 @@
     #pragma GCC diagnostic pop
 #elif PTK_COMPILER_CLANG
     #pragma clang diagnostic pop
+#elif PTK_COMPILER_MSVC
+	#pragma warning( pop )
 #endif
 
 namespace pTK
