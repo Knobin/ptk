@@ -9,7 +9,7 @@ set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 if (MSVC)
     #set(CMAKE_CXX_FLAGS "/Wall")
 else (MSVC)
-     set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic")
+     set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -fvisibility=hidden")
 endif (MSVC)
 
 # Build Type
