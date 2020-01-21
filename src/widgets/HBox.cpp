@@ -225,17 +225,17 @@ namespace pTK
             {
                 int32 cAlign = at(i)->getAlign();
                 
-                if (isAlignSet(cAlign, Align::Top))
+                if (isAlignSet(cAlign, Align::Left))
                 {
                     spaces.at(i) = 0;
                     spaces.at(i+1) = 1;
                 }
-                else if (isAlignSet(cAlign, Align::Bottom))
+                else if (isAlignSet(cAlign, Align::Right))
                 {
                     spaces.at(i) = 1;
                     spaces.at(i+1) = 0;
                 }
-                else if (isAlignSet(cAlign, Align::Center) || isAlignSet(cAlign, Align::VCenter))
+                else if (isAlignSet(cAlign, Align::Center) || isAlignSet(cAlign, Align::HCenter))
                 {
                     spaces.at(i) = 1;
                     spaces.at(i+1) = 1;
