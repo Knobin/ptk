@@ -11,21 +11,21 @@
 namespace pTK
 {
     Point::Point()
-        : x{0}, y{0}
+        : x{}, y{}
     {
         
     }
     
-    Point::Point(int t_x, int t_y)
-        : x{t_x}, y{t_y}
+    Point::Point(value_type other_x, value_type other_y)
+        : x{other_x}, y{other_y}
     {
         
     }
 
-    void Point::set(int t_x, int t_y)
+    void Point::set(value_type other_x, value_type other_y)
     {
-        x = t_x;
-        y = t_y;
+        x = other_x;
+        y = other_y;
     }
     
     // Comparison operators.

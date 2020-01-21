@@ -19,7 +19,7 @@ namespace pTK
     {
     }
     
-    Color::Color(uint color)
+    Color::Color(size_type color)
     {
         set_rgba(color);
     }
@@ -31,13 +31,13 @@ namespace pTK
     }
     
     // Get.
-    uint Color::to_int() const
+    Color::size_type Color::to_int() const
     {
-        uint r_value = 0;
-        r_value |= static_cast<uint>(r << 24);
-        r_value |= static_cast<uint>(g << 16);
-        r_value |= static_cast<uint>(b << 8);
-        r_value |= static_cast<uint>(a);
+        size_type r_value = 0;
+        r_value |= static_cast<size_type>(r << 24);
+        r_value |= static_cast<size_type>(g << 16);
+        r_value |= static_cast<size_type>(b << 8);
+        r_value |= static_cast<size_type>(a);
         
         return r_value;
     }
@@ -50,14 +50,14 @@ namespace pTK
         b = blue;
     }
     
-    void Color::set_rgb(uint color)
+    void Color::set_rgb(size_type color)
     {
-        r = static_cast<byte>((color >> 24) & 0xFF);
-        g = static_cast<byte>((color >> 16) & 0xFF);
-        b = static_cast<byte>((color >> 8) & 0xFF);
+        r = static_cast<value_type>((color >> 24) & 0xFF);
+        g = static_cast<value_type>((color >> 16) & 0xFF);
+        b = static_cast<value_type>((color >> 8) & 0xFF);
     }
     
-    void Color::set_rgba(byte red, byte green, byte blue, byte alpha)
+    void Color::set_rgba(value_type red, value_type green, value_type blue, value_type alpha)
     {
         r = red;
         g = green;
@@ -65,12 +65,12 @@ namespace pTK
         a = alpha;
     }
     
-    void Color::set_rgba(uint color)
+    void Color::set_rgba(size_type color)
     {
-        r = static_cast<byte>((color >> 24) & 0xFF);
-        g = static_cast<byte>((color >> 16) & 0xFF);
-        b = static_cast<byte>((color >> 8) & 0xFF);
-        a = static_cast<byte>(color & 0xFF);
+        r = static_cast<value_type>((color >> 24) & 0xFF);
+        g = static_cast<value_type>((color >> 16) & 0xFF);
+        b = static_cast<value_type>((color >> 8) & 0xFF);
+        a = static_cast<value_type>(color & 0xFF);
     }
     
     // Comparison operators.
@@ -88,10 +88,10 @@ namespace pTK
     Color operator+(const Color& lhs, const Color& rhs)
     {
         Color new_Color;
-        new_Color.r = static_cast<byte>(std::min(lhs.r + rhs.r, 255));
-        new_Color.g = static_cast<byte>(std::min(lhs.g + rhs.g, 255));
-        new_Color.b = static_cast<byte>(std::min(lhs.b + rhs.b, 255));
-        new_Color.a = static_cast<byte>(std::min(lhs.a + rhs.a, 255));
+        new_Color.r = static_cast<Color::value_type>(std::min(lhs.r + rhs.r, 255));
+        new_Color.g = static_cast<Color::value_type>(std::min(lhs.g + rhs.g, 255));
+        new_Color.b = static_cast<Color::value_type>(std::min(lhs.b + rhs.b, 255));
+        new_Color.a = static_cast<Color::value_type>(std::min(lhs.a + rhs.a, 255));
         
         return new_Color;
     }
@@ -99,10 +99,10 @@ namespace pTK
     Color operator-(const Color& lhs, const Color& rhs)
     {
         Color new_Color;
-        new_Color.r = static_cast<byte>(std::max(lhs.r - rhs.r, 0));
-        new_Color.g = static_cast<byte>(std::max(lhs.g - rhs.g, 0));
-        new_Color.b = static_cast<byte>(std::max(lhs.b - rhs.b, 0));
-        new_Color.a = static_cast<byte>(std::max(lhs.a - rhs.a, 0));
+        new_Color.r = static_cast<Color::value_type>(std::max(lhs.r - rhs.r, 0));
+        new_Color.g = static_cast<Color::value_type>(std::max(lhs.g - rhs.g, 0));
+        new_Color.b = static_cast<Color::value_type>(std::max(lhs.b - rhs.b, 0));
+        new_Color.a = static_cast<Color::value_type>(std::max(lhs.a - rhs.a, 0));
         
         return new_Color;
     }

@@ -181,7 +181,7 @@ namespace pTK
         swapBuffers();
     }
     
-    void Window::onChildDraw(uint)
+    void Window::onChildDraw(size_type)
     {
         sendEvent<Event>(Event::Category::Window, Event::Type::WindowDraw);
     }

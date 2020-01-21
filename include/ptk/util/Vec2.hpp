@@ -22,6 +22,9 @@ namespace pTK
     class Vec2
     {
     public:
+        using value_type = T;
+
+    public:
         /** Constructs Vec2 with default values.
          
          @return    default initialized Vec2
@@ -35,8 +38,8 @@ namespace pTK
          
          @return    default initialized Vec2
          */
-        Vec2(T t_x, T t_y)
-            : x{t_x}, y{t_y}
+        Vec2(T other_x, T other_y)
+            : x{other_x}, y{other_y}
         {
         }
         

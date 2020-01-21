@@ -151,7 +151,7 @@ namespace pTK
         void handleWindowEvent(Event* event);
 
         void forceDrawAll();
-        void onChildDraw(uint) override;
+        void onChildDraw(size_type) override;
         
         void swapBuffers();
         void setLimits(const Size& minSize, const Size& maxSize);

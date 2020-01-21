@@ -45,7 +45,7 @@ namespace pTK
          @param posy    associated y position
          @return        default initialized MotionEvent
          */
-        MotionEvent(int posx, int posy)
+        MotionEvent(Point::value_type posx, Point::value_type posy)
             : Event(Event::Category::Mouse, Event::Type::MouseMoved), m_pos{posx, posy}
         {
         }
@@ -65,13 +65,13 @@ namespace pTK
          
          @return    x position
          */
-        int getX() const { return m_pos.x; }
+        Point::value_type getX() const { return m_pos.x; }
         
         /** Function for retrieving the associated y position.
          
          @return    y position
          */
-        int getY() const { return m_pos.y; }
+        Point::value_type getY() const { return m_pos.y; }
         
         /** Function for retrieving the associated position.
          
@@ -96,7 +96,7 @@ namespace pTK
          @param y_offset    associated y offset
          @return            default initialized ScrollEvent
          */
-        ScrollEvent(float x_offset, float y_offset)
+        ScrollEvent(Vec2f::value_type x_offset, Vec2f::value_type y_offset)
             : Event(Event::Category::Mouse, Event::Type::MouseScrolled), m_offset{x_offset, y_offset}
         {
         }
@@ -116,13 +116,13 @@ namespace pTK
          
          @return    x offset
          */
-        float getX() const { return m_offset.x; }
+        Vec2f::value_type getX() const { return m_offset.x; }
         
         /** Function for retrieving the associated y offset.
          
          @return    y offset
          */
-        float getY() const { return m_offset.y; }
+        Vec2f::value_type getY() const { return m_offset.y; }
         
         /** Function for retrieving the associated offset.
          
@@ -152,7 +152,7 @@ namespace pTK
          @param posy    associated y position
          @return        default initialized ButtonEvent
          */
-        ButtonEvent(Event::Type type, Mouse::Button button, int posx, int posy)
+        ButtonEvent(Event::Type type, Mouse::Button button, Point::value_type posx, Point::value_type posy)
             : MotionEvent(posx, posy), m_button{button}
         {
             m_type = type;

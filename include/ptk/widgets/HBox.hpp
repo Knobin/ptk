@@ -52,14 +52,14 @@ namespace pTK
     private:
         void onAdd(const Ref<Widget>&) override;
         void onRemove(const Ref<Widget>&) override;
-        void onChildUpdate(uint) override;
+        void onChildUpdate(size_type) override;
         
     private:
         void expandOnAdd(const Size& newSize);
         void refitContent();
         
-        std::vector<int> calcSpaces(uint width);
-        int alignChildV(uint index, const Size& parentSize, const Size& childSize);
+        std::vector<Size::value_type> calcSpaces(Size::value_type width);
+        Point::value_type alignChildV(size_type index, const Size& parentSize, const Size& childSize);
         
         Size calculateMinSize() const;
         Size calculateMaxSize() const;

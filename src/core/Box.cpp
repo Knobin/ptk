@@ -79,7 +79,7 @@ namespace pTK
             Box::const_iterator it = findRaw(widget);
             if (it != cend())
             {
-                onChildUpdate(it - cbegin());
+                onChildUpdate(static_cast<size_type>(it - cbegin()));
                 draw();
                 m_busy = false;
                 return true;
@@ -97,7 +97,7 @@ namespace pTK
             Box::const_iterator it = findRaw(widget);
             if (it != cend())
             {
-                onChildDraw(it - cbegin());
+                onChildDraw(static_cast<size_type>(it - cbegin()));
                 draw();
                 m_busy = false;
                 return true;

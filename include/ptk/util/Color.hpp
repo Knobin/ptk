@@ -29,6 +29,10 @@ namespace pTK
     class Color
     {
     public:
+        using value_type = byte;
+        using size_type = uint32;
+
+    public:
         /** Constructs Color with default values.
          
          @return  default initialized Color
@@ -40,7 +44,7 @@ namespace pTK
          @param color   color with alpha in int form
          @return        Color initialized
          */
-        explicit Color(uint color);
+        explicit Color(size_type color);
         
         /** Constructs Color with default with red, green blue and alpha.
             Default value for alpha is 255, if none is specified.
@@ -58,7 +62,7 @@ namespace pTK
          
          @return    Copy of Color in int form
          */
-        uint to_int() const;
+        size_type to_int() const;
         
         /** Set function for setting r, g and b.
          
@@ -82,7 +86,7 @@ namespace pTK
          
          @param color   color with alpha in int form
          */
-        void set_rgb(uint color);
+        void set_rgb(size_type color);
         
         /** Set function for setting r, g, b and a.
          
@@ -97,7 +101,7 @@ namespace pTK
          
          @param color   color with alpha in int form
          */
-        void set_rgba(uint color);
+        void set_rgba(size_type color);
         
         // Variables.
         byte r;

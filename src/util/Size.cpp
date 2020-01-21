@@ -10,28 +10,28 @@
 
 namespace pTK
 {
-    const int Size::Limits::Min = 0;
-    const int Size::Limits::Max = std::numeric_limits<int>::max();
+    const Size::value_type Size::Limits::Min = 0;
+    const Size::value_type Size::Limits::Max = std::numeric_limits<Size::value_type>::max();
     
     const Size Size::Min(Size::Limits::Min, Size::Limits::Min);
     const Size Size::Max(Size::Limits::Max, Size::Limits::Max);
     
     Size::Size()
-        : width{0}, height{0}
+        : width{Limits::Min}, height{Limits::Min}
     {
         
     }
     
-    Size::Size(int t_width, int t_height)
-        : width{t_width}, height{t_height}
+    Size::Size(value_type other_width, value_type other_height)
+        : width{other_width}, height{other_height}
     {
         
     }
     
-    void Size::setSize(int t_width, int t_height)
+    void Size::setSize(value_type other_width, value_type other_height)
     {
-        width = t_width;
-        height = t_height;
+        width = other_width;
+        height = other_height;
     }
     
     // Comparison operators.

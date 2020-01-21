@@ -8,6 +8,10 @@
 #ifndef PTK_UTIL_POINT_HPP
 #define PTK_UTIL_POINT_HPP
 
+// Local Headers
+#include "ptk/core/Types.hpp"
+#include "ptk/util/Vec2.hpp"
+
 namespace pTK
 {
     /** Point class implementation.
@@ -17,29 +21,43 @@ namespace pTK
     class Point
     {
     public:
+        using value_type = int32;
+
+    public:
         /** Constructs Point with default values.
          
          @return    default initialized Point
          */
         Point();
-        
-        /** Constructs Point with default values with t_x and t_y.
-         
+
+        /** Constructs Point with default values with v.
+
+         @param v   Vec2 to copy from
          @return    default initialized Point
          */
-        Point(int t_x, int t_y);
+        template<typename T>
+        Point(const Vec2<T>& v);
         
-        ~Point() = default;
+        /** Constructs Point with default values with other_x and other_y.
+         
+         @param other_x     x position
+         @param other_y     y position
+         @return            default initialized Point
+         */
+        Point(value_type other_x, value_type other_y);
         
         /** Function for setting both x and y position.
          
-         @param t_x     new x position
-         @param t_y     new y position
+         @param other_x   new x position
+         @param other_y   new y position
          */
-        void set(int t_x, int t_y);
+        void set(value_type other_x, value_type other_y);
+
+        template <typename T>
+        Point& operator=(const Vec2<T>& v);
         
-        int x;
-        int y;
+        value_type x;
+        value_type y;
     };
     
     // Comparison operators.
@@ -55,8 +73,23 @@ namespace pTK
     Point& operator-=(Point& lhs, const Point& rhs);
     Point& operator*=(Point& lhs, const Point& rhs);
     Point& operator/=(Point& lhs, const Point& rhs);
+
+    template<typename T>
+    Point::Point(const Vec2<T>& v)
+        : x{static_cast<Point::value_type>(v.x)},
+            y{static_cast<Point::value_type>(v.y)}
+    {
+
+    }
+
+    template <typename T>
+    Point& Point::operator=(const Vec2<T>& v)
+    {
+        x = static_cast<Point::value_type>(v.x);
+        y = static_cast<Point::value_type>(v.y);
+
+        return *this;
+    }
 }
-
-
 
 #endif // PTK_UTIL_POSITION_HPP

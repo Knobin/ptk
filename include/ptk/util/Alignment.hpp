@@ -11,9 +11,12 @@
 // Local Headers
 #include "ptk/core/Types.hpp"
 
+// C++ Headers
+#include <type_traits>
+
 namespace pTK
 {
-    enum Align
+    enum Align : int32
     {
         Top     = 0x0001,
         Bottom  = 0x0002,
@@ -25,7 +28,7 @@ namespace pTK
         Center  = 0x0080
     };
     
-    bool isAlignSet(int32 number, Align align);
+    bool isAlignSet(std::underlying_type<Align>::type number, Align align);
 
     /** Directions struct implementation.
      
@@ -33,10 +36,12 @@ namespace pTK
      */
     struct Directions
     {
-        int32 top;
-        int32 bottom;
-        int32 left;
-        int32 right;
+        using value_type = int32;
+
+        value_type top;
+        value_type bottom;
+        value_type left;
+        value_type right;
     };
     
     /** Margin class implementation.
@@ -71,7 +76,7 @@ namespace pTK
          @param mRight  right margin
          @return        default initialized Margin
          */
-        Margin(int32 mTop, int32 mBottom, int32 mLeft, int32 mRight);
+        Margin(value_type mTop, value_type mBottom, value_type mLeft, value_type mRight);
         
         ~Margin() = default;
     };

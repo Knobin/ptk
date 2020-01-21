@@ -187,8 +187,8 @@ namespace pTK
     private:
         virtual void onAdd(const Ref<Widget>&) {}
         virtual void onRemove(const Ref<Widget>&) {}
-        virtual void onChildUpdate(uint) {}
-        virtual void onChildDraw(uint) {}
+        virtual void onChildUpdate(size_type) {}
+        virtual void onChildDraw(size_type) {}
         
     private:
         // Variables

@@ -93,39 +93,39 @@ namespace pTK
          
          @param topMargin  value to apply for top margin.
          */
-        void setMarginTop(int32 topMargin);
+        void setMarginTop(Margin::value_type topMargin);
 
         /** Function for setting the bottom margin of the Widget.
          
          @param bottomMargin  value to apply for bottom margin.
          */
-        void setMarginBottom(int32 bottomMargin);
+        void setMarginBottom(Margin::value_type bottomMargin);
 
         /** Function for setting the left margin of the Widget.
          
          @param leftMargin  value to apply for left margin.
          */
-        void setMarginLeft(int32 leftMargin);
+        void setMarginLeft(Margin::value_type leftMargin);
 
         /** Function for setting the right margin of the Widget.
          
          @param rightMargin  value to apply for right margin.
          */
-        void setMarginRight(int32 rightMargin);
+        void setMarginRight(Margin::value_type rightMargin);
 
         /** Function for setting the top and bottom margin of the Widget.
          
          @param topMargin  value to apply for top margin.
          @param bottomMargin  value to apply for bottom margin.
          */
-        void setMarginTopBottom(int32 topMargin, int32 bottomMargin);
+        void setMarginTopBottom(Margin::value_type topMargin, Margin::value_type bottomMargin);
 
         /** Function for setting the left and right margin of the Widget.
          
          @param leftMargin  value to apply for left margin.
          @param rightMargin  value to apply for right margin.
          */
-        void setMarginLeftRight(int32 leftMargin, int32 rightMargin);
+        void setMarginLeftRight(Margin::value_type leftMargin, Margin::value_type rightMargin);
         
         /** Function for retrieving the margin of the Widget.
          
@@ -157,9 +157,9 @@ namespace pTK
          */
         int32 getMarginRight() const;
 
-        void setAlign(int32 alignment);
+        void setAlign(std::underlying_type<Align>::type alignment);
 
-        int32 getAlign() const;
+        std::underlying_type<Align>::type getAlign() const;
         
     protected:
         /** Function for updating the child.
@@ -187,7 +187,7 @@ namespace pTK
         Point m_pos;
         std::string m_name;
         Margin m_margin;
-        int32 m_align;
+        std::underlying_type<Align>::type m_align;
     };
     
     // Comparison operators.

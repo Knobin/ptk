@@ -130,7 +130,7 @@ namespace pTK
     
     bool Checkbox::onEnterEvent()
     {
-        int temp = m_state;
+        byte temp = m_state;
         if (m_state == 3)
             m_state = 2;
         else
@@ -145,7 +145,7 @@ namespace pTK
     
     bool Checkbox::onLeaveEvent()
     {
-        int temp = m_state;
+        byte temp = m_state;
         if ((m_state == 2) && (status()))
             m_state = 3;
         else if ((m_state == 2) && (!status()))
@@ -162,7 +162,7 @@ namespace pTK
     
     bool Checkbox::onClickEvent(Mouse::Button, const Point&)
     {
-        int temp = m_state;
+        byte temp = m_state;
         m_click = true;
         if (status())
             m_state = 1;
@@ -179,7 +179,7 @@ namespace pTK
     
     bool Checkbox::onReleaseEvent(Mouse::Button, const Point&)
     {
-        int temp = m_state;
+        byte temp = m_state;
         
         if (!status())
             if (m_hover)

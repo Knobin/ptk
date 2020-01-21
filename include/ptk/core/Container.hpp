@@ -123,7 +123,7 @@ namespace pTK
          @param index   Index
          @return        element in Container
          */
-        type at(unsigned int index)
+        type at(size_type index)
         {
             if (index >= size())
                 throw std::out_of_range("Index is out of range!");
@@ -136,7 +136,7 @@ namespace pTK
          @param index   Index
          @return        element in Container
          */
-        type at(unsigned int index) const
+        type at(size_type index) const
         {
             if (index >= size())
                 throw std::out_of_range("Index is out of range!");
@@ -149,11 +149,8 @@ namespace pTK
          @param index   Index
          @return        element in Container
          */
-        type operator[](unsigned int index) const
+        type operator[](size_type index) const
         {
-            if (index >= size())
-                throw std::out_of_range("Index is out of range!");
-            
             return m_holder[index];
         }
         

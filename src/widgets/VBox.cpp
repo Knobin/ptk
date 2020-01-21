@@ -52,7 +52,7 @@ namespace pTK
         refitContent();
     }
     
-    void VBox::onChildUpdate(uint)
+    void VBox::onChildUpdate(size_type)
     {
         refitContent();
     }
@@ -68,7 +68,7 @@ namespace pTK
         layoutSize.width    = (vbSize.width > layoutSize.width) ? vbSize.width : layoutSize.width;
         
         setSize(layoutSize); // this will generate a Resize event.
-        for (uint i = 0; i < children; ++i)
+        for (size_type i{0}; i < children; ++i)
         {
             auto child = at(i);
             Size cSize = child->getMinSize();
@@ -92,11 +92,11 @@ namespace pTK
         setMinSize(layoutSize);
         Size vbSize = getSize();
         Point vbPos = getPosition();
-        size_t children = size();
+        size_type children = size();
         std::vector<Size> sizes(children);
         
         // Initialize sizes.
-        for (uint i = 0; i < children; ++i)
+        for (uint i{0}; i < children; ++i)
         {
             sizes.at(i) = at(i)->getMinSize();
             int maxWidth = at(i)->getMaxSize().width;
@@ -112,14 +112,14 @@ namespace pTK
         // TODO: it takes many iteration before the height is distributed, especially if only 1 can grow.
         while (totalEachLeft > 0)
         {
-            int eachAdd = static_cast<int>(std::floor(static_cast<float>(totalEachLeft) / static_cast<float>(children)));
+            Size::value_type eachAdd = static_cast<int>(std::floor(static_cast<float>(totalEachLeft) / static_cast<float>(children)));
             eachAdd = (totalEachLeft < (int)children) ? 1 : eachAdd;
             bool done = true;
-            for (uint i = 0; i < children; ++i)
+            for (size_type i{0}; i < children; ++i)
             {
-                int min = sizes.at(i).height;
-                int max = at(i)->getMaxSize().height;
-                int delta = max - min;
+                Size::value_type min = sizes.at(i).height;
+                Size::value_type max = at(i)->getMaxSize().height;
+                Size::value_type delta = max - min;
                 
                 if (delta > 0)
                 {
@@ -149,10 +149,10 @@ namespace pTK
         }
         
         // TODO: Fix if we break in while loop (size left unused).
-        std::vector<int> spaces = calcSpaces(totalEachLeft);
+        std::vector<Size::value_type> spaces = calcSpaces(totalEachLeft);
         
         // Set sizes to childs and spaces.
-        for (uint i = 0; i != children; i++)
+        for (size_type i{0}; i != children; i++)
         {
             auto child = at(i);
             Size cSize = sizes.at(i);
@@ -189,15 +189,17 @@ namespace pTK
     Size VBox::calculateMinSize() const
     {
 		Size contentMinSize;
-        for (uint i = 0; i < size(); ++i)
+        for (size_type i{0}; i < size(); ++i)
         {
             Margin cMargin = at(i)->getMargin();
-            int vMargin = cMargin.top + cMargin.bottom;
-            int hMargin = cMargin.left + cMargin.right;
+            Margin::value_type vMargin = cMargin.top + cMargin.bottom;
+            Margin::value_type hMargin = cMargin.left + cMargin.right;
             
             Size cMinSize = at(i)->getMinSize();
-            contentMinSize.height += (vMargin + cMinSize.height);
-            contentMinSize.width = ((cMinSize.width + hMargin) > contentMinSize.width) ? cMinSize.width + hMargin : contentMinSize.width;
+            contentMinSize.height += static_cast<Size::value_type>(vMargin + cMinSize.height);
+            contentMinSize.width =
+                ((cMinSize.width + static_cast<Size::value_type>(hMargin)) > contentMinSize.width) 
+                ? cMinSize.width + static_cast<Size::value_type>(hMargin) : contentMinSize.width;
         }
         
         return contentMinSize;
@@ -221,16 +223,16 @@ namespace pTK
         return contentMaxSize;
     }
     
-    std::vector<int> VBox::calcSpaces(uint height)
+    std::vector<Size::value_type> VBox::calcSpaces(Size::value_type height)
     {
-        const uint children = size();
-        const size_t spaceCount = size() + 1;
-        std::vector<int> spaces(spaceCount);
+        const size_type children = size();
+        const size_type spaceCount = size() + 1;
+        std::vector<Size::value_type> spaces(spaceCount);
         if (height != 0)
         {
-            for (uint i = 0; i != children; i++)
+            for (size_type i{0}; i != children; i++)
             {
-                int32 cAlign = at(i)->getAlign();
+                std::underlying_type<Align>::type cAlign = at(i)->getAlign();
                 
                 if (isAlignSet(cAlign, Align::Top))
                 {
@@ -250,12 +252,12 @@ namespace pTK
             }
             
             uint spacesToUse = 0;
-            for (uint i = 0; i != spaceCount; i++)
+            for (size_type i{0}; i != spaceCount; i++)
                 if (spaces.at(i) == 1)
                     ++spacesToUse;
             
             uint spaceHeight = (spacesToUse != 0) ? height / spacesToUse : 0;
-            for (uint i = 0; i != spaceCount; i++)
+            for (size_type i{0}; i != spaceCount; i++)
                 if (spaces.at(i) == 1)
                     spaces.at(i) = spaceHeight;
             
@@ -264,19 +266,19 @@ namespace pTK
         return spaces;
     }
     
-    int VBox::alignChildH(uint index, const Size& parentSize, const Size& childSize)
+    int VBox::alignChildH(size_type index, const Size& parentSize, const Size& childSize)
     {
-        int posx = 0;
+        Point::value_type posx{0};
         Margin cMargin = at(index)->getMargin();
 
         // Align
-        int32 cAlign = at(index)->getAlign();
+        std::underlying_type<Align>::type cAlign = at(index)->getAlign();
         if (isAlignSet(cAlign, Align::Right))
-            posx = parentSize.width - childSize.width;
+            posx = static_cast<Point::value_type>(parentSize.width - childSize.width);
         else if (isAlignSet(cAlign, Align::Center) || isAlignSet(cAlign, Align::HCenter))
-            posx = (parentSize.width/2) - (childSize.width/2);
+            posx = static_cast<Point::value_type>((parentSize.width/2) - (childSize.width/2));
         else if (cMargin.left > 0)
-            posx = cMargin.left;
+            posx = static_cast<Point::value_type>(cMargin.left);
 
         // Apply negative margin.
         posx += (cMargin.left < 0) ? cMargin.left : 0;

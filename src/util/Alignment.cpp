@@ -10,7 +10,7 @@
 
 namespace pTK
 {
-    bool isAlignSet(int32 number, Align align)
+    bool isAlignSet(std::underlying_type<Align>::type number, Align align)
     {
         return ((number & align) == align);
     }
@@ -25,7 +25,7 @@ namespace pTK
     {
     }
     
-    Margin::Margin(int32 mTop, int32 mBottom, int32 mLeft, int32 mRight)
+    Margin::Margin(value_type mTop, value_type mBottom, value_type mLeft, value_type mRight)
         : Directions{mTop, mBottom, mLeft, mRight}
     {
     }

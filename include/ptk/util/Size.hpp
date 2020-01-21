@@ -8,6 +8,9 @@
 #ifndef PTK_UTIL_SIZE_HPP
 #define PTK_UTIL_SIZE_HPP
 
+// Local Headers
+#include "ptk/core/Types.hpp"
+
 // C++ Headers
 #include <limits>
 
@@ -20,10 +23,12 @@ namespace pTK
     class Size
     {
     public:
+        using value_type = int32;
+
         struct Limits
         {
-            static const int Min;
-            static const int Max;
+            static const value_type Min;
+            static const value_type Max;
         };
         
         static const Size Max;
@@ -38,11 +43,11 @@ namespace pTK
 
         /** Constructs Size with default values width and height.
          * 
-         @param t_width     width
-         @param t_height    height
-         @return            default initialized Size
+         @param width   width
+         @param height  height
+         @return        default initialized Size
          */
-        Size(int t_width, int t_height);
+        Size(value_type other_width, value_type other_height);
         ~Size() = default;
         
         /** Function for setting size.
@@ -50,10 +55,10 @@ namespace pTK
          @param width   new width
          @param height  new height
          */
-        void setSize(int t_width, int t_height);
+        void setSize(value_type other_width, value_type other_height);
         
-        int width;
-        int height;
+        value_type width;
+        value_type height;
     };
     
     // Comparison operators.

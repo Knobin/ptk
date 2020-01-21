@@ -75,7 +75,7 @@ namespace pTK
     
     void Font::setSize(uint fontSize)
     {
-        m_font.setSize(fontSize);
+        m_font.setSize(static_cast<SkScalar>(fontSize));
     }
     
     uint Font::getSize() const

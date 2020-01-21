@@ -66,38 +66,38 @@ namespace pTK
         update();
     }
     
-    void Widget::setMarginTop(int32 topMargin)
+    void Widget::setMarginTop(Margin::value_type topMargin)
     {
         m_margin.top = topMargin;
         update();
     }
     
-    void Widget::setMarginBottom(int32 bottomMargin)
+    void Widget::setMarginBottom(Margin::value_type bottomMargin)
     {
         m_margin.bottom = bottomMargin;
         update();
     }
     
-    void Widget::setMarginLeft(int32 leftMargin)
+    void Widget::setMarginLeft(Margin::value_type leftMargin)
     {
         m_margin.left = leftMargin;
         update();
     }
     
-    void Widget::setMarginRight(int32 rightMargin)
+    void Widget::setMarginRight(Margin::value_type rightMargin)
     {
         m_margin.right = rightMargin;
         update();
     }
     
-    void Widget::setMarginTopBottom(int32 topMargin, int32 bottomMargin)
+    void Widget::setMarginTopBottom(Margin::value_type topMargin, Margin::value_type bottomMargin)
     {
         m_margin.top = topMargin;
         m_margin.bottom = bottomMargin;
         update();
     }
     
-    void Widget::setMarginLeftRight(int32 leftMargin, int32 rightMargin)
+    void Widget::setMarginLeftRight(Margin::value_type leftMargin, Margin::value_type rightMargin)
     {
         m_margin.left = leftMargin;
         m_margin.right = rightMargin;
@@ -129,13 +129,13 @@ namespace pTK
         return m_margin.right;
     }
 
-    void Widget::setAlign(int32 alignment)
+    void Widget::setAlign(std::underlying_type<Align>::type alignment)
     {
         m_align = alignment;
         update();
     }
 
-    int32 Widget::getAlign() const
+    std::underlying_type<Align>::type Widget::getAlign() const
     {
         return m_align;
     }
