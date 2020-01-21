@@ -188,12 +188,12 @@ namespace pTK
     
     Size VBox::calculateMinSize() const
     {
-        Size contentMinSize;
+		Size contentMinSize;
         for (uint i = 0; i < size(); ++i)
         {
             Margin cMargin = at(i)->getMargin();
-            int hMargin = cMargin.top + cMargin.bottom;
-            int vMargin = cMargin.left + cMargin.right;
+            int vMargin = cMargin.top + cMargin.bottom;
+            int hMargin = cMargin.left + cMargin.right;
             
             Size cMinSize = at(i)->getMinSize();
             contentMinSize.height += (vMargin + cMinSize.height);
