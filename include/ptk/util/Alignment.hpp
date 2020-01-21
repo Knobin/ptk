@@ -32,8 +32,8 @@ namespace pTK
 
     /** Directions struct implementation.
      
-     Pretty self-explanatory.
-     */
+        Pretty self-explanatory.
+    */
     struct Directions
     {
         using value_type = int32;
@@ -46,36 +46,35 @@ namespace pTK
     
     /** Margin class implementation.
      
-     This class is for handling margin of all directions and
-     keep track if directions have margin set to Auto as well.
-     The Auto implementation for now is pretty bad and will, at
-     some point, change. For now it works.
-     
+        This class is for handling margin of all directions and
+        keep track if directions have margin set to Auto as well.
+        The Auto implementation for now is pretty bad and will, at
+        some point, change. For now it works.
     */
     class Margin : public Directions
     {
     public:
         /** Constructs Margin with default values.
          
-         @return    default initialized Margin
-         */
+            @return    default initialized Margin
+        */
         Margin();
 
         /** Constructs Margin with default values with directions.
          
-         @param directions  margin for all directions
-         @return            default initialized Margin
-         */
+            @param directions  margin for all directions
+            @return            default initialized Margin
+        */
         Margin(Directions directions);
 
         /** Constructs Margin with default values with directions.
          
-         @param mTop    top margin
-         @param mBottom bottom margin
-         @param mLeft   left margin
-         @param mRight  right margin
-         @return        default initialized Margin
-         */
+            @param mTop    top margin
+            @param mBottom bottom margin
+            @param mLeft   left margin
+            @param mRight  right margin
+            @return        default initialized Margin
+        */
         Margin(value_type mTop, value_type mBottom, value_type mLeft, value_type mRight);
         
         ~Margin() = default;

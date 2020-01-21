@@ -56,48 +56,48 @@ namespace pTK
 {
     /** Canvas class implementation.
      
-     This class is to handle the SkCanvas for easy access with
-     functions for common operations.
-     */
+        This class is to handle the SkCanvas for easy access with
+        functions for common operations.
+    */
     class Canvas : public Singleton
     {
     public:
         /** Constructs Canvas with default values.
          
-         @return    default initialized Canvas
-         */
+            @return    default initialized Canvas
+        */
         Canvas(const Size& size);
         ~Canvas();
         
         /** Function for resizing the Canvas.
          
-         @param width   New width of canvas
-         @param width   New height of canvas
-         */
+            @param width   New width of canvas
+            @param width   New height of canvas
+        */
         void resize(const Size& size);
         
         /** Function for clearing the Canvas.
          
-         @param color   Clear color
-         */
+            @param color   Clear color
+        */
         void clear(const Color& color);
         
         /** Function for retrieving the SkCanvas of the Canvas.
          
-         @return    SkCanvas property
-         */
+            @return    SkCanvas property
+        */
         SkCanvas* skCanvas() const;
         
         /** Function for retrieving the SkSurface of the Canvas.
          
-         @return    SkSurface property
-         */
+            @return    SkSurface property
+        */
         SkSurface* skSurface() const;
         
         /** Function for retrieving the size of the Canvas.
          
-         @return    size of canvas
-         */
+            @return    size of canvas
+        */
         const Size& getSize() const;
         
     private:

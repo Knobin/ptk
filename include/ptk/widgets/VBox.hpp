@@ -18,35 +18,35 @@ namespace pTK
 {
     /** VBox class implementation.
      
-     Derived from Box, this class for holding Cells in
-     order of displaying them in a vertical style.
-     */
+        Derived from Box, this class for holding Cells in
+        order of displaying them in a vertical style.
+    */
     class VBox : public Box
     {
     public:
         /** Constructs VBox with default values.
          
-         @return    default initialized VBox
-         */
+            @return    default initialized VBox
+        */
         VBox();
         virtual ~VBox() = default;
         
         /** Function for setting the position of the VBox and its
-         children.
+            children.
          
-         Derived from Widget.
+            Derived from Widget.
          
-         @param pos     Position to set
-         */
+            @param pos     Position to set
+        */
         void setPosHint(const Point& pos) override;
         
         /** Function for setting the size of the VBox and its
-         children.
+            children.
          
-         Derived from Widget.
+            Derived from Widget.
          
-         @param newSize     Size to set
-         */
+            @param newSize     Size to set
+        */
         void setSize(const Size& newSize) override;
         
     private:

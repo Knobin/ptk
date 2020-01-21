@@ -15,96 +15,95 @@ namespace pTK
 {
     /** Checkbox class implementation.
      
-     This class implements a basic Checkbox.
-     It includes all the necessary function for
-     it to work.
+        This class implements a basic Checkbox.
+        It includes all the necessary function for
+        it to work.
 
-     Checkbox specific functions implemented are:
-        bool status();
-        void set(bool status):
-        bool toggle();
+        Checkbox specific functions implemented are:
+            - bool status();
+            - void set(bool status):
+            - bool toggle();
 
-     An extra callback is also present for overriding when
-     the checkbox is toggled.
-
-     */
+        An extra callback is also present for overriding when
+        the checkbox is toggled.
+    */
     class Checkbox : public Rectangle
     {
     public:
         /** Checkbox Button with default values.
          
-         @return    default initialized Checkbox
-         */
+            @return    default initialized Checkbox
+        */
         Checkbox();
         virtual ~Checkbox() = default;
         
         /** Draw function.
-         Function is called when it is time to draw.
+            Function is called when it is time to draw.
          
-         Derived from Drawable.
+            Derived from Drawable.
 
-         @param canvas  Canvas to draw to
-         */
+            @param canvas  Canvas to draw to
+        */
         void onDraw(SkCanvas* canvas) override;
         
         /** Function for retrieving the status.
          
-         @return    status
-         */
+            @return    status
+        */
         bool status() const;
 
         /** Function for setting the status.
          
-         @param status  he status toggled to.
-         */
+            @param status  he status toggled to.
+        */
         void set(bool status);
 
         /** Function for toggling the status.
          
-         @return    the status toggled to.
-         */
+            @return    the status toggled to.
+        */
         bool toggle();
         
         /** Function for handling when mouse is entering.
          
-         Derived from EventFunctions.
-         */
+            Derived from EventFunctions.
+        */
         bool onEnterEvent() override;
         
         /** Function for handling when mouse is leaving.
          
-         Derived from EventFunctions.
-         */
+            Derived from EventFunctions.
+        */
         bool onLeaveEvent() override;
         
         /** Function for handling when mouse is clicking.
          
-         Derived from EventFunctions.
+            Derived from EventFunctions.
          
-         @param button      which button on mouse triggered the event.
-         @param position    x and y position
-         */
+            @param button      which button on mouse triggered the event.
+            @param position    x and y position
+        */
         bool onClickEvent(Mouse::Button, const Point&) override;
         
         /** Function for handling when mouse is released.
          
-         Derived from EventFunctions.
+            Derived from EventFunctions.
          
-         @param button      which button on mouse triggered the event.
-         @param position    x and y position
-         */
+            @param button      which button on mouse triggered the event.
+            @param position    x and y position
+        */
         bool onReleaseEvent(Mouse::Button, const Point&) override;
         
         /** Function for handling when the checkbox is toggled.
          
-         @param status    status on toggle.
-         */
+            @param status    status on toggle.
+        */
         virtual void onToggleEvent(bool status);
         
         /** Function for handling when the checkbox is toggled.
          
-         @param callback    function to call on toggle.
-         */
+            @param callback    function to call on toggle.
+        */
         void onToggle(const std::function<bool(bool status)>& callback);
         
     private:

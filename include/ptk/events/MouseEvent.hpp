@@ -19,9 +19,9 @@ namespace pTK
     {
         /** Mouse::Button enum class implementation.
         
-         This enum class is to specify which button on the mouse
-         if pressed or released.
-         */
+            This enum class is to specify which button on the mouse
+            if pressed or released.
+        */
         enum class Button
         {
             NONE = 0,
@@ -33,18 +33,18 @@ namespace pTK
     
     /** MotionEvent class implementation.
      
-     Derived from Event, this class if for creating
-     events from the motion of the mouse.
-     */
+        Derived from Event, this class if for creating
+        events from the motion of the mouse.
+    */
     class MotionEvent : public Event
     {
     public:
         /** Constructs MotionEvent with default values with t_posx and t_posy.
          
-         @param posx    associated x position
-         @param posy    associated y position
-         @return        default initialized MotionEvent
-         */
+            @param posx    associated x position
+            @param posy    associated y position
+            @return        default initialized MotionEvent
+        */
         MotionEvent(Point::value_type posx, Point::value_type posy)
             : Event(Event::Category::Mouse, Event::Type::MouseMoved), m_pos{posx, posy}
         {
@@ -52,9 +52,9 @@ namespace pTK
         
         /** Constructs MotionEvent with default values with pos.
          
-         @param pos     associated x and y position
-         @return        default initialized MotionEvent
-         */
+            @param pos     associated x and y position
+            @return        default initialized MotionEvent
+        */
         MotionEvent(const Point& pos)
             : Event(Event::Category::Mouse, Event::Type::MouseMoved), m_pos{pos}
         {
@@ -63,20 +63,20 @@ namespace pTK
 
         /** Function for retrieving the associated x position.
          
-         @return    x position
-         */
+            @return    x position
+        */
         Point::value_type getX() const { return m_pos.x; }
         
         /** Function for retrieving the associated y position.
          
-         @return    y position
-         */
+            @return    y position
+        */
         Point::value_type getY() const { return m_pos.y; }
         
         /** Function for retrieving the associated position.
          
-         @return    y position
-         */
+            @return    y position
+        */
         const Point& getPos() const { return m_pos; }
     private:
         Point m_pos;
@@ -84,18 +84,18 @@ namespace pTK
 
     /** ScrollEvent class implementation.
      
-     Derived from Event, this class if for creating
-     events from the scroll motion of the mouse.
-     */
+        Derived from Event, this class if for creating
+        events from the scroll motion of the mouse.
+    */
     class ScrollEvent : public Event
     {
     public:
         /** Constructs ScrollEvent with default values with t_xoffset and t_yoffset.
          
-         @param x_offset    associated x offset
-         @param y_offset    associated y offset
-         @return            default initialized ScrollEvent
-         */
+            @param x_offset    associated x offset
+            @param y_offset    associated y offset
+            @return            default initialized ScrollEvent
+        */
         ScrollEvent(Vec2f::value_type x_offset, Vec2f::value_type y_offset)
             : Event(Event::Category::Mouse, Event::Type::MouseScrolled), m_offset{x_offset, y_offset}
         {
@@ -103,9 +103,9 @@ namespace pTK
         
         /** Constructs ScrollEvent with default values with offset.
          
-         @param offset  associated x and y offset
-         @return        default initialized ScrollEvent
-         */
+            @param offset  associated x and y offset
+            @return        default initialized ScrollEvent
+        */
         ScrollEvent(const Vec2f& offset)
             : Event(Event::Category::Mouse, Event::Type::MouseScrolled), m_offset{offset}
         {
@@ -114,20 +114,20 @@ namespace pTK
 
         /** Function for retrieving the associated x offset.
          
-         @return    x offset
-         */
+            @return    x offset
+        */
         Vec2f::value_type getX() const { return m_offset.x; }
         
         /** Function for retrieving the associated y offset.
          
-         @return    y offset
-         */
+            @return    y offset
+        */
         Vec2f::value_type getY() const { return m_offset.y; }
         
         /** Function for retrieving the associated offset.
          
-         @return    offset
-         */
+            @return    offset
+        */
         const Vec2f& getOffset() const { return m_offset; }
         
     private:
@@ -136,22 +136,22 @@ namespace pTK
 
     /** ButtonEvent class implementation.
      
-     Derived from Event, this class if for creating
-     events from the mouse. Such as button presses or
-     releases.
-     */
+        Derived from Event, this class if for creating
+        events from the mouse. Such as button presses or
+        releases.
+    */
     class ButtonEvent : public MotionEvent
     {
     public:
         /** Constructs ButtonEvent with default values with type,
          t_button, t_posx and t_posy.
          
-         @param type    press or release
-         @param button  which button
-         @param posx    associated x position
-         @param posy    associated y position
-         @return        default initialized ButtonEvent
-         */
+            @param type    press or release
+            @param button  which button
+            @param posx    associated x position
+            @param posy    associated y position
+            @return        default initialized ButtonEvent
+        */
         ButtonEvent(Event::Type type, Mouse::Button button, Point::value_type posx, Point::value_type posy)
             : MotionEvent(posx, posy), m_button{button}
         {
@@ -161,8 +161,8 @@ namespace pTK
 
         /** Function for retrieving the associated button.
          
-         @return    Pressed or Released button
-         */
+            @return    Pressed or Released button
+        */
         Mouse::Button getButton() const { return m_button; }
     private:
         Mouse::Button m_button;

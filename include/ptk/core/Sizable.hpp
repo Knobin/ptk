@@ -16,64 +16,64 @@ namespace pTK
 {
     /** Sizable class implementation.
      
-     Sizable class for handling size.
-     */
+        Sizable class for handling size.
+    */
     class Sizable
     {
     public:
         /** Constructs Sizable with default values.
          
-         @return  default initialized Sizable
-         */
+            @return  default initialized Sizable
+        */
         Sizable();
         
         /** Constructs Sizable with default values with size.
          
-         @return  default initialized Sizable
-         */
+            @return  default initialized Sizable
+        */
         Sizable(const Size& size);
         virtual ~Sizable() = default;
         
         /** Funtion for setting minimal size.
          
-         @param size    minimal size
-         */
+            @param size    minimal size
+        */
         virtual void setMinSize(const Size& size);
         
         /** Funtion for getting the minimal size.
          
-         @param size    minimal size
-         */
+            @param size    minimal size
+        */
         Size getMinSize() const;
         
         /** Funtion for setting size.
          
-         @param size    size
-         */
+            @param size    size
+        */
         virtual void setSize(const Size& size);
         
         /** Funtion for setting size.
          
-         @param size    size
-         */
+            @param size    size
+        */
         virtual void setConstSize(const Size& size);
         
         /** Funtion for getting the size.
          
-         @param size    size
-         */
+            @param size    size
+        */
         const Size& getSize() const;
         
         /** Funtion for setting maximal size.
          
-         @param size    maximal size
-         */
+            @param size    maximal size
+        */
         virtual void setMaxSize(const Size& size);
         
         /** Funtion for getting the maximal size.
          
-         @param size    maximal size
-         */
+            @param size    maximal size
+        */
         Size getMaxSize() const;
         
     private:

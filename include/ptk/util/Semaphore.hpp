@@ -20,8 +20,8 @@ namespace pTK
 {
     /** Semaphore class implementation.
      
-     A basic class for synchronizing threads.
-     */
+        A basic class for synchronizing threads.
+    */
     class Semaphore : public Singleton
     {
     public:
@@ -29,40 +29,37 @@ namespace pTK
         
         /** Constructs Semaphore with default values.
          
-         @return  default initialized Semaphore
-         */
+            @return  default initialized Semaphore
+        */
         Semaphore(unsigned int count);
         virtual ~Semaphore() = default;
         
         /** Funtion for incrementing count and notify a waiting
-        thread (if any).
-         
-         */
+            thread (if any).
+        */
         int post();
         
         /** Funtion for decrementing count, if count is zero, the
-         thread will wait until post() is called by another thread, then
-         decrement count.
-         
-         */
+            thread will wait until post() is called by another thread, then
+            decrement count.
+        */
         int wait();
         
         /** Same as wait() except if count is zero, it does not block but
             returns an error.
-         
-         */
+        */
         int trywait();
         
         /** Same as wait() except if count is zero, function will block and if
             specified time is reached, it will return an error. If count is greater
             than zero, the specified time will be skipped.
          
-         */
+        */
         int timedwait(std::chrono::duration<double> duration);
         
         /** Function for returning the current value of count.
          
-         */
+        */
         int getvalue();
         
     private:

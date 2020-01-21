@@ -17,40 +17,40 @@ namespace pTK
 {
     /** Application class implementation.
      
-     This class is to manage windows and handle the whole
-     application.
+        This class is to manage windows and handle the whole
+        application.
      
-     */
+    */
     class Application : public Singleton
     {
     public:
         /** Constructs Event with default values.
          
-         @return        default initialized Transformable
-         */
+            @return        default initialized Transformable
+        */
         Application();
         
         /** Constructs Event with default values.
          
-         @param argc    argument count
-         @param argv    arguments
-         @return        default initialized Transformable
-         */
+            @param argc    argument count
+            @param argv    arguments
+            @return        default initialized Transformable
+        */
         Application(int argc, char *argv[]);
         ~Application() = default;
 
         /** Function for executing the application.
          
-         @param window  start window
-         */
+            @param window  start window
+        */
         int exec(Window* window);
         
         /** Function for setting the delay between polling events.
          
-        Default is currently 8ms, about 120 times / second.
+            Default is currently 8ms, about 120 times / second.
          
-         @param duration  time to wait
-         */
+            @param duration  time to wait
+        */
         void delayPoll(std::chrono::duration<uint64> const& duration);
         
         // TODO: Menubar

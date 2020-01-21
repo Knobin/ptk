@@ -19,45 +19,45 @@ namespace pTK
     public:
         /** Constructs Shape with default values.
          
-         @return    default initialized Shape
-         */
+            @return    default initialized Shape
+        */
         Shape();
         virtual ~Shape() = default;
         
         /** Function for retrieving the Color of the Shape.
          
-         @return    Current Color
-         */
+            @return    Current Color
+        */
         const Color& getColor() const;
         
         /** Function for setting the Color of the Shape.
          
-         @param Color   Shape Color
-         */
+            @param Color   Shape Color
+        */
         virtual void setColor(const Color& color);
         
         /** Function for retrieving the Color of the Shape.
          
-         @return    Current Color
-         */
+            @return    Current Color
+        */
         const Color& getOutlineColor() const;
         
         /** Function for setting the Color of the outline.
          
-         @param outline_color   outline Color
-         */
+            @param outline_color   outline Color
+        */
         virtual void setOutlineColor(const Color& outlineColor);
         
         /** Function for retrieving the thickness of the outline.
          
-         @return    outline thickness
-         */
+            @return    outline thickness
+        */
         float getOutlineThickness() const;
         
         /** Function for setting the thickness of the outline.
          
-         @param outline_thickness   thickness of outline
-         */
+            @param outline_thickness   thickness of outline
+        */
         virtual void setOutlineThickness(float outlineThickness);
         
     private:

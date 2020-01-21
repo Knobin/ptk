@@ -26,46 +26,46 @@ namespace pTK
         
         /** Function for handling when a key is pressed or released.
          
-         @param callback    function to call on key event
-         */
+            @param callback    function to call on key event
+        */
         void onKey(const std::function<bool(Event::Type, int32)>& callback);
         
         /** Function for handling when mouse is hovering.
          
-         @param callback    function to call on hover event
-         */
+            @param callback    function to call on hover event
+        */
         void onHover(const std::function<bool(const Point&)>& callback);
         
         /** Function for handling when mouse is entering.
          
-         @param callback    function to call on hover event
-         */
+            @param callback    function to call on hover event
+        */
         void onEnter(const std::function<bool()>& callback);
         
         /** Function for handling when mouse is leaving.
          
-         @param callback    function to call on leaving event
-         */
+            @param callback    function to call on leaving event
+        */
         void onLeave(const std::function<bool()>& callback);
         
         /** Function for handling when mouse is scrolling.
          
-         @param offset     x and y offset
-         */
+            @param offset     x and y offset
+        */
         void onScroll(const std::function<bool(const Vec2f&)>& callback);
         
         /** Function for handling when mouse is clicking.
          
-         @param button      which button on mouse triggered the event.
-         @param position    x and y position
-         */
+            @param button      which button on mouse triggered the event.
+            @param position    x and y position
+        */
         void onClick(const std::function<bool(Mouse::Button, const Point&)>& callback);
         
         /** Function for handling when mouse is released.
          
-         @param button      which button on mouse triggered the event.
-         @param position    x and y position
-         */
+            @param button      which button on mouse triggered the event.
+            @param position    x and y position
+        */
         void onRelease(const std::function<bool(Mouse::Button, const Point&)>& callback);
         
     protected:

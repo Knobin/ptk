@@ -18,7 +18,7 @@ namespace pTK
 {
     /** Size class implementation.
          
-     This class is low level class handling size (width and height).
+        This class is low level class handling size (width and height).
     */
     class Size
     {
@@ -37,24 +37,24 @@ namespace pTK
     public:
         /** Constructs Size with default values.
          
-         @return    default initialized Size
-         */
+            @return    default initialized Size
+        */
         Size();
 
         /** Constructs Size with default values width and height.
-         * 
-         @param width   width
-         @param height  height
-         @return        default initialized Size
-         */
+            
+            @param width   width
+            @param height  height
+            @return        default initialized Size
+        */
         Size(value_type other_width, value_type other_height);
         ~Size() = default;
         
         /** Function for setting size.
          
-         @param width   new width
-         @param height  new height
-         */
+            @param width   new width
+            @param height  new height
+        */
         void setSize(value_type other_width, value_type other_height);
         
         value_type width;

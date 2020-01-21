@@ -15,36 +15,36 @@ namespace pTK
 {
     /** Rectangle class implementation.
      
-     Derived from Shape, this class if for creating a
-     simple rectangle for drawing.
-     */
+        Derived from Shape, this class if for creating a
+        simple rectangle for drawing.
+    */
     class Rectangle : public Shape
     {
     public:
         /** Constructs Rectangle with default values.
          
-         @return    default initialized Rectangle
-         */
+            @return    default initialized Rectangle
+        */
         Rectangle();
         virtual ~Rectangle() = default;
         
         /** Draw function.
-         Function is called when it is time to draw.
+            Function is called when it is time to draw.
          
-         Derived from Drawable.
-         */
+            Derived from Drawable.
+        */
         void onDraw(SkCanvas* canvas) override;
         
         /** Function for setting the corner radius.
          
-         @param radius  corner radius
-         */
+            @param radius  corner radius
+        */
         void setCornerRadius(float radius);
         
         /** Function for retrieving the corner radius.
          
-         @return    corner radius
-         */
+            @return    corner radius
+        */
         float getCornerRadius() const;
         
     private:

@@ -21,60 +21,60 @@ namespace pTK
     public:
         /** Constructs Clock with default values.
          
-         @return    default initialized Clock
-         */
+            @return    default initialized Clock
+        */
         Clock();
         
         /** Function for resetting the internal clock.
          
-         */
+        */
         void reset();
         
         /** Function for stopping the internal clock.
          
-         */
+        */
         void stop();
         
         /** Function for retrieving the time passed in nanoseconds,
-         since reset was called or object was created.
+            since reset was called or object was created.
          
-         @return    Clock passed in nanoseconds
-         */
+            @return    Clock passed in nanoseconds
+        */
         uint64 nanoseconds() const;
         
         /** Function for retrieving the time passed in microseconds,
-         since reset was called or object was created.
+            since reset was called or object was created.
          
-         @return    Clock passed in microseconds
-         */
+            @return    Clock passed in microseconds
+        */
         uint64 microseconds() const;
         
         /** Function for retrieving the time passed in milliseconds,
-         since reset was called or object was created.
+            since reset was called or object was created.
          
-         @return    Clock passed in milliseconds
-         */
+            @return    Clock passed in milliseconds
+        */
         uint64 milliseconds() const;
         
         /** Function for retrieving the time passed in seconds,
-         since reset was called or object was created.
+            since reset was called or object was created.
          
-         @return    Clock passed in seconds
-         */
+            @return    Clock passed in seconds
+        */
         uint64 seconds() const;
         
         /** Function for retrieving the time passed in minutes,
-         since reset was called or object was created.
+            since reset was called or object was created.
          
-         @return    Clock passed in minutes
-         */
+            @return    Clock passed in minutes
+        */
         uint32 minutes() const;
         
         /** Function for retrieving the time passed in hours,
-         since reset was called or object was created.
+            since reset was called or object was created.
          
-         @return    Clock passed in hours
-         */
+            @return    Clock passed in hours
+        */
         uint32 hours() const;
         
     private:

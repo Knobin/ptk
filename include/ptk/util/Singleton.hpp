@@ -16,8 +16,8 @@ namespace pTK
 {
     /** Singeton class implementation.
      
-     Class for forbidding copying and moving.
-     */
+        Class for forbidding copying and moving.
+    */
     class Singleton : public NonMovable, public NonCopyable
     {
     public:

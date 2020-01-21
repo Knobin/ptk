@@ -16,11 +16,11 @@ namespace pTK
 {
     /** EventHandling class implementation.
      
-     This class is to handle the incoming events.
+        This class is to handle the incoming events.
      
-     Depending on the event category and type, one of
-     the defined functions below will be called.
-     */
+        Depending on the event category and type, one of
+        the defined functions below will be called.
+    */
     class EventHandling : public EventCallbacks, public EventFunctions
     {
     public:
@@ -29,73 +29,70 @@ namespace pTK
         
         /** Function for handling when a key is pressed or released.
          
-         This function will call two other functions to handle the event.
-         One for the user to bind to and one for derived classes to handle
-         the event internally.
+            This function will call two other functions to handle the event.
+            One for the user to bind to and one for derived classes to handle
+            the event internally.
          
-         @param type    Key event (press or release)
-         @param int     Keycode
-         */
+            @param type    Key event (press or release)
+            @param int     Keycode
+        */
         bool handleKeyEvent(Event::Type type, int32 keycode);
         
         /** Function for handling when mouse is hovering.
          
-         This function will call two other functions to handle the event.
-         One for the user to bind to and one for derived classes to handle
-         the event internally.
-         
-         */
+            This function will call two other functions to handle the event.
+            One for the user to bind to and one for derived classes to handle
+            the event internally.
+        */
         bool handleHoverEvent(const Point&);
         
         /** Function for handling when mouse is entering.
          
-         This function will call two other functions to handle the event.
-         One for the user to bind to and one for derived classes to handle
-         the event internally.
-         
+            This function will call two other functions to handle the event.
+            One for the user to bind to and one for derived classes to handle
+            the event internally.
          */
         bool handleEnterEvent();
         
         /** Function for handling when mouse is leaving.
          
-         This function will call two other functions to handle the event.
-         One for the user to bind to and one for derived classes to handle
-         the event internally.
-         
-         */
+            This function will call two other functions to handle the event.
+            One for the user to bind to and one for derived classes to handle
+            the event internally.
+        */
         bool handleLeaveEvent();
         
         /** Function for handling when mouse is scrolling.
          
-         This function will call two other functions to handle the event.
-         One for the user to bind to and one for derived classes to handle
-         the event internally.
+            This function will call two other functions to handle the event.
+            One for the user to bind to and one for derived classes to handle
+            the event internally.
          
-         @param offset     x and y offset
-         */
+            @param offset     x and y offset
+        */
         bool handleScrollEvent(const Vec2f& offset);
         
         
         /** Function for handling when mouse is clicking.
          
-         This function will call two other functions to handle the event.
-         One for the user to bind to and one for derived classes to handle
-         the event internally.
+            This function will call two other functions to handle the event.
+            One for the user to bind to and one for derived classes to handle
+            the event internally.
          
-         @param button      which button on mouse triggered the event.
-         @param position    x and y position
-         */
+            @param button      which button on mouse triggered the event.
+            @param position    x and y position
+        */
         bool handleClickEvent(Mouse::Button button, const Point& position);
         
         /** Function for handling when mouse is released.
          
-         This function will call two other functions to handle the event.
-         One for the user to bind to and one for derived classes to handle
-         the event internally.
+            This function will call two other functions to handle the event.
+            One for the user to bind to and one for derived classes to handle
+            the event internally.
          
-         @param button      which button on mouse triggered the event.
-         @param position    x and y position
-         */
+            @param button      which button on mouse triggered the event.
+            @param position    x and y position
+        */
         bool handleReleaseEvent(Mouse::Button button, const Point& position);
         
     private:

@@ -23,55 +23,55 @@ namespace pTK
 {
     /** Font class implementation.
      
-     This class is for handling font information.
-     */
+        This class is for handling font information.
+    */
     class Font
     {
     public:
         /** Constructs Font with default values.
          
-         @return    default initialized Font
-         */
+            @return    default initialized Font
+        */
         Font();
         virtual ~Font() = default;
        
         /** Function for setting the font from a given file.
          
-         @param path    font file to load
-         @return        status
-         */
+            @param path    font file to load
+            @return        status
+        */
         bool loadFromFile(const std::string& path);
 
         /** Function for setting the font family of the Label.
          
-         @param font    font family for Label to use
-         @return        status
-         */
+            @param font    font family for Label to use
+            @return        status
+        */
         bool setFamily(const std::string& fontFamily);
         
         /** Function for retrieving the current font family used by Label.
          
-         @return  current font family
-         */
+            @return  current font family
+        */
         std::string getFamily() const;
         
         /** Function for setting the font size of the Label
          
-         @param fontSize    size of the font
-         */
+            @param fontSize    size of the font
+        */
         void setSize(uint fontSize);
         
         /** Function for retrieving the current font size used by Label.
          
-         @return  current font size
-         */
+            @return  current font size
+        */
         uint getSize() const;
         
         /** Function for retrieving the bounds of a specific text.
          
-         @param str     text to calculate bounds on
-         @return        bounds of the text
-         */
+            @param str     text to calculate bounds on
+            @return        bounds of the text
+        */
         Size getBounds(const std::string& str) const;
         
         /** Function for retrieving the raw SkFont.

@@ -15,16 +15,16 @@ namespace pTK
 {
     /** Drawable class implementation.
      
-     This class is the base class for drawable widget.
-     Widgets without this class cannot be drawn.
-     */
+        This class is the base class for drawable widget.
+        Widgets without this class cannot be drawn.
+    */
     class Drawable
     {
     public:
         /** Constructs Drawable with default values.
          
-         @return    default initialized Drawable
-         */
+            @return    default initialized Drawable
+        */
         Drawable()
             : m_visible{true}
         {
@@ -34,15 +34,15 @@ namespace pTK
         
         /** Draw function.
          
-         Function is called when it is time to draw.
+            Function is called when it is time to draw.
          
-         @param canvas   SkCanvas to draw to.
-         */
+            @param canvas   SkCanvas to draw to.
+        */
         virtual void onDraw(SkCanvas*) {}
         
         /** Function to enable drawing.
 
-         */
+        */
         virtual void show()
         {
             m_visible = true;
@@ -50,7 +50,7 @@ namespace pTK
         
         /** Function to disable drawing and hide it.
          
-         */
+        */
         virtual void hide()
         {
             m_visible = true;
@@ -58,8 +58,8 @@ namespace pTK
         
         /** Function for checking if it is visible.
          
-         @return    status
-         */
+            @return    status
+        */
         bool visible() const
         {
             return m_visible;

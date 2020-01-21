@@ -22,77 +22,77 @@ namespace pTK
     public:
         /** Constructs Text with default values.
          
-         @return    default initialized Text
-         */
+            @return    default initialized Text
+        */
         Text();
 
         /** Constructs Text with default values.
         
-         @param font    Font to use 
-         @return        default initialized Text with Font
-         */
+            @param font    Font to use 
+            @return        default initialized Text with Font
+        */
         Text(const Ref<Font>& font);
         virtual ~Text() = default;
 
         /** Function for setting the Font.
          
-         @param font    Font to set
-         */
+            @param font    Font to set
+        */
         void setFont(const Ref<Font>& font);
 
         /** Function for retrieving the Font.
          
-         @return  Font
-         */
+            @return  Font
+        */
         Ref<Font> getFont() const;
         
         /** Function for setting the font from a given file.
          
-         @param path    font file to load
-         @return        status
-         */
+            @param path    font file to load
+            @return        status
+        */
         virtual bool setFontFromFile(const std::string& path);
 
         /** Function for setting the font family.
          
-         @param font    font family to use.
-         */
+            @param font    font family to use.
+        */
         virtual bool setFontFamily(const std::string& fontFamily);
         
         /** Function for retrieving the font family.
          
-         @return  current font family
-         */
+            @return  current font family
+        */
         std::string getFontFamily() const;
         
         /** Function for setting the font size.
          
-         @param fontSize    size of the font
-         */
+            @param fontSize    size of the font
+        */
         virtual void setFontSize(uint fontSize);
         
         /** Function for retrieving the font size.
          
-         @return  current font size
-         */
+            @return  current font size
+        */
         uint getFontSize() const;
         
         /** Function for setting the text.
          
-         @param text    text for Label
-         */
+            @param text    text for Label
+        */
         virtual void setText(const std::string& text);
         
         /** Function for retrieving the text.
          
-         @return  current text
-         */
+            @return  current text
+        */
         const std::string& getText() const;
         
         /** Function for retrieving the bounds of the text.
          
-         @return  bounds of the text
-         */
+            @return  bounds of the text
+        */
         Size getBounds() const;
         
     private:

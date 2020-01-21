@@ -15,9 +15,9 @@ namespace pTK
 {
     /** Vec2 class implementation.
          
-     This is a basic template class for holding two 
-     coordinates (or values) x and y.
-     */
+        This is a basic template class for holding two 
+        coordinates (or values) x and y.
+    */
     template <typename T>
     class Vec2
     {
@@ -27,8 +27,8 @@ namespace pTK
     public:
         /** Constructs Vec2 with default values.
          
-         @return    default initialized Vec2
-         */
+            @return    default initialized Vec2
+        */
         Vec2()
             : x{}, y{}
         {
@@ -36,8 +36,8 @@ namespace pTK
         
         /** Constructs Vec2 with default values with x and y.
          
-         @return    default initialized Vec2
-         */
+            @return    default initialized Vec2
+        */
         Vec2(T other_x, T other_y)
             : x{other_x}, y{other_y}
         {
@@ -45,12 +45,12 @@ namespace pTK
         
         /** Constructs Vec2 with default values from another Vec2. (Copy)
          
-         This constructor can copy ant templated Vec2, as long as static_cast
-         can do it. If not, you will get a compile error.
+            This constructor can copy ant templated Vec2, as long as static_cast
+            can do it. If not, you will get a compile error.
          
-         @param vec     Vec2 to copy from
-         @return        default initialized Vec2
-         */
+            @param vec     Vec2 to copy from
+            @return        default initialized Vec2
+        */
         template <typename U>
         explicit Vec2(const Vec2<U>& vec)
             : x{static_cast<T>(vec.x)}, y{static_cast<T>(vec.y)}
@@ -59,12 +59,12 @@ namespace pTK
         
         /** Constructs Vec2 with default values from another Vec2. (Copy)
          
-         This constructor can copy ant templated Vec2, as long as static_cast
-         can do it. If not, you will get a compile error.
+            This constructor can copy ant templated Vec2, as long as static_cast
+            can do it. If not, you will get a compile error.
          
-         @param vec     Vec2 to copy from
-         @return        default initialized Vec2
-         */
+            @param vec     Vec2 to copy from
+            @return        default initialized Vec2
+        */
         template <typename U>
         Vec2<T>& operator=( const Vec2<U>& vec )
         {

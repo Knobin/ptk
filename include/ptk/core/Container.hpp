@@ -20,14 +20,14 @@ namespace pTK
 {
     /** Container class implementation.
      
-     Base class for handling a collection of items.
-     */
+        Base class for handling a collection of items.
+    */
     template<typename T> 
     class Container
     {
     public:
         /** typedefs for Container.
-         */
+        */
         using type                      = T;
         using container_type            = std::vector<type>;
         using iterator                  = typename container_type::iterator;
@@ -38,8 +38,8 @@ namespace pTK
         
         /** Constructs Container with default values.
          
-         @return    default initialized Container
-         */
+            @return    default initialized Container
+        */
         Container()
             : m_holder{}
         {
@@ -47,8 +47,8 @@ namespace pTK
         
         /** Constructs Container with default values with item.
          
-         @return    default initialized Container
-         */
+            @return    default initialized Container
+        */
         Container(const type& item)
             : m_holder{}
         {
@@ -57,8 +57,8 @@ namespace pTK
         
         /** Constructs Container with default values with list.
          
-         @return    default initialized Container
-         */
+            @return    default initialized Container
+        */
         Container(std::initializer_list<type> list)
             : m_holder{}
         {
@@ -69,8 +69,8 @@ namespace pTK
         
         /** Constructs Container with default values with Container.
          
-         @return    default initialized Container
-         */
+            @return    default initialized Container
+        */
         Container(const Container& rhs)
         {
             m_holder.reserve(rhs.size());
@@ -82,9 +82,9 @@ namespace pTK
         
         /** Container assignment operator.
          
-         @param rhs     Container to copy from
-         @return        Container with values from rhs
-         */
+            @param rhs     Container to copy from
+            @return        Container with values from rhs
+        */
         Container& operator=(const Container& rhs)
         {
             if (this == &rhs)
@@ -99,8 +99,8 @@ namespace pTK
         
         /** Funtion for adding a widget to the Container.
          
-         @param item  item to add
-         */
+            @param item  item to add
+        */
         virtual bool add(const type& item)
         {
             m_holder.push_back(item);
@@ -109,8 +109,8 @@ namespace pTK
         
         /** Funtion for removing a widget in the Container.
          
-         @param item  item to remove
-         */
+            @param item  item to remove
+        */
         virtual void remove(const type& item)
         {
             const_iterator it = find(item);
@@ -120,9 +120,9 @@ namespace pTK
 
         /** Function for retrieving the element at the index in the Container.
          
-         @param index   Index
-         @return        element in Container
-         */
+            @param index   Index
+            @return        element in Container
+        */
         type at(size_type index)
         {
             if (index >= size())
@@ -133,9 +133,9 @@ namespace pTK
         
         /** Function for retrieving the element at the index in the Container.
          
-         @param index   Index
-         @return        element in Container
-         */
+            @param index   Index
+            @return        element in Container
+        */
         type at(size_type index) const
         {
             if (index >= size())
@@ -146,9 +146,9 @@ namespace pTK
         
         /** Operator for retrieving the element at the index in the Container.
          
-         @param index   Index
-         @return        element in Container
-         */
+            @param index   Index
+            @return        element in Container
+        */
         type operator[](size_type index) const
         {
             return m_holder[index];
@@ -156,7 +156,7 @@ namespace pTK
         
         /** Function for retrieving the size of the Container.
          
-         */
+        */
         size_type size() const
         {
             return m_holder.size();
@@ -164,8 +164,8 @@ namespace pTK
         
         /** Function for checking if the Container is empty.
          
-         @return    empty
-         */
+            @return    empty
+        */
         bool empty() const
         {
             return m_holder.empty();
@@ -173,11 +173,11 @@ namespace pTK
         
         /** Function for retrieving the first element in the container.
          
-         Should in no circumstances be called when the container is empty!
-         This is considered to be undefined behavior!
+            Should in no circumstances be called when the container is empty!
+            This is considered to be undefined behavior!
          
-         @return    first element in Container
-         */
+            @return    first element in Container
+        */
         type front() const
         {
             return m_holder.front();
@@ -185,100 +185,100 @@ namespace pTK
         
         /** Function for retrieving the last element in the container.
          
-         Should in no circumstances be called when the container is empty!
-         This is considered to be undefined behavior!
+            Should in no circumstances be called when the container is empty!
+            This is considered to be undefined behavior!
          
-         @return    last element in container
-         */
+            @return    last element in container
+        */
         type back() const
         {
             return m_holder.back();
         }
         
         /** Function for retrieving the an iterator that points to the first
-         value in the Container.
+            value in the Container.
          
-         The iterator may be equal to end iterator if the Container is empty.
+            The iterator may be equal to end iterator if the Container is empty.
          
-         @return    iterator
-         */
+            @return    iterator
+        */
         iterator begin()
         {
             return m_holder.begin();
         }
         
         /** Function for retrieving the special iterator referring to
-         the past-the-end of the Container.
+            the past-the-end of the Container.
          
-         The iterator should never be dereferenced, due to the fact that the iterator
-         does not point to a value and should therefore only be used for checking.
+            The iterator should never be dereferenced, due to the fact that the iterator
+            does not point to a value and should therefore only be used for checking.
          
-         @return    iterator
-         */
+            @return    iterator
+        */
         iterator end()
         {
             return m_holder.end();
         }
         
         /** Function for retrieving the an const iterator that points to the first
-         value in the Container.
+            value in the Container.
          
-         The iterator may be equal to end iterator if the Container is empty.
+            The iterator may be equal to end iterator if the Container is empty.
          
-         @return    const iterator
-         */
+            @return    const iterator
+        */
         const_iterator cbegin() const
         {
             return m_holder.cbegin();
         }
         
         /** Function for retrieving the special const iterator referring to
-         the past-the-end of the Container.
+            the past-the-end of the Container.
          
-         The iterator should never be dereferenced, due to the fact that the iterator
-         does not point to a value and should therefore only be used for checking.
+            The iterator should never be dereferenced, due to the fact that the iterator
+            does not point to a value and should therefore only be used for checking.
          
-         @return    const iterator
-         */
+            @return    const iterator
+        */
         const_iterator cend() const
         {
             return m_holder.cend();
         }
         
         /** Function for retrieving the an iterator that points to the last
-         value in the Container.
+            value in the Container.
          
-         This iterator is working in reverse. Meaning that is starts at the end
-         and is moving to the beginning.
+            This iterator is working in reverse. Meaning that is starts at the end
+            and is moving to the beginning.
          
-         The iterator may be equal to rend iterator if the Container is empty.
+            The iterator may be equal to rend iterator if the Container is empty.
          
-         @return    const iterator
-         */
+            @return    const iterator
+        */
         reverse_iterator rbegin()
         {
             return m_holder.rbegin();
         }
         
         /** Function for retrieving the special const iterator referring to
-         the past-the-end of the Container.
+            the past-the-end of the Container.
          
-         The iterator should never be dereferenced, due to the fact that the iterator
-         does not point to a value and should therefore only be used for checking.
+            The iterator should never be dereferenced, due to the fact that the iterator
+            does not point to a value and should therefore only be used for checking.
          
-         @return    const iterator
-         */
+            @return    const iterator
+        */
         reverse_iterator rend()
         {
             return m_holder.rend();
         }
 
         /** Funtion for finding a widget in the Container.
-         Function can be used to check if a pointer to Widget exists.
+            Function can be used to check if a pointer to Widget exists.
          
-         @param widget  widget to find
-         @return        const_iterator to widget or end const_iterator
-         */
+            @param widget  widget to find
+            @return        const_iterator to widget or end const_iterator
+        */
         const_iterator find(const type& item) const
         {
             for (auto it{cbegin()}; it != cend(); ++it)
@@ -290,8 +290,8 @@ namespace pTK
         
         /** Function for looping over the items in the container.
          
-         @param func    function to call for each item.
-         */
+            @param func    function to call for each item.
+        */
         void forEach(const std::function<void(const type& item)>& func) const
         {
             for (const_iterator it = cbegin(); it != cend(); it++)

@@ -16,18 +16,18 @@ namespace pTK
 {
     /** ResizeEvent class implementation.
      
-     Derived from Event, this class if for creating
-     events from the resizing of the window.
-     */
+        Derived from Event, this class if for creating
+        events from the resizing of the window.
+    */
     class ResizeEvent : public Event
     {
     public:
         /** Constructs ResizeEvent with default values with width and height.
          
-         @param width   associated width
-         @param height  associated height
-         @return        default initialized ResizeEvent
-         */
+            @param width   associated width
+            @param height  associated height
+            @return        default initialized ResizeEvent
+        */
         ResizeEvent(int width, int height, int contentWidth, int contentHeight)
             : Event(Event::Category::Window, Event::Type::WindowResize), m_size{width, height},
                 m_contentSize{contentWidth, contentHeight}
@@ -36,9 +36,9 @@ namespace pTK
         
         /** Constructs ResizeEvent with default values with size.
          
-         @param size    associated width and height
-         @return        default initialized ResizeEvent
-         */
+            @param size    associated width and height
+            @return        default initialized ResizeEvent
+        */
         ResizeEvent(const Size& size, const Size& contentSize)
             : Event(Event::Category::Window, Event::Type::WindowResize), m_size{size},
                 m_contentSize{contentSize}
@@ -48,14 +48,14 @@ namespace pTK
         
         /** Function for retrieving the associated size.
          
-         @return    size
-         */
+            @return    size
+        */
         const Size& getSize() const { return m_size; }
         
         /** Function for retrieving the associated content size.
          
-         @return    size
-         */
+            @return    size
+        */
         const Size& getContentSize() const { return m_contentSize; }
 
     private:

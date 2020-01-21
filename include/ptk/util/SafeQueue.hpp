@@ -21,15 +21,15 @@ namespace pTK
         Implemented with Condition Variable, meaning that if you
         call front() or back() the thread will be blocked until
         push() has been called.
-     */
+    */
     template<typename T>
     class SafeQueue
     {
     public:
         /** Constructs SafeQueue with default values.
          
-         @return  default initialized SafeQueue
-         */
+            @return  default initialized SafeQueue
+        */
         SafeQueue()
             : m_mutex{}, m_conditionVariable{}, m_queue{}
         {
@@ -39,8 +39,8 @@ namespace pTK
         
         /** Funtion for pushing an item to the queue.
          
-         @param item    item to push
-         */
+            @param item    item to push
+        */
         void push(const T& item)
         {
             std::unique_lock<std::mutex> lock(m_mutex);
@@ -50,8 +50,8 @@ namespace pTK
         
         /** Funtion for pushing an item to the queue.
          
-         @param item    item to push
-         */
+            @param item    item to push
+        */
         void push(T&& item)
         {
             std::unique_lock<std::mutex> lock(m_mutex);
@@ -61,7 +61,7 @@ namespace pTK
         
         /** Funtion for removing the first item in the queue.
          
-         */
+        */
         void pop()
         {
             std::unique_lock<std::mutex> lock(m_mutex);
@@ -72,13 +72,13 @@ namespace pTK
         
         /** Funtion for retrieving the item at the front in the queue.
          
-         This function will block the thread until push() has been called.
-         If multiple threads is waiting in this function, multiple push()
-         may need to be called before the thread will wake up. Due to
-         notify_one() in push().
+            This function will block the thread until push() has been called.
+            If multiple threads is waiting in this function, multiple push()
+            may need to be called before the thread will wake up. Due to
+            notify_one() in push().
          
-         @return    item at the front
-         */
+            @return    item at the front
+        */
         T front()
         {
             std::unique_lock<std::mutex> lock(m_mutex);
@@ -90,13 +90,13 @@ namespace pTK
         
         /** Funtion for retrieving the item at the back in the queue.
          
-         This function will block the thread until push() has been called.
-         If multiple threads is waiting in this function, multiple push()
-         may need to be called before the thread will wake up. Due to
-         notify_one() in push().
-         
-         @return    item at the back
-         */
+            This function will block the thread until push() has been called.
+            If multiple threads is waiting in this function, multiple push()
+            may need to be called before the thread will wake up. Due to
+            notify_one() in push().
+            
+            @return    item at the back
+        */
         T back()
         {
             std::unique_lock<std::mutex> lock(m_mutex);
@@ -108,8 +108,8 @@ namespace pTK
         
         /** Funtion for checking if the queue is empty or not.
          
-         @return    empty status
-         */
+            @return    empty status
+        */
         bool empty() const
         {
             std::unique_lock<std::mutex> lock(m_mutex);
@@ -119,8 +119,8 @@ namespace pTK
         
         /** Funtion for checking the size of the queue.
          
-         @return    size
-         */
+            @return    size
+        */
         size_t size() const
         {
             std::unique_lock<std::mutex> lock(m_mutex);

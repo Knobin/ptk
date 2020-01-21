@@ -12,11 +12,11 @@ namespace pTK
 {
     /** EventFunctions class implementation.
      
-     This class is to handle the incoming events.
+        This class is to handle the incoming events.
      
-     Depending on the event category and type, one of
-     the defined functions below will be called.
-     */
+        Depending on the event category and type, one of
+        the defined functions below will be called.
+    */
     class EventFunctions
     {
     public:
@@ -25,44 +25,44 @@ namespace pTK
         
         /** Function for handling when a key is pressed or released.
          
-         @param type    Key event (press or release)
-         @param int     Keycode
-         */
+            @param type    Key event (press or release)
+            @param int     Keycode
+        */
         virtual bool onKeyEvent(Event::Type, int32) { return true; }
         
         /** Function for handling when mouse is hovering.
          
-         */
+        */
         virtual bool onHoverEvent(const Point&) { return true; }
         
         /** Function for handling when mouse is entering.
          
-         */
+        */
         virtual bool onEnterEvent() { return true; }
         
         /** Function for handling when mouse is leaving.
          
-         */
+        */
         virtual bool onLeaveEvent() { return true; }
         
         /** Function for handling when mouse is scrolling.
          
          @param offset     x and y offset
-         */
+        */
         virtual bool onScrollEvent(const Vec2f&) { return true; }
         
         /** Function for handling when mouse is clicking.
          
-         @param button      which button on mouse triggered the event.
-         @param position    x and y position
-         */
+            @param button      which button on mouse triggered the event.
+            @param position    x and y position
+        */
         virtual bool onClickEvent(Mouse::Button, const Point&) { return true; }
         
         /** Function for handling when mouse is released.
          
-         @param button      which button on mouse triggered the event.
-         @param position    x and y position
-         */
+            @param button      which button on mouse triggered the event.
+            @param position    x and y position
+        */
         virtual bool onReleaseEvent(Mouse::Button, const Point&) { return true; }
     };
 }
