@@ -35,15 +35,15 @@ namespace pTK
          @return    default initialized Cell
          */
         Cell(const Ref<Widget>& widget);
-        ~Cell() = default;
+		~Cell();
         
-        /** Function for setting the Widget of the Cell.
+        /** Function for setting the Widget in the Cell.
 
          @param widget  Widget to set
          */
         void setWidget(const Ref<Widget>& widget);
         
-        /** Function for setting the Widget of the Cell.
+        /** Function for retrieving the Widget in the Cell.
          
          @return    current set Widget
          */

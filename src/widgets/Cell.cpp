@@ -26,6 +26,12 @@ namespace pTK
         Widget::setSize(m_widgetSize);
         setMinSize(m_widgetSize);
     }
+
+	Cell::~Cell()
+	{
+		if (m_widget)
+			m_widget->setParent(nullptr);
+	}
     
     void Cell::setWidget(const Ref<Widget>& widget)
     {

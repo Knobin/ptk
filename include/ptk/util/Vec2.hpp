@@ -48,8 +48,8 @@ namespace pTK
          @param vec     Vec2 to copy from
          @return        default initialized Vec2
          */
-        template <typename S>
-        explicit Vec2(const Vec2<S>& vec)
+        template <typename U>
+        explicit Vec2(const Vec2<U>& vec)
             : x{static_cast<T>(vec.x)}, y{static_cast<T>(vec.y)}
         {
         }
@@ -62,8 +62,8 @@ namespace pTK
          @param vec     Vec2 to copy from
          @return        default initialized Vec2
          */
-        template <typename S>
-        Vec2<T>& operator=( const Vec2<S>& vec )
+        template <typename U>
+        Vec2<T>& operator=( const Vec2<U>& vec )
         {
             x = static_cast<T>(vec.x);
             y = static_cast<T>(vec.y);
@@ -153,10 +153,10 @@ namespace pTK
     {
         return lhs = lhs / rhs;
     }
-
-    typedef Vec2<float> Vec2f;
-    typedef Vec2<uint> Vec2u;
-    typedef Vec2<int32> Vec2i;
+	
+    using Vec2f = Vec2<float>;
+    using Vec2u = Vec2<uint>;
+    using Vec2i = Vec2<int32>;
 }
 
 #endif // PTK_UTIL_VEC2_HPP

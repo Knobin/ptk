@@ -24,8 +24,7 @@ namespace pTK
 
      Functions with a single parameter of uint32, expects the
      aforementioned layout in order to be correct. If the
-     function only sets r, g and b, and expects a uint32,
-     the AA bits are ignored.
+     function only sets r, g and b, unexpected behaviour will occur.
      */
     class Color
     {
