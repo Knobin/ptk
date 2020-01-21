@@ -107,6 +107,7 @@ namespace pTK
         SkCanvas* m_canvas;
         GrGLFramebufferInfo m_info;
         SkColorType m_colorType;
+		SkSurfaceProps m_props;
         Size m_size;
     };
     

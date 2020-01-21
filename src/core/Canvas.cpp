@@ -34,9 +34,10 @@ namespace pTK
 {
     Canvas::Canvas(const Size& size)
         : Singleton(), m_context{nullptr}, m_surface{nullptr}, m_canvas{nullptr}, m_info{},
-            m_colorType{}, m_size{size}
+			m_colorType{}, m_props{SkSurfaceProps::kUseDeviceIndependentFonts_Flag, SkSurfaceProps::kLegacyFontHost_InitType}, m_size{size}
     {
 		auto glInterface = GrGLMakeNativeInterface();
+		PTK_ASSERT(glInterface, "Failed to create interface!");
 		m_context.reset(GrContext::MakeGL(glInterface).release());
 
 		GrGLint buffer;
@@ -67,17 +68,14 @@ namespace pTK
     {
         glViewport(0, 0, size.width, size.height);
         
-        GrBackendRenderTarget backendRenderTarget(size.width, size.height, 0, 0, m_info);
-        
-        m_surface = SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, nullptr);
-        
+        GrBackendRenderTarget backendRenderTarget(size.width, size.height, 1, 8, m_info);
+
+        m_surface = SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, &m_props);
         PTK_ASSERT(m_surface, "Failed to create surface!");
         
         // Save Canvas for rendering.
         m_canvas = m_surface->getCanvas();
         m_size = size;
-        
-        PTK_INFO("Created Canvas, {0}x{1}", size.width, size.height);
     }
     
     void Canvas::clear(const Color& color)
