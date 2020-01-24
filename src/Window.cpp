@@ -26,35 +26,35 @@ namespace pTK
         // Set Widget properties.
         Sizable::setSize({static_cast<int>(width), static_cast<int>(height)});
         setName(name);
-        
+
         initGLFW();
 
         // Create Window.
         m_window = glfwCreateWindow(static_cast<int>(width), static_cast<int>(height), name.c_str(), nullptr, nullptr);
         PTK_ASSERT(m_window, "Failed to create GLFW Window");
         PTK_INFO("GLFW Window Created, {0:d}x{1:d}", static_cast<int>(width), static_cast<int>(height));
-        
+
         // Get Monitor Scale
         glfwGetWindowContentScale(m_window, &m_scale.x, &m_scale.y);
         PTK_INFO("Monitor scale, {0:0.2f}x{1:0.2f}", m_scale.x, m_scale.y);
-        
+
         // Bind context.
         glfwMakeContextCurrent(m_window);
-        
+
         // Init Canvas
         Size wSize = getContentSize();
         m_drawCanvas = std::make_unique<Canvas>(Size(wSize.width, wSize.height));
         PTK_ASSERT(m_drawCanvas, "Failed to create Canvas");
-        
+
         // Set Callbacks
         glfwSetWindowUserPointer(m_window, this);
         setWindowCallbacks();
         setMouseCallbacks();
         setKeyCallbacks();
-        
+
         PTK_INFO("Window Initialization finished");
     }
-    
+
     // Init Functions
     void Window::initGLFW()
     {
@@ -68,17 +68,17 @@ namespace pTK
         glfwWindowHint(GLFW_DEPTH_BITS, 0);
 		glfwWindowHint(GLFW_SAMPLES, 4);
     }
-    
+
     // Set Event Callbacks
     void Window::setWindowCallbacks()
     {
         // void window_size_callback(GLFWwindow* window, int width, int height)
         glfwSetWindowSizeCallback(m_window, [](GLFWwindow* t_window, int t_width, int t_height){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
-            window->postEvent(new ResizeEvent{Size{t_width, t_height}, window->getContentSize()});
+            window->postEvent(new ResizeEvent{static_cast<Size::value_type>(t_width), static_cast<Size::value_type>(t_height)});
             window->handleEvents();
         });
-        
+
         // void window_close_callback(GLFWwindow* window)
         glfwSetWindowCloseCallback(m_window, [](GLFWwindow* t_window){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
@@ -87,14 +87,14 @@ namespace pTK
 
         // void window_maximize_callback(GLFWwindow* window, int maximized)
         glfwSetWindowMaximizeCallback(m_window, [](GLFWwindow* t_window, int){
-            // TODO: Should create a resize EventFunction. 
+            // TODO: Should create a resize EventFunction.
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
             int width, height;
             glfwGetWindowSize(t_window, &width, &height);
-            window->postEvent(new ResizeEvent{Size{width, height}, window->getContentSize()});
+            window->postEvent(new ResizeEvent{static_cast<Size::value_type>(width), static_cast<Size::value_type>(height)});
         });
     }
-    
+
     void Window::setMouseCallbacks()
     {
         // void cursor_enter_callback(GLFWwindow* window, int entered)
@@ -106,31 +106,31 @@ namespace pTK
                 window->sendEvent(&event);
             }
         });
-        
+
         // void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
         glfwSetCursorPosCallback(m_window, [](GLFWwindow* t_window, double t_xpos, double t_ypos){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
             Size wSize = window->getSize();
-            
+
             if ((t_xpos >= 0) && (t_xpos <= (wSize.width)))
             {
                 if ((t_ypos >= 0) && (t_ypos <= (wSize.height)))
                 {
-                    MotionEvent event{ static_cast<Point::value_type>(t_xpos), 
+                    MotionEvent event{ static_cast<Point::value_type>(t_xpos),
                         static_cast<Point::value_type>(t_ypos)};
                     window->sendEvent(&event);
                 }
             }
-                
-                    
+
+
         });
         // void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
         glfwSetMouseButtonCallback(m_window, [](GLFWwindow* t_window, int t_button, int t_action, int){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
-            
+
             double xpos, ypos;
             glfwGetCursorPos(t_window, &xpos, &ypos);
-            
+
             Mouse::Button button;
             if (t_button == GLFW_MOUSE_BUTTON_LEFT)
                 button = Mouse::Button::Left;
@@ -140,18 +140,18 @@ namespace pTK
                 button = Mouse::Button::Right;
             else
                 button = Mouse::Button::NONE;
-            
+
             if (t_action == GLFW_PRESS)
             {
-                ButtonEvent event{Event::Type::MouseButtonPressed, 
-                    button, 
-                    static_cast<Point::value_type>(xpos), 
+                ButtonEvent event{Event::Type::MouseButtonPressed,
+                    button,
+                    static_cast<Point::value_type>(xpos),
                     static_cast<Point::value_type>(ypos)};
                 window->sendEvent(&event);
             }
             else if (t_action == GLFW_RELEASE)
             {
-                ButtonEvent event{ Event::Type::MouseButtonReleased, 
+                ButtonEvent event{Event::Type::MouseButtonReleased,
                     button,
                     static_cast<Point::value_type>(xpos),
                     static_cast<Point::value_type>(ypos)};
@@ -159,7 +159,7 @@ namespace pTK
             }
         });
     }
-    
+
     void Window::setKeyCallbacks()
     {
         // void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -186,38 +186,38 @@ namespace pTK
 		glfwTerminate();
         PTK_INFO("Window Destroyed");
     }
-    
+
     // Will be called when all children will need to redraw.
     // For example, window.show();
     void Window::forceDrawAll()
     {
         SkCanvas* canvas = m_drawCanvas->skCanvas();
-        
+
         Color color = getBackground();
         m_drawCanvas->clear(color);
-        
+
         // Apply monitor scale.
         SkMatrix matrix;
         matrix.setScale(m_scale.x, m_scale.y);
         canvas->setMatrix(matrix);
-        
+
         for (iterator it = begin(); it != end(); it++)
             (*it)->onDraw(canvas);
-        
+
         canvas->flush();
         swapBuffers();
     }
-    
+
     void Window::onChildDraw(size_type)
     {
         postEvent(new Event{Event::Category::Window, Event::Type::WindowDraw});
     }
-    
+
     void Window::pollEvents()
     {
         glfwWaitEvents();
     }
-    
+
     void Window::handleEvents()
     {
         size_t eventCount = m_eventQueue.size();
@@ -225,10 +225,10 @@ namespace pTK
         {
             std::unique_ptr<Event> event = std::move(m_eventQueue.front());
             m_eventQueue.pop();
-            
+
             handleEvent(event.get());
         }
-        
+
         // Quick fix when previous event cause a draw event.
         if (m_eventQueue.size() > 0)
         {
@@ -261,59 +261,59 @@ namespace pTK
     {
         glfwSwapBuffers(m_window);
     }
-    
+
     // Size
     Size Window::getContentSize() const
     {
         int width, height;
         glfwGetFramebufferSize(m_window, &width, &height);
-        
+
         return Size(width, height);
     }
-    
+
     const Vec2f& Window::getDPIScale() const
     {
         return m_scale;
     }
-    
+
     void Window::setSize(const Size& size)
     {
         glfwSetWindowSize(m_window, size.width, size.height);
         Widget::setSize(size);
     }
-    
+
     void Window::setMinSize(const Size& size)
     {
         Size wSize = getSize();
         Size contentMinSize = VBox::getMinSize();
         Size newMinSize;
-        
+
         if (size.width != GLFW_DONT_CARE)
             newMinSize.width = ((size.width > contentMinSize.width) && (size.width <= wSize.width)) ? size.width : contentMinSize.width;
         else
             newMinSize.width = contentMinSize.width;
-        
+
         if (size.height != GLFW_DONT_CARE)
             newMinSize.height = ((size.height > contentMinSize.height) && (size.height <= wSize.height)) ? size.height : contentMinSize.height;
         else
             newMinSize.height = contentMinSize.height;
-        
+
         Sizable::setMinSize(newMinSize);
         setLimits(newMinSize, getMaxSize());
     }
-    
+
     void Window::setMaxSize(const Size& size)
     {
         Size wSize = getSize();
         Size newMaxSize;
-        
+
         newMaxSize.width = ((size.height >= wSize.height) && (size.height <= Size::Limits::Max)) ? size.width : Size::Limits::Max;
         newMaxSize.height = ((size.width >= wSize.width) && (size.width <= Size::Limits::Max)) ? size.width : Size::Limits::Max;
-        
+
         Sizable::setMaxSize(newMaxSize);
         setLimits(getMinSize(), newMaxSize);
     }
-    
+
     void Window::setLimits(const Size& minSize, const Size& maxSize)
     {
 		int width = (maxSize.width == Size::Limits::Max) ? GLFW_DONT_CARE : maxSize.width;
@@ -326,20 +326,20 @@ namespace pTK
     {
         return (bool)glfwWindowShouldClose(m_window);
     }
-    
+
     void Window::close()
     {
         glfwSetWindowShouldClose(m_window, GLFW_TRUE);
         postEvent(new Event{Event::Category::Window, Event::Type::WindowClose});
     }
-    
+
     // Visible
     void Window::show()
     {
         glfwShowWindow(m_window);
         forceDrawAll();
     }
-    
+
     void Window::hide()
     {
         glfwHideWindow(m_window);
@@ -402,25 +402,27 @@ namespace pTK
         else if (type == Event::Type::WindowResize)
         {
             ResizeEvent* rEvent = (ResizeEvent*)event;
-			Size cSize = rEvent->getContentSize();
-            
+            Size size{rEvent->getSize()};
+			Size cSize{static_cast<Size::value_type>(size.width * m_scale.x),
+                static_cast<Size::value_type>(size.height * m_scale.y)};
+
             // Set Framebuffer Size.
             if (cSize != m_drawCanvas->getSize())
                 m_drawCanvas->resize(cSize);
-            
+
             // TODO: May conflict with eventThread.
             Size contentMinSize = VBox::getMinSize();
             Size currentMinSize = getMinSize();
             if ((currentMinSize.width < contentMinSize.width) || (currentMinSize.height < contentMinSize.height))
                 setMinSize(contentMinSize);
-            
+
             // TODO: May conflict with eventThread.
             Size contentMaxSize = VBox::getMaxSize();
             Size currentMaxSize = getMaxSize();
             if ((currentMaxSize.width > contentMaxSize.width) || (currentMaxSize.height > contentMaxSize.height))
                 setMaxSize(contentMaxSize);
-            
-            VBox::setSize(rEvent->getSize());
+
+            VBox::setSize(size);
             m_draw = true;
         }
     }
