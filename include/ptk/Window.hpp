@@ -25,8 +25,8 @@
 namespace pTK
 {
     /** Window class implementation.
-     
-        Implements the Window and is also responsible 
+
+        Implements the Window and is also responsible
         for bridging the events to the Widgets.
 
     */
@@ -34,12 +34,12 @@ namespace pTK
     {
     public:
         /** Default Window consturctor is disabled.
-        
+
         */
         Window() = delete;
 
         /** Window Button with default values with name, width and height.
-         
+
             Note: Window width or height cant be 0, if either one of them is 0, it will set
             that value to 1.
 
@@ -52,10 +52,10 @@ namespace pTK
         virtual ~Window();
 
         /** Function for retrieving the content size.
-         
+
             If the monitor supports high DPI, the content of
             the window will size*DPIScale.
-         
+
             If high DPI is not supported this will return the
             window size.
 
@@ -86,7 +86,7 @@ namespace pTK
             @param size    maximum width and height to set
         */
         void setMaxSize(const Size& size) override;
-        
+
         /** Function for checking if the window should close.
 
             @return     close status
@@ -94,10 +94,10 @@ namespace pTK
         bool shouldClose();
 
         /** Function for closing the window.
-         
+
         */
         void close();
-        
+
         /** Function for showing the window.
 
         */
@@ -107,17 +107,17 @@ namespace pTK
 
         */
         void hide() override;
-        
+
         /** Function for polling the window events.
 
         */
         void pollEvents();
-        
+
         /** Function for handling the window events.
-         
+
         */
         void handleEvents();
-        
+
         /** Function for sending events to the window to
             be handled directly.
 
@@ -131,6 +131,8 @@ namespace pTK
             Event gets put on a queue (FIFO) and returns directly.
             Note: event must be allocated on the HEAP, as soon as the
             event is handled it will be deleted.
+
+            This function is thread safe.
         */
         void postEvent(Event *event);
 
@@ -139,17 +141,17 @@ namespace pTK
         GLFWwindow* m_window;
         Vec2f m_scale;
         std::unique_ptr<Canvas> m_drawCanvas;
-        std::queue<std::unique_ptr<Event>> m_eventQueue;
+        SafeQueue<std::unique_ptr<Event>> m_eventQueue;
         bool m_draw;
 
         // Init Functions
         void initGLFW();
-        
+
         // Set Event Callbacks
         void setWindowCallbacks();
         void setMouseCallbacks();
         void setKeyCallbacks();
-        
+
         // Event processing
         void handleEvent(Event *event);
         void handleKeyboardEvent(Event* event);
@@ -158,10 +160,10 @@ namespace pTK
 
         void forceDrawAll();
         void onChildDraw(size_type) override;
-        
+
         void swapBuffers();
         void setLimits(const Size& minSize, const Size& maxSize);
-        
+
         // Hide functions
         void setPosHint(const Point&) override {}
         using Widget::setParent;
