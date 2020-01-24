@@ -75,14 +75,14 @@ namespace pTK
         // void window_size_callback(GLFWwindow* window, int width, int height)
         glfwSetWindowSizeCallback(m_window, [](GLFWwindow* t_window, int t_width, int t_height){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
-            window->sendEvent<ResizeEvent>(Size{t_width, t_height}, window->getContentSize());
+            window->postEvent(new ResizeEvent{Size{t_width, t_height}, window->getContentSize()});
             window->handleEvents();
         });
         
         // void window_close_callback(GLFWwindow* window)
         glfwSetWindowCloseCallback(m_window, [](GLFWwindow* t_window){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
-            window->sendEvent<Event>(Event::Category::Window, Event::Type::WindowClose);
+            window->postEvent(new Event{Event::Category::Window, Event::Type::WindowClose});
         });
 
         // void window_maximize_callback(GLFWwindow* window, int maximized)
@@ -91,7 +91,7 @@ namespace pTK
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
             int width, height;
             glfwGetWindowSize(t_window, &width, &height);
-            window->sendEvent<ResizeEvent>(Size{width, height}, window->getContentSize());
+            window->postEvent(new ResizeEvent{Size{width, height}, window->getContentSize()});
         });
     }
     
@@ -102,7 +102,8 @@ namespace pTK
             if (!entered)
             {
                 auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
-                window->sendEvent<MotionEvent>(-1, -1);
+                MotionEvent event{-1, -1};
+                window->sendEvent(&event);
             }
         });
         
@@ -112,8 +113,16 @@ namespace pTK
             Size wSize = window->getSize();
             
             if ((t_xpos >= 0) && (t_xpos <= (wSize.width)))
+            {
                 if ((t_ypos >= 0) && (t_ypos <= (wSize.height)))
-                    window->sendEvent<MotionEvent>((int)t_xpos, (int)t_ypos);
+                {
+                    MotionEvent event{ static_cast<Point::value_type>(t_xpos), 
+                        static_cast<Point::value_type>(t_ypos)};
+                    window->sendEvent(&event);
+                }
+            }
+                
+                    
         });
         // void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
         glfwSetMouseButtonCallback(m_window, [](GLFWwindow* t_window, int t_button, int t_action, int){
@@ -133,9 +142,21 @@ namespace pTK
                 button = Mouse::Button::NONE;
             
             if (t_action == GLFW_PRESS)
-                window->sendEvent<ButtonEvent>(Event::Type::MouseButtonPressed, button, xpos, ypos);
+            {
+                ButtonEvent event{Event::Type::MouseButtonPressed, 
+                    button, 
+                    static_cast<Point::value_type>(xpos), 
+                    static_cast<Point::value_type>(ypos)};
+                window->sendEvent(&event);
+            }
             else if (t_action == GLFW_RELEASE)
-                window->sendEvent<ButtonEvent>(Event::Type::MouseButtonReleased, button, xpos, ypos);
+            {
+                ButtonEvent event{ Event::Type::MouseButtonReleased, 
+                    button,
+                    static_cast<Point::value_type>(xpos),
+                    static_cast<Point::value_type>(ypos)};
+                window->sendEvent(&event);
+            }
         });
     }
     
@@ -145,9 +166,15 @@ namespace pTK
         glfwSetKeyCallback(m_window, [](GLFWwindow* t_window, int t_key, int, int t_action, int){
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
             if (t_action == GLFW_PRESS)
-                window->sendEvent<KeyEvent>(Event::Type::KeyPressed, t_key);
+            {
+                KeyEvent event{Event::Type::KeyPressed, t_key};
+                window->sendEvent(&event);
+            }
             else if (t_action == GLFW_RELEASE)
-                window->sendEvent<KeyEvent>(Event::Type::KeyReleased, t_key);
+            {
+                KeyEvent event{ Event::Type::KeyReleased, t_key };
+                window->sendEvent(&event);
+            }
         });
     }
 
@@ -183,7 +210,7 @@ namespace pTK
     
     void Window::onChildDraw(size_type)
     {
-        sendEvent<Event>(Event::Category::Window, Event::Type::WindowDraw);
+        postEvent(new Event{Event::Category::Window, Event::Type::WindowDraw});
     }
     
     void Window::pollEvents()
@@ -196,25 +223,16 @@ namespace pTK
         size_t eventCount = m_eventQueue.size();
         for (uint i = 0; i < eventCount; i++)
         {
-            Ref<Event> event = m_eventQueue.front();
+            std::unique_ptr<Event> event = std::move(m_eventQueue.front());
             m_eventQueue.pop();
             
-            if (event->category() == Event::Category::Window)
-                handleWindowEvent(event.get());
-            else if (event->category() == Event::Category::Key)
-                handleKeyboardEvent(event.get());
-            else if (event->category() == Event::Category::Mouse)
-                handleMouseEvent(event.get());
-#ifdef PTK_DEBUG
-            else
-                PTK_WARN("Unknown event");
-#endif
+            handleEvent(event.get());
         }
         
         // Quick fix when previous event cause a draw event.
         if (m_eventQueue.size() > 0)
         {
-            Ref<Event> event = m_eventQueue.front();
+            Ref<Event> event = std::move(m_eventQueue.front());
             if (event->category() == Event::Category::Window)
             {
                 handleWindowEvent(event.get());
@@ -227,6 +245,16 @@ namespace pTK
             forceDrawAll();
             m_draw = false;
         }
+    }
+
+    void Window::sendEvent(Event *event)
+    {
+        handleEvent(event);
+    }
+
+    void Window::postEvent(Event *event)
+    {
+        m_eventQueue.push(std::unique_ptr<Event>(event));
     }
 
     void Window::swapBuffers()
@@ -302,7 +330,7 @@ namespace pTK
     void Window::close()
     {
         glfwSetWindowShouldClose(m_window, GLFW_TRUE);
-        sendEvent<Event>(Event::Category::Window, Event::Type::WindowClose);
+        postEvent(new Event{Event::Category::Window, Event::Type::WindowClose});
     }
     
     // Visible
@@ -315,6 +343,22 @@ namespace pTK
     void Window::hide()
     {
         glfwHideWindow(m_window);
+    }
+
+    void Window::handleEvent(Event *event)
+    {
+        PTK_ASSERT(event, "Undefined Event");
+
+        if (event->category() == Event::Category::Window)
+            handleWindowEvent(event);
+        else if (event->category() == Event::Category::Key)
+            handleKeyboardEvent(event);
+        else if (event->category() == Event::Category::Mouse)
+            handleMouseEvent(event);
+#ifdef PTK_DEBUG
+        else
+            PTK_WARN("Unknown event");
+#endif
     }
 
     // Called by event thread.

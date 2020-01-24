@@ -118,23 +118,28 @@ namespace pTK
         */
         void handleEvents();
         
-        /** Templated function for sending events to the window to
-            be handled.
+        /** Function for sending events to the window to
+            be handled directly.
 
+            Returns after the event is handled.
         */
-        template<typename T, typename... Args>
-        void sendEvent(Args&& ...args)
-        {
-            Ref<T> event = create<T>(std::forward<Args>(args)...);
-            m_eventQueue.push(event);
-        }
-        
+        void sendEvent(Event *event);
+
+        /** Function for sending events to the window to
+            be handled later when handleEvents() is called.
+
+            Event gets put on a queue (FIFO) and returns directly.
+            Note: event must be allocated on the HEAP, as soon as the
+            event is handled it will be deleted.
+        */
+        void postEvent(Event *event);
+
     private:
         // Window
         GLFWwindow* m_window;
         Vec2f m_scale;
         std::unique_ptr<Canvas> m_drawCanvas;
-        std::queue<Ref<Event>> m_eventQueue;
+        std::queue<std::unique_ptr<Event>> m_eventQueue;
         bool m_draw;
 
         // Init Functions
@@ -146,6 +151,7 @@ namespace pTK
         void setKeyCallbacks();
         
         // Event processing
+        void handleEvent(Event *event);
         void handleKeyboardEvent(Event* event);
         void handleMouseEvent(Event* event);
         void handleWindowEvent(Event* event);
