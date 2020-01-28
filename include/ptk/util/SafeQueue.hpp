@@ -9,28 +9,41 @@
 #define PTK_UTIL_SAFEQUEUE_HPP
 
 // C++ Headers
-#include <queue>
+#include <deque>
 #include <mutex>
 #include <condition_variable>
+#include <utility>
 
 namespace pTK
 {
     /** SafeQueue class implementation.
 
-        A thread safe wrapper for queue.
+        A thread safe wrapper for a container.
+        The container as the second template parameter must satisfy the requirements
+        of SequenceContainer and implement these following functions with the usual semantics:
+            - push_back()
+            - pop_front()
+            - back()
+            - front()
+
+        The default container is std::deque.
+
         Implemented with Condition Variable, meaning that if you
         call front() or back() the thread will be blocked until
         push() has been called.
+
+        Important to note is that all the comparison and assignment operators do not lock 
+        the queues!
     */
-    template<typename T>
+    template<typename T, typename Container = std::deque<T>>
     class SafeQueue
     {
     public:
-        using value_type      = T;
-        using reference       = T&;
-        using const_reference = const T&;
-        using size_type       = size_t;
-        using container_type  = std::queue<T>;
+        using value_type = typename Container::value_type;
+        using reference = typename Container::reference;
+        using const_reference = typename Container::const_reference;
+        using size_type = typename Container::size_type;
+        using container_type = Container;
 
     public:
         /** Constructs SafeQueue with default values.
@@ -38,11 +51,82 @@ namespace pTK
             @return  default initialized SafeQueue
         */
         SafeQueue()
-            : m_mutex{}, m_conditionVariable{}, m_queue{}
+            : m_mutex{},
+              m_conditionVariable{},
+              m_cont{}
         {
+
         }
 
+        /** Copy Constructs for SafeQueue.
+
+            Note: Will only lock the SafeQueue it is copying from.
+            There is no point in locking the current object whilst
+            it is being created.
+
+            @param other    to copy from
+            @return         SafeQueue copy of other
+        */
+        SafeQueue(const SafeQueue& other)
+            : m_mutex{},
+              m_conditionVariable{},
+              m_cont{}
+        {
+            std::unique_lock<std::mutex> lock(other.m_mutex);
+            m_cont = other.m_cont;
+        }
+
+        /** Move Constructs for SafeQueue.
+
+            Note: Will only lock the SafeQueue it is moving from.
+            There is no point in locking the current object whilst
+            it is being created.
+
+            @param other    to move from
+            @return         SafeQueue with values moved from other
+        */
+        SafeQueue(SafeQueue&& other)
+        {
+            std::unique_lock<std::mutex> lock(other.m_mutex);
+            std::swap(m_cont, other.m_cont);
+        }
+
+        /** Destructor for SafeQueue.
+
+        */
         ~SafeQueue() = default;
+
+        /** Copy Assignment for SafeQueue.
+
+            Note: Will not lock either queue!
+
+            @param other    to copy from
+            @return         SafeQueue copy of other
+        */
+        SafeQueue& operator=(const SafeQueue& other)
+        {
+            if (this == &other)
+                return *this;
+
+            m_cont = other.m_cont;
+            return *this;
+        }
+
+        /** Move Assignment for SafeQueue.
+
+            Note: Will not lock either queue!
+
+            @param other    to move from
+            @return         SafeQueue with values moved from other
+        */
+        SafeQueue& operator=(SafeQueue&& other)
+        {
+            if (this == &other)
+                return *this;
+
+            m_cont = std::move(other.m_cont);
+            return *this;
+        }
 
         /** Funtion for pushing an item to the queue.
 
@@ -51,7 +135,7 @@ namespace pTK
         void push(const value_type& item)
         {
             std::unique_lock<std::mutex> lock(m_mutex);
-            m_queue.push(item);
+            m_cont.push_back(item);
             m_conditionVariable.notify_one();
         }
 
@@ -62,7 +146,7 @@ namespace pTK
         void push(value_type&& item)
         {
             std::unique_lock<std::mutex> lock(m_mutex);
-            m_queue.push(std::move(item));
+            m_cont.push_back(std::move(item));
             m_conditionVariable.notify_one();
         }
 
@@ -74,7 +158,7 @@ namespace pTK
         void emplace(Args&&... args)
         {
             std::unique_lock<std::mutex> lock(m_mutex);
-            m_queue.emaplce(m_queue.emplace(std::forward<Args>(args)...));
+            m_cont.emplace_back(std::forward<Args>(args)...);
             m_conditionVariable.notify_one();
         }
 
@@ -85,8 +169,8 @@ namespace pTK
         {
             std::unique_lock<std::mutex> lock(m_mutex);
 
-            if (!m_queue.empty())
-                m_queue.pop();
+            if (!m_cont.empty())
+                m_cont.pop_front();
         }
 
         /** Funtion for retrieving the item at the front in the queue.
@@ -101,10 +185,10 @@ namespace pTK
         reference front()
         {
             std::unique_lock<std::mutex> lock(m_mutex);
-            while (m_queue.empty())
+            while (m_cont.empty())
                 m_conditionVariable.wait(lock);
 
-            return m_queue.front();
+            return m_cont.front();
         }
 
         /** Funtion for retrieving the item at the front in the queue.
@@ -119,10 +203,10 @@ namespace pTK
         const_reference front() const
         {
             std::unique_lock<std::mutex> lock(m_mutex);
-            while (m_queue.empty())
+            while (m_cont.empty())
                 m_conditionVariable.wait(lock);
 
-            return m_queue.front();
+            return m_cont.front();
         }
 
         /** Funtion for retrieving the item at the back in the queue.
@@ -137,10 +221,10 @@ namespace pTK
         reference back()
         {
             std::unique_lock<std::mutex> lock(m_mutex);
-            while (m_queue.empty())
+            while (m_cont.empty())
                 m_conditionVariable.wait(lock);
 
-            return m_queue.back();
+            return m_cont.back();
         }
 
         /** Funtion for retrieving the item at the back in the queue.
@@ -155,10 +239,10 @@ namespace pTK
         const_reference back() const
         {
             std::unique_lock<std::mutex> lock(m_mutex);
-            while (m_queue.empty())
+            while (m_cont.empty())
                 m_conditionVariable.wait(lock);
 
-            return m_queue.back();
+            return m_cont.back();
         }
 
         /** Funtion for checking if the queue is empty or not.
@@ -169,7 +253,7 @@ namespace pTK
         {
             std::unique_lock<std::mutex> lock(m_mutex);
 
-            return m_queue.empty();
+            return m_cont.empty();
         }
 
         /** Funtion for checking the size of the queue.
@@ -180,14 +264,87 @@ namespace pTK
         {
             std::unique_lock<std::mutex> lock(m_mutex);
 
-            return m_queue.size();
+            return m_cont.size();
+        }
+
+        /** Funtion for locking the queue.
+            
+            Will block if the mutex is not available.
+        */
+        void lock()
+        {
+            m_mutex.lock();
+        }
+
+        /** Funtion for trying to lock the queue.
+
+            Will return instantly.
+
+            @return    lock status
+        */
+        bool try_lock()
+        {
+            return m_mutex.try_lock();
+        }
+
+        /** Funtion for unlocking the queue.
+
+            Will block if the mutex is not available.
+        */
+        void unlock()
+        {
+            m_mutex.unlock();
         }
 
     private:
         mutable std::mutex m_mutex;
         std::condition_variable m_conditionVariable;
-        container_type m_queue;
+        Container m_cont;
+
+        template<typename T1, typename Container1>
+        friend bool operator==(const SafeQueue<T1, Container1>& lhs,
+            const SafeQueue<T1, Container1>& rhs);
+
+        template<typename T1, typename Container1>
+        friend bool operator>(const SafeQueue<T1, Container1>& lhs,
+            const SafeQueue<T1, Container1>& rhs);
     };
+
+    template<typename T, typename Container>
+    bool operator==(const SafeQueue<T, Container>& lhs, const SafeQueue<T, Container>& rhs)
+    {
+        return lhs.m_cont == rhs.m_cont;
+    }
+
+    template<typename T, typename Container>
+    bool operator!=(const SafeQueue<T, Container>& lhs, const SafeQueue<T, Container>& rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    template<typename T, typename Container>
+    bool operator<(const SafeQueue<T, Container>& lhs, const SafeQueue<T, Container>& rhs)
+    {
+        return rhs > lhs;
+    }
+
+    template<typename T, typename Container>
+    bool operator<=(const SafeQueue<T, Container>& lhs, const SafeQueue<T, Container>& rhs)
+    {
+        return !(lhs > rhs);
+    }
+
+    template<typename T, typename Container>
+    bool operator>(const SafeQueue<T, Container>& lhs, const SafeQueue<T, Container>& rhs)
+    {
+        return lhs.m_cont > rhs.m_cont;
+    }
+
+    template<typename T, typename Container>
+    bool operator>=(const SafeQueue<T, Container>& lhs, const SafeQueue<T, Container>& rhs)
+    {
+        return !(lhs < rhs);
+    }
 }
 
 #endif // PTK_UTIL_SAFEQUEUE_HPP
