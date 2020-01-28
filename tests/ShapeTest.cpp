@@ -39,7 +39,7 @@ TEST_CASE("Shape Getters and Setters")
     SECTION("outline_thickness")
     {
         pTK::Shape s;
-        s.setOutlineThickness(10);
+        s.setOutlineThickness(10.0f);
         REQUIRE(s.getOutlineThickness() == 10);
     }
 }
@@ -49,7 +49,7 @@ TEST_CASE("Shape Copy and Assignment")
     // Testing Shape Copy and Assignment.
     pTK::Color  color{50, 100, 150, 200};
     pTK::Color  outline_color{75, 125, 175, 225};
-    uint32_t    outline_thickness = 50;
+    float       outline_thickness = 50.0f;
     
     pTK::Shape s;
     s.setColor(color);
@@ -79,7 +79,7 @@ TEST_CASE ("Shape Comparison")
     // Testing Transformable Comparison.
     pTK::Color  color{50, 100, 150, 200};
     pTK::Color  outline_color{75, 125, 175, 225};
-    uint32_t    outline_thickness = 50;
+    float       outline_thickness = 50.0f;
     
     pTK::Shape s;
     s.setColor(color);
