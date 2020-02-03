@@ -28,11 +28,15 @@ namespace pTK
     class Widget : public Alignment, public Drawable, public EventHandling, public Sizable
     {
     public:
-        /** Constructs Event with default values.
+        /** Constructs Widget with default values.
          
             @return    default initialized Widget
         */
         Widget();
+
+        /** Deconstructor for Widget.
+        
+        */
         virtual ~Widget() = default;
         
         /** Function sets the Container parent of the Widget.
@@ -108,9 +112,11 @@ namespace pTK
         virtual bool drawChild(Widget*);
 
     private:
+        // Size functions derived from Sizable.
         void onResize(const Size& size) override;
         void onLimitChange(const Size& min, const Size& max) override;
 
+        // Alignment functions derived from Alignment.
         void onAlignChange(std::underlying_type<Align>::type) override;
         void onMarginChange(const Margin&) override;
         void onPaddingChange(const Padding&) override;

@@ -22,6 +22,10 @@ namespace pTK
             @return    default initialized Shape
         */
         Shape();
+
+        /** Deconstructor for Shape.
+
+        */
         virtual ~Shape() = default;
         
         /** Function for retrieving the Color of the Shape.

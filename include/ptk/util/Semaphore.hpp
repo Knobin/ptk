@@ -25,6 +25,10 @@ namespace pTK
     class Semaphore : public Singleton
     {
     public:
+        /** Deleted Constructor for Semaphore.
+
+            Object should always be constructed with a count.
+        */
         Semaphore() = delete;
         
         /** Constructs Semaphore with default values.
@@ -32,6 +36,10 @@ namespace pTK
             @return  default initialized Semaphore
         */
         Semaphore(unsigned int count);
+
+        /** Deconstructor for Semaphore.
+
+        */
         virtual ~Semaphore() = default;
         
         /** Funtion for incrementing count and notify a waiting

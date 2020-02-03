@@ -17,7 +17,14 @@ namespace pTK
     class NonMovable
     {
     public:
+        /** Deleted Move Constructor.
+
+        */
         NonMovable(const NonMovable&) = delete;
+
+        /** Deleted Move Assignment operator.
+
+        */
         NonMovable& operator=(const NonMovable&) = delete;
         
     protected:

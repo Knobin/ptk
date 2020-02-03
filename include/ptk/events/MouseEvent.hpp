@@ -59,6 +59,10 @@ namespace pTK
             : Event(Event::Category::Mouse, Event::Type::MouseMoved), m_pos{pos}
         {
         }
+
+        /** Deconstructor for MotionEvent.
+
+        */
         virtual ~MotionEvent() = default;
 
         /** Function for retrieving the associated x position.

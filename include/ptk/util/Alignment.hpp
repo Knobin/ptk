@@ -28,6 +28,14 @@ namespace pTK
         Center  = 0x0080
     };
     
+    /** Function for checking if a specific Align is set.
+
+        e.g. Align align{Align::Top | Align::Bottom};
+        isAlignSet(align, Align::Top); => returns true
+        isAlignSet(align, Align::Bottom); => returns true
+        isAlignSet(align, Align::Top | Align::Bottom); => returns true
+        all other combinations will return false.
+    */
     bool isAlignSet(std::underlying_type<Align>::type number, Align align);
 
     /** Directions struct implementation.
@@ -50,7 +58,16 @@ namespace pTK
     class Alignment
     {
     public:
+        /** Constructs Alignment with default values.
+
+            @return    default initialized Alignment
+        */
         Alignment();
+
+        /** Deconstructor for Alignment.
+
+        */
+        virtual ~Alignment() = default;
 
         /** Function for setting the align property of the Widget.
 
@@ -213,8 +230,22 @@ namespace pTK
         Padding::value_type getPaddingRight() const;
 
     private:
+        /** Function for notifying that Align property has changed.
+
+            @param align    new Align value
+        */
         virtual void onAlignChange(std::underlying_type<Align>::type) {}
+
+        /** Function for notifying that Margin property has changed.
+
+            @param margin    new Margin value
+        */
         virtual void onMarginChange(const Margin&) {}
+
+        /** Function for notifying that Padding property has changed.
+
+            @param padding    new Padding value
+        */
         virtual void onPaddingChange(const Padding&) {}
 
     private:

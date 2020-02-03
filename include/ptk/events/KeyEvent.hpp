@@ -32,7 +32,12 @@ namespace pTK
         KeyEvent(Event::Type type, int32 keycode)
             : Event(Event::Category::Key, type), m_keycode{keycode}
         {
+
         }
+
+        /** Deconstructor for KeyEvent.
+
+        */
         ~KeyEvent() final = default;
 
         /** Function for retrieving the associated keycode.

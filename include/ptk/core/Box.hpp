@@ -35,6 +35,10 @@ namespace pTK
             @return    default initialized Box
          */
         Box();
+
+        /** Deconstructor for Box.
+
+        */
         virtual ~Box();
 
         /** Function for adding a Widget

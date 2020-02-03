@@ -78,6 +78,9 @@ namespace pTK
                 add((*it));
         }
         
+        /** Deconstructor for Container.
+
+        */
         virtual ~Container() {}
         
         /** Container assignment operator.

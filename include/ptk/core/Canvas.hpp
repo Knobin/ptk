@@ -67,6 +67,10 @@ namespace pTK
             @return    default initialized Canvas
         */
         Canvas(const Size& size);
+
+        /** Deconstructor for Canvas.
+
+        */
         ~Canvas();
         
         /** Function for resizing the Canvas.

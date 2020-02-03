@@ -33,6 +33,10 @@ namespace pTK
             @return    default initialized Font
         */
         Font();
+
+        /** Deconstructor for Font.
+
+        */
         virtual ~Font() = default;
        
         /** Function for setting the font from a given file.

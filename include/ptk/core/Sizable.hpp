@@ -32,6 +32,10 @@ namespace pTK
             @return  default initialized Sizable
         */
         Sizable(const Size& size);
+
+        /** Deconstructor for Sizable.
+
+        */
         virtual ~Sizable() = default;
         
         /** Funtion for setting minimal size.

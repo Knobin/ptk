@@ -58,6 +58,10 @@ namespace pTK
             : m_type{type}, m_category{category}
         {
         }
+
+        /** Deconstructor for Event.
+
+        */
         virtual ~Event() = default;
         
         /** Function for retrieving the type of the event.

@@ -21,7 +21,14 @@ namespace pTK
     class EventCallbacks
     {
     public:
+        /** Constructs EventCallbacks with default values.
+
+        */
         EventCallbacks();
+
+        /** Deconstructor for EventCallbacks.
+
+        */
         virtual ~EventCallbacks() = default;
         
         /** Function for handling when a key is pressed or released.

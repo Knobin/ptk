@@ -32,6 +32,10 @@ namespace pTK
             @return        default initialized Text with Font
         */
         Text(const Ref<Font>& font);
+
+        /** Deconstructor for Text.
+
+        */
         virtual ~Text() = default;
 
         /** Function for setting the Font.

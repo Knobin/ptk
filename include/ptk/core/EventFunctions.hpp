@@ -20,7 +20,14 @@ namespace pTK
     class EventFunctions
     {
     public:
+        /** Constructs EventFunctions with default values.
+
+        */
         EventFunctions() = default;
+
+        /** Deconstructor for EventFunctions.
+
+        */
         virtual ~EventFunctions() = default;
         
         /** Function for handling when a key is pressed or released.

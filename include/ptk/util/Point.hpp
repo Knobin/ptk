@@ -53,6 +53,11 @@ namespace pTK
         */
         void set(value_type other_x, value_type other_y);
 
+        /** Assigns Point with default values with v.
+
+            @param v   Vec2 to copy from
+            @return    point reference
+        */
         template <typename T>
         Point& operator=(const Vec2<T>& v);
         

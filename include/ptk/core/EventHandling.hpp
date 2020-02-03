@@ -24,7 +24,14 @@ namespace pTK
     class EventHandling : public EventCallbacks, public EventFunctions
     {
     public:
+        /** Constructs EventHandling with default values.
+
+        */
         EventHandling();
+
+        /** Deconstructor for EventHandling.
+
+        */
         virtual ~EventHandling() = default;
         
         /** Function for handling when a key is pressed or released.

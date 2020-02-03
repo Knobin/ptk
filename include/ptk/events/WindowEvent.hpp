@@ -42,6 +42,10 @@ namespace pTK
             : Event(Event::Category::Window, Event::Type::WindowResize), m_size{size}
         {
         }
+
+        /** Deconstructor for ResizeEvent.
+
+        */
         ~ResizeEvent() final = default;
 
         /** Function for retrieving the associated size.

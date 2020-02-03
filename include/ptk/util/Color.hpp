@@ -56,6 +56,10 @@ namespace pTK
             @return        Color initialized
         */
         Color(byte red, byte green, byte blue, byte alpha = 255);
+
+        /** Deconstructor for Color.
+
+        */
         virtual ~Color() = default;
         
         /** Get function for retrieving copy of Color in int form.

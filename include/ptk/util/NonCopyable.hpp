@@ -16,8 +16,19 @@ namespace pTK
     */
     struct NonCopyable
     {
+        /** Constructs NonCopyable with default values.
+
+        */
         NonCopyable() = default;
+
+        /** Deleted Copy Constructor.
+
+        */
         NonCopyable(const NonCopyable&) = delete;
+
+        /** Deleted Copy Assignment operator.
+
+        */
         NonCopyable& operator=(const NonCopyable&) = delete;
     };
 }
