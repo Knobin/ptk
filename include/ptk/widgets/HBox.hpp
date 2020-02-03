@@ -41,7 +41,7 @@ namespace pTK
         void setPosHint(const Point& pos) override;
         
     protected:
-        void refitContent();
+        void refitContent(const Size& size);
 
     private:
         void onAdd(const Ref<Widget>&) override;

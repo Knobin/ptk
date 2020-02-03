@@ -46,7 +46,7 @@ namespace pTK
         m_text->setPosHint(textPos);
     }
 
-    void Button::onResize(const Size& size)
+    void Button::onResize(const Size&)
     {
         setBounds();
     }

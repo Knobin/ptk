@@ -394,7 +394,7 @@ namespace pTK
                 m_drawCanvas->resize(cSize);
 
             setSize(size);
-            refitContent();
+            refitContent(size);
             m_draw = true;
         }
     }

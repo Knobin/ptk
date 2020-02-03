@@ -43,13 +43,13 @@ namespace pTK
              
              Only need to resize and position children.
              */
-            refitContent();
+            refitContent(vbSize);
         }
     }
     
     void VBox::onRemove(const Ref<Widget>&)
     {
-        refitContent();
+        refitContent(getSize());
     }
     
     void VBox::onChildUpdate(size_type)
@@ -88,10 +88,10 @@ namespace pTK
         }
     }
     
-    void VBox::refitContent()
+    void VBox::refitContent(const Size& nsize)
     {
         Size layoutSize = calculateMinSize();
-        Size vbSize = getSize();
+        Size vbSize = nsize;
         Point vbPos = getPosition();
         size_type children = size();
         std::vector<Size> sizes(children);
@@ -182,9 +182,9 @@ namespace pTK
         Widget::setPosHint(pos);
     }
 
-    void VBox::onResize(const Size&)
+    void VBox::onResize(const Size& size)
     {
-        refitContent();
+        refitContent(size);
     }
     
     Size VBox::calculateMinSize() const
