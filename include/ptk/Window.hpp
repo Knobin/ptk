@@ -69,24 +69,6 @@ namespace pTK
         */
         const Vec2f& getDPIScale() const;
 
-        /** Function for setting the size of the window.
-
-            @param size    width and height to set
-        */
-        void setSize(const Size& size) override;
-
-        /** Function for setting the minimum size of the window.
-
-            @param size    minimum width and height to set
-        */
-        void setMinSize(const Size& size) override;
-
-        /** Function for setting the maximum size of the window.
-
-            @param size    maximum width and height to set
-        */
-        void setMaxSize(const Size& size) override;
-
         /** Function for checking if the window should close.
 
             @return     close status
@@ -135,6 +117,10 @@ namespace pTK
             This function is thread safe.
         */
         void postEvent(Event *event);
+
+    private:
+        void onResize(const Size& size) override;
+        void onLimitChange(const Size& min, const Size& max) override;
 
     private:
         // Window

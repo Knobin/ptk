@@ -40,23 +40,17 @@ namespace pTK
         */
         void setPosHint(const Point& pos) override;
         
-        /** Function for setting the size of the VBox and its
-            children.
-         
-            Derived from Widget.
-         
-            @param newSize     Size to set
-        */
-        void setSize(const Size& newSize) override;
-        
+    protected:
+        void refitContent();
+
     private:
         void onAdd(const Ref<Widget>&) override;
         void onRemove(const Ref<Widget>&) override;
         void onChildUpdate(size_type) override;
+        void onResize(const Size& size) override;
         
     private:
         void expandOnAdd(const Size& newSize);
-        void refitContent();
         
         std::vector<Size::value_type> calcSpaces(Size::value_type height);
         Point::value_type alignChildH(size_type index, const Size& parentSize, const Size& childSize);

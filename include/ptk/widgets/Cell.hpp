@@ -68,15 +68,6 @@ namespace pTK
         */
         void setPosHint(const Point& pos) override;
         
-        /** Function for setting the size of the VBox and its
-            children.
-         
-            Derived from Widget.
-         
-            @param newSize     Size to set
-        */
-        void setSize(const Size& size) override;
-        
         /** Draw function.
             Function is called when it is time to draw.
          
@@ -141,7 +132,10 @@ namespace pTK
         bool onReleaseEvent(Mouse::Button btn, const Point& pos) override;
     private:
         void calculatePosition();
-        
+    
+        void onResize(const Size& size) override;
+    private:
+
         Ref<Widget> m_widget;
         Size m_widgetSize;
         Point m_widgetPos;

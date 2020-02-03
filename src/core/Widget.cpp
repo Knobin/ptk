@@ -26,16 +26,14 @@ namespace pTK
     {
         return m_parent;
     }
-    
-    void Widget::setSize(const Size& size)
+
+    void Widget::onResize(const Size& size)
     {
-        Sizable::setSize(size);
         update();
     }
 
-    void Widget::setConstSize(const Size& size)
+    void Widget::onLimitChange(const Size&, const Size&)
     {
-        Sizable::setConstSize(size);
         update();
     }
     

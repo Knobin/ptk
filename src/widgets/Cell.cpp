@@ -94,12 +94,9 @@ namespace pTK
         
         Widget::setPosHint(pos);
     }
-    
-    void Cell::setSize(const Size& size)
+
+    void Cell::onResize(const Size& size)
     {
-        // Set widget position. ( TODO: Align)
-        // We align center default.
-        Widget::setSize(size);
         calculatePosition();
     }
     

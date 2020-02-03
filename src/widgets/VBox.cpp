@@ -54,7 +54,8 @@ namespace pTK
     
     void VBox::onChildUpdate(size_type)
     {
-        refitContent();
+        setMinSize(calculateMinSize());
+        //setMaxSize(calculateMaxSize());
     }
     
     void VBox::expandOnAdd(const Size& newSize)
@@ -89,7 +90,6 @@ namespace pTK
     void VBox::refitContent()
     {
         Size layoutSize = calculateMinSize();
-        setMinSize(layoutSize);
         Size vbSize = getSize();
         Point vbPos = getPosition();
         size_type children = size();
@@ -179,26 +179,25 @@ namespace pTK
         
         Widget::setPosHint(pos);
     }
-    
-    void VBox::setSize(const Size& newSize)
+
+    void VBox::onResize(const Size&)
     {
-        Widget::setSize(newSize);
         refitContent();
     }
     
     Size VBox::calculateMinSize() const
     {
-		Size contentMinSize;
-        for (size_type i{0}; i < size(); ++i)
+        Size contentMinSize{Size::Min};
+        for (auto it{cbegin()}; it != cend(); ++it)
         {
-            Margin cMargin = at(i)->getMargin();
+            Margin cMargin = (*it)->getMargin();
             Margin::value_type vMargin = cMargin.top + cMargin.bottom;
             Margin::value_type hMargin = cMargin.left + cMargin.right;
-            
-            Size cMinSize = at(i)->getMinSize();
+
+            Size cMinSize = (*it)->getMinSize();
             contentMinSize.height += static_cast<Size::value_type>(vMargin + cMinSize.height);
             contentMinSize.width =
-                ((cMinSize.width + static_cast<Size::value_type>(hMargin)) > contentMinSize.width) 
+                ((cMinSize.width + static_cast<Size::value_type>(hMargin)) > contentMinSize.width)
                 ? cMinSize.width + static_cast<Size::value_type>(hMargin) : contentMinSize.width;
         }
         
@@ -207,17 +206,12 @@ namespace pTK
     
     Size VBox::calculateMaxSize() const
     {
-        Size contentMaxSize;
-        auto it = cbegin();
-        if (it != cend())
+        Size contentMaxSize{Size::Max};
+        for (auto it{cbegin()}; it != cend(); ++it)
         {
-            contentMaxSize = (*it)->getMaxSize();
-            while (++it != cend())
-            {
-                Size maxSize = (*it)->getMaxSize();
-                contentMaxSize.width = (maxSize.width < contentMaxSize.width) ? maxSize.width : contentMaxSize.width;
-                contentMaxSize.height += maxSize.height;
-            }
+            Size maxSize = (*it)->getMaxSize();
+            contentMaxSize.width = (maxSize.width < contentMaxSize.width) ? maxSize.width : contentMaxSize.width;
+            contentMaxSize.height += maxSize.height;
         }
         
         return contentMaxSize;

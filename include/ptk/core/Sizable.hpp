@@ -38,7 +38,7 @@ namespace pTK
          
             @param size    minimal size
         */
-        virtual void setMinSize(const Size& size);
+        void setMinSize(const Size& size);
         
         /** Funtion for getting the minimal size.
          
@@ -50,13 +50,13 @@ namespace pTK
          
             @param size    size
         */
-        virtual void setSize(const Size& size);
+        void setSize(const Size& size);
         
         /** Funtion for setting size.
          
             @param size    size
         */
-        virtual void setConstSize(const Size& size);
+        void setConstSize(const Size& size);
         
         /** Funtion for getting the size.
          
@@ -68,13 +68,43 @@ namespace pTK
          
             @param size    maximal size
         */
-        virtual void setMaxSize(const Size& size);
+        void setMaxSize(const Size& size);
         
         /** Funtion for getting the maximal size.
          
             @param size    maximal size
         */
         Size getMaxSize() const;
+
+        /** Funtion for setting both minimal and maximal size.
+
+            @param min    minimal size
+            @param max    maximum size
+        */
+        void setLimits(const Size& min, const Size& max);
+
+    private:
+        /** Funtion for knowing when the size has been changed.
+            
+            Will be called when setSize accepts a new size.
+            Internal size will be set before calling this, so
+            calling getSize will also return the new size.
+            
+            @param size    new size
+        */
+        virtual void onResize(const Size&) {}
+
+        /** Funtion for knowing when the limits has been changed.
+
+            Will be called when when either setMinSize, setMaxSize or setLimits 
+            accepts a new size.
+            Internal sizes will be set before calling this, so
+            calling getMaxSize or getMinSize will also return the new size.
+
+            @param min    current min size
+            @param max    current max size
+        */
+        virtual void onLimitChange(const Size&, const Size&) {}
         
     private:
         Size m_minSize;

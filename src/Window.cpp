@@ -276,49 +276,32 @@ namespace pTK
         return m_scale;
     }
 
-    void Window::setSize(const Size& size)
+    void Window::onResize(const Size& size)
     {
-        glfwSetWindowSize(m_window, size.width, size.height);
-        Widget::setSize(size);
+        if (m_window)
+        {
+            int width, height;
+            glfwGetWindowSize(m_window, &width, &height);
+            Size winSize{static_cast<Size::value_type >(width),
+                      static_cast<Size::value_type >(height)};
+            if (size != winSize)
+                glfwSetWindowSize(m_window, size.width, size.height);
+        }
     }
 
-    void Window::setMinSize(const Size& size)
+    void Window::onLimitChange(const Size& min, const Size& max)
     {
-        Size wSize = getSize();
-        Size contentMinSize = VBox::getMinSize();
-        Size newMinSize;
-
-        if (size.width != GLFW_DONT_CARE)
-            newMinSize.width = ((size.width > contentMinSize.width) && (size.width <= wSize.width)) ? size.width : contentMinSize.width;
-        else
-            newMinSize.width = contentMinSize.width;
-
-        if (size.height != GLFW_DONT_CARE)
-            newMinSize.height = ((size.height > contentMinSize.height) && (size.height <= wSize.height)) ? size.height : contentMinSize.height;
-        else
-            newMinSize.height = contentMinSize.height;
-
-        Sizable::setMinSize(newMinSize);
-        setLimits(newMinSize, getMaxSize());
-    }
-
-    void Window::setMaxSize(const Size& size)
-    {
-        Size wSize = getSize();
-        Size newMaxSize;
-
-        newMaxSize.width = ((size.height >= wSize.height) && (size.height <= Size::Limits::Max)) ? size.width : Size::Limits::Max;
-        newMaxSize.height = ((size.width >= wSize.width) && (size.width <= Size::Limits::Max)) ? size.width : Size::Limits::Max;
-
-        Sizable::setMaxSize(newMaxSize);
-        setLimits(getMinSize(), newMaxSize);
+        setLimits(min, max);
     }
 
     void Window::setLimits(const Size& minSize, const Size& maxSize)
     {
-		int width = (maxSize.width == Size::Limits::Max) ? GLFW_DONT_CARE : maxSize.width;
-		int height = (maxSize.height == Size::Limits::Max) ? GLFW_DONT_CARE : maxSize.height;
-		glfwSetWindowSizeLimits(m_window, static_cast<int>(minSize.width), static_cast<int>(minSize.height), width, height);
+        if (m_window)
+        {
+            int width = (maxSize.width == Size::Limits::Max) ? GLFW_DONT_CARE : maxSize.width;
+            int height = (maxSize.height == Size::Limits::Max) ? GLFW_DONT_CARE : maxSize.height;
+            glfwSetWindowSizeLimits(m_window, static_cast<int>(minSize.width), static_cast<int>(minSize.height), width, height);
+        }
     }
 
     // Close
@@ -410,19 +393,8 @@ namespace pTK
             if (cSize != m_drawCanvas->getSize())
                 m_drawCanvas->resize(cSize);
 
-            // TODO: May conflict with eventThread.
-            Size contentMinSize = VBox::getMinSize();
-            Size currentMinSize = getMinSize();
-            if ((currentMinSize.width < contentMinSize.width) || (currentMinSize.height < contentMinSize.height))
-                setMinSize(contentMinSize);
-
-            // TODO: May conflict with eventThread.
-            Size contentMaxSize = VBox::getMaxSize();
-            Size currentMaxSize = getMaxSize();
-            if ((currentMaxSize.width > contentMaxSize.width) || (currentMaxSize.height > contentMaxSize.height))
-                setMaxSize(contentMaxSize);
-
-            VBox::setSize(size);
+            setSize(size);
+            refitContent();
             m_draw = true;
         }
     }

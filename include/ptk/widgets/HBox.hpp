@@ -40,19 +40,12 @@ namespace pTK
         */
         void setPosHint(const Point& pos) override;
         
-        /** Function for setting the size of the HBox and its
-            children.
-         
-            Derived from Widget.
-         
-            @param newSize     Size to set
-        */
-        void setSize(const Size& newSize) override;
-        
     private:
         void onAdd(const Ref<Widget>&) override;
         void onRemove(const Ref<Widget>&) override;
         void onChildUpdate(size_type) override;
+
+        void onResize(const Size& size) override;
         
     private:
         void expandOnAdd(const Size& newSize);

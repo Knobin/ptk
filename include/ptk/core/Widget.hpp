@@ -47,18 +47,6 @@ namespace pTK
         */
         Widget* getParent() const;
         
-        /** Function for requesting the size of the Widget.
-            
-            @param size  requested size of the Widget.
-        */
-        void setSize(const Size& size) override;
-
-        /** Function for requesting the const size of the Widget.
-            
-            @param size  requested const size of the Widget.
-        */
-        void setConstSize(const Size& size) override;
-        
         /** Function for requesting the position of the Widget.
          
             @param pos  requested position of the Widget.
@@ -160,6 +148,16 @@ namespace pTK
         void setAlign(std::underlying_type<Align>::type alignment);
 
         std::underlying_type<Align>::type getAlign() const;
+
+        /** Function for notifying the parent of a change and
+            to put it on an internal render queue.
+        */
+        bool update();
+
+        /** Function for notifying the parent of a change and
+            put it on an internal render queue.
+        */
+        bool draw();
         
     protected:
         /** Function for updating the child.
@@ -167,21 +165,17 @@ namespace pTK
         */
         virtual bool updateChild(Widget*);
         
-        /** Function for notifying the parent of a change and
-            to put it on an internal render queue.
-        */
-        bool update();
+        
         
         /** Function for redrawing the child.
          
         */
         virtual bool drawChild(Widget*);
-        
-        /** Function for notifying the parent of a change and
-            put it on an internal render queue.
-        */
-        bool draw();
-        
+
+    private:
+        void onResize(const Size& size) override;
+        void onLimitChange(const Size& min, const Size& max) override;
+
     private:
         Widget* m_parent;
         Point m_pos;

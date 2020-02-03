@@ -45,17 +45,9 @@ namespace pTK
         Widget::setPosHint(pos);
         m_text->setPosHint(textPos);
     }
-    
-    void Button::setSize(const Size& newSize)
+
+    void Button::onResize(const Size& size)
     {
-        Size textSize = m_text->getSize();
-        textSize.width += (m_borderSize*2);
-        textSize.height += (m_borderSize*2);
-        
-        textSize.width = (newSize.width > textSize.width) ? newSize.width : textSize.width;
-        textSize.height = (newSize.height > textSize.height) ? newSize.height : textSize.height;
-        
-        Widget::setSize(textSize);
         setBounds();
     }
     

@@ -82,7 +82,6 @@ namespace pTK
     void HBox::refitContent()
     {
         Size layoutSize = calculateMinSize();
-        setMinSize(layoutSize);
         Size vbSize = getSize();
         Point vbPos = getPosition();
         size_type children = size();
@@ -172,10 +171,9 @@ namespace pTK
         
         Widget::setPosHint(pos);
     }
-    
-    void HBox::setSize(const Size& newSize)
+
+    void HBox::onResize(const Size&)
     {
-        Widget::setSize(newSize);
         refitContent();
     }
     
