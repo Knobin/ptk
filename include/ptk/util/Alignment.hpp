@@ -44,44 +44,184 @@ namespace pTK
         value_type right;
     };
     
-    /** Margin class implementation.
-     
-        This class is for handling margin of all directions and
-        keep track if directions have margin set to Auto as well.
-        The Auto implementation for now is pretty bad and will, at
-        some point, change. For now it works.
-    */
-    class Margin : public Directions
+    using Margin = Directions;
+    using Padding = Directions;
+
+    class Alignment
     {
     public:
-        /** Constructs Margin with default values.
-         
-            @return    default initialized Margin
-        */
-        Margin();
+        Alignment();
 
-        /** Constructs Margin with default values with directions.
-         
-            @param directions  margin for all directions
-            @return            default initialized Margin
-        */
-        Margin(Directions directions);
+        /** Function for setting the align property of the Widget.
 
-        /** Constructs Margin with default values with directions.
-         
-            @param mTop    top margin
-            @param mBottom bottom margin
-            @param mLeft   left margin
-            @param mRight  right margin
-            @return        default initialized Margin
+            @param align  Align to apply.
         */
-        Margin(value_type mTop, value_type mBottom, value_type mLeft, value_type mRight);
-        
-        ~Margin() = default;
+        void setAlign(std::underlying_type<Align>::type align);
+
+        /** Function for retrieving the align property of the Widget.
+
+            @return current align
+        */
+        std::underlying_type<Align>::type getAlign() const;
+
+        /** Function for setting the margin of the Widget.
+
+            @param margin  Margin to apply.
+        */
+        void setMargin(const Margin& margin);
+
+        /** Function for setting the top margin of the Widget.
+
+            @param topMargin  value to apply for top margin.
+        */
+        void setMarginTop(Margin::value_type topMargin);
+
+        /** Function for setting the bottom margin of the Widget.
+
+            @param bottomMargin  value to apply for bottom margin.
+        */
+        void setMarginBottom(Margin::value_type bottomMargin);
+
+        /** Function for setting the left margin of the Widget.
+
+            @param leftMargin  value to apply for left margin.
+        */
+        void setMarginLeft(Margin::value_type leftMargin);
+
+        /** Function for setting the right margin of the Widget.
+
+            @param rightMargin  value to apply for right margin.
+        */
+        void setMarginRight(Margin::value_type rightMargin);
+
+        /** Function for setting the top and bottom margin of the Widget.
+
+            @param topMargin  value to apply for top margin.
+            @param bottomMargin  value to apply for bottom margin.
+        */
+        void setMarginTopBottom(Margin::value_type topMargin, Margin::value_type bottomMargin);
+
+        /** Function for setting the left and right margin of the Widget.
+
+            @param leftMargin  value to apply for left margin.
+            @param rightMargin  value to apply for right margin.
+        */
+        void setMarginLeftRight(Margin::value_type leftMargin, Margin::value_type rightMargin);
+
+        /** Function for retrieving the margin of the Widget.
+
+            @return  current margin
+        */
+        const Margin& getMargin() const;
+
+        /** Function for retrieving the top margin of the Widget.
+
+            @return  current top margin
+        */
+        Margin::value_type getMarginTop() const;
+
+        /** Function for retrieving the bottom margin of the Widget.
+
+            @return  current bottom margin
+        */
+        Margin::value_type getMarginBottom() const;
+
+        /** Function for retrieving the left margin of the Widget.
+
+            @return  current left margin
+        */
+        Margin::value_type getMarginLeft() const;
+
+        /** Function for retrieving the right margin of the Widget.
+
+            @return  current right margin
+        */
+        Margin::value_type getMarginRight() const;
+
+        /** Function for setting the padding of the Widget.
+
+            @param padding  Padding to apply.
+        */
+        void setPadding(const Padding& padding);
+
+        /** Function for setting the top padding of the Widget.
+
+            @param topPadding  value to apply for top padding.
+        */
+        void setPaddingTop(Padding::value_type topPadding);
+
+        /** Function for setting the bottom padding of the Widget.
+
+            @param bottomPadding  value to apply for bottom padding.
+        */
+        void setPaddingBottom(Margin::value_type bottomPadding);
+
+        /** Function for setting the left padding of the Widget.
+
+            @param leftPadding  value to apply for left padding.
+        */
+        void setPaddingLeft(Padding::value_type leftPadding);
+
+        /** Function for setting the right padding of the Widget.
+
+            @param rightPadding  value to apply for right padding.
+        */
+        void setPaddingRight(Padding::value_type rightPadding);
+
+        /** Function for setting the top and bottom padding of the Widget.
+
+            @param topPadding  value to apply for top padding.
+            @param bottomPadding  value to apply for bottom padding.
+        */
+        void setPaddingTopBottom(Padding::value_type topPadding, Padding::value_type bottomPadding);
+
+        /** Function for setting the left and right padding of the Widget.
+
+            @param leftPadding  value to apply for left padding.
+            @param rightPadding  value to apply for right padding.
+        */
+        void setPaddingLeftRight(Padding::value_type leftPadding, Padding::value_type rightPadding);
+
+        /** Function for retrieving the padding of the Widget.
+
+            @return  current padding
+        */
+        const Margin& getPadding() const;
+
+        /** Function for retrieving the top padding of the Widget.
+
+            @return  current top padding
+        */
+        Padding::value_type getPaddingTop() const;
+
+        /** Function for retrieving the bottom padding of the Widget.
+
+            @return  current bottom padding
+        */
+        Padding::value_type getPaddingBottom() const;
+
+        /** Function for retrieving the left padding of the Widget.
+
+            @return  current left padding
+        */
+        Padding::value_type getPaddingLeft() const;
+
+        /** Function for retrieving the right padding of the Widget.
+
+            @return  current right padding
+        */
+        Padding::value_type getPaddingRight() const;
+
+    private:
+        virtual void onAlignChange(std::underlying_type<Align>::type) {}
+        virtual void onMarginChange(const Margin&) {}
+        virtual void onPaddingChange(const Padding&) {}
+
+    private:
+        std::underlying_type<Align>::type m_align;
+        Margin m_margin;
+        Padding m_padding;
     };
-
-    // TODO: Padding
-    // using Padding = Directions;
 }
 
 #endif // PTK_UTIL_ALIGNMENT_HPP

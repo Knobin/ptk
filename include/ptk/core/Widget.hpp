@@ -25,7 +25,7 @@ namespace pTK
         This class is low level class for widget, that
         has the essential component for rendering.
     */
-    class Widget : public Drawable, public EventHandling, public Sizable
+    class Widget : public Alignment, public Drawable, public EventHandling, public Sizable
     {
     public:
         /** Constructs Event with default values.
@@ -70,84 +70,6 @@ namespace pTK
             @return  name
         */
         const std::string& getName() const;
-        
-        /** Function for setting the margin of the Widget.
-         
-            @param margin  Margin to apply.
-        */
-        void setMargin(const Margin& margin);
-
-        /** Function for setting the top margin of the Widget.
-         
-            @param topMargin  value to apply for top margin.
-        */
-        void setMarginTop(Margin::value_type topMargin);
-
-        /** Function for setting the bottom margin of the Widget.
-         
-            @param bottomMargin  value to apply for bottom margin.
-        */
-        void setMarginBottom(Margin::value_type bottomMargin);
-
-        /** Function for setting the left margin of the Widget.
-         
-            @param leftMargin  value to apply for left margin.
-        */
-        void setMarginLeft(Margin::value_type leftMargin);
-
-        /** Function for setting the right margin of the Widget.
-         
-            @param rightMargin  value to apply for right margin.
-        */
-        void setMarginRight(Margin::value_type rightMargin);
-
-        /** Function for setting the top and bottom margin of the Widget.
-         
-            @param topMargin  value to apply for top margin.
-            @param bottomMargin  value to apply for bottom margin.
-        */
-        void setMarginTopBottom(Margin::value_type topMargin, Margin::value_type bottomMargin);
-
-        /** Function for setting the left and right margin of the Widget.
-         
-            @param leftMargin  value to apply for left margin.
-            @param rightMargin  value to apply for right margin.
-        */
-        void setMarginLeftRight(Margin::value_type leftMargin, Margin::value_type rightMargin);
-        
-        /** Function for retrieving the margin of the Widget.
-         
-            @return  current margin
-        */
-        const Margin& getMargin() const;
-
-        /** Function for retrieving the top margin of the Widget.
-         
-            @return  current top margin
-        */
-        int32 getMarginTop() const;
-
-        /** Function for retrieving the bottom margin of the Widget.
-         
-            @return  current bottom margin
-        */
-        int32 getMarginBottom() const;
-
-        /** Function for retrieving the left margin of the Widget.
-         
-            @return  current left margin
-        */
-        int32 getMarginLeft() const;
-
-        /** Function for retrieving the right margin of the Widget.
-         
-            @return  current right margin
-        */
-        int32 getMarginRight() const;
-
-        void setAlign(std::underlying_type<Align>::type alignment);
-
-        std::underlying_type<Align>::type getAlign() const;
 
         /** Function for notifying the parent of a change and
             to put it on an internal render queue.
@@ -162,13 +84,26 @@ namespace pTK
     protected:
         /** Function for updating the child.
          
+            override this function for receiving update
+            requests from children (update function is called
+            in the child). i.e. something in the
+            child has changed, probably a new size or 
+            position is set.
+
+            @param child    request from
+
         */
         virtual bool updateChild(Widget*);
         
-        
-        
         /** Function for redrawing the child.
+
+            override this function for receiving draw
+            requests from children (draw function is called
+            in the child). i.e. something in the
+            child has changed and it only needs to be 
+            redrawn.
          
+            @param child    request from
         */
         virtual bool drawChild(Widget*);
 
@@ -176,12 +111,14 @@ namespace pTK
         void onResize(const Size& size) override;
         void onLimitChange(const Size& min, const Size& max) override;
 
+        void onAlignChange(std::underlying_type<Align>::type) override;
+        void onMarginChange(const Margin&) override;
+        void onPaddingChange(const Padding&) override;
+
     private:
         Widget* m_parent;
         Point m_pos;
         std::string m_name;
-        Margin m_margin;
-        std::underlying_type<Align>::type m_align;
     };
     
     // Comparison operators.

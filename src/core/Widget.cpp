@@ -11,8 +11,8 @@
 namespace pTK
 {
     Widget::Widget()
-        : Drawable(), EventHandling(), Sizable(), m_parent{nullptr}, m_name{},
-            m_margin{}, m_align{Align::Center}
+        : Alignment(), Drawable(), EventHandling(), Sizable(), 
+        m_parent{nullptr}, m_name{}
     {
         
     }
@@ -58,86 +58,6 @@ namespace pTK
         return m_name;
     }
     
-    void Widget::setMargin(const Margin& margin)
-    {
-        m_margin = margin;
-        update();
-    }
-    
-    void Widget::setMarginTop(Margin::value_type topMargin)
-    {
-        m_margin.top = topMargin;
-        update();
-    }
-    
-    void Widget::setMarginBottom(Margin::value_type bottomMargin)
-    {
-        m_margin.bottom = bottomMargin;
-        update();
-    }
-    
-    void Widget::setMarginLeft(Margin::value_type leftMargin)
-    {
-        m_margin.left = leftMargin;
-        update();
-    }
-    
-    void Widget::setMarginRight(Margin::value_type rightMargin)
-    {
-        m_margin.right = rightMargin;
-        update();
-    }
-    
-    void Widget::setMarginTopBottom(Margin::value_type topMargin, Margin::value_type bottomMargin)
-    {
-        m_margin.top = topMargin;
-        m_margin.bottom = bottomMargin;
-        update();
-    }
-    
-    void Widget::setMarginLeftRight(Margin::value_type leftMargin, Margin::value_type rightMargin)
-    {
-        m_margin.left = leftMargin;
-        m_margin.right = rightMargin;
-        update();
-    }
-    
-    const Margin& Widget::getMargin() const
-    {
-        return m_margin;
-    }
-    
-    int32 Widget::getMarginTop() const
-    {
-        return m_margin.top;
-    }
-    
-    int32 Widget::getMarginBottom() const
-    {
-        return m_margin.bottom;
-    }
-    
-    int32 Widget::getMarginLeft() const
-    {
-        return m_margin.left;
-    }
-    
-    int32 Widget::getMarginRight() const
-    {
-        return m_margin.right;
-    }
-
-    void Widget::setAlign(std::underlying_type<Align>::type alignment)
-    {
-        m_align = alignment;
-        update();
-    }
-
-    std::underlying_type<Align>::type Widget::getAlign() const
-    {
-        return m_align;
-    }
-    
     bool Widget::updateChild(Widget*)
     {
         return true;
@@ -162,6 +82,21 @@ namespace pTK
             return m_parent->drawChild(this);
         
         return false;
+    }
+
+    void Widget::onAlignChange(std::underlying_type<Align>::type)
+    {
+        update();
+    }
+
+    void Widget::onMarginChange(const Margin&)
+    {
+        update();
+    }
+
+    void Widget::onPaddingChange(const Padding&)
+    {
+        update();
     }
     
     ///////////////////////////////////////////////////////////////////////////////
