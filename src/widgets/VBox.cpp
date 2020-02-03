@@ -84,7 +84,7 @@ namespace pTK
             Padding cPadding = child->getPadding();
             vbPos.y += cMargin.top + cPadding.top;
             child->setPosHint(Point(vbPos.x + alignChildH(i, newSize, cSize), vbPos.y));
-            vbPos.y += cSize.height + cMargin.bottom + cPadding.bottom;;
+            vbPos.y += cSize.height + cMargin.bottom + cPadding.bottom;
         }
     }
     

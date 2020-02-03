@@ -73,9 +73,10 @@ namespace pTK
              */
             child->setSize(cSize);
             Margin cMargin = child->getMargin();
-            vbPos.x += cMargin.left;
+            Padding cPadding = child->getPadding();
+            vbPos.x += cMargin.left + cPadding.left;;
             child->setPosHint(Point(vbPos.x, vbPos.y + alignChildV(i, vbSize, cSize)));
-            vbPos.x += cSize.width;
+            vbPos.x += cSize.width + cMargin.right + cPadding.right;
         }
     }
     
@@ -151,9 +152,10 @@ namespace pTK
             Size cSize = sizes.at(i);
             child->setSize(cSize);
             Margin cMargin = child->getMargin();
-            vbPos.x += cMargin.left + spaces.at(i);
+            Padding cPadding = child->getPadding();
+            vbPos.x += cMargin.left + cPadding.left + spaces.at(i);
             child->setPosHint(Point(vbPos.x, vbPos.y + alignChildV(i, vbSize, cSize)));
-            vbPos.x += cSize.width + cMargin.right;
+            vbPos.x += cSize.width + cMargin.right + cPadding.right;
         }
     }
     
@@ -179,38 +181,39 @@ namespace pTK
     
     Size HBox::calculateMinSize() const
     {
-        Size contentMinSize;
-        for (size_type i{0}; i < size(); ++i)
+        Size contentMinSize{Size::Min};
+        for (auto it{ cbegin() }; it != cend(); ++it)
         {
-            Margin cMargin = at(i)->getMargin();
-            Margin::value_type vMargin = cMargin.top + cMargin.bottom;
-            Margin::value_type hMargin = cMargin.left + cMargin.right;
+            Padding cPadding = (*it)->getPadding();
+            Padding::value_type vPadding = cPadding.top + cPadding.bottom;
+            Padding::value_type hPadding = cPadding.left + cPadding.right;
 
-            Size cMinSize = at(i)->getMinSize();
-            contentMinSize.height = 
-                ((cMinSize.height + static_cast<Size::value_type>(vMargin)) > contentMinSize.height) ? 
-                static_cast<Size::value_type>(cMinSize.height + vMargin) : contentMinSize.height;
-            contentMinSize.width += static_cast<Size::value_type>(hMargin + cMinSize.width);
+            Size cMinSize = (*it)->getMinSize();
+            contentMinSize.width += static_cast<Size::value_type>(hPadding + cMinSize.width);
+            contentMinSize.height =
+                ((cMinSize.height + static_cast<Size::value_type>(vPadding)) > contentMinSize.height)
+                ? cMinSize.height + static_cast<Size::value_type>(vPadding) : contentMinSize.height;
         }
-        
+
         return contentMinSize;
     }
     
     Size HBox::calculateMaxSize() const
     {
-        Size contentMaxSize;
-        auto it = cbegin();
-        if (it != cend())
+        Size contentMaxSize{Size::Max};
+        for (auto it{ cbegin() }; it != cend(); ++it)
         {
-            contentMaxSize = (*it)->getMaxSize();
-            while (++it != cend())
-            {
-                Size maxSize = (*it)->getMaxSize();
-                contentMaxSize.width += maxSize.width;
-                contentMaxSize.height = (maxSize.height < contentMaxSize.height) ? maxSize.height : contentMaxSize.height;
-            }
+            Padding cPadding = (*it)->getPadding();
+            Padding::value_type vPadding = cPadding.top + cPadding.bottom;
+            Padding::value_type hPadding = cPadding.left + cPadding.right;
+
+            Size maxSize = (*it)->getMaxSize();
+            contentMaxSize.height += (maxSize.height < (contentMaxSize.height - static_cast<Size::value_type>(vPadding)))
+                ? maxSize.height + static_cast<Size::value_type>(vPadding) : contentMaxSize.height;
+            contentMaxSize.width += (maxSize.width < (contentMaxSize.width - static_cast<Size::value_type>(hPadding)))
+                ? maxSize.width + static_cast<Size::value_type>(hPadding) : contentMaxSize.width;
         }
-        
+
         return contentMaxSize;
     }
     
@@ -259,19 +262,23 @@ namespace pTK
     Point::value_type HBox::alignChildV(size_type index, const Size& parentSize, const Size& childSize)
     {
         Point::value_type posy{0};
-        Margin cMargin = at(index)->getMargin();
+        Size cSize{ childSize };
+        Margin cMargin{at(index)->getMargin()};
+        Padding cPadding{at(index)->getPadding()};
+
+        // Pre
+        cSize.width += static_cast<Size::value_type>(cPadding.top + cPadding.bottom);
 
         // Align
         std::underlying_type<Align>::type cAlign = at(index)->getAlign();
         if (isAlignSet(cAlign, Align::Bottom))
-            posy = static_cast<Point::value_type>(parentSize.height - childSize.height);
+            posy = static_cast<Point::value_type>(parentSize.width - cSize.width);
         else if (isAlignSet(cAlign, Align::Center) || isAlignSet(cAlign, Align::VCenter))
-            posy = static_cast<Point::value_type>((parentSize.height/2) - (childSize.height/2));
-        else if (cMargin.top > 0)
-            posy = static_cast<Point::value_type>(cMargin.top);
+            posy = static_cast<Point::value_type>((parentSize.width / 2) - (cSize.width / 2));
 
-        // Apply negative margin.
-        posy += (cMargin.top < 0) ? cMargin.top : 0;
+        // Post
+        posy += static_cast<Point::value_type>(cMargin.top);
+        posy += static_cast<Point::value_type>(cPadding.top);
 
         return posy;
     }
