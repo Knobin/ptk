@@ -38,10 +38,9 @@ int main(int argc, char *argv[])
     // Sidebar title.
     pTK::Ref<pTK::Label> sTitle = pTK::create<pTK::Label>();
     sTitle->setText("SandboxApp");
-    sTitle->setName("SandboxApp");
     sTitle->setFontSize(FLARGE);
     sTitle->setAlign(pTK::Align::Top | pTK::Align::HCenter);
-    sTitle->setMargin({18, 18, 18, 18});
+    sTitle->setPadding({18, 18, 18, 18});
     
     // Button style for sidebar.
     pTK::Button::Style sbBtnStyle;
@@ -95,24 +94,21 @@ int main(int argc, char *argv[])
     // Title of right side content.
     pTK::Ref<pTK::Label> cTitle = pTK::create<pTK::Label>();
     cTitle->setText("Content");
-    cTitle->setName("Content label");
     cTitle->setFontSize(FLARGE);
-    cTitle->setMargin({18, 9, 18, 18});
+    cTitle->setPadding({18, 9, 18, 18});
     cTitle->setColor(pTK::Color());
     cTitle->setAlign(pTK::Align::Left | pTK::Align::Top);
 
     // This should be a pTK::TextArea (when that is implemented).
     pTK::Ref<pTK::Label> cText = pTK::create<pTK::Label>();
     cText->setText("This should be a multiline text!");
-    cText->setName("TextArea");
     cText->setFontSize(FNORMAL);
-    cText->setMargin({9, 18, 18, 18});
+    cText->setPadding({9, 18, 18, 18});
     cText->setColor(pTK::Color());
     cText->setAlign(pTK::Align::Left | pTK::Align::Top);
 
     // Just a rectangle. Nothing special about it.
     pTK::Ref<pTK::Rectangle> rect = pTK::create<pTK::Rectangle>();
-    rect->setName("rect");
     rect->setColor(pTK::Color(0xC0C0C0FF));
     rect->setConstSize({250, 125});
 
@@ -123,13 +119,12 @@ int main(int argc, char *argv[])
 	checkbox->setColor(pTK::Color(0x00FF00FF));
 	checkbox->setOutlineColor(pTK::Color(0xFF00FFFF));
 	checkbox->setAlign(pTK::Align::Left | pTK::Align::Bottom);
-	checkbox->setMargin({ 18, 9, 18, 18 });
+	checkbox->setPadding({ 18, 9, 18, 18 });
 
 	pTK::Ref<pTK::Label> cStatus = pTK::create<pTK::Label>();
 	cStatus->setText("Checkbox Status: false");
-	cStatus->setName("Checkbox Status label");
 	cStatus->setFontSize(25);
-	cStatus->setMargin({ 18, 9, 18, 18 });
+	cStatus->setPadding({ 18, 9, 18, 18 });
 	cStatus->setColor(pTK::Color());
 	cStatus->setAlign(pTK::Align::Left | pTK::Align::Top);
 
