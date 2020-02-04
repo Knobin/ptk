@@ -15,20 +15,20 @@
 namespace pTK
 {
     /** Sizable class implementation.
-     
+
         Sizable class for handling size.
     */
     class Sizable
     {
     public:
         /** Constructs Sizable with default values.
-         
+
             @return  default initialized Sizable
         */
         Sizable();
-        
+
         /** Constructs Sizable with default values with size.
-         
+
             @return  default initialized Sizable
         */
         Sizable(const Size& size);
@@ -37,46 +37,46 @@ namespace pTK
 
         */
         virtual ~Sizable() = default;
-        
+
         /** Funtion for setting minimal size.
-         
+
             @param size    minimal size
         */
         void setMinSize(const Size& size);
-        
+
         /** Funtion for getting the minimal size.
-         
-            @param size    minimal size
+
+            @return    minimal size
         */
         Size getMinSize() const;
-        
+
         /** Funtion for setting size.
-         
+
             @param size    size
         */
         void setSize(const Size& size);
-        
+
         /** Funtion for setting size.
-         
+
             @param size    size
         */
         void setConstSize(const Size& size);
-        
+
         /** Funtion for getting the size.
-         
-            @param size    size
+
+            @return    size
         */
         const Size& getSize() const;
-        
+
         /** Funtion for setting maximal size.
-         
+
             @param size    maximal size
         */
         void setMaxSize(const Size& size);
-        
+
         /** Funtion for getting the maximal size.
-         
-            @param size    maximal size
+
+            @return    maximal size
         */
         Size getMaxSize() const;
 
@@ -87,20 +87,26 @@ namespace pTK
         */
         void setLimits(const Size& min, const Size& max);
 
+        /** Function for checking if Sizable object has a const size.
+
+            @return    status
+         */
+        bool isConstSize() const;
+
     private:
         /** Funtion for knowing when the size has been changed.
-            
+
             Will be called when setSize accepts a new size.
             Internal size will be set before calling this, so
             calling getSize will also return the new size.
-            
+
             @param size    new size
         */
         virtual void onResize(const Size&) {}
 
         /** Funtion for knowing when the limits has been changed.
 
-            Will be called when when either setMinSize, setMaxSize or setLimits 
+            Will be called when when either setMinSize, setMaxSize or setLimits
             accepts a new size.
             Internal sizes will be set before calling this, so
             calling getMaxSize or getMinSize will also return the new size.
@@ -109,16 +115,16 @@ namespace pTK
             @param max    current max size
         */
         virtual void onLimitChange(const Size&, const Size&) {}
-        
+
     private:
         Size m_minSize;
         Size m_size;
         Size m_maxSize;
-        
+
         bool m_minLock;
         bool m_maxLock;
     };
-    
+
     // Comparison operators.
     bool operator==(const Sizable& lhs, const Sizable& rhs);
     bool operator!=(const Sizable& lhs, const Sizable& rhs);
@@ -126,4 +132,3 @@ namespace pTK
 
 
 #endif // PTK_CORE_SIZABLE_HPP
-
