@@ -158,6 +158,14 @@ namespace pTK
                 window->sendEvent(&event);
             }
         });
+
+        // void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+        glfwSetScrollCallback(m_window, [](GLFWwindow* t_window, double xoffset, double yoffset){
+            auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
+            Vec2f v{static_cast<float>(xoffset), static_cast<float>(yoffset)};
+            ScrollEvent event{v};
+            window->sendEvent(&event);
+        });
     }
 
     void Window::setKeyCallbacks()
@@ -370,6 +378,10 @@ namespace pTK
                 handleClickEvent(btn, pos);
             else if (type == Event::Type::MouseButtonReleased)
                 handleReleaseEvent(btn, pos);
+        } else if (type == Event::Type::MouseScrolled)
+        {
+            ScrollEvent* sEvent = static_cast<ScrollEvent*>(event);
+            handleScrollEvent(sEvent->getOffset());
         }
     }
 
