@@ -35,42 +35,42 @@ namespace pTK
             @param type    Key event (press or release)
             @param int     Keycode
         */
-        virtual bool onKeyEvent(Event::Type, int32) { return true; }
+        virtual bool onKeyEvent(Event::Type, int32) { return false; }
         
         /** Function for handling when mouse is hovering.
          
         */
-        virtual bool onHoverEvent(const Point&) { return true; }
+        virtual bool onHoverEvent(const Point&) { return false; }
         
         /** Function for handling when mouse is entering.
          
         */
-        virtual bool onEnterEvent() { return true; }
+        virtual bool onEnterEvent() { return false; }
         
         /** Function for handling when mouse is leaving.
          
         */
-        virtual bool onLeaveEvent() { return true; }
+        virtual bool onLeaveEvent() { return false; }
         
         /** Function for handling when mouse is scrolling.
          
          @param offset     x and y offset
         */
-        virtual bool onScrollEvent(const Vec2f&) { return true; }
+        virtual bool onScrollEvent(const Vec2f&) { return false; }
         
         /** Function for handling when mouse is clicking.
          
             @param button      which button on mouse triggered the event.
             @param position    x and y position
         */
-        virtual bool onClickEvent(Mouse::Button, const Point&) { return true; }
+        virtual bool onClickEvent(Mouse::Button, const Point&) { return false; }
         
         /** Function for handling when mouse is released.
          
             @param button      which button on mouse triggered the event.
             @param position    x and y position
         */
-        virtual bool onReleaseEvent(Mouse::Button, const Point&) { return true; }
+        virtual bool onReleaseEvent(Mouse::Button, const Point&) { return false; }
     };
 }
 

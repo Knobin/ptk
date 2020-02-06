@@ -18,91 +18,70 @@ namespace pTK
     
     bool EventHandling::handleKeyEvent(Event::Type type, int32 keycode)
     {
-        bool status = true;
+        bool status = false;
         if (m_keyCallback != nullptr)
             status = m_keyCallback(type, keycode);
         
-        if (status)
-            status = onKeyEvent(type, keycode);
-        
-        return status;
+        return status || onKeyEvent(type, keycode);
     }
     
     bool EventHandling::handleHoverEvent(const Point& pos)
     {
-        bool status = true;
+        bool status = false;
         
         if (m_hoverCallback != nullptr)
             status = m_hoverCallback(pos);
         
-        if (status)
-            status = onHoverEvent(pos);
-        
-        return status;
+        return status || onHoverEvent(pos);
     }
     
     bool EventHandling::handleEnterEvent()
     {
-        bool status = true;
+        bool status = false;
         
         if (m_enterCallback != nullptr)
             status = m_enterCallback();
         
-        if (status)
-            status = onEnterEvent();
-        
-        return status;
+        return status || onEnterEvent();
     }
     
     bool EventHandling::handleLeaveEvent()
     {
-        bool status = true;
+        bool status = false;
         
         if (m_leaveCallback != nullptr)
             status = m_leaveCallback();
-        
-        if (status)
-            status = onLeaveEvent();
-        
-        return status;
+
+        return status || onLeaveEvent();
     }
     
     bool EventHandling::handleScrollEvent(const Vec2f& offset)
     {
-        bool status = true;
+        bool status = false;
         
         if (m_scrollCallback != nullptr)
             status = m_scrollCallback(offset);
         
-        if (status)
-            status = onScrollEvent(offset);
-        
-        return status;
+        return status || onScrollEvent(offset);
     }
     
     bool EventHandling::handleClickEvent(Mouse::Button button, const Point& position)
     {
-        bool status = true;
+        bool status = false;
         
         if (m_clickCallback != nullptr)
             status = m_clickCallback(button, position);
         
-        if (status)
-            status = onClickEvent(button, position);
-        
-        return status;
+        return status || onClickEvent(button, position);
     }
     
     bool EventHandling::handleReleaseEvent(Mouse::Button button, const Point& position)
     {
-        bool status = true;
+        bool status = false;
 
         if (m_releaseCallback != nullptr)
             status = m_releaseCallback(button, position);
         
-        if (status)
-            status = onReleaseEvent(button, position);
-        
-        return status;
+        return status || onReleaseEvent(button, position);
     }
 }
