@@ -29,16 +29,11 @@ namespace pTK
             @return    default initialized VBox
         */
         VBox();
-        virtual ~VBox() = default;
-        
-        /** Function for setting the position of the VBox and its
-            children.
-         
-            Derived from Widget.
-         
-            @param pos     Position to set
+
+        /** Deconstructor for VBox.
+
         */
-        void setPosHint(const Point& pos) override;
+        virtual ~VBox() = default;
         
     protected:
         void refitContent(const Size& size);
@@ -51,12 +46,11 @@ namespace pTK
         
     private:
         void expandOnAdd(const Size& newSize);
+        Size calcMinSize() const;
+        Size calcMaxSize() const;
         
         std::vector<Size::value_type> calcSpaces(Size::value_type height);
         Point::value_type alignChildH(size_type index, const Size& parentSize, const Size& childSize);
-        
-        Size calculateMinSize() const;
-        Size calculateMaxSize() const;
     };
 }
 

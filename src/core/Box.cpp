@@ -48,6 +48,21 @@ namespace pTK
             draw();
         }
     }
+
+    void Box::setPosHint(const Point& pos)
+    {
+        Point currentPos = getPosition();
+        Point deltaPos = pos - currentPos;
+
+        for (auto it = begin(); it != end(); it++)
+        {
+            Point wPos = (*it)->getPosition();
+            wPos += deltaPos;
+            (*it)->setPosHint(wPos);
+        }
+
+        Widget::setPosHint(pos);
+    }
     
     void Box::onDraw(SkCanvas* canvas)
     {
@@ -157,9 +172,9 @@ namespace pTK
                 if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
                 {
                     Widget *temp = (*it).get(); // Iterator might change, when passing the event.
-                    (*it)->handleClickEvent(btn, pos);
+                    bool status = (*it)->handleClickEvent(btn, pos);
                     m_lastClickedWidget = temp;
-                    return true;
+                    return status;
                 }
             }
         }
@@ -170,20 +185,16 @@ namespace pTK
     bool Box::onReleaseEvent(Mouse::Button btn, const Point& pos)
     {
         if (m_lastClickedWidget != nullptr)
-        {
-            m_lastClickedWidget->handleReleaseEvent(btn, pos);
-            return true;
-        }
+            return m_lastClickedWidget->handleReleaseEvent(btn, pos);
+
         return false;
     }
     
     bool Box::onKeyEvent(Event::Type type, int32 keycode)
     {
         if (m_lastClickedWidget != nullptr)
-        {
-            m_lastClickedWidget->handleKeyEvent(type, keycode);
-            return true;
-        }
+            return m_lastClickedWidget->handleKeyEvent(type, keycode);
+
         return false;
     }
     
@@ -212,9 +223,7 @@ namespace pTK
                         handleEnterEvent();
                     }
                     
-                    m_currentHoverWidget->handleHoverEvent(pos);
-                    
-                    return true;
+                    return m_currentHoverWidget->handleHoverEvent(pos);
                 }
             }
         }
@@ -231,10 +240,8 @@ namespace pTK
     bool Box::onEnterEvent()
     {
         if (m_currentHoverWidget != nullptr)
-        {
-            m_currentHoverWidget->handleEnterEvent();
-            return true;
-        }
+            return m_currentHoverWidget->handleEnterEvent();
+        
         return false;
     }
     
@@ -242,12 +249,12 @@ namespace pTK
     {
         if (m_currentHoverWidget != nullptr)
         {
-            m_currentHoverWidget->handleLeaveEvent();
+            bool status = m_currentHoverWidget->handleLeaveEvent();
             
             // Reset current hovered Widget.
             m_currentHoverWidget = nullptr;
             
-            return true;
+            return status;
         }
         return false;
     }
@@ -255,10 +262,8 @@ namespace pTK
     bool Box::onScrollEvent(const Vec2f& offset)
     {
         if (m_currentHoverWidget != nullptr)
-        {
-            m_currentHoverWidget->handleScrollEvent(offset);
-            return true;
-        }
+            return m_currentHoverWidget->handleScrollEvent(offset);;
+        
         return false;
     }
     
@@ -270,5 +275,10 @@ namespace pTK
     const Color& Box::getBackground() const
     {
         return m_background;
+    }
+
+    bool Box::busy() const
+    {
+        return m_busy;
     }
 }

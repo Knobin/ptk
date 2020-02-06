@@ -57,6 +57,15 @@ namespace pTK
             @param widget  Widget to remove
         */
         void remove(const Ref<Widget>& widget) override;
+
+        /** Function for setting the position of the VBox and its
+            children.
+
+            Derived from Widget.
+
+            @param pos     Position to set
+        */
+        void setPosHint(const Point& pos) override;
         
         /** Draw function.
             Function is called when it is time to draw.
@@ -187,6 +196,9 @@ namespace pTK
             @return    current background color
         */
         const Color& getBackground() const;
+
+    protected:
+        bool busy() const;
         
     private:
         virtual void onAdd(const Ref<Widget>&) {}

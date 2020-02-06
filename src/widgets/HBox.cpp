@@ -20,7 +20,7 @@ namespace pTK
     void HBox::onAdd(const Ref<Widget>&)
     {
         Size vbSize = getSize();
-        Size minLayoutSize = calculateMinSize();
+        Size minLayoutSize = calcMinSize();
         setMinSize(minLayoutSize);
         
         if ((minLayoutSize.width > vbSize.width) || (minLayoutSize.height > vbSize.height))
@@ -82,7 +82,7 @@ namespace pTK
     
     void HBox::refitContent(const Size& nsize)
     {
-        Size layoutSize = calculateMinSize();
+        Size layoutSize = calcMinSize();
         Size vbSize = nsize;
         Point vbPos = getPosition();
         size_type children = size();
@@ -158,63 +158,10 @@ namespace pTK
             vbPos.x += cSize.width + cMargin.right + cPadding.right;
         }
     }
-    
-    void HBox::setPosHint(const Point& pos)
-    {
-        Point currentPos = getPosition();
-        Point deltaPos = pos - currentPos;
-        
-        for (auto it = begin(); it != end(); it++)
-        {
-            Point wPos = (*it)->getPosition();
-            wPos += deltaPos;
-            (*it)->setPosHint(wPos);
-        }
-        
-        Widget::setPosHint(pos);
-    }
 
     void HBox::onResize(const Size& size)
     {
         refitContent(size);
-    }
-    
-    Size HBox::calculateMinSize() const
-    {
-        Size contentMinSize{Size::Min};
-        for (auto it{ cbegin() }; it != cend(); ++it)
-        {
-            Padding cPadding = (*it)->getPadding();
-            Padding::value_type vPadding = cPadding.top + cPadding.bottom;
-            Padding::value_type hPadding = cPadding.left + cPadding.right;
-
-            Size cMinSize = (*it)->getMinSize();
-            contentMinSize.width += static_cast<Size::value_type>(hPadding + cMinSize.width);
-            contentMinSize.height =
-                ((cMinSize.height + static_cast<Size::value_type>(vPadding)) > contentMinSize.height)
-                ? cMinSize.height + static_cast<Size::value_type>(vPadding) : contentMinSize.height;
-        }
-
-        return contentMinSize;
-    }
-    
-    Size HBox::calculateMaxSize() const
-    {
-        Size contentMaxSize{Size::Max};
-        for (auto it{ cbegin() }; it != cend(); ++it)
-        {
-            Padding cPadding = (*it)->getPadding();
-            Padding::value_type vPadding = cPadding.top + cPadding.bottom;
-            Padding::value_type hPadding = cPadding.left + cPadding.right;
-
-            Size maxSize = (*it)->getMaxSize();
-            contentMaxSize.height += (maxSize.height < (contentMaxSize.height - static_cast<Size::value_type>(vPadding)))
-                ? maxSize.height + static_cast<Size::value_type>(vPadding) : contentMaxSize.height;
-            contentMaxSize.width += (maxSize.width < (contentMaxSize.width - static_cast<Size::value_type>(hPadding)))
-                ? maxSize.width + static_cast<Size::value_type>(hPadding) : contentMaxSize.width;
-        }
-
-        return contentMaxSize;
     }
     
     std::vector<Size::value_type> HBox::calcSpaces(Size::value_type width)
@@ -281,6 +228,44 @@ namespace pTK
         posy += static_cast<Point::value_type>(cPadding.top);
 
         return posy;
+    }
+
+    Size HBox::calcMinSize() const
+    {
+        Size contentMinSize{ Size::Min };
+        for (auto it{ cbegin() }; it != cend(); ++it)
+        {
+            Padding cPadding = (*it)->getPadding();
+            Padding::value_type vPadding = cPadding.top + cPadding.bottom;
+            Padding::value_type hPadding = cPadding.left + cPadding.right;
+
+            Size cMinSize = (*it)->getMinSize();
+            contentMinSize.width += static_cast<Size::value_type>(hPadding + cMinSize.width);
+            contentMinSize.height =
+                ((cMinSize.height + static_cast<Size::value_type>(vPadding)) > contentMinSize.height)
+                ? cMinSize.height + static_cast<Size::value_type>(vPadding) : contentMinSize.height;
+        }
+
+        return contentMinSize;
+    }
+
+    Size HBox::calcMaxSize() const
+    {
+        Size contentMaxSize{ Size::Max };
+        for (auto it{ cbegin() }; it != cend(); ++it)
+        {
+            Padding cPadding = (*it)->getPadding();
+            Padding::value_type vPadding = cPadding.top + cPadding.bottom;
+            Padding::value_type hPadding = cPadding.left + cPadding.right;
+
+            Size maxSize = (*it)->getMaxSize();
+            contentMaxSize.height += (maxSize.height < (contentMaxSize.height - static_cast<Size::value_type>(vPadding)))
+                ? maxSize.height + static_cast<Size::value_type>(vPadding) : contentMaxSize.height;
+            contentMaxSize.width += (maxSize.width < (contentMaxSize.width - static_cast<Size::value_type>(hPadding)))
+                ? maxSize.width + static_cast<Size::value_type>(hPadding) : contentMaxSize.width;
+        }
+
+        return contentMaxSize;
     }
 }
 

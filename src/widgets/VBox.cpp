@@ -27,7 +27,7 @@ namespace pTK
     void VBox::onAdd(const Ref<Widget>&)
     {
         Size vbSize = getSize();
-        Size minLayoutSize = calculateMinSize();
+        Size minLayoutSize = calcMinSize();
         setMinSize(minLayoutSize);
         //setLimits(minLayoutSize, calculateMaxSize());
 
@@ -57,12 +57,12 @@ namespace pTK
     {
         if (!isConstSize())
         {
-            Size cMaxSize{calculateMaxSize()};
+            Size cMaxSize{calcMaxSize()};
             Size maxSize{getMaxSize()};
             if (cMaxSize > maxSize)
                 maxSize = cMaxSize;
 
-            Size cMinSize{calculateMinSize()};
+            Size cMinSize{calcMinSize()};
             Size minSize{getMinSize()};
             if (cMinSize > minSize)
                 minSize = cMinSize;
@@ -103,7 +103,7 @@ namespace pTK
 
     void VBox::refitContent(const Size& nsize)
     {
-        Size layoutSize = calculateMinSize();
+        Size layoutSize = calcMinSize();
         Size vbSize = nsize;
         Point vbPos = getPosition();
         size_type children = size();
@@ -180,62 +180,9 @@ namespace pTK
         }
     }
 
-    void VBox::setPosHint(const Point& pos)
-    {
-        Point currentPos = getPosition();
-        Point deltaPos = pos - currentPos;
-
-        for (auto it = begin(); it != end(); it++)
-        {
-            Point wPos = (*it)->getPosition();
-            wPos += deltaPos;
-            (*it)->setPosHint(wPos);
-        }
-
-        Widget::setPosHint(pos);
-    }
-
     void VBox::onResize(const Size& size)
     {
         refitContent(size);
-    }
-
-    Size VBox::calculateMinSize() const
-    {
-        Size contentMinSize{Size::Min};
-        for (auto it{cbegin()}; it != cend(); ++it)
-        {
-            Padding cPadding = (*it)->getPadding();
-            Padding::value_type vPadding = cPadding.top + cPadding.bottom;
-            Padding::value_type hPadding = cPadding.left + cPadding.right;
-
-            Size cMinSize = (*it)->getMinSize();
-            contentMinSize.height += static_cast<Size::value_type>(vPadding + cMinSize.height);
-            contentMinSize.width =
-                ((cMinSize.width + static_cast<Size::value_type>(hPadding)) > contentMinSize.width)
-                ? cMinSize.width + static_cast<Size::value_type>(hPadding) : contentMinSize.width;
-        }
-
-        return contentMinSize;
-    }
-
-    Size VBox::calculateMaxSize() const
-    {
-        Size contentMaxSize{Size::Max};
-        for (auto it{cbegin()}; it != cend(); ++it)
-        {
-            Padding cPadding = (*it)->getPadding();
-            Padding::value_type vPadding = cPadding.top + cPadding.bottom;
-            Padding::value_type hPadding = cPadding.left + cPadding.right;
-
-            Size maxSize = (*it)->getMaxSize();
-            contentMaxSize.height += (maxSize.height < (contentMaxSize.height - static_cast<Size::value_type>(vPadding)))
-                ? maxSize.height + static_cast<Size::value_type>(vPadding) : contentMaxSize.height;
-            contentMaxSize.width += (maxSize.width < (contentMaxSize.width - static_cast<Size::value_type>(hPadding)))
-                ? maxSize.width + static_cast<Size::value_type>(hPadding) : contentMaxSize.width;
-        }
-
-        return contentMaxSize;
     }
 
     std::vector<Size::value_type> VBox::calcSpaces(Size::value_type height)
@@ -303,5 +250,43 @@ namespace pTK
         posx += static_cast<Point::value_type>(cPadding.left);
 
         return posx;
+    }
+
+    Size VBox::calcMinSize() const
+    {
+        Size contentMinSize{ Size::Min };
+        for (auto it{ cbegin() }; it != cend(); ++it)
+        {
+            Padding cPadding = (*it)->getPadding();
+            Padding::value_type vPadding = cPadding.top + cPadding.bottom;
+            Padding::value_type hPadding = cPadding.left + cPadding.right;
+
+            Size cMinSize = (*it)->getMinSize();
+            contentMinSize.height += static_cast<Size::value_type>(vPadding + cMinSize.height);
+            contentMinSize.width =
+                ((cMinSize.width + static_cast<Size::value_type>(hPadding)) > contentMinSize.width)
+                ? cMinSize.width + static_cast<Size::value_type>(hPadding) : contentMinSize.width;
+        }
+
+        return contentMinSize;
+    }
+
+    Size VBox::calcMaxSize() const
+    {
+        Size contentMaxSize{ Size::Max };
+        for (auto it{ cbegin() }; it != cend(); ++it)
+        {
+            Padding cPadding = (*it)->getPadding();
+            Padding::value_type vPadding = cPadding.top + cPadding.bottom;
+            Padding::value_type hPadding = cPadding.left + cPadding.right;
+
+            Size maxSize = (*it)->getMaxSize();
+            contentMaxSize.height += (maxSize.height < (contentMaxSize.height - static_cast<Size::value_type>(vPadding)))
+                ? maxSize.height + static_cast<Size::value_type>(vPadding) : contentMaxSize.height;
+            contentMaxSize.width += (maxSize.width < (contentMaxSize.width - static_cast<Size::value_type>(hPadding)))
+                ? maxSize.width + static_cast<Size::value_type>(hPadding) : contentMaxSize.width;
+        }
+
+        return contentMaxSize;
     }
 }
