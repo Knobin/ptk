@@ -11,7 +11,7 @@
 // --- Application -------------------
 #include "ptk/Application.hpp"
 #include "ptk/Core.hpp"
-#include "ptk/Window.hpp"
+// TODO: include window
 
 // --- Core --------------------------
 #include "ptk/core/Canvas.hpp"

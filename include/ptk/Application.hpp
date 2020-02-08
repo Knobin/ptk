@@ -10,7 +10,7 @@
 
 // Local Headers
 #include "ptk/util/Singleton.hpp"
-#include "ptk/Window.hpp"
+#include "ptk/core/BaseWindow.hpp"
 #include "ptk/core/Types.hpp"
 
 namespace pTK
@@ -43,7 +43,7 @@ namespace pTK
          
             @param window  start window
         */
-        int exec(Window* window);
+        int exec(BaseWindow* window);
         
         /** Function for setting the delay between polling events.
          
