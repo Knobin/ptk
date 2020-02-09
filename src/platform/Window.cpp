@@ -16,7 +16,7 @@
 namespace pTK
 {
     GLFWWindow::GLFWWindow(const std::string& name, const Vec2u& size)
-        : BaseWindow(name, size),
+        : WindowBase(name, size),
             m_window{nullptr}, m_drawCanvas{nullptr}
     {
         initGLFW();

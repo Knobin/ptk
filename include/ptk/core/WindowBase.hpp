@@ -1,12 +1,12 @@
 //
-//  core/BaseWindow.hpp
+//  core/WindowBase.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-02-08.
 //
 
-#ifndef PTK_CORE_BASEWINDOW_HPP
-#define PTK_CORE_BASEWINDOW_HPP
+#ifndef PTK_CORE_WINDOWBASE_HPP
+#define PTK_CORE_WINDOWBASE_HPP
 
 // Local Headers
 #include "ptk/util/Singleton.hpp"
@@ -21,15 +21,15 @@
 
 namespace pTK
 {
-    class BaseWindow : public VBox, public Singleton
+    class WindowBase : public VBox, public Singleton
     {
     public:
-        BaseWindow(const std::string& name, const Vec2u& size);
+        WindowBase(const std::string& name, const Vec2u& size);
 
         /** Deconstructor for Canvas.
 
         */
-        virtual ~BaseWindow() = default;
+        virtual ~WindowBase() = default;
 
         /** Function for retrieving the content size.
 
@@ -114,4 +114,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_CORE_BASEWINDOW_HPP
+#endif // PTK_CORE_WINDOWBASE_HPP

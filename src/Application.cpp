@@ -28,7 +28,7 @@ namespace pTK
         // TODO: Check arguments.
     }
 
-    int Application::exec(pTK::BaseWindow* window)
+    int Application::exec(pTK::WindowBase* window)
     {
         PTK_ASSERT(window, "Window is nullptr");
         

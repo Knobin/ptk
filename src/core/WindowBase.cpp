@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "ptk/core/BaseWindow.hpp"
+#include "ptk/core/WindowBase.hpp"
 #include "ptk/events/KeyEvent.hpp"
 #include "ptk/events/MouseEvent.hpp"
 #include "ptk/events/WindowEvent.hpp"
@@ -17,7 +17,7 @@
 
 namespace pTK
 {
-    BaseWindow::BaseWindow(const std::string& name, const Vec2u& size)
+    WindowBase::WindowBase(const std::string& name, const Vec2u& size)
             : VBox(), Singleton(),
               m_eventQueue{}, m_scale{1.0f, 1.0f}, m_draw{false}, m_close{false}
     {
@@ -26,12 +26,12 @@ namespace pTK
         setName(name);
     }
 
-    void BaseWindow::onChildDraw(size_type)
+    void WindowBase::onChildDraw(size_type)
     {
         postEvent(new Event{Event::Category::Window, Event::Type::WindowDraw});
     }
 
-    void BaseWindow::handleEvents()
+    void WindowBase::handleEvents()
     {
         SafeQueue<std::unique_ptr<Event>>::size_type eventCount = m_eventQueue.size();
         for (uint i = 0; i < eventCount; i++)
@@ -60,17 +60,17 @@ namespace pTK
         }
     }
 
-    void BaseWindow::sendEvent(Event *event)
+    void WindowBase::sendEvent(Event *event)
     {
         handleEvent(event);
     }
 
-    void BaseWindow::postEvent(Event *event)
+    void WindowBase::postEvent(Event *event)
     {
         m_eventQueue.push(std::unique_ptr<Event>(event));
     }
 
-    Size BaseWindow::getContentSize() const
+    Size WindowBase::getContentSize() const
     {
         Size wSize{getSize()};
         wSize.width = static_cast<Size::value_type>(wSize.width * m_scale.x);
@@ -78,22 +78,22 @@ namespace pTK
         return wSize;
     }
 
-    const Vec2f& BaseWindow::getDPIScale() const
+    const Vec2f& WindowBase::getDPIScale() const
     {
         return m_scale;
     }
 
-    bool BaseWindow::shouldClose()
+    bool WindowBase::shouldClose()
     {
         return m_close;
     }
 
-    void BaseWindow::setScale(const Vec2f& scale)
+    void WindowBase::setScale(const Vec2f& scale)
     {
         m_scale = scale;
     }
 
-    void BaseWindow::handleEvent(Event *event)
+    void WindowBase::handleEvent(Event *event)
     {
         PTK_ASSERT(event, "Undefined Event");
 
@@ -109,14 +109,14 @@ namespace pTK
 #endif
     }
 
-    void BaseWindow::handleKeyboardEvent(Event* event)
+    void WindowBase::handleKeyboardEvent(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
         KeyEvent* kEvent = static_cast<KeyEvent*>(event);
         handleKeyEvent(kEvent->type(), kEvent->get_keycode());
     }
 
-    void BaseWindow::handleMouseEvent(Event* event)
+    void WindowBase::handleMouseEvent(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
         Event::Type type = event->type();
@@ -140,7 +140,7 @@ namespace pTK
         }
     }
 
-    void BaseWindow::handleWindowEvent(Event* event)
+    void WindowBase::handleWindowEvent(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
         Event::Type type = event->type();

@@ -9,14 +9,14 @@
 #define PTK_PlATFORM_WIN32_WINDOW_HPP
 
 // Local Headers
-#include "ptk/core/BaseWindow.hpp"
+#include "ptk/core/WindowBase.hpp"
 
 // Windows Headers
 #include <windows.h>
 
 namespace pTK
 {
-    class Window : public BaseWindow
+    class Window : public WindowBase
     {
     public:
         Window(const std::string& name, const Vec2u& size);

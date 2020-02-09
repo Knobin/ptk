@@ -9,7 +9,7 @@
 #define PTK_WINDOW_HPP
 
 // Local Headers
-#include "ptk/core/BaseWindow.hpp"
+#include "ptk/core/WindowBase.hpp"
 
 // GLFW Headers
 #include <GLFW/glfw3.h>
@@ -22,7 +22,7 @@ namespace pTK
         for bridging the events to the Widgets.
 
     */
-    class GLFWWindow : public BaseWindow
+    class GLFWWindow : public WindowBase
     {
     public:
         /** Window Button with default values with name, width and height.

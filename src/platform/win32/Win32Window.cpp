@@ -24,7 +24,7 @@ static std::wstring get_utf16(const std::string& str)
 namespace pTK
 {
     Window::Window(const std::string& name, const Vec2u& size)
-        : BaseWindow(name, size),
+        : WindowBase(name, size),
             m_handle{}
     {
         WNDCLASSEXW wcx{};
