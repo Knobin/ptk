@@ -8,6 +8,10 @@
 // Local Headers
 #include "ptk/widgets/Checkbox.hpp"
 
+// Skia Headers
+#include "include/core/SkRRect.h"
+#include "include/core/SkPath.h"
+
 // TODO: Fix m_click or just delete it.
 
 namespace pTK

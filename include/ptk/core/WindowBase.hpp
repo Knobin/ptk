@@ -11,7 +11,6 @@
 // Local Headers
 #include "ptk/util/Singleton.hpp"
 #include "ptk/widgets/VBox.hpp"
-#include "ptk/core/Canvas.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/util/Vec2.hpp"
 #include "ptk/util/SafeQueue.hpp"

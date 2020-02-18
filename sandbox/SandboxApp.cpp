@@ -1,7 +1,7 @@
 // pTK Headers
 #include "ptk/ptk.hpp"
-#include "ptk/platform/win32/Win32Window.hpp"
-//#include "ptk/platform/Window.hpp"
+//#include "ptk/platform/win32/Win32Window.hpp"
+#include "ptk/platform/Window.hpp"
 #include "ptk/Application.hpp"
 
 // settings
@@ -15,11 +15,9 @@ const unsigned int FNORMAL = 14;
 
 int main(int argc, char *argv[])
 {
-    //pTK::Window window{"pTK Sandbox Window", {540, 360}};
-
     pTK::Application app{};
-    pTK::Window window{"pTK Sandbox Window", {960, 540}};
-    //pTK::GLFWWindow window("pTK GLFW Window", {960, 540});
+    //pTK::Window window{"pTK Sandbox Window", {960, 540}};
+    pTK::GLFWWindow window("pTK GLFW Window", {960, 540});
     window.setBackground(pTK::Color(0x232323FF));
 
     // Set ESC key to close the window.
@@ -162,8 +160,6 @@ int main(int argc, char *argv[])
 
     // Add hbox to window.
     window.add(hbox);
-
-    PTK_WARN("EXEC");
 
     return app.exec(&window);
 }

@@ -14,7 +14,7 @@
 // TODO: include window
 
 // --- Core --------------------------
-#include "ptk/core/Canvas.hpp"
+#include "ptk/core/CanvasBase.hpp"
 #include "ptk/core/Container.hpp"
 #include "ptk/core/Drawable.hpp"
 #include "ptk/core/Event.hpp"

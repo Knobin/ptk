@@ -9,7 +9,7 @@
 #define PTK_CORE_DRAWABLE_HPP
 
 // Skia Headers
-#include "ptk/core/Canvas.hpp"
+#include "ptk/core/CanvasBase.hpp"
 
 namespace pTK
 {

@@ -37,7 +37,7 @@ namespace pTK
 
         // Init Canvas
         Size wSize = getContentSize();
-        m_drawCanvas = std::make_unique<Canvas>(Size(wSize.width, wSize.height));
+        m_drawCanvas = std::make_unique<GLCanvas>(Size(wSize.width, wSize.height));
         PTK_ASSERT(m_drawCanvas, "Failed to create Canvas");
 
         // Set Callbacks
