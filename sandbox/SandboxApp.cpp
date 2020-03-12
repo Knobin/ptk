@@ -2,7 +2,8 @@
 #include "ptk/ptk.hpp"
 //#include "ptk/platform/win32/Win32Window.hpp"
 #include "ptk/platform/Window.hpp"
-#include "ptk/Application.hpp"
+
+#include <iostream>
 
 // settings
 const unsigned int SCR_WIDTH = 960;
@@ -16,15 +17,27 @@ const unsigned int FNORMAL = 14;
 int main(int argc, char *argv[])
 {
     pTK::Application app{};
-    //pTK::Window window{"pTK Sandbox Window", {960, 540}};
-    pTK::GLFWWindow window("pTK GLFW Window", {960, 540});
+    pTK::Window window{"pTK Win32 Window", {960, 540}};
+    //pTK::GLFWWindow window("pTK GLFW Window", {960, 540});
     window.setBackground(pTK::Color(0x232323FF));
 
     // Set ESC key to close the window.
     window.onKey([&](pTK::Event::Type type, int32 key) {
+        std::cout << "key pressed:" << key << std::endl;
         if ((type == pTK::Event::Type::KeyReleased) && (key == 256))
             window.close();
+        if ((type == pTK::Event::Type::KeyReleased) && (key == 32))
+        {
+            std::cout << "draw" << std::endl;
+            window.postEvent(new pTK::Event{pTK::Event::Category::Window, pTK::Event::Type::WindowDraw});
+        }
+
         return true;
+    });
+
+    window.onHover([](const pTK::Point& point) {
+        //std::cout << "pos: " << point.x << "x" << point.y << std::endl;
+        return false;
     });
 
     // HBox.

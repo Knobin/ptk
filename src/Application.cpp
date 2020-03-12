@@ -44,7 +44,7 @@ namespace pTK
             // To lower cpu usage, we wait.
             std::this_thread::sleep_for(m_waitTime);
         }
-        
+
         window->hide();
 
         return 0;

@@ -28,6 +28,7 @@ namespace pTK
 
     void WindowBase::onChildDraw(size_type)
     {
+        PTK_WARN("onChildDraw");
         postEvent(new Event{Event::Category::Window, Event::Type::WindowDraw});
     }
 

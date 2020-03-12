@@ -72,13 +72,13 @@ namespace pTK
 
             @return    SkCanvas property
         */
-        SkCanvas* skCanvas() const;
+        virtual SkCanvas* skCanvas() const = 0;
 
         /** Function for retrieving the SkSurface of the Canvas.
 
             @return    SkSurface property
         */
-        SkSurface* skSurface() const;
+        virtual SkSurface* skSurface() const = 0;
 
         /** Function for retrieving the size of the Canvas.
 
@@ -88,8 +88,6 @@ namespace pTK
 
     protected:
         void setSize(const Size& size);
-        // TODO: Maybe move from protected to private or let derived class handle this.
-        Ref<SkSurface> m_surface;
 
     private:
         Size m_size;

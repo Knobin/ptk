@@ -55,9 +55,22 @@ namespace pTK
             @param width   New height of canvas
         */
         void resize(const Size& size) override;
+
+        /** Function for retrieving the SkCanvas of the Canvas.
+
+            @return    SkCanvas property
+        */
+        SkCanvas* skCanvas() const override;
+
+        /** Function for retrieving the SkSurface of the Canvas.
+
+            @return    SkSurface property
+        */
+        SkSurface* skSurface() const override;
         
     private:
         // Skia
+        sk_sp<SkSurface> m_surface;
         Ref<GrContext> m_context;
         GrGLFramebufferInfo m_info;
         SkColorType m_colorType;

@@ -27,9 +27,11 @@ message(STATUS "pTK build: ${PTK_BUILD_TYPE}")
 # OS
 if (UNIX AND NOT APPLE)
     # for Linux, BSD, Solaris, Minix
+    add_definitions(-DPTK_PLATFORM_UNIX)
     set(SKIA_PLATFORM_DEPENDENCIES "-lfreetype -lfontconfig")
 	set(SKIA_FILENAME "libskia.a")
 elseif (WIN32)
+    add_definitions(-DPTK_PLATFORM_WINDOWS)
 	set(SKIA_FILENAME "skia.lib")
 else()
     set(SKIA_PLATFORM_DEPENDENCIES "")

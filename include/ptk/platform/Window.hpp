@@ -1,12 +1,12 @@
 //
-//  Window.hpp
+//  platform/GLFWWindow.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2019-06-12.
 //
 
-#ifndef PTK_WINDOW_HPP
-#define PTK_WINDOW_HPP
+#ifndef PTK_GLFWWINDOW_HPP
+#define PTK_GLFWWINDOW_HPP
 
 // Local Headers
 #include "ptk/core/WindowBase.hpp"
@@ -91,4 +91,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_WINDOW_HPP
+#endif // PTK_GLFWWINDOW_HPP

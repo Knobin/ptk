@@ -80,4 +80,14 @@ namespace pTK
 
         setSize(size);
     }
+
+    SkCanvas* GLCanvas::skCanvas() const
+    {
+        return m_surface->getCanvas();
+    }
+
+    SkSurface* GLCanvas::skSurface() const
+    {
+        return m_surface.get();
+    }
 }

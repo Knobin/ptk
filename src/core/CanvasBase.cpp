@@ -12,24 +12,14 @@ namespace pTK
 {
     CanvasBase::CanvasBase(const Size& size)
             : Singleton(),
-                m_surface{nullptr}, m_size{size}
+                m_size{size}
     {
 
     }
 
     void CanvasBase::clear(const Color& color)
     {
-        m_surface->getCanvas()->clear(SkColorSetARGB(255, color.r, color.g, color.b));
-    }
-
-    SkCanvas* CanvasBase::skCanvas() const
-    {
-        return m_surface->getCanvas();
-    }
-
-    SkSurface* CanvasBase::skSurface() const
-    {
-        return m_surface.get();
+        skCanvas()->clear(SkColorSetARGB(255, color.r, color.g, color.b));
     }
 
     const Size& CanvasBase::getSize() const
