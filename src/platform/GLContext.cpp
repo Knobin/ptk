@@ -1,12 +1,12 @@
 //
-//  platform/GLCanvas.cpp
+//  platform/GLContext.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-02-09.
 //
 
 // Local Headers
-#include "ptk/platform/GLCanvas.hpp"
+#include "ptk/platform/GLContext.hpp"
 #include "ptk/Core.hpp"
 
 // Skia Headers
@@ -32,8 +32,8 @@
 
 namespace pTK
 {
-    GLCanvas::GLCanvas(const Size& size)
-        : CanvasBase(size), m_context{nullptr}, m_info{}, m_colorType{},
+    GLContext::GLContext(const Size& size)
+        : ContextBase(size), m_context{nullptr}, m_info{}, m_colorType{},
             m_props{SkSurfaceProps::kUseDeviceIndependentFonts_Flag, SkSurfaceProps::kLegacyFontHost_InitType}
     {
 		auto glInterface = GrGLMakeNativeInterface();
@@ -60,7 +60,7 @@ namespace pTK
         resize(size);
     }
 
-    GLCanvas::~GLCanvas()
+    GLContext::~GLContext()
     {
         // Apparently, surface needs to be destroyed before context.
         // Otherwise, SkRefCount will give a nice assert.
@@ -68,7 +68,7 @@ namespace pTK
         m_context.reset();
     }
     
-    void GLCanvas::resize(const Size& size)
+    void GLContext::resize(const Size& size)
     {
         glViewport(0, 0, size.width, size.height);
         
@@ -81,12 +81,12 @@ namespace pTK
         setSize(size);
     }
 
-    SkCanvas* GLCanvas::skCanvas() const
+    SkCanvas* GLContext::skCanvas() const
     {
         return m_surface->getCanvas();
     }
 
-    SkSurface* GLCanvas::skSurface() const
+    SkSurface* GLContext::skSurface() const
     {
         return m_surface.get();
     }

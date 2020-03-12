@@ -1,15 +1,15 @@
 //
-//  platform/GLCanvas.hpp
+//  platform/GLContext.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-02-09.
 //
 
-#ifndef PTK_PLATFORM_GLCANVAS_HPP
-#define PTK_PLATFORM_GLCANVAS_HPP
+#ifndef PTK_PLATFORM_GLCONTEXT_HPP
+#define PTK_PLATFORM_GLCONTEXT_HPP
 
 // Local Headers
-#include "ptk/core/CanvasBase.hpp"
+#include "ptk/core/ContextBase.hpp"
 
 // C++ Headers
 #include <memory>
@@ -31,38 +31,38 @@
 
 namespace pTK
 {
-    /** GLCanvas class implementation.
+    /** GLContext class implementation.
      
         Canvas for setting up OpenGL rendering.
     */
-    class GLCanvas : public CanvasBase
+    class GLContext : public ContextBase
     {
     public:
-        /** Constructs GLCanvas with default values.
+        /** Constructs GLContext with default values.
          
-            @return    default initialized GLCanvas
+            @return    default initialized GLContext
         */
-        GLCanvas(const Size& size);
+        GLContext(const Size& size);
 
-        /** Deconstructor for GLCanvas.
+        /** Deconstructor for GLContext.
 
         */
-        virtual ~GLCanvas();
+        virtual ~GLContext();
         
-        /** Function for resizing the Canvas.
+        /** Function for resizing the context.
          
-            @param width   New width of canvas
-            @param width   New height of canvas
+            @param width   New width of context
+            @param width   New height of context
         */
         void resize(const Size& size) override;
 
-        /** Function for retrieving the SkCanvas of the Canvas.
+        /** Function for retrieving the SkCanvas of the context.
 
             @return    SkCanvas property
         */
         SkCanvas* skCanvas() const override;
 
-        /** Function for retrieving the SkSurface of the Canvas.
+        /** Function for retrieving the SkSurface of the context.
 
             @return    SkSurface property
         */
@@ -78,4 +78,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_PLATFORM_GLCANVAS_HPP
+#endif // PTK_PLATFORM_GLCONTEXT_HPP

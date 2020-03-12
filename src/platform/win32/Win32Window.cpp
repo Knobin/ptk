@@ -62,7 +62,7 @@ namespace pTK
             throw std::exception();
         }
 
-        rasterCanvas = new Win32RasterCanvas(wSize);
+        rasterCanvas = new Win32RasterContext(wSize);
         SetWindowLongPtr(m_handle, GWLP_USERDATA, (LONG_PTR)this);
 
         ::ShowWindow(m_handle, SW_SHOW);

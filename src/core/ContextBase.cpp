@@ -1,33 +1,33 @@
 //
-//  core/CanvasBase.cpp
+//  core/ContextBase.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-02-09.
 //
 
 // Local Headers
-#include "ptk/core/CanvasBase.hpp"
+#include "ptk/core/ContextBase.hpp"
 
 namespace pTK
 {
-    CanvasBase::CanvasBase(const Size& size)
+    ContextBase::ContextBase(const Size& size)
             : Singleton(),
                 m_size{size}
     {
 
     }
 
-    void CanvasBase::clear(const Color& color)
+    void ContextBase::clear(const Color& color)
     {
         skCanvas()->clear(SkColorSetARGB(255, color.r, color.g, color.b));
     }
 
-    const Size& CanvasBase::getSize() const
+    const Size& ContextBase::getSize() const
     {
         return m_size;
     }
 
-    void CanvasBase::setSize(const Size& size)
+    void ContextBase::setSize(const Size& size)
     {
         m_size = size;
     }

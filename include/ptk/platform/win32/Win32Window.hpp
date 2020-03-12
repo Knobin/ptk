@@ -10,7 +10,7 @@
 
 // Local Headers
 #include "ptk/core/WindowBase.hpp"
-#include "ptk/platform/win32/Win32RasterCanvas.hpp"
+#include "ptk/platform/win32/Win32RasterContext.hpp"
 
 // Windows Headers
 #include <windows.h>
@@ -33,7 +33,7 @@ namespace pTK
 
     private:
         HWND m_handle;
-        Win32RasterCanvas *rasterCanvas;
+        Win32RasterContext *rasterCanvas;
     };
 }
 

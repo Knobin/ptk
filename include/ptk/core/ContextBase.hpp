@@ -1,12 +1,12 @@
 //
-//  core/CanvasBase.hpp
+//  core/ContextBase.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-02-09.
 //
 
-#ifndef PTK_CORE_CANVASBASE_HPP
-#define PTK_CORE_CANVASBASE_HPP
+#ifndef PTK_CORE_CONTEXTBASE_HPP
+#define PTK_CORE_CONTEXTBASE_HPP
 
 // Local Headers
 #include "ptk/Core.hpp"
@@ -41,46 +41,46 @@
 
 namespace pTK
 {
-    class CanvasBase : public Singleton
+    class ContextBase : public Singleton
     {
     public:
-        /** Constructs CanvasBase with default values.
+        /** Constructs ContextBase with default values.
 
-            @return    default initialized CanvasBase
+            @return    default initialized ContextBase
         */
-        CanvasBase(const Size& size);
+        ContextBase(const Size& size);
 
-        /** Deconstructor for CanvasBase.
+        /** Deconstructor for ContextBase.
 
         */
-        virtual ~CanvasBase() = default;
+        virtual ~ContextBase() = default;
 
-        /** Function for resizing the Canvas.
+        /** Function for resizing the Context.
 
-            @param width   New width of canvas
-            @param width   New height of canvas
+            @param width   New width of context
+            @param width   New height of context
         */
         virtual void resize(const Size& size) = 0;
 
-        /** Function for clearing the Canvas.
+        /** Function for clearing the context.
 
             @param color   Clear color
         */
         void clear(const Color& color);
 
-        /** Function for retrieving the SkCanvas of the Canvas.
+        /** Function for retrieving the SkCanvas of the context.
 
             @return    SkCanvas property
         */
         virtual SkCanvas* skCanvas() const = 0;
 
-        /** Function for retrieving the SkSurface of the Canvas.
+        /** Function for retrieving the SkSurface of the context.
 
             @return    SkSurface property
         */
         virtual SkSurface* skSurface() const = 0;
 
-        /** Function for retrieving the size of the Canvas.
+        /** Function for retrieving the size of the context.
 
             @return    size of canvas
         */
@@ -98,4 +98,4 @@ namespace pTK
     SkPoint convertToSkPoint(const Size& size, const Vec2f& scale = {1.0f, 1.0f});
 }
 
-#endif // PTK_CORE_CANVASBASE_HPP
+#endif // PTK_CORE_CONTEXTBASE_HPP

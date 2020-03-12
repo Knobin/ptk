@@ -10,7 +10,7 @@
 
 // Local Headers
 #include "ptk/core/WindowBase.hpp"
-#include "ptk/platform/GLCanvas.hpp"
+#include "ptk/platform/GLContext.hpp"
 
 // GLFW Headers
 #include <GLFW/glfw3.h>
@@ -76,7 +76,7 @@ namespace pTK
     private:
         // Window
         GLFWwindow* m_window;
-        std::unique_ptr<GLCanvas> m_drawCanvas;
+        std::unique_ptr<GLContext> m_drawCanvas;
 
         // Init Functions
         void initGLFW();

@@ -14,7 +14,7 @@
 #include "ptk/Window.hpp"
 
 // --- Core --------------------------
-#include "ptk/core/CanvasBase.hpp"
+#include "ptk/core/ContextBase.hpp"
 #include "ptk/core/Container.hpp"
 #include "ptk/core/Drawable.hpp"
 #include "ptk/core/Event.hpp"

@@ -6,17 +6,17 @@
 //
 
 // Local Headers
-#include "ptk/platform/win32/Win32RasterCanvas.hpp"
+#include "ptk/platform/win32/Win32RasterContext.hpp"
 
 namespace pTK
 {
-    Win32RasterCanvas::Win32RasterCanvas(const Size& size)
-        : CanvasBase(size)
+    Win32RasterContext::Win32RasterContext(const Size& size)
+        : ContextBase(size)
     {
         resize(size);
     }
 
-    void Win32RasterCanvas::resize(const Size& size)
+    void Win32RasterContext::resize(const Size& size)
     {
         SkColorType m_colorType{kN32_SkColorType};
 
@@ -43,17 +43,17 @@ namespace pTK
         setSize(size);
     }
 
-    SkCanvas* Win32RasterCanvas::skCanvas() const
+    SkCanvas* Win32RasterContext::skCanvas() const
     {
         return m_surface->getCanvas();
     }
 
-    SkSurface* Win32RasterCanvas::skSurface() const
+    SkSurface* Win32RasterContext::skSurface() const
     {
         return m_surface.get();
     }
 
-    void Win32RasterCanvas::swapbuffers(HWND m_handle)
+    void Win32RasterContext::swapbuffers(HWND m_handle)
     {
         BITMAPINFO *bmpInfo = reinterpret_cast<BITMAPINFO*>(m_surfaceMemory.get());
         HRGN hrgn = CreateRectRgn(0,0,0,0);
