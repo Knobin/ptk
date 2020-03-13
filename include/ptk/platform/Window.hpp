@@ -23,7 +23,7 @@ namespace pTK
         for bridging the events to the Widgets.
 
     */
-    class GLFWWindow : public WindowBase
+    class Window : public WindowBase
     {
     public:
         /** Window Button with default values with name, width and height.
@@ -36,8 +36,8 @@ namespace pTK
             @param height  height of the window
             @return        default initialized Window
         */
-        GLFWWindow(const std::string& name, const Vec2u& size);
-        virtual ~GLFWWindow();
+        Window(const std::string& name, const Vec2u& size);
+        virtual ~Window();
 
         /** Function for closing the window.
 
