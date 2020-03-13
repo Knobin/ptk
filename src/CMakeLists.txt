@@ -9,7 +9,7 @@ set(CORE_FILES core/Box.cpp
         core/Sizable.cpp
         core/Text.cpp
         core/Widget.cpp
-        core/WindowBase.cpp)
+        )
 
 set(UTIL_FILES util/Alignment.cpp
         util/Clock.cpp
@@ -29,15 +29,15 @@ set(WIDGET_FILES widgets/Button.cpp
 
 if (WIN32)
     set(PLATFORM_FILES platform/win32/Win32RasterContext.cpp
-            platform/win32/Win32Window.cpp)
+            platform/win32/Win32Backend.cpp)
     message(STATUS "Using Win32")
 else()
-    set(PLATFORM_FILES platform/GLContext.cpp
-            platform/Window.cpp)
+    set(PLATFORM_FILES platform/glfw/GLContext.cpp
+            platform/glfw/WindowBackend.cpp)
     message(STATUS "Using GLFW")
 endif()
 
-set(SOURCE_FILES Application.cpp Log.cpp
+set(SOURCE_FILES Application.cpp Log.cpp Window.cpp
         ${CORE_FILES}
         ${PLATFORM_FILES}
         ${UTIL_FILES}

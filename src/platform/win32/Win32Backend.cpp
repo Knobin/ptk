@@ -6,7 +6,8 @@
 //
 
 // Local Headers
-#include "ptk/platform/win32/Win32Window.hpp"
+#include "ptk/platform/win32/Win32Backend.hpp"
+#include "ptk/Window.hpp"
 
 // C++ Headers
 #include <iostream>
@@ -29,9 +30,9 @@ static std::wstring get_utf16(const std::string& str)
 
 namespace pTK
 {
-    Window::Window(const std::string& name, const Vec2u& size)
-        : WindowBase(name, size),
-            m_handle{}
+    Win32Backend::Win32Backend(Window *window, const std::string& name, const Vec2u& size, Backend backend)
+        : WindowBackend(backend),
+            m_parentWindow{window}, m_handle{}
     {
         WNDCLASSEXW wcx{};
         wcx.cbSize = sizeof(wcx);
@@ -50,7 +51,6 @@ namespace pTK
             throw std::exception();
         }
 
-
         DWORD style = WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
         Size wSize{static_cast<Size::value_type>(size.x), static_cast<Size::value_type>(size.y)};
         Size adjSize{calcAdjustedWindowSize(wSize, style)};
@@ -63,34 +63,18 @@ namespace pTK
         }
 
         rasterCanvas = new Win32RasterContext(wSize);
-        SetWindowLongPtr(m_handle, GWLP_USERDATA, (LONG_PTR)this);
+        SetWindowLongPtr(m_handle, GWLP_USERDATA, (LONG_PTR)m_parentWindow);
 
         ::ShowWindow(m_handle, SW_SHOW);
         ::UpdateWindow(m_handle);
     }
 
-    void Window::forceDrawAll()
+    void Win32Backend::setPosHint(const Point& pos)
     {
-        PAINTSTRUCT ps;
-        HDC hdc{BeginPaint(m_handle, &ps)};
-        SkCanvas* canvas = rasterCanvas->skCanvas();
-        PTK_INFO("FORCEDRAWALL");
-        Color color = getBackground();
-        canvas->clear(SkColorSetARGB(255, color.r, color.g, color.b));
-        // Apply monitor scale.
-        SkMatrix matrix;
-        Vec2f scale{getDPIScale()};
-        matrix.setScale(scale.x, scale.y);
-        canvas->setMatrix(matrix);
-        for (iterator it = begin(); it != end(); it++)
-            (*it)->onDraw(canvas);
-
-        canvas->flush();
-        rasterCanvas->swapbuffers(m_handle);
-        EndPaint(m_handle, &ps);
+        // TODO
     }
 
-    void Window::pollEvents()
+    void Win32Backend::pollEvents()
     {
         MSG Msg;
         WaitMessage();
@@ -100,7 +84,60 @@ namespace pTK
         }
     }
 
-    LRESULT Window::wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    void Win32Backend::beginPaint()
+    {
+        ps = PAINTSTRUCT();
+        HDC hdc{BeginPaint(m_handle, &ps)};
+    }
+
+    void Win32Backend::endPaint()
+    {
+        EndPaint(m_handle, &ps);
+    }
+
+    void Win32Backend::swapbuffers()
+    {
+        rasterCanvas->swapbuffers(m_handle);
+    }
+
+    void Win32Backend::resize(const Size& size)
+    {
+        //rasterCanvas->resize(m_parentWindow->getContentSize());
+    }
+
+    void Win32Backend::setLimits(const Size& min, const Size& max)
+    {
+        // TODO
+    }
+
+    void Win32Backend::close()
+    {
+        // TODO
+        m_parentWindow->postEvent(new Event{Event::Category::Window, Event::Type::WindowClose});
+    }
+
+    void Win32Backend::show()
+    {
+        // TODO
+        m_parentWindow->forceDrawAll();
+    }
+
+    void Win32Backend::hide()
+    {
+        // TODO
+    }
+
+    ContextBase *Win32Backend::getContext() const
+    {
+        return rasterCanvas;
+    }
+
+    Vec2f Win32Backend::getDPIScale() const
+    {
+        return {1.0f, 1.0f};
+    }
+
+    LRESULT Win32Backend::wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
         switch(msg)
@@ -135,7 +172,7 @@ namespace pTK
         return 0;
     }
 
-    Size Window::calcAdjustedWindowSize(const Size& from, DWORD style) const
+    Size Win32Backend::calcAdjustedWindowSize(const Size& from, DWORD style) const
     {
         RECT adjustedSize{};
         adjustedSize.top = 0;

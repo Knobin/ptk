@@ -1,38 +1,43 @@
 //
-//  core/BaseWindow.hpp
+//  Window.cpp
 //  pTK
 //
-//  Created by Robin Gustafsson on 2020-02-08.
+//  Created by Robin Gustafsson on 2020-03-04.
 //
 
 // Local Headers
-#include "ptk/core/WindowBase.hpp"
+#include "ptk/Window.hpp"
+#include "ptk/platform/Backend.hpp"
 #include "ptk/events/KeyEvent.hpp"
 #include "ptk/events/MouseEvent.hpp"
 #include "ptk/events/WindowEvent.hpp"
 #include "ptk/Core.hpp"
+#include "ptk/core/ContextBase.hpp"
 
 // C++ Headers
 #include <exception>
+#include <memory>
 
 namespace pTK
 {
-    WindowBase::WindowBase(const std::string& name, const Vec2u& size)
+    Window::Window(const std::string& name, const Vec2u& size, Backend backend)
             : VBox(), Singleton(),
-              m_eventQueue{}, m_scale{1.0f, 1.0f}, m_draw{false}, m_close{false}
+                m_winBackend{nullptr}, m_eventQueue{}, m_draw{false}, m_close{false}
     {
         // Set Widget properties.
         Sizable::setSize({static_cast<Size::value_type>(size.x), static_cast<Size::value_type>(size.y)});
         setName(name);
+
+        m_winBackend = new BACKEND(this, name, size, backend);
     }
 
-    void WindowBase::onChildDraw(size_type)
+    void Window::onChildDraw(size_type)
     {
         PTK_WARN("onChildDraw");
         postEvent(new Event{Event::Category::Window, Event::Type::WindowDraw});
     }
 
-    void WindowBase::handleEvents()
+    void Window::handleEvents()
     {
         SafeQueue<std::unique_ptr<Event>>::size_type eventCount = m_eventQueue.size();
         for (uint i = 0; i < eventCount; i++)
@@ -61,40 +66,58 @@ namespace pTK
         }
     }
 
-    void WindowBase::sendEvent(Event *event)
+    void Window::sendEvent(Event *event)
     {
         handleEvent(event);
     }
 
-    void WindowBase::postEvent(Event *event)
+    void Window::postEvent(Event *event)
     {
         m_eventQueue.push(std::unique_ptr<Event>(event));
     }
 
-    Size WindowBase::getContentSize() const
+    Size Window::getContentSize() const
     {
         Size wSize{getSize()};
-        wSize.width = static_cast<Size::value_type>(wSize.width * m_scale.x);
-        wSize.height = static_cast<Size::value_type>(wSize.height * m_scale.y);
+        Vec2f scale{getDPIScale()};
+        wSize.width = static_cast<Size::value_type>(wSize.width * scale.x);
+        wSize.height = static_cast<Size::value_type>(wSize.height * scale.y);
         return wSize;
     }
 
-    const Vec2f& WindowBase::getDPIScale() const
+    Vec2f Window::getDPIScale() const
     {
-        return m_scale;
+        return m_winBackend->getDPIScale();
     }
 
-    bool WindowBase::shouldClose()
+    bool Window::shouldClose()
     {
         return m_close;
     }
 
-    void WindowBase::setScale(const Vec2f& scale)
+    void Window::show()
     {
-        m_scale = scale;
+        m_winBackend->show();
     }
 
-    void WindowBase::handleEvent(Event *event)
+    void Window::hide()
+    {
+        m_winBackend->hide();
+    }
+
+    void Window::onResize(const Size& size)
+    {
+        if (m_winBackend)
+            m_winBackend->resize(size);
+    }
+
+    void Window::onLimitChange(const Size& min, const Size& max)
+    {
+        if (m_winBackend)
+            m_winBackend->setLimits(min, max);
+    }
+
+    void Window::handleEvent(Event *event)
     {
         PTK_ASSERT(event, "Undefined Event");
 
@@ -110,14 +133,14 @@ namespace pTK
 #endif
     }
 
-    void WindowBase::handleKeyboardEvent(Event* event)
+    void Window::handleKeyboardEvent(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
         KeyEvent* kEvent = static_cast<KeyEvent*>(event);
         handleKeyEvent(kEvent->type(), kEvent->get_keycode());
     }
 
-    void WindowBase::handleMouseEvent(Event* event)
+    void Window::handleMouseEvent(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
         Event::Type type = event->type();
@@ -141,7 +164,7 @@ namespace pTK
         }
     }
 
-    void WindowBase::handleWindowEvent(Event* event)
+    void Window::handleWindowEvent(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
         Event::Type type = event->type();
@@ -153,9 +176,11 @@ namespace pTK
         {
             ResizeEvent* rEvent = (ResizeEvent*)event;
             Size size{rEvent->getSize()};
-            Size cSize{static_cast<Size::value_type>(size.width * m_scale.x),
-                       static_cast<Size::value_type>(size.height * m_scale.y)};
+            Vec2f scale{m_winBackend->getDPIScale()};
+            Size cSize{static_cast<Size::value_type>(size.width * scale.x),
+                       static_cast<Size::value_type>(size.height * scale.y)};
 
+            m_winBackend->resize(size);
             setSize(size);
             refitContent(size);
             m_draw = true;
@@ -163,5 +188,38 @@ namespace pTK
         {
             m_close = true;
         }
+    }
+
+    void Window::close()
+    {
+        m_winBackend->close();
+    }
+
+    void Window::pollEvents()
+    {
+        m_winBackend->pollEvents();
+    }
+
+    void Window::forceDrawAll()
+    {
+        m_winBackend->beginPaint();
+        ContextBase *context = m_winBackend->getContext();
+        SkCanvas* canvas = context->skCanvas();
+
+        Color color = getBackground();
+        context->clear(color);
+
+        // Apply monitor scale.
+        SkMatrix matrix;
+        Vec2f scale{getDPIScale()};
+        matrix.setScale(scale.x, scale.y);
+        canvas->setMatrix(matrix);
+
+        for (iterator it = begin(); it != end(); it++)
+            (*it)->onDraw(canvas);
+
+        canvas->flush();
+        m_winBackend->swapbuffers();
+        m_winBackend->endPaint();
     }
 }

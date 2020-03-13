@@ -9,21 +9,20 @@
 #define PTK_GLFWWINDOW_HPP
 
 // Local Headers
-#include "ptk/core/WindowBase.hpp"
-#include "ptk/platform/GLContext.hpp"
+#include "ptk/core/WindowBackend.hpp"
+#include "ptk/platform/glfw/GLContext.hpp"
 
 // GLFW Headers
 #include <GLFW/glfw3.h>
 
 namespace pTK
 {
-    /** Window class implementation.
+    class Window;
 
-        Implements the Window and is also responsible
-        for bridging the events to the Widgets.
+    /** GLFWBackend class implementation.
 
     */
-    class GLFWWindow : public WindowBase
+    class GLFWBackend : public WindowBackend
     {
     public:
         /** Window Button with default values with name, width and height.
@@ -36,8 +35,8 @@ namespace pTK
             @param height  height of the window
             @return        default initialized Window
         */
-        GLFWWindow(const std::string& name, const Vec2u& size);
-        virtual ~GLFWWindow();
+        GLFWBackend(Window *window, const std::string& name, const Vec2u& size, Backend backend);
+        virtual ~GLFWBackend();
 
         /** Function for closing the window.
 
@@ -59,24 +58,26 @@ namespace pTK
         */
         void pollEvents() override;
 
-        /** Function for forcing the window to redraw everything.
-
-        */
-        void forceDrawAll() override;
-
         /** Function for setting the window position.
 
         */
         void setPosHint(const Point& pos) override;
 
-    private:
-        void onResize(const Size& size) override;
-        void onLimitChange(const Size& min, const Size& max) override;
+        ContextBase *getContext() const override;
+
+        void swapbuffers() override;
+
+        Vec2f getDPIScale() const override;
+
+        void resize(const Size& size) override;
+        void setLimits(const Size& min, const Size& max) override;
 
     private:
         // Window
         GLFWwindow* m_window;
         std::unique_ptr<GLContext> m_drawCanvas;
+        Window *m_parentWindow;
+        Vec2f m_scale;
 
         // Init Functions
         void initGLFW();
@@ -86,7 +87,6 @@ namespace pTK
         void setMouseCallbacks();
         void setKeyCallbacks();
 
-        void swapBuffers();
         void setLimits2(const Size& minSize, const Size& maxSize);
     };
 }
