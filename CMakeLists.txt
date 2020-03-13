@@ -62,14 +62,9 @@ message(STATUS "Build Tests: ${BUILD_TESTS}")
 message(STATUS "Build Examples: ${BUILD_EXAMPLES}")
 message(STATUS "Build Sandbox: ${BUILD_SANDBOX}")
 
-# Source files
-file(GLOB_RECURSE SOURCE_FILES ${CMAKE_SOURCE_DIR}/src/*.cpp)
-source_group(TREE "${CMAKE_SOURCE_DIR}/src" PREFIX "Source Files" FILES ${SOURCE_FILES})
-
 # Header files
 file(GLOB_RECURSE HEADER_FILES ${CMAKE_SOURCE_DIR}/include/*.hpp)
 source_group(TREE "${CMAKE_SOURCE_DIR}/include/ptk" PREFIX "Header Files" FILES ${HEADER_FILES})
-
 include_directories(${CMAKE_SOURCE_DIR}/include/)
 
 # Skia properties
@@ -90,33 +85,25 @@ set_target_properties(skia PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${SKIA_PATH}"
 )
 
-# Define executable
-add_library(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
-
-# Skia
-target_link_libraries(${PROJECT_NAME} ${SKIA_PLATFORM_DEPENDENCIES} skia)
-
 # OpenGL
 find_package(OpenGL REQUIRED)
-target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES})
 
 # GLFW
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(GLFW_INSTALL ON CACHE BOOL "" FORCE)
-set(USE_MSVC_RUNTIME_LIBRARY_DLL OFF CACHE BOOL "" FORCE)
-add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/GLFW)
-include_directories(${CMAKE_SOURCE_DIR}/third_party/glfw/include)
-target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
-
-# spdlog
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/third_party/spdlog/include)
+if (NOT WIN32)
+    set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+    set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    set(GLFW_INSTALL ON CACHE BOOL "" FORCE)
+    set(USE_MSVC_RUNTIME_LIBRARY_DLL OFF CACHE BOOL "" FORCE)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/GLFW)
+    include_directories(${CMAKE_SOURCE_DIR}/third_party/glfw/include)
+endif (NOT WIN32)
 
 # Threads
 find_package (Threads REQUIRED)
-target_link_libraries(${PROJECT_NAME} Threads::Threads)
+
+# Define library
+add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 
 # Example
 if (BUILD_EXAMPLES)

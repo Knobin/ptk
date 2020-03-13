@@ -1,7 +1,5 @@
 // pTK Headers
 #include "ptk/ptk.hpp"
-//#include "ptk/platform/win32/Win32Window.hpp"
-#include "ptk/platform/Window.hpp"
 
 #include <iostream>
 
