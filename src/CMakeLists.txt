@@ -33,7 +33,7 @@ if (WIN32)
     message(STATUS "Using Win32")
 else()
     set(PLATFORM_FILES platform/glfw/GLContext.cpp
-            platform/glfw/WindowBackend.cpp)
+            platform/glfw/GLFWBackend.cpp)
     message(STATUS "Using GLFW")
 endif()
 
