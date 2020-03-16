@@ -8,10 +8,11 @@
 // Local Headers
 #include "ptk/platform/win32/Win32Backend.hpp"
 #include "ptk/Window.hpp"
+#include "ptk/core/Exception.hpp"
+#include "ptk/events/WindowEvent.hpp"
 
 // C++ Headers
 #include <iostream>
-#include <exception>
 
 // Windows Headers
 #include <windowsx.h>
@@ -46,10 +47,8 @@ namespace pTK
         wcx.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
         wcx.hCursor = ::LoadCursorW(nullptr, reinterpret_cast<LPCWSTR>(IDC_ARROW));
 
-        if(!RegisterClassExW(&wcx)) {
-            std::cerr << "Window Registration Failed!" << std::endl;
-            throw std::exception();
-        }
+        if(!RegisterClassExW(&wcx))
+            throw WindowError("Window Registration Failed!");
 
         DWORD style = WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
         Size wSize{static_cast<Size::value_type>(size.x), static_cast<Size::value_type>(size.y)};
@@ -57,10 +56,7 @@ namespace pTK
         m_handle = CreateWindowExW(0, wcx.lpszClassName, get_utf16(name).c_str(), style, CW_USEDEFAULT, CW_USEDEFAULT,
                                    adjSize.width, adjSize.height, nullptr, nullptr, GetModuleHandleW(nullptr), nullptr);
         if (!m_handle)
-        {
-            std::cerr << "Error: Failure to create window!" << std::endl;
-            throw std::exception();
-        }
+            throw WindowError("Failed to create window!");
 
         rasterCanvas = new Win32RasterContext(wSize);
         SetWindowLongPtr(m_handle, GWLP_USERDATA, (LONG_PTR)m_parentWindow);
@@ -76,12 +72,14 @@ namespace pTK
 
     void Win32Backend::pollEvents()
     {
+        PTK_WARN("pollEvents start");
         MSG Msg;
         WaitMessage();
         if(GetMessageW(&Msg, nullptr, 0, 0) > 0 ){
             TranslateMessage(&Msg);
             DispatchMessage(&Msg);
         }
+        PTK_WARN("pollEvents end");
     }
 
     void Win32Backend::beginPaint()
@@ -102,7 +100,7 @@ namespace pTK
 
     void Win32Backend::resize(const Size& size)
     {
-        //rasterCanvas->resize(m_parentWindow->getContentSize());
+        rasterCanvas->resize(m_parentWindow->getContentSize());
     }
 
     void Win32Backend::setLimits(const Size& min, const Size& max)
@@ -157,19 +155,46 @@ namespace pTK
                 window->postEvent(new Event{Event::Category::Window, Event::Type::WindowDraw});
                 break;
             case WM_KEYDOWN:
-                window->sendEvent(new KeyEvent(Event::Type::KeyPressed, wParam));
+                {
+                    KeyEvent evt{Event::Type::KeyPressed, static_cast<int32>(wParam)};
+                    window->sendEvent(&evt);
+                }
                 break;
             case WM_KEYUP:
-                window->sendEvent(new KeyEvent(Event::Type::KeyReleased, wParam));
+                {
+                    KeyEvent evt{Event::Type::KeyReleased, static_cast<int32>(wParam)};
+                    window->sendEvent(&evt);
+                }
                 break;
             case WM_MOUSEMOVE:
-                window->sendEvent(new MotionEvent(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
+                {
+                    MotionEvent evt{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+                    window->sendEvent(&evt);
+                }
+                break;
+            case WM_LBUTTONDOWN:
+                handleMouseClick(window, Event::Type::MouseButtonPressed, Mouse::Button::Left, lParam);
+                break;
+            case WM_LBUTTONUP:
+                handleMouseClick(window, Event::Type::MouseButtonReleased, Mouse::Button::Left, lParam);
+                break;
+            case WM_SIZE:
+                window->postEvent(new ResizeEvent(LOWORD(lParam), HIWORD(lParam)));
+                //window->handleEvents();
                 break;
             default:
                 return DefWindowProcW(hwnd, msg, wParam, lParam);
         }
 
         return 0;
+    }
+
+    void Win32Backend::handleMouseClick(Window *window, Event::Type type, Mouse::Button btn, LPARAM lParam)
+    {
+        Point::value_type xpos = static_cast<Point::value_type>(GET_X_LPARAM(lParam));
+        Point::value_type ypos = static_cast<Point::value_type>(GET_Y_LPARAM(lParam));
+        ButtonEvent evt{type, btn, xpos, ypos};
+        window->sendEvent(&evt);
     }
 
     Size Win32Backend::calcAdjustedWindowSize(const Size& from, DWORD style) const

@@ -11,6 +11,8 @@
 // Local Headers
 #include "ptk/core/WindowBackend.hpp"
 #include "ptk/platform/win32/Win32RasterContext.hpp"
+#include "ptk/core/Event.hpp"
+#include "ptk/events/MouseEvent.hpp"
 
 // Windows Headers
 #include <windows.h>
@@ -64,6 +66,8 @@ namespace pTK
 
     private:
         static LRESULT CALLBACK wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+        static void handleMouseClick(Window *window, Event::Type type, Mouse::Button btn, LPARAM lParam);
+
         Size calcAdjustedWindowSize(const Size& from, DWORD style) const;
 
     private:

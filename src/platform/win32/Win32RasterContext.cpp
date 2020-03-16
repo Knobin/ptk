@@ -7,6 +7,7 @@
 
 // Local Headers
 #include "ptk/platform/win32/Win32RasterContext.hpp"
+#include "ptk/core/Exception.hpp"
 
 namespace pTK
 {
@@ -29,7 +30,7 @@ namespace pTK
         ZeroMemory(bmpInfo, sizeof(BITMAPINFO));
         bmpInfo->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
         bmpInfo->bmiHeader.biWidth = w;
-        bmpInfo->bmiHeader.biHeight = -h; // negative means top-down bitmap. Skia draws top-down.
+        bmpInfo->bmiHeader.biHeight = -h;
         bmpInfo->bmiHeader.biPlanes = 1;
         bmpInfo->bmiHeader.biBitCount = 32;
         bmpInfo->bmiHeader.biCompression = BI_RGB;
@@ -37,7 +38,8 @@ namespace pTK
 
         SkImageInfo info = SkImageInfo::Make(w, h, m_colorType, kPremul_SkAlphaType,nullptr);
         m_surface = SkSurface::MakeRasterDirect(info, pixels, sizeof(uint32_t) * w);
-        PTK_ASSERT(m_surface, "Failed to create Raster Canvas for Win32");
+        if (!m_surface)
+            throw ContextError("Failed to create Raster Canvas for Win32");
 
         PTK_INFO("Created Win32RasterCanvas: {}x{}", size.width, size.height);
         setSize(size);

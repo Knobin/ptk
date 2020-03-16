@@ -33,7 +33,6 @@ namespace pTK
 
     void Window::onChildDraw(size_type)
     {
-        PTK_WARN("onChildDraw");
         postEvent(new Event{Event::Category::Window, Event::Type::WindowDraw});
     }
 
@@ -180,8 +179,8 @@ namespace pTK
             Size cSize{static_cast<Size::value_type>(size.width * scale.x),
                        static_cast<Size::value_type>(size.height * scale.y)};
 
-            m_winBackend->resize(size);
             setSize(size);
+            m_winBackend->resize(size);
             refitContent(size);
             m_draw = true;
         }else if (type == Event::Type::WindowClose)
