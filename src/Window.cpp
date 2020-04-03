@@ -27,6 +27,7 @@ namespace pTK
         // Set Widget properties.
         Sizable::setSize({static_cast<Size::value_type>(size.x), static_cast<Size::value_type>(size.y)});
         setName(name);
+        Drawable::hide();
 
         m_winBackend = new BACKEND(this, name, size, backend);
     }
@@ -96,11 +97,13 @@ namespace pTK
 
     void Window::show()
     {
+        Drawable::show();
         m_winBackend->show();
     }
 
     void Window::hide()
     {
+        Drawable::hide();
         m_winBackend->hide();
     }
 

@@ -72,14 +72,11 @@ namespace pTK
 
     void Win32Backend::pollEvents()
     {
-        PTK_WARN("pollEvents start");
         MSG Msg;
-        WaitMessage();
         if(GetMessageW(&Msg, nullptr, 0, 0) > 0 ){
             TranslateMessage(&Msg);
             DispatchMessage(&Msg);
         }
-        PTK_WARN("pollEvents end");
     }
 
     void Win32Backend::beginPaint()
@@ -152,7 +149,11 @@ namespace pTK
             case WM_MOVE:
                 break;
             case WM_PAINT:
-                window->postEvent(new Event{Event::Category::Window, Event::Type::WindowDraw});
+                if (window->visible())
+                {
+                    window->postEvent(new Event{Event::Category::Window, Event::Type::WindowDraw});
+                    window->handleEvents();
+                }
                 break;
             case WM_KEYDOWN:
                 {
@@ -178,9 +179,17 @@ namespace pTK
             case WM_LBUTTONUP:
                 handleMouseClick(window, Event::Type::MouseButtonReleased, Mouse::Button::Left, lParam);
                 break;
+            case WM_SIZING:
+            {
+                RECT rect{};
+                GetClientRect(hwnd, &rect);
+                int width = rect.right - rect.left;
+                int height = rect.bottom - rect.top;
+                window->postEvent(new ResizeEvent(width, height));
+            }
+                break;
             case WM_SIZE:
                 window->postEvent(new ResizeEvent(LOWORD(lParam), HIWORD(lParam)));
-                //window->handleEvents();
                 break;
             default:
                 return DefWindowProcW(hwnd, msg, wParam, lParam);
