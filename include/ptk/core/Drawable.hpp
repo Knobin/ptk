@@ -56,7 +56,7 @@ namespace pTK
         */
         virtual void hide()
         {
-            m_visible = true;
+            m_visible = false;
         }
         
         /** Function for checking if it is visible.

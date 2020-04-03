@@ -84,6 +84,18 @@ namespace pTK
         return false;
     }
 
+    void Widget::show()
+    {
+        Drawable::show(); // Set the visible boolean.
+        update(); // Tell parent to display widget.
+    }
+
+    void Widget::hide()
+    {
+        Drawable::hide(); // Set the visible boolean.
+        update(); // Tell parent to hide widget.
+    }
+
     void Widget::onAlignChange(std::underlying_type<Align>::type)
     {
         update();

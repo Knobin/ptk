@@ -84,6 +84,16 @@ namespace pTK
             put it on an internal render queue.
         */
         bool draw();
+
+        /** Function to enable drawing.
+
+        */
+        void show() override;
+
+        /** Function to disable drawing and hide it.
+
+        */
+        void hide() override;
         
     protected:
         /** Function for updating the child.
