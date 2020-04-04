@@ -10,7 +10,7 @@ const unsigned int SCR_HEIGHT = 540;
 int main(int argc, char *argv[])
 {
     pTK::Application app(argc, argv);
-    pTK::Window window("pTK Button Example", SCR_WIDTH, SCR_HEIGHT);
+    pTK::Window window("pTK Button Example", {SCR_WIDTH, SCR_HEIGHT});
     
     pTK::Ref<pTK::Button> defaultBtn = pTK::create<pTK::Button>(pTK::Button::Style::Default);
     defaultBtn->setText("Default Button");

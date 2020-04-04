@@ -205,7 +205,7 @@ namespace pTK
         glfwSwapBuffers(m_window);
     }
 
-    void GLFWBackend::resize(const Size& size)
+    void GLFWBackend::resize(const Size&)
     {
         m_drawCanvas->resize(m_parentWindow->getContentSize());
     }

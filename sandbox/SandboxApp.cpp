@@ -14,7 +14,7 @@ const unsigned int FNORMAL = 14;
 
 int main(int argc, char *argv[])
 {
-    pTK::Application app{};
+    pTK::Application app{argc, argv};
     pTK::Window window{"pTK Win32 Window", {960, 540}};
     //pTK::GLFWWindow window("pTK GLFW Window", {960, 540});
     window.setBackground(pTK::Color(0x232323FF));
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
         return true;
     });
 
-    window.onHover([](const pTK::Point& point) {
+    window.onHover([](const pTK::Point&) {
         //std::cout << "pos: " << point.x << "x" << point.y << std::endl;
         return false;
     });

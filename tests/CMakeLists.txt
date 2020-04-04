@@ -39,7 +39,7 @@ define_test(NAME ColorTest FILES ${PTK_INCLUDE}/util/Color.hpp ${PTK_SRC}/util/C
 define_test(NAME PointTest FILES ${PTK_INCLUDE}/util/Point.hpp ${PTK_SRC}/util/Point.cpp PointTest.cpp)
 define_test(NAME RectangleTest FILES ${PTK_HEADER_FILES} RectangleTest.cpp LINKS ptk)
 define_test(NAME SafeQueueTest FILES ${PTK_INCLUDE}/util/SafeQueue.hpp SafeQueueTest.cpp)
-define_test(NAME SemaphoreTest FILES ${PTK_INCLUDE}/util/Semaphore.hpp ${PTK_SRC}/util/Semaphore.cpp SemaphoreTest.cpp)
+define_test(NAME SemaphoreTest FILES ${PTK_INCLUDE}/util/Semaphore.hpp ${PTK_SRC}/util/Semaphore.cpp SemaphoreTest.cpp LINKS Threads::Threads)
 define_test(NAME ShapeTest FILES ${PTK_HEADER_FILES} ShapeTest.cpp LINKS ptk)
 define_test(NAME SizableTest FILES ${PTK_HEADER_FILES} SizableTest.cpp LINKS ptk)
 define_test(NAME SizeTest FILES ${PTK_INCLUDE}/util/Size.hpp ${PTK_SRC}/util/Size.cpp SizeTest.cpp)
