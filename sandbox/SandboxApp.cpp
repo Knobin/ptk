@@ -25,10 +25,7 @@ int main(int argc, char *argv[])
         if ((type == pTK::Event::Type::KeyReleased) && (key == 27))
             window.close();
         if ((type == pTK::Event::Type::KeyReleased) && (key == 32))
-        {
-            std::cout << "draw" << std::endl;
-            window.postEvent(new pTK::Event{pTK::Event::Category::Window, pTK::Event::Type::WindowDraw});
-        }
+            window.setPosHint({200, 50});
 
         return true;
     });

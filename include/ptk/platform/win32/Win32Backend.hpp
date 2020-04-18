@@ -20,7 +20,7 @@
 namespace pTK
 {
     class Window;
-    
+
     class Win32Backend : public WindowBackend
     {
     public:

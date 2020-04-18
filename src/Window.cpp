@@ -227,6 +227,12 @@ namespace pTK
         m_winBackend->endPaint();
     }
 
+    void Window::setPosHint(const Point& pos)
+    {
+        m_winBackend->setPosHint(pos);
+        PTK_INFO("pos: {}x{}", pos.x, pos.y);
+    }
+
     WindowBackend* Window::getBackend() const
     {
         return m_winBackend;

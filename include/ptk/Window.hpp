@@ -98,6 +98,8 @@ namespace pTK
         */
         void forceDrawAll();
 
+        void setPosHint(const Point& pos) override;
+
         WindowBackend* getBackend() const;
 
     private:

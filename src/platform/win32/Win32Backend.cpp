@@ -97,7 +97,9 @@ namespace pTK
 
     void Win32Backend::setPosHint(const Point& pos)
     {
-        // TODO
+        RECT rect{pos.x, pos.y, pos.x, pos.y};
+        SetWindowPos(m_handle, nullptr, rect.left, rect.top, 0, 0,
+                SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
     }
 
     void Win32Backend::pollEvents()
