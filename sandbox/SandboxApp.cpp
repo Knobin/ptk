@@ -12,6 +12,11 @@ const unsigned int FLARGE = 24;
 const unsigned int FSIDEBAR = 16;
 const unsigned int FNORMAL = 14;
 
+// Colors
+uint colSidebar{0x252525FF};
+uint colContent{0x171717FF};
+uint colText{0xF5F5F5FF};
+
 int main(int argc, char *argv[])
 {
     pTK::Application app{argc, argv};
@@ -43,28 +48,28 @@ int main(int argc, char *argv[])
     pTK::Ref<pTK::VBox> sidebar = pTK::create<pTK::VBox>();
     sidebar->setSize({static_cast<int>(SCR_WIDTH*0.225f), pTK::Size::Limits::Max});
     sidebar->setAlign(pTK::Align::Left);
-    sidebar->setBackground(pTK::Color(0x303030FF));
+    sidebar->setBackground(pTK::Color(colSidebar));
 
     // Sidebar title.
     pTK::Ref<pTK::Label> sTitle = pTK::create<pTK::Label>();
     sTitle->setText("SandboxApp");
     sTitle->setFontSize(FLARGE);
+    sTitle->setColor(pTK::Color(colText));
     sTitle->setAlign(pTK::Align::Top | pTK::Align::HCenter);
     sTitle->setPadding({18, 18, 18, 18});
 
     // Button style for sidebar.
     pTK::Button::Style sbBtnStyle;
-    sbBtnStyle.color = pTK::Color(0x252525FF);
-    sbBtnStyle.clickColor = pTK::Color(0x151515FF);
-    sbBtnStyle.hoverColor = pTK::Color(0x202020FF);
-    sbBtnStyle.textColor = pTK::Color(0xFFFFFFFF);
+    sbBtnStyle.color = pTK::Color(0x212121FF);
+    sbBtnStyle.clickColor = pTK::Color(0x171717FF);
+    sbBtnStyle.hoverColor = pTK::Color(0x1f1f1fFF);
+    sbBtnStyle.textColor = pTK::Color(colText);
     sbBtnStyle.cornerRadius = 0.0f;
 
     // First button in sidebar.
     pTK::Ref<pTK::Button> b1 = pTK::create<pTK::Button>(sbBtnStyle);
     b1->setText("Button 1");
     b1->setFontSize(FSIDEBAR);
-    b1->setCornerRadius(0.0f);
     b1->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
     b1->setAlign(pTK::Top);
 
@@ -72,7 +77,6 @@ int main(int argc, char *argv[])
     pTK::Ref<pTK::Button> b2 = pTK::create<pTK::Button>(sbBtnStyle);
     b2->setText("Button 2");
     b2->setFontSize(FSIDEBAR);
-    b2->setCornerRadius(0.0f);
     b2->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
     b2->setAlign(pTK::Top);
 
@@ -80,18 +84,17 @@ int main(int argc, char *argv[])
     pTK::Ref<pTK::Button> b3 = pTK::create<pTK::Button>(sbBtnStyle);
     b3->setText("Button 3");
     b3->setFontSize(FSIDEBAR);
-    b3->setCornerRadius(0.0f);
     b3->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
     b3->setAlign(pTK::Top);
 
     // Bottom button in sidebar.
-    pTK::Ref<pTK::Button> b4 = pTK::create<pTK::Button>(pTK::Button::Style::Danger);
-    b4->setText("Close");
-    b4->setFontSize(FSIDEBAR);
-    b4->setCornerRadius(0.0f);
-    b4->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
-    b4->setAlign(pTK::Bottom);
-    b4->onRelease([&](pTK::Mouse::Button, const pTK::Point&){
+    pTK::Ref<pTK::Button> quit = pTK::create<pTK::Button>(pTK::Button::Style::Danger);
+    quit->setText("Close");
+    quit->setFontSize(FSIDEBAR);
+    quit->setCornerRadius(0.0f);
+    quit->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
+    quit->setAlign(pTK::Bottom);
+    quit->onRelease([&](pTK::Mouse::Button, const pTK::Point&){
         window.close();
         return true;
     });
@@ -99,14 +102,14 @@ int main(int argc, char *argv[])
     // VBox as right side content. (TODO: should be a scrollable area).
     pTK::Ref<pTK::VBox> content = pTK::create<pTK::VBox>();
     content->setAlign(pTK::Align::Left);
-    content->setBackground(pTK::Color(0xF0F0F0FF));
+    content->setBackground(pTK::Color(colContent));
 
     // Title of right side content.
     pTK::Ref<pTK::Label> cTitle = pTK::create<pTK::Label>();
     cTitle->setText("Content");
     cTitle->setFontSize(FLARGE);
     cTitle->setPadding({18, 9, 18, 18});
-    cTitle->setColor(pTK::Color());
+    cTitle->setColor(pTK::Color(colText));
     cTitle->setAlign(pTK::Align::Left | pTK::Align::Top);
 
     // This should be a pTK::TextArea (when that is implemented).
@@ -114,7 +117,7 @@ int main(int argc, char *argv[])
     cText->setText("This should be a multiline text!");
     cText->setFontSize(FNORMAL);
     cText->setPadding({9, 18, 18, 18});
-    cText->setColor(pTK::Color());
+    cText->setColor(pTK::Color(colText));
     cText->setAlign(pTK::Align::Left | pTK::Align::Top);
 
     // Just a rectangle. Nothing special about it.
@@ -135,7 +138,7 @@ int main(int argc, char *argv[])
     cStatus->setText("Checkbox Status: false");
     cStatus->setFontSize(25);
     cStatus->setPadding({ 18, 9, 18, 18 });
-    cStatus->setColor(pTK::Color());
+    cStatus->setColor(pTK::Color(colText));
     cStatus->setAlign(pTK::Align::Left | pTK::Align::Top);
 
     checkbox->onToggle([&](bool status) {
@@ -150,7 +153,7 @@ int main(int argc, char *argv[])
     sidebar->add(b1);
     sidebar->add(b2);
     sidebar->add(b3);
-    sidebar->add(b4);
+    sidebar->add(quit);
 
     // Set Maxsize of sidebar.
     sidebar->setMaxSize({sidebar->getSize().width, pTK::Size::Limits::Max});
