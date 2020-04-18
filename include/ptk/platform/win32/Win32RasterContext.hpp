@@ -52,7 +52,7 @@ namespace pTK
         */
         SkSurface* skSurface() const override;
 
-        void swapbuffers(HWND hwnd);
+        void swapBuffers(HWND hwnd);
 
     private:
         SkAutoMalloc  m_surfaceMemory;

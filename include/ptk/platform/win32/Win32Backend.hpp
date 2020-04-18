@@ -20,11 +20,11 @@
 namespace pTK
 {
     class Window;
-
+    
     class Win32Backend : public WindowBackend
     {
     public:
-        Win32Backend(Window *window, const std::string& name, const Vec2u& size, Backend backend);
+        Win32Backend(Window *window, const std::string& name, const Size& size, Backend backend);
         virtual ~Win32Backend() = default;
 
         /** Function for closing the window.
@@ -54,27 +54,30 @@ namespace pTK
 
         ContextBase *getContext() const override;
 
-        void swapbuffers() override;
+        void swapBuffers() override;
 
         Vec2f getDPIScale() const override;
 
         void resize(const Size& size) override;
-        void setLimits(const Size& min, const Size& max) override;
+
+        void setLimits(const Size&, const Size&) override;
 
         void beginPaint() override;
         void endPaint() override;
+
+        DWORD getWindowStyle() const;
 
     private:
         static LRESULT CALLBACK wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
         static void handleMouseClick(Window *window, Event::Type type, Mouse::Button btn, LPARAM lParam);
 
-        Size calcAdjustedWindowSize(const Size& from, DWORD style) const;
-
     private:
         Window *m_parentWindow;
         HWND m_handle;
+        DWORD m_style;
         Win32RasterContext *rasterCanvas;
         PAINTSTRUCT ps;
+        Vec2f m_scale;
     };
 }
 

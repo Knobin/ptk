@@ -16,16 +16,16 @@
 
 namespace pTK
 {
-    GLFWBackend::GLFWBackend(Window *window, const std::string& name, const Vec2u& size, Backend backend)
+    GLFWBackend::GLFWBackend(Window *window, const std::string& name, const Size& size, Backend backend)
         : WindowBackend(backend),
             m_window{nullptr}, m_drawCanvas{nullptr}, m_parentWindow{window}, m_scale{1.0f, 1.0f}
     {
         initGLFW();
 
         // Create Window.
-        m_window = glfwCreateWindow(static_cast<int>(size.x), static_cast<int>(size.y), name.c_str(), nullptr, nullptr);
+        m_window = glfwCreateWindow(static_cast<int>(size.width), static_cast<int>(size.height), name.c_str(), nullptr, nullptr);
         PTK_ASSERT(m_window, "Failed to create GLFW Window");
-        PTK_INFO("GLFW Window Created, {0:d}x{1:d}", static_cast<int>(size.x), static_cast<int>(size.y));
+        PTK_INFO("GLFW Window Created, {0:d}x{1:d}", static_cast<int>(size.width), static_cast<int>(size.height));
 
         // Get Monitor Scale
         glfwGetWindowContentScale(m_window, &m_scale.x, &m_scale.y);
@@ -36,8 +36,8 @@ namespace pTK
 
         // Init Canvas
         Size wSize;
-        wSize.width = static_cast<Size::value_type>(size.x * m_scale.x);
-        wSize.height = static_cast<Size::value_type>(size.y * m_scale.y);
+        wSize.width = static_cast<Size::value_type>(size.width * m_scale.x);
+        wSize.height = static_cast<Size::value_type>(size.height * m_scale.y);
         m_drawCanvas = std::make_unique<GLContext>(Size(wSize.width, wSize.height));
         PTK_ASSERT(m_drawCanvas, "Failed to create Canvas");
 
@@ -200,7 +200,7 @@ namespace pTK
         glfwWaitEvents();
     }
 
-    void GLFWBackend::swapbuffers()
+    void GLFWBackend::swapBuffers()
     {
         glfwSwapBuffers(m_window);
     }

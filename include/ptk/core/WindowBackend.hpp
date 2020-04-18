@@ -41,7 +41,7 @@ namespace pTK
         virtual void setPosHint(const Point&) = 0;
         virtual void resize(const Size&) = 0;
         virtual void setLimits(const Size&, const Size&) = 0;
-        virtual void swapbuffers() = 0;
+        virtual void swapBuffers() = 0;
         virtual ContextBase *getContext() const = 0;
         virtual Vec2f getDPIScale() const { return {1.0f, 1.0f}; }
         virtual void beginPaint() {}

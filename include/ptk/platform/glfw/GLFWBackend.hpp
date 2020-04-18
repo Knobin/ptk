@@ -35,7 +35,7 @@ namespace pTK
             @param height  height of the window
             @return        default initialized Window
         */
-        GLFWBackend(Window *window, const std::string& name, const Vec2u& size, Backend backend);
+        GLFWBackend(Window *window, const std::string& name, const Size& size, Backend backend);
         virtual ~GLFWBackend();
 
         /** Function for closing the window.
@@ -65,7 +65,7 @@ namespace pTK
 
         ContextBase *getContext() const override;
 
-        void swapbuffers() override;
+        void swapBuffers() override;
 
         Vec2f getDPIScale() const override;
 

@@ -25,7 +25,7 @@ namespace pTK
     class Window : public VBox, public Singleton
     {
     public:
-        Window(const std::string& name, const Vec2u& size, Backend backend = Backend::SOFTWARE);
+        Window(const std::string& name, const Size& size, Backend backend = Backend::SOFTWARE);
 
         /** Deconstructor for Canvas.
 
@@ -97,6 +97,8 @@ namespace pTK
 
         */
         void forceDrawAll();
+
+        WindowBackend* getBackend() const;
 
     private:
         // Event processing

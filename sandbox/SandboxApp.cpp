@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     // Set ESC key to close the window.
     window.onKey([&](pTK::Event::Type type, int32 key) {
         std::cout << "key pressed:" << key << std::endl;
-        if ((type == pTK::Event::Type::KeyReleased) && (key == 256))
+        if ((type == pTK::Event::Type::KeyReleased) && (key == 27))
             window.close();
         if ((type == pTK::Event::Type::KeyReleased) && (key == 32))
         {
@@ -171,6 +171,8 @@ int main(int argc, char *argv[])
 
     // Add hbox to window.
     window.add(hbox);
+
+    window.setMaxSize({1280, 720});
 
     return app.exec(&window);
 }

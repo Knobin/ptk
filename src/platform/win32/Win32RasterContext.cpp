@@ -55,7 +55,7 @@ namespace pTK
         return m_surface.get();
     }
 
-    void Win32RasterContext::swapbuffers(HWND m_handle)
+    void Win32RasterContext::swapBuffers(HWND m_handle)
     {
         BITMAPINFO *bmpInfo = reinterpret_cast<BITMAPINFO*>(m_surfaceMemory.get());
         HRGN hrgn = CreateRectRgn(0,0,0,0);
@@ -66,6 +66,5 @@ namespace pTK
                       DIB_RGB_COLORS, SRCCOPY);
         DeleteObject(hrgn);
         ReleaseDC(m_handle, dc);
-        PTK_INFO("Swapped Buffers");
     }
 }

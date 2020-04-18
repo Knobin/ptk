@@ -20,12 +20,12 @@
 
 namespace pTK
 {
-    Window::Window(const std::string& name, const Vec2u& size, Backend backend)
+    Window::Window(const std::string& name, const Size& size, Backend backend)
             : VBox(), Singleton(),
                 m_winBackend{nullptr}, m_eventQueue{}, m_draw{false}, m_close{false}
     {
         // Set Widget properties.
-        Sizable::setSize({static_cast<Size::value_type>(size.x), static_cast<Size::value_type>(size.y)});
+        Sizable::setSize(size);
         setName(name);
         Drawable::hide();
 
@@ -173,20 +173,22 @@ namespace pTK
         if (type == Event::Type::WindowDraw)
         {
             m_draw = true;
-        }
-        else if (type == Event::Type::WindowResize)
+        } else if (type == Event::Type::WindowResize)
         {
             ResizeEvent* rEvent = (ResizeEvent*)event;
-            Size size{rEvent->getSize()};
-            Vec2f scale{m_winBackend->getDPIScale()};
-            Size cSize{static_cast<Size::value_type>(size.width * scale.x),
-                       static_cast<Size::value_type>(size.height * scale.y)};
+            const Size size{rEvent->getSize()};
+            const Vec2f scale{m_winBackend->getDPIScale()};
+            const Size cSize{static_cast<Size::value_type>(size.width * scale.x),
+                             static_cast<Size::value_type>(size.height * scale.y)};
 
-            setSize(size);
-            m_winBackend->resize(size);
-            refitContent(size);
-            m_draw = true;
-        }else if (type == Event::Type::WindowClose)
+            if (cSize != m_winBackend->getContext()->getSize())
+            {
+                setSize(size);
+                m_winBackend->resize(size);
+                refitContent(size);
+                m_draw = true;
+            }
+        } else if (type == Event::Type::WindowClose)
         {
             m_close = true;
         }
@@ -221,7 +223,12 @@ namespace pTK
             (*it)->onDraw(canvas);
 
         canvas->flush();
-        m_winBackend->swapbuffers();
+        m_winBackend->swapBuffers();
         m_winBackend->endPaint();
+    }
+
+    WindowBackend* Window::getBackend() const
+    {
+        return m_winBackend;
     }
 }
