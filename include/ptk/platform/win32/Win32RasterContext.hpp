@@ -19,6 +19,11 @@
 
 namespace pTK
 {
+    /** Win32RasterContext class implementation.
+
+        Context for a software based Win32 backend.
+        All drawings will be done using the CPU.
+    */
     class Win32RasterContext : public ContextBase
     {
     public:
@@ -52,6 +57,10 @@ namespace pTK
         */
         SkSurface* skSurface() const override;
 
+        /** Function for swapping the buffers.
+
+            @param hwnd     Window handle
+        */
         void swapBuffers(HWND hwnd);
 
     private:

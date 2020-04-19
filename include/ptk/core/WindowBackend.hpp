@@ -12,48 +12,126 @@
 #include "ptk/util/Point.hpp"
 #include "ptk/util/Size.hpp"
 #include "ptk/core/ContextBase.hpp"
+#include "ptk/Core.hpp"
 
 namespace pTK
 {
-    enum class Backend
+    /** Backend enum class implementation
+
+        Specifies which backend that should be used.
+    */
+    enum class BackendType
     {
-        NONE = 0,
-        SOFTWARE,
+        SOFTWARE = 1,
         HARDWARE
     };
 
+    /** WindowBackend class implementation
+
+        Specifies the backend API that the platform must implement.
+    */
     class WindowBackend
     {
     public:
         WindowBackend() = delete;
-        WindowBackend(Backend backend)
+
+        /** Constructs WindowBackend with default values.
+
+            @param backend  type of backend
+            @return         default initialized WindowBackend
+        */
+        WindowBackend(BackendType backend)
             : m_backend{backend}
         {
 
         }
+
+        /** Deconstructor for WindowBackend.
+
+        */
         virtual ~WindowBackend() = default;
 
-        // API
+        /** Function for showing the window.
+
+        */
         virtual void show() = 0;
+
+        /** Function for closing the window.
+
+        */
         virtual void close() = 0;
+
+        /** Function for hiding the window.
+
+        */
         virtual void hide() = 0;
+
+        /** Function for polling the events.
+
+        */
         virtual void pollEvents() = 0;
-        virtual void setPosHint(const Point&) = 0;
-        virtual void resize(const Size&) = 0;
-        virtual void setLimits(const Size&, const Size&) = 0;
+
+        /** Function for setting the position of the window.
+
+            @param pos  position to set
+        */
+        virtual void setPosHint(const Point& UNUSED(pos)) = 0;
+
+        /** Function for resizing the window.
+
+            @param size  size to set
+        */
+        virtual void resize(const Size& UNUSED(size)) = 0;
+
+        /** Function for setting the size limits the window.
+
+            @param min  minimal size of the window
+            @param max  maximum size of the window
+        */
+        virtual void setLimits(const Size& UNUSED(min), const Size& UNUSED(max)) = 0;
+
+        /** Function for swapping the buffers.
+
+        */
         virtual void swapBuffers() = 0;
+
+        /** Function for retrieving the Context of the Backend.
+
+            @return     Context
+        */
         virtual ContextBase *getContext() const = 0;
+
+        /** Function for retrieving the scaling of the Window.
+
+            @return     scaling
+        */
         virtual Vec2f getDPIScale() const { return {1.0f, 1.0f}; }
+
+        /** Function for initiating the drawing.
+
+            This function will be called before any drawing is supposed to be done.
+            Note: It is not mandatory to implement this function, every platform may not need it.
+        */
         virtual void beginPaint() {}
+
+        /** Function for ending the drawing.
+
+            This function will be called after the drawing is completed.
+            Note: It is not mandatory to implement this function, every platform may not need it.
+        */
         virtual void endPaint() {}
 
-        Backend getBackendType() const
+        /** Function for retrieving the backend type of the Window.
+
+            @return     backend type
+        */
+        BackendType getBackendType() const
         {
             return m_backend;
         }
 
     private:
-        Backend m_backend;
+        BackendType m_backend;
     };
 }
 

@@ -79,7 +79,7 @@ namespace pTK
 
     static std::map<byte, int32> s_keyMap{initKeyCodes()};
 
-    Win32Backend::Win32Backend(Window *window, const std::string& name, const Size& size, Backend backend)
+    Win32Backend::Win32Backend(Window *window, const std::string& name, const Size& size, BackendType backend)
         : WindowBackend(backend),
             m_parentWindow{window}, m_handle{},
             m_style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX},

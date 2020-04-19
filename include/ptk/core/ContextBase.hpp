@@ -41,6 +41,11 @@
 
 namespace pTK
 {
+    /** ContextBase class implementation.
+
+        This class handles the drawing.
+        Kind of an API class that implements some common functions.
+    */
     class ContextBase : public Singleton
     {
     public:

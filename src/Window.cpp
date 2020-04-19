@@ -13,6 +13,7 @@
 #include "ptk/events/WindowEvent.hpp"
 #include "ptk/Core.hpp"
 #include "ptk/core/ContextBase.hpp"
+#include "ptk/core/Exception.hpp"
 
 // C++ Headers
 #include <exception>
@@ -20,7 +21,7 @@
 
 namespace pTK
 {
-    Window::Window(const std::string& name, const Size& size, Backend backend)
+    Window::Window(const std::string& name, const Size& size, BackendType backend)
             : VBox(), Singleton(),
                 m_winBackend{nullptr}, m_eventQueue{}, m_draw{false}, m_close{false}
     {
@@ -29,7 +30,7 @@ namespace pTK
         setName(name);
         Drawable::hide();
 
-        m_winBackend = new BACKEND(this, name, size, backend);
+        m_winBackend = std::make_unique<BACKEND>(this, name, size, backend);
     }
 
     void Window::onChildDraw(size_type)
@@ -235,6 +236,6 @@ namespace pTK
 
     WindowBackend* Window::getBackend() const
     {
-        return m_winBackend;
+        return m_winBackend.get();
     }
 }

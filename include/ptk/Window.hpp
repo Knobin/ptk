@@ -22,12 +22,27 @@
 
 namespace pTK
 {
+    /** Window class implementation.
+
+        This class is not responsible for handling the Window, it is only supposed to bridge
+        the backend and connect the events with the widgets.
+
+        Window creation is handled in the Backend and this class is sort of an API for the
+        backend. The class will always have the same size independent of platform.
+        This makes the class suitable to derive from, if needed.
+
+        Currently, it will default to a software based backend if no one is specified.
+    */
     class Window : public VBox, public Singleton
     {
     public:
-        Window(const std::string& name, const Size& size, Backend backend = Backend::SOFTWARE);
+        /** Constructs Window with default values.
 
-        /** Deconstructor for Canvas.
+            @return    default initialized Window
+        */
+        Window(const std::string& name, const Size& size, BackendType backend = BackendType::SOFTWARE);
+
+        /** Deconstructor for Window.
 
         */
         virtual ~Window() = default;
@@ -50,12 +65,20 @@ namespace pTK
         */
         Vec2f getDPIScale() const;
 
+        /** Function to show the Window.
+
+        */
         void show() override;
 
+        /** Function to hide the Window.
+
+        */
         void hide() override;
 
         /** Function for closing the window.
 
+            This function will set a close flag and return instantly.
+            Window will close when the current loop is finished.
         */
         void close();
 
@@ -98,8 +121,16 @@ namespace pTK
         */
         void forceDrawAll();
 
+        /** Function for setting the window position.
+
+            @param pos  requested position of the Window.
+        */
         void setPosHint(const Point& pos) override;
 
+        /** Function for retrieving the backend.
+
+            @return    backend
+        */
         WindowBackend* getBackend() const;
 
     private:
@@ -114,7 +145,7 @@ namespace pTK
         void onLimitChange(const Size& min, const Size& max) override;
 
     private:
-        WindowBackend *m_winBackend;
+        std::unique_ptr<WindowBackend> m_winBackend;
         SafeQueue<std::unique_ptr<Event>> m_eventQueue;
         bool m_draw;
         bool m_close;

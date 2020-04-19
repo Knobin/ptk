@@ -1,12 +1,12 @@
 //
-//  platform/GLFWWindow.hpp
+//  platform/glfw/GLFWWindow.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2019-06-12.
 //
 
-#ifndef PTK_GLFWWINDOW_HPP
-#define PTK_GLFWWINDOW_HPP
+#ifndef PTK_PlATFORM_GLFW_GLFWBACKEND_HPP
+#define PTK_PlATFORM_GLFW_GLFWBACKEND_HPP
 
 // Local Headers
 #include "ptk/core/WindowBackend.hpp"
@@ -60,16 +60,38 @@ namespace pTK
 
         /** Function for setting the window position.
 
-        */
+             @param pos  requested position of the Window.
+         */
         void setPosHint(const Point& pos) override;
 
+        /** Function for retrieving the Context.
+
+            @return context
+        */
         ContextBase *getContext() const override;
 
+        /** Function for swapping the buffers.
+
+        */
         void swapBuffers() override;
 
+        /** Function for retrieving the scaling of the Window.
+
+            @return     scaling
+        */
         Vec2f getDPIScale() const override;
 
+        /** Function for resizing the window.
+
+            @param size  size to set
+        */
         void resize(const Size& size) override;
+
+        /** Function for setting the size limits the window.
+
+            @param min  minimal size of the window
+            @param max  maximum size of the window
+        */
         void setLimits(const Size& min, const Size& max) override;
 
     private:
@@ -91,4 +113,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_GLFWWINDOW_HPP
+#endif // PTK_PlATFORM_GLFW_GLFWBACKEND_HPP

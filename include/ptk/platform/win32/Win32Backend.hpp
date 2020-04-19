@@ -24,10 +24,26 @@ namespace pTK
 {
     class Window;
 
+    /** Win32Backend class implementation.
+
+        This class handles the Windows Window (Win32).
+    */
     class Win32Backend : public WindowBackend
     {
     public:
-        Win32Backend(Window *window, const std::string& name, const Size& size, Backend backend);
+        /** Constructs Win32Backend with default values.
+
+            @param window   parent Window class
+            @param name     name of the window
+            @param size     size of the window
+            @param backend  type of backend
+            @return         default initialized Win32Backend
+        */
+        Win32Backend(Window *window, const std::string& name, const Size& size, BackendType backend);
+
+        /** Deconstructor for Win32Backend.
+
+        */
         virtual ~Win32Backend() = default;
 
         /** Function for closing the window.
@@ -52,22 +68,56 @@ namespace pTK
 
         /** Function for setting the window position.
 
+            @param pos  requested position of the Window.
         */
         void setPosHint(const Point& pos) override;
 
+        /** Function for retrieving the Context.
+
+            @return context
+        */
         ContextBase *getContext() const override;
 
+        /** Function for swapping the buffers.
+
+        */
         void swapBuffers() override;
 
+        /** Function for retrieving the scaling of the Window.
+
+            @return     scaling
+        */
         Vec2f getDPIScale() const override;
 
+        /** Function for resizing the window.
+
+            @param size  size to set
+        */
         void resize(const Size& size) override;
 
+        /** Function for setting the size limits the window.
+
+            @param min  minimal size of the window
+            @param max  maximum size of the window
+        */
         void setLimits(const Size&, const Size&) override;
 
+        /** Function for initiating the drawing.
+
+            This function will be called before any drawing is supposed to be done.
+        */
         void beginPaint() override;
+
+        /** Function for ending the drawing.
+
+            This function will be called after the drawing is completed.
+        */
         void endPaint() override;
 
+        /** Function for retrieving the current Windows style of the Win32 Window.
+
+            @return Win32 Window style
+        */
         DWORD getWindowStyle() const;
 
     private:
