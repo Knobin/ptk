@@ -10,9 +10,7 @@
 #include "ptk/Window.hpp"
 #include "ptk/core/Exception.hpp"
 #include "ptk/events/WindowEvent.hpp"
-
-// C++ Headers
-#include <iostream>
+#include "ptk/events/KeyCodes.hpp"
 
 // Windows Headers
 #include <windowsx.h>
@@ -47,6 +45,39 @@ namespace pTK
         return {static_cast<Size::value_type>(size.width * scale.x),
                      static_cast<Size::value_type>(size.height * scale.y)};
     }
+
+    static std::map<byte, int32> initKeyCodes()
+    {
+        std::map<byte, int32> map{};
+        map[0x00] = PTK_KEY_UNKNOWN;
+        map[VK_SPACE] = PTK_KEY_SPACE; map[VK_ESCAPE] = PTK_KEY_ESCAPE;
+        map[0x30] = PTK_KEY_0; map[0x31] = PTK_KEY_1; map[0x32] = PTK_KEY_2; map[0x33] = PTK_KEY_3;
+        map[0x34] = PTK_KEY_4; map[0x35] = PTK_KEY_5; map[0x36] = PTK_KEY_6; map[0x37] = PTK_KEY_7;
+        map[0x38] = PTK_KEY_8; map[0x39] = PTK_KEY_9;
+        map[VK_NUMPAD0] = PTK_KEY_0; map[VK_NUMPAD1] = PTK_KEY_1; map[VK_NUMPAD2] = PTK_KEY_2;
+        map[VK_NUMPAD3] = PTK_KEY_3; map[VK_NUMPAD4] = PTK_KEY_4; map[VK_NUMPAD5] = PTK_KEY_5;
+        map[VK_NUMPAD6] = PTK_KEY_6; map[VK_NUMPAD7] = PTK_KEY_7; map[VK_NUMPAD8] = PTK_KEY_8;
+        map[VK_NUMPAD9] = PTK_KEY_9;
+        map[0x41] = PTK_KEY_A; map[0x42] = PTK_KEY_B; map[0x43] = PTK_KEY_C; map[0x44] = PTK_KEY_D;
+        map[0x45] = PTK_KEY_E; map[0x46] = PTK_KEY_F; map[0x47] = PTK_KEY_G; map[0x48] = PTK_KEY_H;
+        map[0x49] = PTK_KEY_I; map[0x4A] = PTK_KEY_J; map[0x4B] = PTK_KEY_K; map[0x4C] = PTK_KEY_L;
+        map[0x4D] = PTK_KEY_M; map[0x4E] = PTK_KEY_N; map[0x4F] = PTK_KEY_O; map[0x50] = PTK_KEY_P;
+        map[0x51] = PTK_KEY_Q; map[0x52] = PTK_KEY_R; map[0x53] = PTK_KEY_S; map[0x54] = PTK_KEY_T;
+        map[0x55] = PTK_KEY_U; map[0x56] = PTK_KEY_V; map[0x57] = PTK_KEY_W; map[0x58] = PTK_KEY_X;
+        map[0x59] = PTK_KEY_Y; map[0x5A] = PTK_KEY_Z;
+        return map;
+    }
+
+    static int32 translateKeycode(const std::map<byte, int32>& map, byte keycode)
+    {
+        auto it{map.find(keycode)};
+        if (it != map.end())
+            return it->second;
+
+        return PTK_KEY_UNKNOWN;
+    }
+
+    static std::map<byte, int32> s_keyMap{initKeyCodes()};
 
     Win32Backend::Win32Backend(Window *window, const std::string& name, const Size& size, Backend backend)
         : WindowBackend(backend),
@@ -160,7 +191,7 @@ namespace pTK
 
     Vec2f Win32Backend::getDPIScale() const
     {
-        return {1.0f, 1.0f};
+        return m_scale;
     }
 
     void Win32Backend::setLimits(const Size&, const Size&)
@@ -188,6 +219,7 @@ namespace pTK
                 PostQuitMessage(0);
                 break;
             case WM_MOVE:
+                // TODO: Should set the parent Window position property (getPosition should work correctly).
                 break;
             case WM_PAINT:
                 if (window->visible())
@@ -198,13 +230,13 @@ namespace pTK
                 break;
             case WM_KEYDOWN:
                 {
-                    KeyEvent evt{Event::Type::KeyPressed, static_cast<int32>(wParam)};
+                    KeyEvent evt{Event::Type::KeyPressed, translateKeycode(s_keyMap, static_cast<byte>(wParam))};
                     window->sendEvent(&evt);
                 }
                 break;
             case WM_KEYUP:
                 {
-                    KeyEvent evt{Event::Type::KeyReleased, static_cast<int32>(wParam)};
+                    KeyEvent evt{Event::Type::KeyReleased, translateKeycode(s_keyMap, static_cast<byte>(wParam))};
                     window->sendEvent(&evt);
                 }
                 break;

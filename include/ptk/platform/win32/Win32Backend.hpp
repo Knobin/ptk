@@ -14,6 +14,9 @@
 #include "ptk/core/Event.hpp"
 #include "ptk/events/MouseEvent.hpp"
 
+// C++ Headers
+#include <map>
+
 // Windows Headers
 #include <windows.h>
 

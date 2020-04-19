@@ -32,6 +32,8 @@ int main(int argc, char *argv[])
         if ((type == pTK::Event::Type::KeyReleased) && (key == 32))
             window.setPosHint({200, 50});
 
+        std::cout << "keycode: " << key << std::endl;
+
         return true;
     });
 
