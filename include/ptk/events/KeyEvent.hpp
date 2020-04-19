@@ -20,7 +20,7 @@ namespace pTK
         events from the keyboard. Such as Key presses or
         releases.
     */
-    class KeyEvent : public Event
+    class KeyEvent final : public Event
     {
     public:
         /** Constructs KeyEvent with default values with t_type and t_keycode.

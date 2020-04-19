@@ -144,7 +144,7 @@ namespace pTK
         events from the mouse. Such as button presses or
         releases.
     */
-    class ButtonEvent : public MotionEvent
+    class ButtonEvent final : public MotionEvent
     {
     public:
         /** Constructs ButtonEvent with default values with type,

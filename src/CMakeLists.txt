@@ -27,6 +27,10 @@ set(WIDGET_FILES widgets/Button.cpp
         widgets/Rectangle.cpp
         widgets/VBox.cpp)
 
+if (PTK_BUILD_TYPE MATCHES Debug)
+    set(LOG_FILES Log.cpp)
+endif()
+
 if (WIN32)
     set(PLATFORM_FILES platform/win32/Win32RasterContext.cpp
             platform/win32/Win32Backend.cpp)
@@ -37,11 +41,12 @@ else()
     message(STATUS "Using GLFW")
 endif()
 
-set(SOURCE_FILES Application.cpp Log.cpp Window.cpp
+set(SOURCE_FILES Application.cpp Window.cpp
         ${CORE_FILES}
         ${PLATFORM_FILES}
         ${UTIL_FILES}
-        ${WIDGET_FILES})
+        ${WIDGET_FILES}
+        ${LOG_FILES})
 source_group(TREE "${CMAKE_SOURCE_DIR}/src" PREFIX "Source Files" FILES ${SOURCE_FILES})
 
 # Define library
@@ -70,7 +75,9 @@ if (NOT WIN32)
 endif (NOT WIN32)
 
 # spdlog
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/third_party/spdlog/include)
+if (PTK_BUILD_TYPE MATCHES Debug)
+    target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/third_party/spdlog/include)
+endif()
 
 # Threads
 target_link_libraries(${PROJECT_NAME} Threads::Threads)

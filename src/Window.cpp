@@ -13,10 +13,8 @@
 #include "ptk/events/WindowEvent.hpp"
 #include "ptk/Core.hpp"
 #include "ptk/core/ContextBase.hpp"
-#include "ptk/core/Exception.hpp"
 
 // C++ Headers
-#include <exception>
 #include <memory>
 
 namespace pTK

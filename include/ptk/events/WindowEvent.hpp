@@ -19,7 +19,7 @@ namespace pTK
         Derived from Event, this class if for creating
         events from the resizing of the window.
     */
-    class ResizeEvent : public Event
+    class ResizeEvent final : public Event
     {
     public:
         /** Constructs ResizeEvent with default values with width and height.
@@ -41,6 +41,7 @@ namespace pTK
         ResizeEvent(const Size& size)
             : Event(Event::Category::Window, Event::Type::WindowResize), m_size{size}
         {
+
         }
 
         /** Deconstructor for ResizeEvent.

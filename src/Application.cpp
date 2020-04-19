@@ -18,13 +18,13 @@ namespace pTK
     Application::Application()
         : Singleton(), m_waitTime(8000000)
     {
-        Log::init();
+        PTK_INIT_LOGGING();
     }
     
     Application::Application(int, char* [])
         : Singleton(), m_waitTime(8000000)
     {
-        Log::init();
+        PTK_INIT_LOGGING();
         // TODO: Check arguments.
     }
 
