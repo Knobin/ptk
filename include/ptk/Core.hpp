@@ -19,7 +19,7 @@
 
     // Unused parameter.
     #ifdef PTK_COMPILER_GCC
-        #define UNUSED(x) __attribute__((unused))
+        #define UNUSED(x) x __attribute__((unused))
     #elif PTK_COMPILER_CLANG
         #define UNUSED(x) x __attribute__((unused))
     #else

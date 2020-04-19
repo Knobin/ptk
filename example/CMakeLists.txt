@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 3.10)
 
 # Source files
 file(GLOB TEST_SOURCE_FILES
@@ -8,6 +7,8 @@ foreach(FILE ${TEST_SOURCE_FILES})
     get_filename_component(WITHOUT_PATH ${FILE} NAME)
     string(REGEX REPLACE "\\.[^.]*$" "" EXECUTABLE ${WITHOUT_PATH})
     add_executable(${EXECUTABLE} ${FILE})
+    set_property(TARGET ${EXECUTABLE} PROPERTY
+            MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     target_link_libraries(${EXECUTABLE} ${SKIA_PLATFORM_DEPENDENCIES} skia ptk)
     set(EXAMPLE_LIST "${EXAMPLE_LIST}${EXECUTABLE};")
 endforeach()

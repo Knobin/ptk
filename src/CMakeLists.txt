@@ -45,7 +45,17 @@ set(SOURCE_FILES Application.cpp Log.cpp Window.cpp
 source_group(TREE "${CMAKE_SOURCE_DIR}/src" PREFIX "Source Files" FILES ${SOURCE_FILES})
 
 # Define library
-add_library(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
+add_library(${PROJECT_NAME} STATIC ${HEADER_FILES} ${SOURCE_FILES})
+
+# Set runtime library to MT or MTd (Release / Debug)
+set_property(TARGET ${PROJECT_NAME} PROPERTY
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+# Compiler flags for ptk
+if (NOT MSVC)
+    target_compile_options(${PROJECT_NAME} PUBLIC
+            -Wall -Wextra -Wpedantic -fvisibility=hidden)
+endif (NOT MSVC)
 
 # Skia
 target_link_libraries(${PROJECT_NAME} ${SKIA_PLATFORM_DEPENDENCIES} skia)

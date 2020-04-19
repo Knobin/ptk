@@ -1,16 +1,10 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15.7)
+cmake_policy(SET CMP0091 NEW)
 project(ptk VERSION 1 DESCRIPTION "C++ library for building user interfaces.")
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-
-# General Compiler flags
-if (MSVC)
-    #set(CMAKE_CXX_FLAGS "/Wall")
-else (MSVC)
-     set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -fvisibility=hidden")
-endif (MSVC)
 
 # Build Type
 if (CMAKE_BUILD_TYPE MATCHES Debug)
@@ -50,8 +44,6 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     message(STATUS "Compiler: GCC")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	add_definitions(-DPTK_COMPILER_MSVC)
-	set(CMAKE_CXX_FLAGS_RELEASE "/MT")
-	set(CMAKE_CXX_FLAGS_DEBUG "/MTd")
 	message(STATUS "Compiler: MSVC")
 endif()
 
