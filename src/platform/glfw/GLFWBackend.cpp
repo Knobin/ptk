@@ -16,7 +16,7 @@
 
 namespace pTK
 {
-    GLFWBackend::GLFWBackend(Window *window, const std::string& name, const Size& size, Backend backend)
+    GLFWBackend::GLFWBackend(Window *window, const std::string& name, const Size& size, BackendType backend)
         : WindowBackend(backend),
             m_window{nullptr}, m_drawCanvas{nullptr}, m_parentWindow{window}, m_scale{1.0f, 1.0f}
     {

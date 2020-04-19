@@ -35,7 +35,7 @@ namespace pTK
             @param height  height of the window
             @return        default initialized Window
         */
-        GLFWBackend(Window *window, const std::string& name, const Size& size, Backend backend);
+        GLFWBackend(Window *window, const std::string& name, const Size& size, BackendType backend);
         virtual ~GLFWBackend();
 
         /** Function for closing the window.
