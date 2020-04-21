@@ -37,61 +37,136 @@ TEST_CASE("Constructors")
     }
 }
 
-TEST_CASE("Getters and Setters")
+TEST_CASE("Minimal Size")
 {
-    // Testing Getters and Setters.
-    pTK::Sizable size;
-    
-    SECTION("minSize")
+    // Testing the behaviour of the setMinSize function.
+    // The maximum size is not tested here and is by default set to pTK::Size::Max.
+
+    SECTION("Blank Size")
     {
+        pTK::Sizable obj;
         pTK::Size minSize(10, 2);
-        size.setMinSize(minSize);
-        
-        REQUIRE_FALSE(size.getMinSize() == minSize);
-        REQUIRE(size.getMinSize() == ZERO);
-        
-        pTK::Sizable shouldWork;
-        shouldWork.setSize(pTK::Size(20, 10));
-        shouldWork.setMinSize(minSize);
-        REQUIRE(shouldWork.getMinSize() == minSize);
-        REQUIRE(shouldWork.getSize() == pTK::Size(20, 10));
-        REQUIRE(shouldWork.getMaxSize() == pTK::Size::Max);
+        obj.setMinSize(minSize);
+
+        REQUIRE(obj.getMinSize() == minSize);
+        REQUIRE(obj.getSize() == minSize);
     }
-    
-    SECTION("size")
+
+    SECTION("minimal size is smaller than size")
     {
-        pTK::Size s(1200, 142);
-        size.setSize(s);
-        
-        REQUIRE(size.getMinSize() == pTK::Size::Min);
-        REQUIRE(size.getSize() == s);
-        REQUIRE(size.getMaxSize() == pTK::Size::Max);
+        pTK::Sizable obj;
+        pTK::Size size{100, 200};
+        obj.setSize(size);
+
+        // Only width is smaller.
+        pTK::Size ms1{25, 200};
+        obj.setMinSize(ms1);
+        REQUIRE(obj.getMinSize() == pTK::Size{ms1.width, size.height});
+        REQUIRE(obj.getSize() == size);
+
+        // Only height is smaller.
+        pTK::Size ms2{ms1.width, 50};
+        obj.setMinSize(ms2);
+        REQUIRE(obj.getMinSize() == ms2);
+        REQUIRE(obj.getSize() == size);
+
+        // Both are smaller than size and larger than current minimal size (25, 50).
+        pTK::Size ms3{90, 190};
+        obj.setMinSize(ms3);
+        REQUIRE(obj.getMinSize() == ms3);
+        REQUIRE(obj.getSize() == size);
     }
-    
-    SECTION("maxSize")
+
+    SECTION("minimal size is larger than size")
     {
-        pTK::Size maxSize(2420, 420);
-        size.setMaxSize(maxSize);
-        
-        REQUIRE(size.getMinSize() == ZERO);
-        REQUIRE(size.getSize() == ZERO);
-        REQUIRE(size.getMaxSize() == maxSize);
+        pTK::Sizable obj;
+        pTK::Size size{100, 200};
+        obj.setSize(size);
+
+        // Only width is larger.
+        pTK::Size ms1{125, 200};
+        obj.setMinSize(ms1);
+        REQUIRE(obj.getMinSize() == ms1);
+        REQUIRE(obj.getSize() == ms1);
+
+        // Only height is larger.
+        pTK::Size ms2{ms1.width, 250};
+        obj.setMinSize(ms2);
+        REQUIRE(obj.getMinSize() == ms2);
+        REQUIRE(obj.getSize() == ms2);
+
+        // Both are larger than size.
+        pTK::Size ms3{300, 400};
+        obj.setMinSize(ms3);
+        REQUIRE(obj.getMinSize() == ms3);
+        REQUIRE(obj.getSize() == ms3);
     }
 }
 
-TEST_CASE("Special Size cases")
+TEST_CASE("Maximum Size")
 {
-    // Testing Getters and Setters for size.
-    
-    SECTION("Standard Size")
+    // Testing the behaviour of the setMaxSize function.
+    // The mininum size is not tested here and is by default set to pTK::Size::Min.
+
+    SECTION("Blank Size")
     {
-        pTK::Sizable size;
-        
-        // Minimal size bigger than (0, 0)
-        pTK::Size minSize(20, 10);
-        size.setMinSize(minSize);
-        REQUIRE_FALSE(size.getMinSize() == minSize);
-        REQUIRE(size.getMinSize() == pTK::Size(0, 0));
+        pTK::Sizable obj;
+        pTK::Size maxSize(100, 200);
+        obj.setMaxSize(maxSize);
+
+        REQUIRE(obj.getMinSize() == ZERO);
+        REQUIRE(obj.getSize() == ZERO);
+        REQUIRE(obj.getMaxSize() == maxSize);
+    }
+
+    SECTION("maximum size is smaller than size")
+    {
+        pTK::Sizable obj;
+        pTK::Size size{100, 200};
+        obj.setSize(size);
+
+        // Only width is smaller.
+        pTK::Size ms1{25, 200};
+        obj.setMaxSize(ms1);
+        REQUIRE(obj.getSize() == ms1);
+        REQUIRE(obj.getMaxSize() == ms1);
+
+        // Only height is smaller.
+        pTK::Size ms2{ms1.width, 50};
+        obj.setMaxSize(ms2);
+        REQUIRE(obj.getSize() == ms2);
+        REQUIRE(obj.getMaxSize() == ms2);
+
+        // Both are smaller than size and current maximum size (25, 50).
+        pTK::Size ms3{10, 20};
+        obj.setMaxSize(ms3);
+        REQUIRE(obj.getSize() == ms3);
+        REQUIRE(obj.getMaxSize() == ms3);
+    }
+
+    SECTION("maximum size is larger than size")
+    {
+        pTK::Sizable obj;
+        pTK::Size size{100, 200};
+        obj.setSize(size);
+
+        // Only width is larger.
+        pTK::Size ms1{125, 200};
+        obj.setMaxSize(ms1);
+        REQUIRE(obj.getSize() == size);
+        REQUIRE(obj.getMaxSize() == ms1);
+
+        // Only height is larger.
+        pTK::Size ms2{ms1.width, 250};
+        obj.setMaxSize(ms2);
+        REQUIRE(obj.getSize() == size);
+        REQUIRE(obj.getMaxSize() == ms2);
+
+        // Both are larger than size.
+        pTK::Size ms3{300, 400};
+        obj.setMaxSize(ms3);
+        REQUIRE(obj.getSize() == size);
+        REQUIRE(obj.getMaxSize() == ms3);
     }
 }
 
@@ -113,6 +188,10 @@ TEST_CASE("Copy and Assignment")
         REQUIRE(size.getMinSize() == s1);
         REQUIRE(size.getSize() == s2);
         REQUIRE(size.getMaxSize() == s3);
+
+        REQUIRE(tmp.getMinSize() == s1);
+        REQUIRE(tmp.getSize() == s2);
+        REQUIRE(tmp.getMaxSize() == s3);
     }
     
     SECTION("Assignment")
@@ -123,6 +202,10 @@ TEST_CASE("Copy and Assignment")
         REQUIRE(size.getMinSize() == s1);
         REQUIRE(size.getSize() == s2);
         REQUIRE(size.getMaxSize() == s3);
+
+        REQUIRE(tmp.getMinSize() == s1);
+        REQUIRE(tmp.getSize() == s2);
+        REQUIRE(tmp.getMaxSize() == s3);
     }
 }
 

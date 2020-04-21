@@ -117,6 +117,15 @@ namespace pTK
         virtual void onLimitChange(const Size&, const Size&) {}
 
     private:
+        // Helper functions for updating minimal size.
+        byte updateMinWidth(Size::value_type width);
+        byte updateMinHeight(Size::value_type height);
+
+        // Helper functions for updating maximum size.
+        byte updateMaxWidth(Size::value_type width);
+        byte updateMaxHeight(Size::value_type height);
+
+    private:
         Size m_minSize;
         Size m_size;
         Size m_maxSize;

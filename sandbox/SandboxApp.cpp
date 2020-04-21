@@ -8,17 +8,16 @@ const unsigned int SCR_WIDTH = 960;
 const unsigned int SCR_HEIGHT = 540;
 
 // Label sizes
-const unsigned int FLARGE = 24;
+const unsigned int FLARGE = 20;
 const unsigned int FSIDEBAR = 16;
-const unsigned int FNORMAL = 14;
+const unsigned int FNORMAL = 12;
 
 // Colors
 uint colSidebar{0x252525FF};
 uint colContent{0x171717FF};
 uint colText{0xF5F5F5FF};
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     pTK::Application app{argc, argv};
     pTK::Window window{"pTK Win32 Window", {960, 540}};
     //pTK::GLFWWindow window("pTK GLFW Window", {960, 540});
@@ -37,7 +36,7 @@ int main(int argc, char *argv[])
         return true;
     });
 
-    window.onHover([](const pTK::Point&) {
+    window.onHover([](const pTK::Point &) {
         //std::cout << "pos: " << point.x << "x" << point.y << std::endl;
         return false;
     });
@@ -114,6 +113,19 @@ int main(int argc, char *argv[])
     cTitle->setColor(pTK::Color(colText));
     cTitle->setAlign(pTK::Align::Left | pTK::Align::Top);
 
+    pTK::Ref<pTK::Rectangle> r1 = pTK::create<pTK::Rectangle>();
+    r1->setColor(pTK::Color(0x2D2D2DFF));
+    r1->setConstSize({250, 125});
+    r1->setCornerRadius(5.0f);
+    r1->setPadding({10, 10, 18, 18});
+
+    pTK::Ref<pTK::Rectangle> r2 = pTK::create<pTK::Rectangle>(*r1.get());
+
+    pTK::Ref<pTK::HBox> h1 = pTK::create<pTK::HBox>();
+    h1->setAlign(pTK::Align::Left);
+    h1->setName("HBOX");
+    h1->setBackground(content->getBackground());
+
     // This should be a pTK::TextArea (when that is implemented).
     pTK::Ref<pTK::Label> cText = pTK::create<pTK::Label>();
     cText->setText("This should be a multiline text!");
@@ -121,11 +133,6 @@ int main(int argc, char *argv[])
     cText->setPadding({9, 18, 18, 18});
     cText->setColor(pTK::Color(colText));
     cText->setAlign(pTK::Align::Left | pTK::Align::Top);
-
-    // Just a rectangle. Nothing special about it.
-    pTK::Ref<pTK::Rectangle> rect = pTK::create<pTK::Rectangle>();
-    rect->setColor(pTK::Color(0xC0C0C0FF));
-    rect->setConstSize({250, 125});
 
     pTK::Ref<pTK::Checkbox> checkbox = pTK::create<pTK::Checkbox>();
     checkbox->setConstSize({ 25, 25 });
@@ -160,10 +167,17 @@ int main(int argc, char *argv[])
     // Set Maxsize of sidebar.
     sidebar->setMaxSize({sidebar->getSize().width, pTK::Size::Limits::Max});
 
+    // Add content to h1.
+    h1->add(r1);
+    h1->add(r2);
+
+    // Set MaxSize of h1.
+    h1->setMaxSize({pTK::Size::Limits::Max, h1->getMinSize().height});
+
     // Add content to right side.
     content->add(cTitle);
     content->add(cText);
-    content->add(rect);
+    content->add(h1);
     content->add(checkbox);
     content->add(cStatus);
 

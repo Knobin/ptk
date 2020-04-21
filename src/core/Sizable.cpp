@@ -24,27 +24,25 @@ namespace pTK
 
     void Sizable::setMinSize(const Size& size)
     {
-        bool changed = false;
-        if ((size.height >= Size::Limits::Min) && (size.height <= m_size.height))
-        {
-            m_minSize.height = size.height;
-            m_minLock = false;
-            changed = true;
-        }
+        // Update minimal sizes.
+        byte status{updateMinWidth(size.width)};
+        status |= updateMinHeight(size.height);
 
-        if ((size.width >= Size::Limits::Min) && (size.width <= m_size.width))
-        {
-            m_minSize.width = size.width;
-            m_minLock = false;
-            changed = true;
-        }
+        // Signal a size change.
+        if (status & 1) // Check if first bit is set.
+            onResize(getSize());
 
-        if (changed)
+        // Signal a limit change.
+        if (status & 2) // Check if second bit is set.
+        {
+            m_minLock = false;
             onLimitChange(getMinSize(), getMaxSize());
+        }
     }
 
     Size Sizable::getMinSize() const
     {
+        // If SetConstSize has been called, return const size.
         if (m_minLock)
             return m_size;
 
@@ -54,29 +52,38 @@ namespace pTK
     void Sizable::setSize(const Size& size)
     {
         bool changed = false;
-        if ((size.width >= m_minSize.width) && (size.width <= m_maxSize.width))
-        {
-            m_size.width = size.width;
-            changed = true;
-        }
 
+        // Height
         if ((size.height >= m_minSize.height) && (size.height <= m_maxSize.height))
         {
+            // Update height.
             m_size.height = size.height;
             changed = true;
         }
 
+        // Width
+        if ((size.width >= m_minSize.width) && (size.width <= m_maxSize.width))
+        {
+            // Update width.
+            m_size.width = size.width;
+            changed = true;
+        }
+
+        // Signal a size change.
         if (changed)
             onResize(m_size);
     }
 
     void Sizable::setConstSize(const Size& size)
     {
+        // Update size and set locks.
         m_size = size;
         m_minLock = true;
         m_maxLock = true;
-        onLimitChange(getMinSize(), getMaxSize());
+
+        // Signal events.
         onResize(size);
+        onLimitChange(getMinSize(), getMaxSize());
     }
 
     const Size& Sizable::getSize() const
@@ -86,27 +93,25 @@ namespace pTK
 
     void Sizable::setMaxSize(const Size& size)
     {
-        bool changed = false;
-        if ((size.height >= m_size.height) && (size.height <= Size::Limits::Max))
-        {
-            m_maxSize.height = size.height;
-            m_maxLock = false;
-            changed = true;
-        }
+        // Update maximum sizes.
+        byte status{updateMaxWidth(size.width)};
+        status |= updateMaxHeight(size.height);
 
-        if ((size.width >= m_size.width) && (size.width <= Size::Limits::Max))
-        {
-            m_maxSize.width = size.width;
-            m_maxLock = false;
-            changed = true;
-        }
+        // Signal a size change.
+        if (status & 1) // Check if first bit is set.
+            onResize(getSize());
 
-        if (changed)
+        // Signal a limit change.
+        if (status & 2) // Check if second bit is set.
+        {
+            m_maxLock = false;
             onLimitChange(getMinSize(), getMaxSize());
+        }
     }
 
     Size Sizable::getMaxSize() const
     {
+        // If SetConstSize has been called, return const size.
         if (m_maxLock)
             return m_size;
 
@@ -115,43 +120,120 @@ namespace pTK
 
     void Sizable::setLimits(const Size& min, const Size& max)
     {
-        bool changed = false;
+        // Update minimal sizes.
+        byte s1{updateMinWidth(min.width)};
+        s1 |= updateMinHeight(min.height);
 
-        // Minimal size
-        if ((min.height >= Size::Limits::Min) && (min.height <= m_size.height))
-        {
-            m_minSize.height = min.height;
+        // Update maximum sizes.
+        byte s2{updateMaxWidth(max.width)};
+        s2 |= updateMaxHeight(max.height);
+
+        // Signal a size change.
+        if ((s1 & 1) || ((s2 & 1)))
+            onResize(getSize());
+
+        // Check if locks are needed.
+        if (s1 & 2)
             m_minLock = false;
-            changed = true;
-        }
-        if ((min.width >= Size::Limits::Min) && (min.width <= m_size.width))
-        {
-            m_minSize.width = min.width;
-            m_minLock = false;
-            changed = true;
-        }
-
-        // Maximum size
-        if ((max.height >= m_size.height) && (max.height <= Size::Limits::Max))
-        {
-            m_maxSize.height = max.height;
+        if (s2 & 2)
             m_maxLock = false;
-            changed = true;
-        }
-        if ((max.width >= m_size.width) && (max.width <= Size::Limits::Max))
-        {
-            m_maxSize.width = max.width;
-            m_maxLock = false;
-            changed = true;
-        }
 
-        if (changed)
+        // Signal a limit change.
+        if ((s1 & 2) || ((s2 & 2)))
             onLimitChange(getMinSize(), getMaxSize());
     }
 
     bool Sizable::isConstSize() const
     {
         return m_minLock && m_maxLock;
+    }
+
+    byte Sizable::updateMinWidth(Size::value_type width)
+    {
+        byte status{0};
+        Size::value_type maxWidth{getMaxSize().width};
+
+        if ((width >= Size::Limits::Min) && (width <= maxWidth))
+        {
+            // If new minimal width is larger than current size. Set width to minimal width.
+            if (width > m_size.width)
+            {
+                m_size.width = width;
+                status = 1;
+            }
+
+            // Update minimal width.
+            m_minSize.width = width;
+            status |= 2;
+        }
+
+        return status;
+    }
+
+    byte Sizable::updateMinHeight(Size::value_type height)
+    {
+        byte status{0};
+        Size::value_type maxHeight{getMaxSize().height};
+
+        if ((height >= Size::Limits::Min) && (height <= maxHeight))
+        {
+            // If new minimal height is larger than current size. Set height to minimal height.
+            if (height > m_size.height)
+            {
+                m_size.height = height;
+                status = 1;
+            }
+
+            // Update minimal height.
+            m_minSize.height = height;
+            status |= 2;
+        }
+
+        return status;
+    }
+
+    byte Sizable::updateMaxWidth(Size::value_type width)
+    {
+        byte status{0};
+        Size::value_type minWidth{getMinSize().width};
+
+        if ((width >= minWidth) && (width <= Size::Limits::Max))
+        {
+            // If new maximum width is smaller than current size. Set width to maximum width.
+            if (width < m_size.width)
+            {
+                m_size.width = width;
+                status = 1;
+            }
+
+            // Update maximum width.
+            m_maxSize.width = width;
+            status |= 2;
+        }
+
+        return status;
+    }
+
+    byte Sizable::updateMaxHeight(Size::value_type height)
+    {
+        byte status{0};
+        Size::value_type minHeight{getMinSize().height};
+
+        if ((height >= minHeight) && (height <= Size::Limits::Max))
+        {
+            // If new maximum height is smaller than current size. Set height to maximum height.
+            if (height < m_size.height)
+            {
+                m_size.height = height;
+                status = 1;
+            }
+
+            // Update maximum height.
+            m_maxSize.height = height;
+            status |= 2;
+        }
+
+        return status;
     }
 
     // Comparison operators.
