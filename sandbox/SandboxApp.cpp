@@ -1,7 +1,9 @@
 // pTK Headers
 #include "ptk/ptk.hpp"
 
+// C++ Headers
 #include <iostream>
+#include <random>
 
 // settings
 const unsigned int SCR_WIDTH = 960;
@@ -16,6 +18,18 @@ const unsigned int FNORMAL = 12;
 uint colSidebar{0x252525FF};
 uint colContent{0x171717FF};
 uint colText{0xF5F5F5FF};
+
+
+pTK::Color randomColor()
+{
+    using color_size = pTK::Color::size_type;
+    static std::random_device rdev;
+    static std::mt19937 rgen(rdev());
+    std::uniform_int_distribution<color_size> idist(0, std::numeric_limits<color_size>::max());
+    color_size hex = idist(rgen);
+    std::cout << "new color: " << hex << std::endl;
+    return pTK::Color(hex);
+}
 
 int main(int argc, char *argv[]) {
     pTK::Application app{argc, argv};
@@ -118,6 +132,11 @@ int main(int argc, char *argv[]) {
     r1->setConstSize({250, 125});
     r1->setCornerRadius(5.0f);
     r1->setPadding({10, 10, 18, 18});
+    r1->onClick([&](pTK::Mouse::Button btn, const pTK::Point&) {
+        if (btn == pTK::Mouse::Button::Left)
+            r1->setColor(randomColor());
+        return true;
+    });
 
     pTK::Ref<pTK::Rectangle> r2 = pTK::create<pTK::Rectangle>(*r1.get());
 

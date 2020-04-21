@@ -26,10 +26,42 @@ namespace pTK
         */
         EventCallbacks();
 
+        /** Copy Constructor for EventCallbacks.
+
+            Note: Event callbacks will not be copied!
+
+            @param other    to copy from
+            @return         EventCallbacks copy of other
+        */
+        EventCallbacks(const EventCallbacks& other);
+
+        /** Copy Constructor for EventCallbacks.
+
+            @param other    to move from
+            @return         EventCallbacks with values moved from other
+        */
+        EventCallbacks(EventCallbacks&& other);
+
         /** Deconstructor for EventCallbacks.
 
         */
         virtual ~EventCallbacks() = default;
+
+        /** Copy Assignment for EventCallbacks.
+
+            Note: Event callbacks will not be copied!
+
+            @param other    to copy from
+            @return         EventCallbacks copy of other
+        */
+        EventCallbacks& operator=(const EventCallbacks& other);
+
+        /** Move Assignment for EventCallbacks.
+
+            @param other    to move from
+            @return         EventCallbacks with values moved from other
+        */
+        EventCallbacks& operator=(EventCallbacks&& other);
         
         /** Function for handling when a key is pressed or released.
          
