@@ -209,19 +209,20 @@ namespace pTK
     Point::value_type HBox::alignChildV(size_type index, const Size& parentSize, const Size& childSize)
     {
         Point::value_type posy{0};
-        Size cSize{ childSize };
-        Margin cMargin{at(index)->getMargin()};
-        Padding cPadding{at(index)->getPadding()};
+        Size cSize{childSize};
+        const auto child{at(index)};
+        Margin cMargin{child->getMargin()};
+        Padding cPadding{child->getPadding()};
 
         // Pre
-        cSize.width += static_cast<Size::value_type>(cPadding.top + cPadding.bottom);
+        cSize.height += static_cast<Size::value_type>(cPadding.top + cPadding.bottom);
 
         // Align
         std::underlying_type<Align>::type cAlign = at(index)->getAlign();
         if (isAlignSet(cAlign, Align::Bottom))
-            posy = static_cast<Point::value_type>(parentSize.width - cSize.width);
+            posy = static_cast<Point::value_type>(parentSize.height - cSize.height);
         else if (isAlignSet(cAlign, Align::Center) || isAlignSet(cAlign, Align::VCenter))
-            posy = static_cast<Point::value_type>((parentSize.width / 2) - (cSize.width / 2));
+            posy = static_cast<Point::value_type>((parentSize.height / 2) - (cSize.height / 2));
 
         // Post
         posy += static_cast<Point::value_type>(cMargin.top);
