@@ -5,38 +5,41 @@
 //  Created by Robin Gustafsson on 2020-03-11.
 //
 
-#ifndef PTK_PlATFORM_WIN32_WIN32RASTERCONTEXT_HPP
-#define PTK_PlATFORM_WIN32_WIN32RASTERCONTEXT_HPP
+#ifndef PTK_PlATFORM_WIN32_WIN32GLCONTEXT_HPP
+#define PTK_PlATFORM_WIN32_WIN32GLCONTEXT_HPP
 
 // Local Headers
 #include "ptk/core/ContextBase.hpp"
 
 // Windows Headers
-#include <windows.h>
+#ifdef _WIN32
+    #define NOMINMAX
+    #include <windows.h>
+#endif
 
 // Skia Headers
-#include "src/core/SkAutoMalloc.h"
+#include "include/gpu/GrContext.h"
 
 namespace pTK
 {
-    /** Win32RasterContext class implementation.
+    /** Win32GLContext class implementation.
 
-        Context for a software based Win32 backend.
-        All drawings will be done using the CPU.
+        Context for a hardware based OpenGL Win32 backend.
+        All drawings will be done using the GPU.
     */
-    class Win32RasterContext : public ContextBase
+    class Win32GLContext : public ContextBase
     {
     public:
-        /** Constructs Win32RasterCanvas with default values.
+        /** Constructs Win32GLContext with default values.
 
-            @return    default initialized Win32RasterCanvas
+            @return    default initialized Win32GLContext
         */
-        Win32RasterContext(HWND hwnd, const Size& size);
+        Win32GLContext(HWND handle, const Size& size);
 
         /** Win32RasterCanvas for GLCanvas.
 
         */
-        virtual ~Win32RasterContext() = default;
+        virtual ~Win32GLContext();
 
         /** Function for resizing the context.
 
@@ -57,16 +60,20 @@ namespace pTK
         */
         SkSurface* skSurface() const override;
 
-        /** Function for swapping the buffers.
+        /** Function for swapping the buffers
 
         */
         void swapBuffers() override;
 
     private:
         HWND m_hwnd;
-        SkAutoMalloc  m_surfaceMemory;
+        HGLRC m_hglrc;
         sk_sp<SkSurface> m_surface;
+        Ref<GrContext> m_context;
+        GrGLFramebufferInfo m_info;
+        SkColorType m_colorType;
+        SkSurfaceProps m_props;
     };
 }
 
-#endif //PTK_PlATFORM_WIN32_WIN32RASTERCONTEXT_HPP
+#endif //PTK_PlATFORM_WIN32_WIN32GLCONTEXT_HPP

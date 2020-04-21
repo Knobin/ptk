@@ -11,8 +11,8 @@
 
 namespace pTK
 {
-    Win32RasterContext::Win32RasterContext(const Size& size)
-        : ContextBase(size)
+    Win32RasterContext::Win32RasterContext(HWND hwnd, const Size& size)
+        : ContextBase(size), m_hwnd{hwnd}
     {
         resize(size);
     }
@@ -55,16 +55,16 @@ namespace pTK
         return m_surface.get();
     }
 
-    void Win32RasterContext::swapBuffers(HWND m_handle)
+    void Win32RasterContext::swapBuffers()
     {
         BITMAPINFO *bmpInfo = reinterpret_cast<BITMAPINFO*>(m_surfaceMemory.get());
         HRGN hrgn = CreateRectRgn(0,0,0,0);
-        GetWindowRgn(m_handle, hrgn);
-        HDC dc = GetDCEx(m_handle, hrgn, DCX_PARENTCLIP);
+        GetWindowRgn(m_hwnd, hrgn);
+        HDC dc = GetDCEx(m_hwnd, hrgn, DCX_PARENTCLIP);
         const Size size = getSize();
         StretchDIBits(dc, 0, 0, size.width, size.height, 0, 0, size.width, size.height, bmpInfo->bmiColors, bmpInfo,
                       DIB_RGB_COLORS, SRCCOPY);
         DeleteObject(hrgn);
-        ReleaseDC(m_handle, dc);
+        ReleaseDC(m_hwnd, dc);
     }
 }

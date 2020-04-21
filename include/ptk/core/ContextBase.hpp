@@ -91,6 +91,11 @@ namespace pTK
         */
         const Size& getSize() const;
 
+        /** Function for swapping the buffers.
+
+        */
+        virtual void swapBuffers() {};
+
     protected:
         void setSize(const Size& size);
 

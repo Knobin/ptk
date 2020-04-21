@@ -33,7 +33,7 @@ pTK::Color randomColor()
 
 int main(int argc, char *argv[]) {
     pTK::Application app{argc, argv};
-    pTK::Window window{"pTK Win32 Window", {960, 540}};
+    pTK::Window window{"pTK Sandbox Window", {960, 540}, pTK::BackendType::HARDWARE};
     //pTK::GLFWWindow window("pTK GLFW Window", {960, 540});
     window.setBackground(pTK::Color(0x232323FF));
 

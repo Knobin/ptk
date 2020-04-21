@@ -10,7 +10,6 @@
 
 // Local Headers
 #include "ptk/core/WindowBackend.hpp"
-#include "ptk/platform/win32/Win32RasterContext.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/events/MouseEvent.hpp"
 
@@ -128,7 +127,7 @@ namespace pTK
         Window *m_parentWindow;
         HWND m_handle;
         DWORD m_style;
-        Win32RasterContext *rasterCanvas;
+        std::unique_ptr<ContextBase> rasterCanvas;
         PAINTSTRUCT ps;
         Vec2f m_scale;
     };

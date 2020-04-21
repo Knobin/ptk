@@ -11,6 +11,8 @@
 #include "ptk/core/Exception.hpp"
 #include "ptk/events/WindowEvent.hpp"
 #include "ptk/events/KeyCodes.hpp"
+#include "ptk/platform/win32/Win32RasterContext.hpp"
+#include "ptk/platform/win32/Win32GLContext.hpp"
 
 // Windows Headers
 #include <windowsx.h>
@@ -79,6 +81,28 @@ namespace pTK
 
     static std::map<byte, int32> s_keyMap{initKeyCodes()};
 
+    std::unique_ptr<ContextBase> createWin32Context(BackendType type, HWND hwnd, const Size& size)
+    {
+        std::unique_ptr<ContextBase> context{nullptr};
+
+        if (type == BackendType::SOFTWARE)
+        {
+            context = std::make_unique<Win32RasterContext>(hwnd, size);
+        }
+        else if (type == BackendType::HARDWARE)
+        {
+            context = std::make_unique<Win32GLContext>(hwnd, size);
+        }
+#ifdef PTK_DEBUG
+        else
+        {
+            PTK_ASSERT(false, "Undefined backend type!");
+        }
+#endif
+
+        return std::move(context);
+    }
+
     Win32Backend::Win32Backend(Window *window, const std::string& name, const Size& size, BackendType backend)
         : WindowBackend(backend),
             m_parentWindow{window}, m_handle{},
@@ -119,7 +143,7 @@ namespace pTK
             throw WindowError("Failed to create window!");
         PTK_INFO("Created Win32Window: {}x{}", size.width, size.height);
 
-        rasterCanvas = new Win32RasterContext(wSize);
+        rasterCanvas = createWin32Context(backend, m_handle, wSize);
         SetWindowLongPtr(m_handle, GWLP_USERDATA, (LONG_PTR)m_parentWindow);
 
         ::ShowWindow(m_handle, SW_SHOW);
@@ -160,7 +184,7 @@ namespace pTK
 
     void Win32Backend::swapBuffers()
     {
-        rasterCanvas->swapBuffers(m_handle);
+        rasterCanvas->swapBuffers();
     }
 
     void Win32Backend::resize(const Size& size)
@@ -186,7 +210,7 @@ namespace pTK
 
     ContextBase *Win32Backend::getContext() const
     {
-        return rasterCanvas;
+        return rasterCanvas.get();
     }
 
     Vec2f Win32Backend::getDPIScale() const
