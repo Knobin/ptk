@@ -108,10 +108,10 @@ namespace pTK
         void set_rgba(size_type color);
         
         // Variables.
-        byte r;
-        byte g;
-        byte b;
-        byte a;
+        value_type r;
+        value_type g;
+        value_type b;
+        value_type a;
     };
     
     // Comparison operators.

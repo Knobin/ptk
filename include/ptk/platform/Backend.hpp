@@ -9,8 +9,8 @@
 #define PTK_PLATFORM_BACKEND_HPP
 
 #if defined(PTK_PLATFORM_WINDOWS)
-#include "ptk/platform/win32/Win32Backend.hpp"
-using BACKEND = pTK::Win32Backend;
+#include "ptk/platform/win/WinBackend.hpp"
+using BACKEND = pTK::WinBackend;
 #elif defined(PTK_PLATFORM_UNIX)
 #include "ptk/platform/glfw/GLFWBackend.hpp"
 using BACKEND = pTK::GLFWBackend;
@@ -21,4 +21,4 @@ using BACKEND = pTK::GLFWBackend;
 #error "Unsupported platform!"
 #endif
 
-#endif //PTK_PLATFORM_BACKEND_HPP
+#endif // PTK_PLATFORM_BACKEND_HPP

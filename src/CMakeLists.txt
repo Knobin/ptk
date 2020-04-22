@@ -32,14 +32,14 @@ if (PTK_BUILD_TYPE MATCHES Debug)
 endif()
 
 if (WIN32)
-    set(PLATFORM_FILES platform/win32/Win32RasterContext.cpp
-            platform/win32/Win32GLContext.cpp
-            platform/win32/Win32Backend.cpp)
-    message(STATUS "Using Win32")
+    set(PLATFORM_FILES platform/win/WinRasterContext.cpp
+            platform/win/WinGLContext.cpp
+            platform/win/WinBackend.cpp)
+    message(STATUS "Using Windows backend")
 else()
     set(PLATFORM_FILES platform/glfw/GLContext.cpp
             platform/glfw/GLFWBackend.cpp)
-    message(STATUS "Using GLFW")
+    message(STATUS "Using GLFW backend")
 endif()
 
 set(SOURCE_FILES Application.cpp Window.cpp

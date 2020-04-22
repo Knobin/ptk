@@ -1,12 +1,12 @@
 //
-//  platform/win32/Win32RasterContext.hpp
+//  platform/win/WinRasterContext.hpp
 //  pTK
 //
-//  Created by Robin Gustafsson on 2020-03-11.
+//  Created by Robin Gustafsson on 2020-04-20.
 //
 
-#ifndef PTK_PlATFORM_WIN32_WIN32GLCONTEXT_HPP
-#define PTK_PlATFORM_WIN32_WIN32GLCONTEXT_HPP
+#ifndef PTK_PlATFORM_WIN_WINGLCONTEXT_HPP
+#define PTK_PlATFORM_WIN_WINGLCONTEXT_HPP
 
 // Local Headers
 #include "ptk/core/ContextBase.hpp"
@@ -22,24 +22,24 @@
 
 namespace pTK
 {
-    /** Win32GLContext class implementation.
+    /** WinGLContext class implementation.
 
-        Context for a hardware based OpenGL Win32 backend.
+        Context for a hardware based OpenGL Windows backend.
         All drawings will be done using the GPU.
     */
-    class Win32GLContext : public ContextBase
+    class WinGLContext : public ContextBase
     {
     public:
-        /** Constructs Win32GLContext with default values.
+        /** Constructs WinGLContext with default values.
 
-            @return    default initialized Win32GLContext
+            @return    default initialized WinGLContext
         */
-        Win32GLContext(HWND handle, const Size& size);
+        WinGLContext(HWND handle, const Size& size);
 
         /** Win32RasterCanvas for GLCanvas.
 
         */
-        virtual ~Win32GLContext();
+        virtual ~WinGLContext();
 
         /** Function for resizing the context.
 
@@ -76,4 +76,4 @@ namespace pTK
     };
 }
 
-#endif //PTK_PlATFORM_WIN32_WIN32GLCONTEXT_HPP
+#endif // PTK_PlATFORM_WIN_WINGLCONTEXT_HPP

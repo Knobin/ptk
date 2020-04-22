@@ -7,6 +7,7 @@
 
 // Local Headers
 #include "ptk/util/Color.hpp"
+#include <iostream>
 
 // C++ Headers
 #include <algorithm>
@@ -20,6 +21,7 @@ namespace pTK
     }
     
     Color::Color(size_type color)
+        : r{0}, g{0}, b{0}, a{255}
     {
         set_rgba(color);
     }
@@ -52,9 +54,9 @@ namespace pTK
     
     void Color::set_rgb(size_type color)
     {
-        r = static_cast<value_type>((color >> 24) & 0xFF);
-        g = static_cast<value_type>((color >> 16) & 0xFF);
-        b = static_cast<value_type>((color >> 8) & 0xFF);
+        r = static_cast<value_type>((color & 0xFF000000) >> 24);
+        g = static_cast<value_type>((color & 0x00FF0000) >> 16);
+        b = static_cast<value_type>((color & 0x0000FF00) >> 8);
     }
     
     void Color::set_rgba(value_type red, value_type green, value_type blue, value_type alpha)
@@ -67,9 +69,7 @@ namespace pTK
     
     void Color::set_rgba(size_type color)
     {
-        r = static_cast<value_type>((color >> 24) & 0xFF);
-        g = static_cast<value_type>((color >> 16) & 0xFF);
-        b = static_cast<value_type>((color >> 8) & 0xFF);
+        set_rgb(color);
         a = static_cast<value_type>(color & 0xFF);
     }
     

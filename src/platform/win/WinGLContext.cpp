@@ -1,12 +1,12 @@
 //
-//  platform/GLContext.cpp
+//  platform/win/WinRasterContext.cpp
 //  pTK
 //
-//  Created by Robin Gustafsson on 2020-02-09.
+//  Created by Robin Gustafsson on 2020-04-20.
 //
 
 // Local Headers
-#include "ptk/platform/win32/Win32GLContext.hpp"
+#include "ptk/platform/win/WinGLContext.hpp"
 #include "ptk/Core.hpp"
 
 // OpenGL Windows Headers
@@ -36,7 +36,7 @@
 
 namespace pTK
 {
-    Win32GLContext::Win32GLContext(HWND hwnd, const Size& size)
+    WinGLContext::WinGLContext(HWND hwnd, const Size& size)
         : ContextBase(size), m_hwnd{hwnd}, m_hglrc{}, m_context{nullptr}, m_info{}, m_colorType{},
             m_props{SkSurfaceProps::kUseDeviceIndependentFonts_Flag, SkSurfaceProps::kLegacyFontHost_InitType}
     {
@@ -50,10 +50,6 @@ namespace pTK
             glClearColor(0, 0, 0, 0);
             glStencilMask(0xFFFFFFFF);
             glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-            int pixelFormat{GetPixelFormat(dc)};
-            PIXELFORMATDESCRIPTOR pfd;
-            DescribePixelFormat(dc, pixelFormat, sizeof(pfd), &pfd);
 
             auto glInterface = GrGLMakeNativeInterface();
             PTK_ASSERT(glInterface, "Failed to create interface!");
@@ -86,7 +82,7 @@ namespace pTK
 #endif
     }
 
-    Win32GLContext::~Win32GLContext()
+    WinGLContext::~WinGLContext()
     {
         // Apparently, surface needs to be destroyed before context.
         // Otherwise, SkRefCount will give a nice assert.
@@ -94,7 +90,7 @@ namespace pTK
         m_context.reset();
     }
 
-    void Win32GLContext::resize(const Size& size)
+    void WinGLContext::resize(const Size& size)
     {
         glViewport(0, 0, size.width, size.height);
 
@@ -104,21 +100,21 @@ namespace pTK
         PTK_ASSERT(surface, "Failed to create surface!");
         m_surface.reset(surface);
 
-        PTK_INFO("Created Win32GLCanvas: {}x{}", size.width, size.height);
+        PTK_INFO("Created WinGLCanvas: {}x{}", size.width, size.height);
         setSize(size);
     }
 
-    SkCanvas* Win32GLContext::skCanvas() const
+    SkCanvas* WinGLContext::skCanvas() const
     {
         return m_surface->getCanvas();
     }
 
-    SkSurface* Win32GLContext::skSurface() const
+    SkSurface* WinGLContext::skSurface() const
     {
         return m_surface.get();
     }
 
-    void Win32GLContext::swapBuffers()
+    void WinGLContext::swapBuffers()
     {
         HDC dc{GetDC(m_hwnd)};
         SwapBuffers(dc);

@@ -31,7 +31,8 @@ namespace pTK
         backend. The class will always have the same size independent of platform.
         This makes the class suitable to derive from, if needed.
 
-        Currently, it will default to a software based backend if no one is specified.
+        Currently, it will default to a hardware based backend if no one is specified.
+        If that backend is not available, it will fall back to a software based backend.
     */
     class Window : public VBox, public Singleton
     {
@@ -40,7 +41,7 @@ namespace pTK
 
             @return    default initialized Window
         */
-        Window(const std::string& name, const Size& size, BackendType backend = BackendType::SOFTWARE);
+        Window(const std::string& name, const Size& size, BackendType backend = BackendType::HARDWARE);
 
         /** Deconstructor for Window.
 

@@ -1,12 +1,12 @@
 //
-//  platform/win32/Win32Backend.hpp
+//  platform/win/WinBackend.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-02-07.
 //
 
-#ifndef PTK_PlATFORM_WIN32_WIN32BACKEND_HPP
-#define PTK_PlATFORM_WIN32_WIN32BACKEND_HPP
+#ifndef PTK_PlATFORM_WIN_WINBACKEND_HPP
+#define PTK_PlATFORM_WIN_WINBACKEND_HPP
 
 // Local Headers
 #include "ptk/core/WindowBackend.hpp"
@@ -23,27 +23,27 @@ namespace pTK
 {
     class Window;
 
-    /** Win32Backend class implementation.
+    /** WinBackend class implementation.
 
-        This class handles the Windows Window (Win32).
+        This class handles the Windows Window.
     */
-    class Win32Backend : public WindowBackend
+    class WinBackend : public WindowBackend
     {
     public:
-        /** Constructs Win32Backend with default values.
+        /** Constructs WinBackend with default values.
 
             @param window   parent Window class
             @param name     name of the window
             @param size     size of the window
             @param backend  type of backend
-            @return         default initialized Win32Backend
+            @return         default initialized WinBackend
         */
-        Win32Backend(Window *window, const std::string& name, const Size& size, BackendType backend);
+        WinBackend(Window *window, const std::string& name, const Size& size, BackendType backend);
 
-        /** Deconstructor for Win32Backend.
+        /** Deconstructor for WinBackend.
 
         */
-        virtual ~Win32Backend() = default;
+        virtual ~WinBackend() = default;
 
         /** Function for closing the window.
 
@@ -113,9 +113,9 @@ namespace pTK
         */
         void endPaint() override;
 
-        /** Function for retrieving the current Windows style of the Win32 Window.
+        /** Function for retrieving the current Windows style of the Window.
 
-            @return Win32 Window style
+            @return Window style
         */
         DWORD getWindowStyle() const;
 
@@ -133,4 +133,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_PlATFORM_WIN32_WIN32WINDOW_HPP
+#endif // PTK_PlATFORM_WIN_WINBACKEND_HPP

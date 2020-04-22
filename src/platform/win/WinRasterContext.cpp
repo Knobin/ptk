@@ -1,23 +1,23 @@
 //
-//  platform/win32/Win32RasterCanvas.hpp
+//  platform/win/WinRasterCanvas.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-03-11.
 //
 
 // Local Headers
-#include "ptk/platform/win32/Win32RasterContext.hpp"
+#include "ptk/platform/win/WinRasterContext.hpp"
 #include "ptk/core/Exception.hpp"
 
 namespace pTK
 {
-    Win32RasterContext::Win32RasterContext(HWND hwnd, const Size& size)
+    WinRasterContext::WinRasterContext(HWND hwnd, const Size& size)
         : ContextBase(size), m_hwnd{hwnd}
     {
         resize(size);
     }
 
-    void Win32RasterContext::resize(const Size& size)
+    void WinRasterContext::resize(const Size& size)
     {
         SkColorType m_colorType{kN32_SkColorType};
 
@@ -39,23 +39,23 @@ namespace pTK
         SkImageInfo info = SkImageInfo::Make(w, h, m_colorType, kPremul_SkAlphaType,nullptr);
         m_surface = SkSurface::MakeRasterDirect(info, pixels, sizeof(uint32_t) * w);
         if (!m_surface)
-            throw ContextError("Failed to create Raster Canvas for Win32");
+            throw ContextError("Failed to create Raster Canvas for Windows Window");
 
-        PTK_INFO("Created Win32RasterCanvas: {}x{}", size.width, size.height);
+        PTK_INFO("Created WinRasterCanvas: {}x{}", size.width, size.height);
         setSize(size);
     }
 
-    SkCanvas* Win32RasterContext::skCanvas() const
+    SkCanvas* WinRasterContext::skCanvas() const
     {
         return m_surface->getCanvas();
     }
 
-    SkSurface* Win32RasterContext::skSurface() const
+    SkSurface* WinRasterContext::skSurface() const
     {
         return m_surface.get();
     }
 
-    void Win32RasterContext::swapBuffers()
+    void WinRasterContext::swapBuffers()
     {
         BITMAPINFO *bmpInfo = reinterpret_cast<BITMAPINFO*>(m_surfaceMemory.get());
         HRGN hrgn = CreateRectRgn(0,0,0,0);

@@ -51,11 +51,18 @@ endif()
 option(BUILD_TESTS "Build test programs" OFF)
 option(BUILD_EXAMPLES "Build example programs" ON)
 option(BUILD_SANDBOX "Build sandbox application" ON)
+option(HW_ACCELERATION "Use Hardware Acceleration" ON)
 
 # Print Options
 message(STATUS "Build Tests: ${BUILD_TESTS}")
 message(STATUS "Build Examples: ${BUILD_EXAMPLES}")
 message(STATUS "Build Sandbox: ${BUILD_SANDBOX}")
+message(STATUS "Hardware Acceleration: ${HW_ACCELERATION}")
+
+# Define HW if enabled.
+if (HW_ACCELERATION)
+    add_definitions(-DPTK_HW_ACCELERATION)
+endif (HW_ACCELERATION)
 
 # Header files
 file(GLOB_RECURSE HEADER_FILES ${CMAKE_SOURCE_DIR}/include/*.hpp)
@@ -81,7 +88,9 @@ set_target_properties(skia PROPERTIES
 )
 
 # OpenGL
-find_package(OpenGL REQUIRED)
+if (HW_ACCELERATION)
+    find_package(OpenGL REQUIRED)
+endif (HW_ACCELERATION)
 
 # GLFW
 if (NOT WIN32)

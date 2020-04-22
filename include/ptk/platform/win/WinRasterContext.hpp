@@ -1,12 +1,12 @@
 //
-//  platform/win32/Win32RasterContext.hpp
+//  platform/win/WinRasterContext.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-03-11.
 //
 
-#ifndef PTK_PlATFORM_WIN32_WIN32RASTERCONTEXT_HPP
-#define PTK_PlATFORM_WIN32_WIN32RASTERCONTEXT_HPP
+#ifndef PTK_PlATFORM_WIN_WINRASTERCONTEXT_HPP
+#define PTK_PlATFORM_WIN_WINRASTERCONTEXT_HPP
 
 // Local Headers
 #include "ptk/core/ContextBase.hpp"
@@ -19,24 +19,24 @@
 
 namespace pTK
 {
-    /** Win32RasterContext class implementation.
+    /** WinRasterContext class implementation.
 
-        Context for a software based Win32 backend.
+        Context for a software based Windows backend.
         All drawings will be done using the CPU.
     */
-    class Win32RasterContext : public ContextBase
+    class WinRasterContext : public ContextBase
     {
     public:
         /** Constructs Win32RasterCanvas with default values.
 
             @return    default initialized Win32RasterCanvas
         */
-        Win32RasterContext(HWND hwnd, const Size& size);
+        WinRasterContext(HWND hwnd, const Size& size);
 
         /** Win32RasterCanvas for GLCanvas.
 
         */
-        virtual ~Win32RasterContext() = default;
+        virtual ~WinRasterContext() = default;
 
         /** Function for resizing the context.
 
@@ -69,4 +69,4 @@ namespace pTK
     };
 }
 
-#endif //PTK_PlATFORM_WIN32_WIN32RASTERCONTEXT_HPP
+#endif // PTK_PlATFORM_WIN_WINRASTERCONTEXT_HPP

@@ -1,18 +1,18 @@
 //
-//  platform/win32/Win32Window.cpp
+//  platform/win/WinBackend.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-02-07.
 //
 
 // Local Headers
-#include "ptk/platform/win32/Win32Backend.hpp"
+#include "ptk/platform/win/WinBackend.hpp"
 #include "ptk/Window.hpp"
 #include "ptk/core/Exception.hpp"
 #include "ptk/events/WindowEvent.hpp"
 #include "ptk/events/KeyCodes.hpp"
-#include "ptk/platform/win32/Win32RasterContext.hpp"
-#include "ptk/platform/win32/Win32GLContext.hpp"
+#include "ptk/platform/win/WinRasterContext.hpp"
+#include "ptk/platform/win/WinGLContext.hpp"
 
 // Windows Headers
 #include <windowsx.h>
@@ -83,27 +83,16 @@ namespace pTK
 
     std::unique_ptr<ContextBase> createWin32Context(BackendType type, HWND hwnd, const Size& size)
     {
-        std::unique_ptr<ContextBase> context{nullptr};
+#ifdef PTK_HW_ACCELERATION
+        if (type == BackendType::HARDWARE)
+            return std::make_unique<WinGLContext>(hwnd, size);
+#endif // PTK_HW_ACCELERATION
 
-        if (type == BackendType::SOFTWARE)
-        {
-            context = std::make_unique<Win32RasterContext>(hwnd, size);
-        }
-        else if (type == BackendType::HARDWARE)
-        {
-            context = std::make_unique<Win32GLContext>(hwnd, size);
-        }
-#ifdef PTK_DEBUG
-        else
-        {
-            PTK_ASSERT(false, "Undefined backend type!");
-        }
-#endif
-
-        return std::move(context);
+        // Software backend is always available.
+        return std::make_unique<WinRasterContext>(hwnd, size);
     }
 
-    Win32Backend::Win32Backend(Window *window, const std::string& name, const Size& size, BackendType backend)
+    WinBackend::WinBackend(Window *window, const std::string& name, const Size& size, BackendType backend)
         : WindowBackend(backend),
             m_parentWindow{window}, m_handle{},
             m_style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX},
@@ -129,10 +118,10 @@ namespace pTK
         auto dpiX = static_cast<float>(GetDeviceCaps(screen, LOGPIXELSX));
         auto dpiY = static_cast<float>(GetDeviceCaps(screen, LOGPIXELSY));
         ReleaseDC(nullptr, screen);
-        PTK_INFO("Win32 Window DPI {}x{}", dpiX, dpiY);
+        PTK_INFO("Windows Window DPI {}x{}", dpiX, dpiY);
         m_scale.x = dpiX / 96.0f;
         m_scale.y = dpiY / 96.0f;
-        PTK_INFO("Win32 Window Scaling {0:0.2f}x{1:0.2f}", m_scale.x, m_scale.y);
+        PTK_INFO("Windows Window Scaling {0:0.2f}x{1:0.2f}", m_scale.x, m_scale.y);
 
         //Size wSize{calcScaling(size, m_scale)};
         Size wSize{size};
@@ -141,7 +130,7 @@ namespace pTK
                                    adjSize.width, adjSize.height, nullptr, nullptr, GetModuleHandleW(nullptr), nullptr);
         if (!m_handle)
             throw WindowError("Failed to create window!");
-        PTK_INFO("Created Win32Window: {}x{}", size.width, size.height);
+        PTK_INFO("Created WinWindow: {}x{}", size.width, size.height);
 
         rasterCanvas = createWin32Context(backend, m_handle, wSize);
         SetWindowLongPtr(m_handle, GWLP_USERDATA, (LONG_PTR)m_parentWindow);
@@ -150,14 +139,14 @@ namespace pTK
         ::UpdateWindow(m_handle);
     }
 
-    void Win32Backend::setPosHint(const Point& pos)
+    void WinBackend::setPosHint(const Point& pos)
     {
         RECT rect{pos.x, pos.y, pos.x, pos.y};
         SetWindowPos(m_handle, nullptr, rect.left, rect.top, 0, 0,
                 SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
     }
 
-    void Win32Backend::pollEvents()
+    void WinBackend::pollEvents()
     {
         MSG Msg;
         if(GetMessageW(&Msg, nullptr, 0, 0) > 0 ){
@@ -166,59 +155,59 @@ namespace pTK
         }
     }
 
-    void Win32Backend::beginPaint()
+    void WinBackend::beginPaint()
     {
         ps = PAINTSTRUCT();
         HDC hdc{BeginPaint(m_handle, &ps)};
     }
 
-    void Win32Backend::endPaint()
+    void WinBackend::endPaint()
     {
         EndPaint(m_handle, &ps);
     }
 
-    DWORD Win32Backend::getWindowStyle() const
+    DWORD WinBackend::getWindowStyle() const
     {
         return m_style;
     }
 
-    void Win32Backend::swapBuffers()
+    void WinBackend::swapBuffers()
     {
         rasterCanvas->swapBuffers();
     }
 
-    void Win32Backend::resize(const Size& size)
+    void WinBackend::resize(const Size& size)
     {
         rasterCanvas->resize(size);
     }
 
-    void Win32Backend::close()
+    void WinBackend::close()
     {
         m_parentWindow->postEvent(new Event{Event::Category::Window, Event::Type::WindowClose});
     }
 
-    void Win32Backend::show()
+    void WinBackend::show()
     {
         ShowWindow(m_handle, SW_SHOW);
         m_parentWindow->forceDrawAll();
     }
 
-    void Win32Backend::hide()
+    void WinBackend::hide()
     {
         ShowWindow(m_handle, SW_HIDE);
     }
 
-    ContextBase *Win32Backend::getContext() const
+    ContextBase *WinBackend::getContext() const
     {
         return rasterCanvas.get();
     }
 
-    Vec2f Win32Backend::getDPIScale() const
+    Vec2f WinBackend::getDPIScale() const
     {
         return m_scale;
     }
 
-    void Win32Backend::setLimits(const Size&, const Size&)
+    void WinBackend::setLimits(const Size&, const Size&)
     {
         RECT rect{};
         GetWindowRect(m_handle, &rect);
@@ -228,7 +217,7 @@ namespace pTK
                 rect.bottom - rect.top, TRUE);
     }
 
-    LRESULT Win32Backend::wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    LRESULT WinBackend::wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
         switch(msg)
@@ -294,7 +283,7 @@ namespace pTK
                 {
                     LPMINMAXINFO lpMMI = (LPMINMAXINFO)lParam;
                     const Size minSize{window->getMinSize()};
-                    Win32Backend* backend{static_cast<Win32Backend*>(window->getBackend())};
+                    WinBackend* backend{static_cast<WinBackend*>(window->getBackend())};
                     const Size adjMinSize{calcAdjustedWindowSize(minSize, backend->getWindowStyle())};
                     lpMMI->ptMinTrackSize.x = adjMinSize.width;
                     lpMMI->ptMinTrackSize.y = adjMinSize.height;
@@ -322,7 +311,7 @@ namespace pTK
         return 0;
     }
 
-    void Win32Backend::handleMouseClick(Window *window, Event::Type type, Mouse::Button btn, LPARAM lParam)
+    void WinBackend::handleMouseClick(Window *window, Event::Type type, Mouse::Button btn, LPARAM lParam)
     {
         Point::value_type xpos = static_cast<Point::value_type>(GET_X_LPARAM(lParam));
         Point::value_type ypos = static_cast<Point::value_type>(GET_Y_LPARAM(lParam));

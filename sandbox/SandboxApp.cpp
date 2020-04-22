@@ -19,7 +19,6 @@ uint colSidebar{0x252525FF};
 uint colContent{0x171717FF};
 uint colText{0xF5F5F5FF};
 
-
 pTK::Color randomColor()
 {
     using color_size = pTK::Color::size_type;
@@ -27,14 +26,14 @@ pTK::Color randomColor()
     static std::mt19937 rgen(rdev());
     std::uniform_int_distribution<color_size> idist(0, std::numeric_limits<color_size>::max());
     color_size hex = idist(rgen);
-    std::cout << "new color: " << hex << std::endl;
-    return pTK::Color(hex);
+    const pTK::Color color{hex};
+    std::cout << "rnd color: 0x" << std::hex << (uint)color.r << (uint)color.g << (uint)color.b << (uint)color.a << std::endl;
+    return color;
 }
 
 int main(int argc, char *argv[]) {
     pTK::Application app{argc, argv};
-    pTK::Window window{"pTK Sandbox Window", {960, 540}, pTK::BackendType::HARDWARE};
-    //pTK::GLFWWindow window("pTK GLFW Window", {960, 540});
+    pTK::Window window{"pTK Sandbox Window", {960, 540}};
     window.setBackground(pTK::Color(0x232323FF));
 
     // Set ESC key to close the window.
