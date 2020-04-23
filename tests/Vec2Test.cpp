@@ -9,34 +9,34 @@ TEMPLATE_TEST_CASE ("Vec2 Constructors", "[Vec2][template]", int, uint8_t, uint1
 
     SECTION("Vec2()")
     {
-        pTK::Vec2<int> vec;
+        pTK::Vec2<TestType> vec;
         REQUIRE(vec.x == 0);
         REQUIRE(vec.y == 0);
     }
     
     SECTION("Vec2(T t_x, T t_y)")
     {
-        pTK::Vec2<int> vec{1, 2};
+        pTK::Vec2<TestType> vec{1, 2};
         REQUIRE(vec.x == 1);
         REQUIRE(vec.y == 2);
     }
 }
 
-TEMPLATE_TEST_CASE ("Vec2 Copy and Assignment", "[Vec2][template]", int, uint8_t, uint16_t, uint32_t, float, double)
+TEMPLATE_TEST_CASE("Vec2 Copy and Assignment", "[Vec2][template]", int, uint8_t, uint16_t, uint32_t, float, double)
 {
     // Testing Vec2 Copy and Assignment.
-    pTK::Vec2<int> vec{10, 20};
+    pTK::Vec2<TestType> vec{10, 20};
     
     SECTION("Copy")
     {
-        pTK::Vec2<int> tmp = vec;
+        pTK::Vec2<TestType> tmp = vec;
         REQUIRE(vec.x == tmp.x);
         REQUIRE(vec.y == tmp.y);
     }
     
     SECTION("Assignment")
     {
-        pTK::Vec2<int> tmp;
+        pTK::Vec2<TestType> tmp;
         tmp = vec;
         REQUIRE(vec.x == 10);
         REQUIRE(vec.y == 20);
@@ -52,9 +52,9 @@ TEMPLATE_TEST_CASE ("Vec2 Copy and Assignment", "[Vec2][template]", int, uint8_t
 TEMPLATE_TEST_CASE ("Vec2 Comparison", "[Vec2][template]", int, uint8_t, uint16_t, uint32_t, float, double)
 {
     // Testing Vec2 Comparison.
-    pTK::Vec2<int> vec;
-    pTK::Vec2<int> vec2;
-    pTK::Vec2<int> vec3{1, 1};
+    pTK::Vec2<TestType> vec;
+    pTK::Vec2<TestType> vec2;
+    pTK::Vec2<TestType> vec3{1, 1};
     
     SECTION("Equal")
     {
@@ -69,15 +69,15 @@ TEMPLATE_TEST_CASE ("Vec2 Comparison", "[Vec2][template]", int, uint8_t, uint16_
     }
 }
 
-TEMPLATE_TEST_CASE ("Vec2 operators", "[Vec2][template]", int, uint8_t, uint16_t, uint32_t, float, double)
+TEMPLATE_TEST_CASE ("Vec2 operators", "[Vec2][template]", int, unsigned int, float, double)
 {
     // Testing Vec2 Operators.
     
     SECTION("operator+")
     {
-        pTK::Vec2<int> vec;
-        pTK::Vec2<int> check;
-        pTK::Vec2<int> add{10, 20};
+        pTK::Vec2<TestType> vec;
+        pTK::Vec2<TestType> check;
+        pTK::Vec2<TestType> add{10, 20};
         
         check = vec + add;
         REQUIRE(check.x == 10);
@@ -90,24 +90,27 @@ TEMPLATE_TEST_CASE ("Vec2 operators", "[Vec2][template]", int, uint8_t, uint16_t
     
     SECTION("operator-")
     {
-        pTK::Vec2<int> vec;
-        pTK::Vec2<int> check;
-        pTK::Vec2<int> sub{10, 20};
-        
-        check = vec - sub;
-        REQUIRE(check.x == -10);
-        REQUIRE(check.y == -20);
-        
-        check = check - sub;
-        REQUIRE(check.x == -20);
-        REQUIRE(check.y == -40);
-    }
+        if (typeid(TestType) != typeid(unsigned int))
+		{
+			pTK::Vec2<TestType> vec;
+			pTK::Vec2<TestType> check;
+			pTK::Vec2<TestType> sub{10, 20};
+			
+			check = vec - sub;
+			REQUIRE(check.x == -10);
+			REQUIRE(check.y == -20);
+			
+			check = check - sub;
+			REQUIRE(check.x == -20);
+			REQUIRE(check.y == -40);
+		}
+	}
     
     SECTION("operator*")
     {
-        pTK::Vec2<int> vec;
-        pTK::Vec2<int> check;
-        pTK::Vec2<int> mul{10, 20};
+        pTK::Vec2<TestType> vec;
+        pTK::Vec2<TestType> check;
+        pTK::Vec2<TestType> mul{10, 20};
         
         check = vec * mul;
         REQUIRE(check.x == 0);
@@ -120,9 +123,9 @@ TEMPLATE_TEST_CASE ("Vec2 operators", "[Vec2][template]", int, uint8_t, uint16_t
     
     SECTION("operator/")
     {
-        pTK::Vec2<int> vec;
-        pTK::Vec2<int> check;
-        pTK::Vec2<int> div{10, 20};
+        pTK::Vec2<TestType> vec;
+        pTK::Vec2<TestType> check;
+        pTK::Vec2<TestType> div{10, 20};
         
         check = vec / div;
         REQUIRE(check.x == 0);
@@ -132,7 +135,7 @@ TEMPLATE_TEST_CASE ("Vec2 operators", "[Vec2][template]", int, uint8_t, uint16_t
         REQUIRE(check.x == 1);
         REQUIRE(check.y == 1);
         
-        pTK::Vec2<int> div2{1, 10};
+        pTK::Vec2<TestType> div2{1, 10};
         check = div / div2;
         REQUIRE(check.x == 10);
         REQUIRE(check.y == 2);
@@ -140,8 +143,8 @@ TEMPLATE_TEST_CASE ("Vec2 operators", "[Vec2][template]", int, uint8_t, uint16_t
     
     SECTION("operator+=")
     {
-        pTK::Vec2<int> check;
-        pTK::Vec2<int> add{10, 20};
+        pTK::Vec2<TestType> check;
+        pTK::Vec2<TestType> add{10, 20};
         
         check += add;
         REQUIRE(check.x == 10);
