@@ -33,8 +33,11 @@ endif()
 
 if (WIN32)
     set(PLATFORM_FILES platform/win/WinRasterContext.cpp
-            platform/win/WinGLContext.cpp
             platform/win/WinBackend.cpp)
+    if (HW_ACCELERATION)
+        set(PLATFORM_FILES ${PLATFORM_FILES}
+                platform/win/WinGLContext.cpp)
+    endif (HW_ACCELERATION)
     message(STATUS "Using Windows backend")
 else()
     set(PLATFORM_FILES platform/glfw/GLContext.cpp
@@ -67,8 +70,10 @@ endif (NOT MSVC)
 target_link_libraries(${PROJECT_NAME} ${SKIA_PLATFORM_DEPENDENCIES} skia)
 
 # OpenGL
-target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES})
+if (HW_ACCELERATION)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES})
+endif (HW_ACCELERATION)
 
 # GLFW
 if (NOT WIN32)

@@ -20,7 +20,8 @@ namespace pTK
 {
     Window::Window(const std::string& name, const Size& size, BackendType backend)
             : VBox(), Singleton(),
-                m_winBackend{nullptr}, m_eventQueue{}, m_draw{false}, m_close{false}
+                m_winBackend{nullptr}, m_eventQueue{}, m_draw{false}, m_close{false},
+                m_threadID{std::this_thread::get_id()}
     {
         // Set Widget properties.
         Sizable::setSize(size);
@@ -72,6 +73,9 @@ namespace pTK
     void Window::postEvent(Event *event)
     {
         m_eventQueue.push(std::unique_ptr<Event>(event));
+
+        if (m_threadID != std::this_thread::get_id())
+            m_winBackend->notifyEvent();
     }
 
     Size Window::getContentSize() const

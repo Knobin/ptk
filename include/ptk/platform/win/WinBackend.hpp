@@ -127,6 +127,14 @@ namespace pTK
         */
         void setIcon(const std::string& path) override;
 
+        /** Function for notifying the backend that an event has been pushed from
+            a different thread.
+
+            Depending on the implementation, pollEvents() might need to be exited.
+            This function will notify when that is needed.
+        */
+        void notifyEvent() override;
+
         /** Function for retrieving the current Windows style of the Window.
 
             @return Window style

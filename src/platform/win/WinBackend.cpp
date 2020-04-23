@@ -12,7 +12,12 @@
 #include "ptk/events/WindowEvent.hpp"
 #include "ptk/events/KeyCodes.hpp"
 #include "ptk/platform/win/WinRasterContext.hpp"
-#include "ptk/platform/win/WinGLContext.hpp"
+
+// Include OpenGL backend if HW Acceleration is enabled.
+#ifdef PTK_HW_ACCELERATION
+    #include "ptk/platform/win/WinGLContext.hpp"
+#endif // PTK_HW_ACCELERATION
+
 
 // Windows Headers
 #include <windowsx.h>
@@ -178,6 +183,13 @@ namespace pTK
         // Ensure that the applicaton icon is changed.
         SendMessage(GetWindow(m_handle, GW_OWNER), WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
         SendMessage(GetWindow(m_handle, GW_OWNER), WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+    }
+
+    void WinBackend::notifyEvent()
+    {
+        // Event has been pushed from a different thread.
+        // send an empty event to exit the message loop.
+        PostMessageW(m_handle, WM_NULL, 0, 0);
     }
 
     DWORD WinBackend::getWindowStyle() const

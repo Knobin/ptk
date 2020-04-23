@@ -5,6 +5,8 @@
 // C++ Headers
 #include <iostream>
 #include <random>
+#include <thread>
+#include <atomic>
 
 // settings
 const unsigned int SCR_WIDTH = 960;
@@ -211,5 +213,18 @@ int main(int argc, char *argv[]) {
 
     window.setMaxSize({1280, 720});
 
-    return app.exec(&window);
+    std::atomic<bool> run{true};
+    std::thread t1{[&](){
+        while (run)
+        {
+            r1->setColor(randomColor());
+            std::this_thread::sleep_for(std::chrono::milliseconds (100));
+        }
+    }};
+
+    int ret{app.exec(&window)};
+    run = false;
+    t1.join();
+
+    return ret;
 }

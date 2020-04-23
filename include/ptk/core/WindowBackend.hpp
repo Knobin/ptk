@@ -133,6 +133,14 @@ namespace pTK
         */
         virtual void setIcon(const std::string& UNUSED(path)) = 0;
 
+        /** Function for notifying the backend that an event has been pushed from
+            a different thread.
+
+            Depending on the implementation, pollEvents() might need to be exited.
+            This function will notify when that is needed.
+        */
+        virtual void notifyEvent() {};
+
         /** Function for retrieving the backend type of the Window.
 
             @return     backend type

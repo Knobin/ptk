@@ -19,6 +19,7 @@
 // C++ Headers
 #include <memory>
 #include <string>
+#include <thread>
 
 namespace pTK
 {
@@ -154,6 +155,7 @@ namespace pTK
         SafeQueue<std::unique_ptr<Event>> m_eventQueue;
         bool m_draw;
         bool m_close;
+        std::thread::id m_threadID;
     };
 }
 
