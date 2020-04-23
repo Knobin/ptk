@@ -113,6 +113,20 @@ namespace pTK
         */
         void endPaint() override;
 
+        /** Function for setting the title of the window.
+
+            @param name     title to show
+        */
+        void setTitle(const std::string& name) override;
+
+        /** Function for setting the icon of the window.
+
+            Note: Will only accept .ico files!
+
+            @param path     icon path
+        */
+        void setIcon(const std::string& path) override;
+
         /** Function for retrieving the current Windows style of the Window.
 
             @return Window style

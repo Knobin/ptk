@@ -128,6 +128,10 @@ namespace pTK
         */
         void setPosHint(const Point& pos) override;
 
+        void setTitle(const std::string& name);
+
+        void setIcon(const std::string& path);
+
         /** Function for retrieving the backend.
 
             @return    backend

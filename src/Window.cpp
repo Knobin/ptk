@@ -12,7 +12,6 @@
 #include "ptk/events/MouseEvent.hpp"
 #include "ptk/events/WindowEvent.hpp"
 #include "ptk/Core.hpp"
-#include "ptk/core/ContextBase.hpp"
 
 // C++ Headers
 #include <memory>
@@ -230,6 +229,16 @@ namespace pTK
     {
         m_winBackend->setPosHint(pos);
         PTK_INFO("pos: {}x{}", pos.x, pos.y);
+    }
+
+    void Window::setTitle(const std::string& name)
+    {
+        m_winBackend->setTitle(name);
+    }
+
+    void Window::setIcon(const std::string& path)
+    {
+        m_winBackend->setIcon(path);
     }
 
     WindowBackend* Window::getBackend() const

@@ -42,12 +42,6 @@ namespace pTK
         return {width, height};
     }
 
-    static Size calcScaling(const Size& size, const Vec2f& scale)
-    {
-        return {static_cast<Size::value_type>(size.width * scale.x),
-                     static_cast<Size::value_type>(size.height * scale.y)};
-    }
-
     static std::map<byte, int32> initKeyCodes()
     {
         std::map<byte, int32> map{};
@@ -101,7 +95,7 @@ namespace pTK
         WNDCLASSEXW wcx{};
         wcx.cbSize = sizeof(wcx);
         wcx.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-        wcx.hInstance = GetModuleHandleW(nullptr);;
+        wcx.hInstance = GetModuleHandleW(nullptr);
         wcx.lpfnWndProc = wndPro;
         wcx.cbClsExtra = 0;
         wcx.cbWndExtra = 0;
@@ -164,6 +158,26 @@ namespace pTK
     void WinBackend::endPaint()
     {
         EndPaint(m_handle, &ps);
+    }
+
+    void WinBackend::setTitle(const std::string& name)
+    {
+        SetWindowTextW(m_handle, get_utf16(name).c_str());
+    }
+
+    void WinBackend::setIcon(const std::string& path)
+    {
+        // Load icon.
+        UINT flags{LR_DEFAULTSIZE | LR_LOADFROMFILE | LR_SHARED};
+        HANDLE hIcon{LoadImage(nullptr, path.c_str(), IMAGE_ICON, 0, 0, flags)};
+
+        // Apply icon.
+        SendMessage(m_handle, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+        SendMessage(m_handle, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+
+        // Ensure that the applicaton icon is changed.
+        SendMessage(GetWindow(m_handle, GW_OWNER), WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+        SendMessage(GetWindow(m_handle, GW_OWNER), WM_SETICON, ICON_BIG, (LPARAM)hIcon);
     }
 
     DWORD WinBackend::getWindowStyle() const

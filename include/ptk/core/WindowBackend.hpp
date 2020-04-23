@@ -121,6 +121,18 @@ namespace pTK
         */
         virtual void endPaint() {}
 
+        /** Function for setting the title of the window.
+
+            @param name     title to show
+        */
+        virtual void setTitle(const std::string& UNUSED(name)) = 0;
+
+        /** Function for setting the icon of the window.
+
+            @param path     icon path
+        */
+        virtual void setIcon(const std::string& UNUSED(path)) = 0;
+
         /** Function for retrieving the backend type of the Window.
 
             @return     backend type

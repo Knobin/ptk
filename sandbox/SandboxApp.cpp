@@ -1,5 +1,6 @@
 // pTK Headers
 #include "ptk/ptk.hpp"
+#include "ptk/events/KeyCodes.hpp"
 
 // C++ Headers
 #include <iostream>
@@ -43,6 +44,8 @@ int main(int argc, char *argv[]) {
             window.close();
         if ((type == pTK::Event::Type::KeyReleased) && (key == 32))
             window.setPosHint({200, 50});
+        if ((type == pTK::Event::Type::KeyReleased) && (key == PTK_KEY_A))
+            window.setTitle("Test title change");
 
         std::cout << "keycode: " << key << std::endl;
 
