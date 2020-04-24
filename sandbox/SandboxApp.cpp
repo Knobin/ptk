@@ -30,7 +30,6 @@ pTK::Color randomColor()
     std::uniform_int_distribution<color_size> idist(0, std::numeric_limits<color_size>::max());
     color_size hex = idist(rgen);
     const pTK::Color color{hex};
-    std::cout << "rnd color: 0x" << std::hex << (uint)color.r << (uint)color.g << (uint)color.b << (uint)color.a << std::endl;
     return color;
 }
 
@@ -48,6 +47,8 @@ int main(int argc, char *argv[]) {
             window.setPosHint({200, 50});
         if ((type == pTK::Event::Type::KeyReleased) && (key == PTK_KEY_A))
             window.setTitle("Test title change");
+        if ((type == pTK::Event::Type::KeyReleased) && (key == PTK_KEY_G))
+            std::cout << window.getWinPos().x << "x" <<  window.getWinPos().y << std::endl;
 
         std::cout << "keycode: " << key << std::endl;
 

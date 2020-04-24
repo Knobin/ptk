@@ -24,7 +24,7 @@ namespace pTK
     Window::Window(const std::string& name, const Size& size, BackendType backend)
             : VBox(), Singleton(),
                 m_winBackend{nullptr}, m_eventQueue{}, m_draw{false}, m_close{false},
-                m_threadID{std::this_thread::get_id()}
+                m_threadID{std::this_thread::get_id()}, m_winPos{}
     {
         // Set Widget properties.
         Sizable::setSize(size);
@@ -193,7 +193,12 @@ namespace pTK
                 refitContent(size);
                 m_draw = true;
             }
-        } else if (type == Event::Type::WindowClose)
+        } else if (type == Event::Type::WindowMoved)
+        {
+            MoveEvent* mEvent{static_cast<MoveEvent*>(event)};
+            m_winPos = mEvent->position;
+        }
+        else if (type == Event::Type::WindowClose)
         {
             m_close = true;
         }
@@ -235,7 +240,11 @@ namespace pTK
     void Window::setPosHint(const Point& pos)
     {
         m_winBackend->setPosHint(pos);
-        PTK_INFO("pos: {}x{}", pos.x, pos.y);
+    }
+
+    const Point& Window::getWinPos() const
+    {
+        return m_winPos;
     }
 
     void Window::setTitle(const std::string& name)

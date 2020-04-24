@@ -11,6 +11,7 @@
 // Local Headers
 #include "ptk/core/Event.hpp"
 #include "ptk/util/Size.hpp"
+#include "ptk/util/Point.hpp"
 
 namespace pTK
 {
@@ -69,6 +70,17 @@ namespace pTK
 
     private:
         Size m_size;
+    };
+
+    class MoveEvent final : public Event
+    {
+    public:
+        MoveEvent(const Point& pos)
+            : Event(Event::Category::Window, Event::Type::WindowMoved), position{pos}
+        {
+        }
+
+        const Point position;
     };
 }
 

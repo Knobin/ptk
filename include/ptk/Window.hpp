@@ -129,6 +129,8 @@ namespace pTK
         */
         void setPosHint(const Point& pos) override;
 
+        const Point& getWinPos() const;
+
         void setTitle(const std::string& name);
 
         void setIcon(const std::string& path);
@@ -150,12 +152,16 @@ namespace pTK
         void onResize(const Size& size) override;
         void onLimitChange(const Size& min, const Size& max) override;
 
+        // getPosition should not be used outside this class.
+        using VBox::getPosition;
+
     private:
         std::unique_ptr<WindowBackend> m_winBackend;
         SafeQueue<std::unique_ptr<Event>> m_eventQueue;
         bool m_draw;
         bool m_close;
         std::thread::id m_threadID;
+        Point m_winPos;
     };
 }
 

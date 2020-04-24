@@ -297,7 +297,10 @@ namespace pTK
                 PostQuitMessage(0);
                 break;
             case WM_MOVE:
-                // TODO: Should set the parent Window position property (getPosition should work correctly).
+                {
+                    MoveEvent evt{{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)}};
+                    window->sendEvent(&evt);
+                }
                 break;
             case WM_PAINT:
                 if (window->visible())
