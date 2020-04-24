@@ -170,11 +170,50 @@ namespace pTK
         SetWindowTextW(m_handle, get_utf16(name).c_str());
     }
 
-    void WinBackend::setIcon(const std::string& path)
+    void WinBackend::setIcon(int32 width, int32 height, byte* pixels)
     {
-        // Load icon.
-        UINT flags{LR_DEFAULTSIZE | LR_LOADFROMFILE | LR_SHARED};
-        HANDLE hIcon{LoadImage(nullptr, path.c_str(), IMAGE_ICON, 0, 0, flags)};
+        // DIB information.
+        BITMAPV5HEADER bmInfo{};
+        ZeroMemory(&bmInfo, sizeof(bmInfo));
+        bmInfo.bV5Size        = sizeof(bmInfo);
+        bmInfo.bV5Width       = width;
+        bmInfo.bV5Height      = -height;
+        bmInfo.bV5Planes      = 1;
+        bmInfo.bV5BitCount    = 32;
+        bmInfo.bV5Compression = BI_BITFIELDS;
+        bmInfo.bV5RedMask     = 0x00FF0000;
+        bmInfo.bV5GreenMask   = 0x0000FF00;
+        bmInfo.bV5BlueMask    = 0x000000FF;
+        bmInfo.bV5AlphaMask   = 0xFF000000;
+
+        // Create the DIB.
+        HDC dc{GetDC(nullptr)};
+        byte *target{nullptr};
+        HBITMAP color{CreateDIBSection(dc, reinterpret_cast<BITMAPINFO*>(&bmInfo), DIB_RGB_COLORS,
+                                         reinterpret_cast<void**>(&target) ,nullptr, 0)};
+        ReleaseDC(nullptr, dc);
+        PTK_ASSERT(color, "Failed to create HBITMAP");
+
+        // Transform pixels from RGBA to BGRA.
+        for (int i = 0;  i < width * height;  i++)
+        {
+            target[(i * 4)]     = pixels[(i * 4) + 2];
+            target[(i * 4) + 1] = pixels[(i * 4) + 1];
+            target[(i * 4) + 2] = pixels[(i * 4) + 0];
+            target[(i * 4) + 3] = pixels[(i * 4) + 3];
+        }
+
+        // Create the mask.
+        HBITMAP mask{CreateBitmap(width, height, 1, 1, nullptr)};
+        PTK_ASSERT(color, "Failed to create HBITMAP");
+
+        // Finally, create the icon.
+        ICONINFO iconInfo{true, 0, 0, mask, color};
+        HICON hIcon{CreateIconIndirect(&iconInfo)};
+        PTK_ASSERT(color, "Failed to create the icon");
+
+        DeleteObject(color);
+        DeleteObject(mask);
 
         // Apply icon.
         SendMessage(m_handle, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
@@ -188,8 +227,8 @@ namespace pTK
     void WinBackend::notifyEvent()
     {
         // Event has been pushed from a different thread.
-        // send an empty event to exit the message loop.
-        PostMessageW(m_handle, WM_NULL, 0, 0);
+        // Signal the window to redraw.
+        RedrawWindow(m_handle, nullptr, nullptr, RDW_INTERNALPAINT | RDW_UPDATENOW);
     }
 
     DWORD WinBackend::getWindowStyle() const

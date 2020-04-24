@@ -129,9 +129,15 @@ namespace pTK
 
         /** Function for setting the icon of the window.
 
-            @param path     icon path
+            Note: The function expects the pixels to be in a RGBA format with size of 32 bits (4 bytes).
+            Therefore, size of the pixel array is width * height * 32.
+            This is why a size parameter is not needed.
+
+            @param width    width of the image
+            @param height   height of the image
+            @param pixels   image pixels in a RGBA format.
         */
-        virtual void setIcon(const std::string& UNUSED(path)) = 0;
+        virtual void setIcon(int32 UNUSED(width), int32 UNUSED(height), byte* UNUSED(pixels)) = 0;
 
         /** Function for notifying the backend that an event has been pushed from
             a different thread.

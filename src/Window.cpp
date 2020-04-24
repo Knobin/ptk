@@ -16,6 +16,9 @@
 // C++ Headers
 #include <memory>
 
+// Skia Headers
+#include "include/core/SkImage.h"
+
 namespace pTK
 {
     Window::Window(const std::string& name, const Size& size, BackendType backend)
@@ -242,7 +245,42 @@ namespace pTK
 
     void Window::setIcon(const std::string& path)
     {
-        m_winBackend->setIcon(path);
+        // Load file.
+        sk_sp<SkData> imageData = SkData::MakeFromFileName(path.c_str());
+        if (imageData)
+        {
+            // Convert file to image.
+            sk_sp<SkImage> image{SkImage::MakeFromEncoded(imageData)};
+            if (image)
+            {
+                // Read pixels in an RGBA format.
+                const SkImageInfo imageInfo{image->imageInfo().makeColorType(SkColorType::kRGBA_8888_SkColorType)};
+                size_t storageSize{imageInfo.computeMinByteSize()};
+                std::unique_ptr<byte[]> pixelData = std::make_unique<byte[]>(storageSize);
+
+                if (image->readPixels(imageInfo, pixelData.get(), imageInfo.minRowBytes(), 0, 0))
+                    m_winBackend->setIcon(static_cast<int32>(image->width()),
+                        static_cast<int32>(image->height()), pixelData.get());
+#ifdef PTK_DEBUG
+                else
+                {
+                    PTK_WARN("Failed to convert image \"{}\" to a RGBA format", path);
+                }
+#endif // PTK_DEBUG
+            }
+#ifdef PTK_DEBUG
+            else
+            {
+                PTK_WARN("Could not decode image \"{}\"", path);
+            }
+#endif // PTK_DEBUG
+        }
+#ifdef PTK_DEBUG
+        else
+        {
+            PTK_WARN("Failed to open \"{}\"", path);
+        }
+#endif // PTK_DEBUG
     }
 
     WindowBackend* Window::getBackend() const
