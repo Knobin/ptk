@@ -129,10 +129,25 @@ namespace pTK
         */
         void setPosHint(const Point& pos) override;
 
+        /** Function for retrieving the window position.
+
+            Note: getPosition is not used due to being internally used by either children or VBOX.
+            Use this function for retrieving the Window Coordinates.
+
+            @return window postion
+        */
         const Point& getWinPos() const;
 
+        /** Function for setting the window title.
+
+            @param name     title to set
+        */
         void setTitle(const std::string& name);
 
+        /** Function for setting the window icon.
+
+            @param path     path to image
+        */
         void setIcon(const std::string& path);
 
         /** Function for retrieving the backend.

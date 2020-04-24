@@ -114,7 +114,7 @@ namespace pTK
 
     void Window::onResize(const Size& size)
     {
-        if (m_winBackend)
+        if ((m_winBackend) && (m_winBackend->getContext()->getSize() != size))
             m_winBackend->resize(size);
     }
 

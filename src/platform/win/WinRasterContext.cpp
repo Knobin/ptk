@@ -39,9 +39,9 @@ namespace pTK
         SkImageInfo info = SkImageInfo::Make(w, h, m_colorType, kPremul_SkAlphaType,nullptr);
         m_surface = SkSurface::MakeRasterDirect(info, pixels, sizeof(uint32_t) * w);
         if (!m_surface)
-            throw ContextError("Failed to create Raster Canvas for Windows Window");
+            throw ContextError("Failed to create Raster Context for Windows Window");
 
-        PTK_INFO("Created WinRasterCanvas: {}x{}", size.width, size.height);
+        PTK_INFO("Created WinRasterContext: {}x{}", size.width, size.height);
         setSize(size);
     }
 

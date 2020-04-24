@@ -190,7 +190,7 @@ namespace pTK
         HDC dc{GetDC(nullptr)};
         byte *target{nullptr};
         HBITMAP color{CreateDIBSection(dc, reinterpret_cast<BITMAPINFO*>(&bmInfo), DIB_RGB_COLORS,
-                                         reinterpret_cast<void**>(&target) ,nullptr, 0)};
+                                         reinterpret_cast<void**>(&target) , nullptr, 0)};
         ReleaseDC(nullptr, dc);
         PTK_ASSERT(color, "Failed to create HBITMAP");
 
@@ -205,12 +205,12 @@ namespace pTK
 
         // Create the mask.
         HBITMAP mask{CreateBitmap(width, height, 1, 1, nullptr)};
-        PTK_ASSERT(color, "Failed to create HBITMAP");
+        PTK_ASSERT(mask, "Failed to create HBITMAP");
 
         // Finally, create the icon.
         ICONINFO iconInfo{true, 0, 0, mask, color};
         HICON hIcon{CreateIconIndirect(&iconInfo)};
-        PTK_ASSERT(color, "Failed to create the icon");
+        PTK_ASSERT(hIcon, "Failed to create the icon");
 
         DeleteObject(color);
         DeleteObject(mask);
