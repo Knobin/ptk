@@ -18,7 +18,7 @@
 namespace pTK
 {
     /** Box class implementation.
-     
+
         Derived from Container, this class for holding Widgets in
         order of displaying them in a vertical style.
 
@@ -31,9 +31,9 @@ namespace pTK
     {
     public:
         /** Constructs Box with default values.
-         
+
             @return    default initialized Box
-         */
+        */
         Box();
 
         /** Deconstructor for Box.
@@ -42,170 +42,174 @@ namespace pTK
         virtual ~Box();
 
         /** Function for adding a Widget
-         
-            Derived from Container.
-         
+
             @param widget  Widget to add
             @return        Status (true if added)
         */
         bool add(const Ref<Widget>& widget) override;
-        
-        /** Function for removing a Widget
-         
-            Derived from Container.
-            
+
+        /** Function for removing a Widget.
+
             @param widget  Widget to remove
         */
         void remove(const Ref<Widget>& widget) override;
 
-        /** Function for setting the position of the VBox and its
-            children.
-
-            Derived from Widget.
+        /** Function for setting the position of the VBox and its children.
 
             @param pos     Position to set
         */
         void setPosHint(const Point& pos) override;
-        
-        /** Draw function.
-            Function is called when it is time to draw.
-        
-            Derived from Drawable.
+
+        /** Function is called when it is time to draw.
+
             @param canvas  canvas to draw to
         */
         void onDraw(SkCanvas* canvas) override;
 
-        /** Function for a child Widget to call the Parent when it
-            need to be drawn.
-         
-            Derived from Widget.
-         
+        /** Function for a child Widget to call the Parent when it need to be drawn.
+
             @param widget  Child Widget
             @return        Status (true if handled)
         */
         bool updateChild(Widget* widget) override;
-        
-        /** Function for a child Widget to call the Parent when it
-            need to be drawn.
-         
-             Derived from Widget.
-         
+
+        /** Function for a child Widget to call the Parent when it need to be drawn.
+
             @param widget  Child Widget
             @return        Status (true if handled)
         */
         bool drawChild(Widget* widget) override;
 
-        /** Funtion for finding a widget in the Container.
-            Function will look for a widget with the specified name and it
-            will grab the first with the matching name.
-         
-            Meaning that if two Widgets or more have the same name, only the
-            first added will be found.
-         
+        /** Function for finding a widget in the Container.
+
+            Function will look for a widget with the specified name and it will grab the first
+            with the matching name.
+
+            Meaning that if two Widgets or more have the same name, only the first added will
+            be found.
+
             @param name    name to find
             @return        const_iterator to widget or end const_iterator
         */
         const_iterator find(const std::string& name);
-        
-        /** Funtion for finding a widget in the Container.
-            Function can be used to check if a pointer to Widget exists.
-         
+
+        /** Function for finding a widget in the Container.
+
             @param widget  widget to find
             @return        const_iterator to widget or end const_iterator
         */
         const_iterator findRaw(const Widget* widget);
-        
-        /** Funtion for finding a widget in the Container.
-         
+
+        /** Function for finding a widget in the Container.
+
             @param pos     pos to find
             @return        const_iterator to widget or end const_iterator
         */
         const_iterator find(const Point& pos);
-        
-        /** Funtion for finding a widget in the Container.
+
+        /** Function for finding a widget in the Container.
             In reverse order.
-         
+
             @param pos     pos to find
             @return        const_iterator to widget or end const_iterator
         */
         reverse_iterator rfind(const Point& pos);
-        
+
         /** Function for handling when a key is pressed or released.
-         
-            Derived from EventFunctions.
-         
+
             @param type    Key event (press or release)
             @param int     Keycode
         */
         bool onKeyEvent(Event::Type type, int32 keycode) override;
-        
+
         /** Function for handling when mouse is hovering.
-         
-            Derived from EventFunctions.
-         
+
             @param pos     position
         */
         bool onHoverEvent(const Point& pos) override;
-        
+
         /** Function for handling when mouse is entering.
-         
-            Derived from EventFunctions.
+
         */
         bool onEnterEvent() override;
-        
+
         /** Function for handling when mouse is leaving.
-         
-            Derived from EventFunctions.
+
         */
         bool onLeaveEvent() override;
-        
+
         /** Function for handling when mouse is scrolling.
-         
-            Derived from EventFunctions.
-         
+
             @param offset     x and y offset
         */
         bool onScrollEvent(const Vec2f& offset) override;
-        
+
         /** Function for handling when mouse is clicking.
-         
-            Derived from EventFunctions.
-         
+
             @param button      which button on mouse triggered the event.
             @param position    x and y position
         */
         bool onClickEvent(Mouse::Button btn, const Point& pos) override;
-        
+
         /** Function for handling when mouse is released.
-         
+
             Derived from EventFunctions.
-         
+
             @param button      which button on mouse triggered the event.
             @param position    x and y position
         */
         bool onReleaseEvent(Mouse::Button btn, const Point& pos) override;
-        
-        /** Funtion for setting the background of the Container.
-         
+
+        /** Function for setting the background of the Container.
+
             @param color   background color
         */
         void setBackground(const Color& color);
-        
-        /** Funtion for getting the background of the Container.
-         
+
+        /** Function for getting the background of the Container.
+
             @return    current background color
         */
         const Color& getBackground() const;
 
     protected:
+        /** Function for checking if a child has called a parent function.
+
+            Used to avoid unnecessary recursion.
+            If this function will break something in the future (might do), replace it.
+
+            @return     status
+        */
         bool busy() const;
-        
+
     private:
-        virtual void onAdd(const Ref<Widget>&) {}
-        virtual void onRemove(const Ref<Widget>&) {}
-        virtual void onChildUpdate(size_type) {}
-        virtual void onChildDraw(size_type) {}
-        
+        /** Callback to use when a Widget has been successfully added.
+
+            @param widget   child that has been added
+        */
+        virtual void onAdd(const Ref<Widget>& UNUSED(widget)) {}
+
+        /** Callback to use when a Widget has been removed.
+
+            Note: widget has already been removed from the container and cannot be accessed with
+            any non-modifying functions.
+
+            @param widget   child that has been removed
+        */
+        virtual void onRemove(const Ref<Widget>& UNUSED(widget)) {}
+
+        /** Callback to use when a child has called the parent update function.
+
+            @param index   the index of the child
+        */
+        virtual void onChildUpdate(size_type UNUSED(index)) {}
+
+        /** Callback to use when a child has called the parent draw function.
+
+            @param index   the index of the child
+        */
+        virtual void onChildDraw(size_type UNUSED(index)) {}
+
     private:
         // Variables
         Color m_background;
@@ -213,6 +217,6 @@ namespace pTK
         Widget* m_currentHoverWidget;
         bool m_busy;
     };
-}
+} // namespace pTK
 
 #endif // PTK_CORE_BOX_HPP

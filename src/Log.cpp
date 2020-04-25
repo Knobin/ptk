@@ -8,9 +8,6 @@
 // Local Headers
 #include "ptk/Log.hpp"
 
-// spdlog Headers
-#include "spdlog/sinks/stdout_sinks.h"
-
 namespace pTK
 {
     std::shared_ptr<spdlog::logger> Log::s_logger;

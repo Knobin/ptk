@@ -97,6 +97,12 @@ namespace pTK
         virtual void swapBuffers() {};
 
     protected:
+        /** Function for setting the size of the context.
+
+            Note: this function is only for internal use to update the size so that the getSize works.
+
+            @param size     size to set.
+        */
         void setSize(const Size& size);
 
     private:

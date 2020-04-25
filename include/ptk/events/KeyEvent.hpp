@@ -23,9 +23,9 @@ namespace pTK
     class KeyEvent final : public Event
     {
     public:
-        // Ob jects for easier type management.
-        inline static Event::Type Pressed = Event::Type::KeyPressed;
-        inline static Event::Type Released = Event::Type::KeyReleased;
+        // Objects for easier type management.
+        inline static const Event::Type Pressed = Event::Type::KeyPressed;
+        inline static const Event::Type Released = Event::Type::KeyReleased;
 
     public:
         /** Constructs KeyEvent with default values with type and code.

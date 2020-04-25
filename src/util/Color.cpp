@@ -7,11 +7,9 @@
 
 // Local Headers
 #include "ptk/util/Color.hpp"
-#include <iostream>
 
 // C++ Headers
 #include <algorithm>
-#include <utility>
 
 namespace pTK
 {

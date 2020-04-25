@@ -7,10 +7,6 @@
 
 // Local Headers
 #include "ptk/widgets/Image.hpp"
-#include "ptk/Log.hpp"
-
-// Skia Headers
-#include "include/core/SkData.h"
 
 namespace pTK
 {

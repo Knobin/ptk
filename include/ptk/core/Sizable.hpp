@@ -38,49 +38,49 @@ namespace pTK
         */
         virtual ~Sizable() = default;
 
-        /** Funtion for setting minimal size.
+        /** Function for setting minimal size.
 
             @param size    minimal size
         */
         void setMinSize(const Size& size);
 
-        /** Funtion for getting the minimal size.
+        /** Function for getting the minimal size.
 
             @return    minimal size
         */
         Size getMinSize() const;
 
-        /** Funtion for setting size.
+        /** Function for setting size.
 
             @param size    size
         */
         void setSize(const Size& size);
 
-        /** Funtion for setting size.
+        /** Function for setting size.
 
             @param size    size
         */
         void setConstSize(const Size& size);
 
-        /** Funtion for getting the size.
+        /** Function for getting the size.
 
             @return    size
         */
         const Size& getSize() const;
 
-        /** Funtion for setting maximal size.
+        /** Function for setting maximal size.
 
             @param size    maximal size
         */
         void setMaxSize(const Size& size);
 
-        /** Funtion for getting the maximal size.
+        /** Function for getting the maximal size.
 
             @return    maximal size
         */
         Size getMaxSize() const;
 
-        /** Funtion for setting both minimal and maximal size.
+        /** Function for setting both minimal and maximal size.
 
             @param min    minimal size
             @param max    maximum size
@@ -94,7 +94,7 @@ namespace pTK
         bool isConstSize() const;
 
     private:
-        /** Funtion for knowing when the size has been changed.
+        /** Function for knowing when the size has been changed.
 
             Will be called when setSize accepts a new size.
             Internal size will be set before calling this, so
@@ -104,7 +104,7 @@ namespace pTK
         */
         virtual void onResize(const Size&) {}
 
-        /** Funtion for knowing when the limits has been changed.
+        /** Function for knowing when the limits has been changed.
 
             Will be called when when either setMinSize, setMaxSize or setLimits
             accepts a new size.

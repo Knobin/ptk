@@ -8,19 +8,10 @@
 // Local Headers
 #include "ptk/Window.hpp"
 #include "ptk/platform/Backend.hpp"
-#include "ptk/events/KeyEvent.hpp"
-#include "ptk/events/MouseEvent.hpp"
 #include "ptk/events/WindowEvent.hpp"
-#include "ptk/Core.hpp"
 
 // C++ Headers
 #include <memory>
-
-// Skia Headers
-#include "include/core/SkImage.h"
-
-#include "ptk/util/Clock.hpp"
-#include <iostream>
 
 namespace pTK
 {
@@ -219,7 +210,6 @@ namespace pTK
 
     void Window::forceDrawAll()
     {
-        Clock clock{};
         m_winBackend->beginPaint();
         ContextBase *context = m_winBackend->getContext();
         SkCanvas* canvas = context->skCanvas();
@@ -239,7 +229,6 @@ namespace pTK
         canvas->flush();
         m_winBackend->swapBuffers();
         m_winBackend->endPaint();
-        std::cout << "Frametime: " << clock.milliseconds() << std::endl;
     }
 
     void Window::setPosHint(const Point& pos)

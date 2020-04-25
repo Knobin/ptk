@@ -128,7 +128,7 @@ namespace pTK
             return *this;
         }
 
-        /** Funtion for pushing an item to the queue.
+        /** Function for pushing an item to the queue.
 
             @param item    item to push
         */
@@ -139,7 +139,7 @@ namespace pTK
             m_conditionVariable.notify_one();
         }
 
-        /** Funtion for pushing an item to the queue.
+        /** Function for pushing an item to the queue.
 
             @param item    item to push
         */
@@ -150,7 +150,7 @@ namespace pTK
             m_conditionVariable.notify_one();
         }
 
-        /** Funtion for emplacing an item to the queue.
+        /** Function for emplacing an item to the queue.
 
             @param item    item to emplace
         */
@@ -162,7 +162,7 @@ namespace pTK
             m_conditionVariable.notify_one();
         }
 
-        /** Funtion for removing the first item in the queue.
+        /** Function for removing the first item in the queue.
 
         */
         void pop()
@@ -173,7 +173,7 @@ namespace pTK
                 m_cont.pop_front();
         }
 
-        /** Funtion for retrieving the item at the front in the queue.
+        /** Function for retrieving the item at the front in the queue.
 
             This function will block the thread until push() has been called.
             If multiple threads is waiting in this function, multiple push()
@@ -191,7 +191,7 @@ namespace pTK
             return m_cont.front();
         }
 
-        /** Funtion for retrieving the item at the front in the queue.
+        /** Function for retrieving the item at the front in the queue.
 
             This function will block the thread until push() has been called.
             If multiple threads is waiting in this function, multiple push()
@@ -209,7 +209,7 @@ namespace pTK
             return m_cont.front();
         }
 
-        /** Funtion for retrieving the item at the back in the queue.
+        /** Function for retrieving the item at the back in the queue.
 
             This function will block the thread until push() has been called.
             If multiple threads is waiting in this function, multiple push()
@@ -227,7 +227,7 @@ namespace pTK
             return m_cont.back();
         }
 
-        /** Funtion for retrieving the item at the back in the queue.
+        /** Function for retrieving the item at the back in the queue.
 
             This function will block the thread until push() has been called.
             If multiple threads is waiting in this function, multiple push()
@@ -245,7 +245,7 @@ namespace pTK
             return m_cont.back();
         }
 
-        /** Funtion for checking if the queue is empty or not.
+        /** Function for checking if the queue is empty or not.
 
             @return    empty status
         */
@@ -256,7 +256,7 @@ namespace pTK
             return m_cont.empty();
         }
 
-        /** Funtion for checking the size of the queue.
+        /** Function for checking the size of the queue.
 
             @return    size
         */
@@ -267,7 +267,7 @@ namespace pTK
             return m_cont.size();
         }
 
-        /** Funtion for locking the queue.
+        /** Function for locking the queue.
             
             Will block if the mutex is not available.
         */
@@ -276,7 +276,7 @@ namespace pTK
             m_mutex.lock();
         }
 
-        /** Funtion for trying to lock the queue.
+        /** Function for trying to lock the queue.
 
             Will return instantly.
 
@@ -287,7 +287,7 @@ namespace pTK
             return m_mutex.try_lock();
         }
 
-        /** Funtion for unlocking the queue.
+        /** Function for unlocking the queue.
 
             Will block if the mutex is not available.
         */

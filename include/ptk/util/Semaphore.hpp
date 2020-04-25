@@ -42,12 +42,12 @@ namespace pTK
         */
         virtual ~Semaphore() = default;
         
-        /** Funtion for incrementing count and notify a waiting
+        /** Function for incrementing count and notify a waiting
             thread (if any).
         */
         int post();
         
-        /** Funtion for decrementing count, if count is zero, the
+        /** Function for decrementing count, if count is zero, the
             thread will wait until post() is called by another thread, then
             decrement count.
         */

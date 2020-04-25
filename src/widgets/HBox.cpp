@@ -7,7 +7,6 @@
 
 // Local Headers
 #include "ptk/widgets/HBox.hpp"
-#include "ptk/Log.hpp"
 
 namespace pTK
 {       

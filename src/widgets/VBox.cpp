@@ -7,14 +7,10 @@
 
 // Local Headers
 #include "ptk/widgets/VBox.hpp"
-#include "ptk/Log.hpp"
 
 // C++ Headers
-#include <algorithm>
 #include <cmath>
 #include <utility>
-#include <iostream>
-
 
 namespace pTK
 {
