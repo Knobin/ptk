@@ -23,31 +23,25 @@ namespace pTK
     class KeyEvent final : public Event
     {
     public:
-        /** Constructs KeyEvent with default values with t_type and t_keycode.
+        // Ob jects for easier type management.
+        inline static Event::Type Pressed = Event::Type::KeyPressed;
+        inline static Event::Type Released = Event::Type::KeyReleased;
+
+    public:
+        /** Constructs KeyEvent with default values with type and code.
          
-            @param type        press or release
-            @param keycode     associated keycode
-            @return            default initialized KeyEvent
+            @param type     press or release
+            @param code     associated keycode
+            @return         default initialized KeyEvent
         */
-        KeyEvent(Event::Type type, int32 keycode)
-            : Event(Event::Category::Key, type), m_keycode{keycode}
+        KeyEvent(Event::Type type, int32 code)
+            : Event(Event::Category::Key, type), keycode{code}
         {
 
         }
 
-        /** Deconstructor for KeyEvent.
-
-        */
-        ~KeyEvent() final = default;
-
-        /** Function for retrieving the associated keycode.
-         
-            @return    Pressed or Released keycode
-        */
-        int32 get_keycode() const { return m_keycode; }
-
-    private:
-        int32 m_keycode;
+        // Key code.
+        const int32 keycode;
     };
 }
 

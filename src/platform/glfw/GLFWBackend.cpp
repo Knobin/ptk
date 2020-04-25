@@ -170,12 +170,12 @@ namespace pTK
             auto window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
             if (t_action == GLFW_PRESS)
             {
-                KeyEvent event{Event::Type::KeyPressed, t_key};
+                KeyEvent event{KeyEvent::Pressed, t_key};
                 window->sendEvent(&event);
             }
             else if (t_action == GLFW_RELEASE)
             {
-                KeyEvent event{ Event::Type::KeyReleased, t_key };
+                KeyEvent event{KeyEvent::Released, t_key};
                 window->sendEvent(&event);
             }
         });

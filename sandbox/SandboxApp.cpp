@@ -41,13 +41,13 @@ int main(int argc, char *argv[]) {
     // Set ESC key to close the window.
     window.onKey([&](pTK::Event::Type type, int32 key) {
         std::cout << "key pressed:" << key << std::endl;
-        if ((type == pTK::Event::Type::KeyReleased) && (key == 27))
+        if ((type == pTK::KeyEvent::Released) && (key == 27))
             window.close();
-        if ((type == pTK::Event::Type::KeyReleased) && (key == 32))
+        if ((type == pTK::KeyEvent::Released) && (key == 32))
             window.setPosHint({200, 50});
-        if ((type == pTK::Event::Type::KeyReleased) && (key == PTK_KEY_A))
+        if ((type == pTK::KeyEvent::Released) && (key == PTK_KEY_A))
             window.setTitle("Test title change");
-        if ((type == pTK::Event::Type::KeyReleased) && (key == PTK_KEY_G))
+        if ((type == pTK::KeyEvent::Released) && (key == PTK_KEY_G))
             std::cout << window.getWinPos().x << "x" <<  window.getWinPos().y << std::endl;
 
         std::cout << "keycode: " << key << std::endl;

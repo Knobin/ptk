@@ -19,6 +19,9 @@
 // Skia Headers
 #include "include/core/SkImage.h"
 
+#include "ptk/util/Clock.hpp"
+#include <iostream>
+
 namespace pTK
 {
     Window::Window(const std::string& name, const Size& size, BackendType backend)
@@ -54,7 +57,7 @@ namespace pTK
         if (!m_eventQueue.empty())
         {
             Ref<Event> event = std::move(m_eventQueue.front());
-            if (event->category() == Event::Category::Window)
+            if (event->category == Event::Category::Window)
             {
                 handleWindowEvent(event.get());
                 m_eventQueue.pop();
@@ -128,11 +131,11 @@ namespace pTK
     {
         PTK_ASSERT(event, "Undefined Event");
 
-        if (event->category() == Event::Category::Window)
+        if (event->category == Event::Category::Window)
             handleWindowEvent(event);
-        else if (event->category() == Event::Category::Key)
+        else if (event->category == Event::Category::Key)
             handleKeyboardEvent(event);
-        else if (event->category() == Event::Category::Mouse)
+        else if (event->category == Event::Category::Mouse)
             handleMouseEvent(event);
 #ifdef PTK_DEBUG
         else
@@ -144,22 +147,22 @@ namespace pTK
     {
         PTK_ASSERT(event, "Undefined Event");
         KeyEvent* kEvent = static_cast<KeyEvent*>(event);
-        handleKeyEvent(kEvent->type(), kEvent->get_keycode());
+        handleKeyEvent(kEvent->type, kEvent->keycode);
     }
 
     void Window::handleMouseEvent(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
-        Event::Type type = event->type();
+        Event::Type type = event->type;
         if (type == Event::Type::MouseMoved)
         {
             MotionEvent* mEvent = static_cast<MotionEvent*>(event);
-            handleHoverEvent(mEvent->getPos());
+            handleHoverEvent(mEvent->pos);
         } else if (type == Event::Type::MouseButtonPressed || type == Event::Type::MouseButtonReleased)
         {
             ButtonEvent* bEvent = static_cast<ButtonEvent*>(event);
-            Point pos{bEvent->getPos()};
-            Mouse::Button btn = bEvent->getButton();
+            Point pos{bEvent->pos};
+            Mouse::Button btn = bEvent->button;
             if (type == Event::Type::MouseButtonPressed)
                 handleClickEvent(btn, pos);
             else if (type == Event::Type::MouseButtonReleased)
@@ -167,21 +170,21 @@ namespace pTK
         } else if (type == Event::Type::MouseScrolled)
         {
             ScrollEvent* sEvent = static_cast<ScrollEvent*>(event);
-            handleScrollEvent(sEvent->getOffset());
+            handleScrollEvent(sEvent->offset);
         }
     }
 
     void Window::handleWindowEvent(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
-        Event::Type type = event->type();
+        Event::Type type = event->type;
         if (type == Event::Type::WindowDraw)
         {
             m_draw = true;
         } else if (type == Event::Type::WindowResize)
         {
             ResizeEvent* rEvent = (ResizeEvent*)event;
-            const Size size{rEvent->getSize()};
+            const Size size{rEvent->size};
             const Vec2f scale{m_winBackend->getDPIScale()};
             const Size cSize{static_cast<Size::value_type>(size.width * scale.x),
                              static_cast<Size::value_type>(size.height * scale.y)};
@@ -196,7 +199,7 @@ namespace pTK
         } else if (type == Event::Type::WindowMoved)
         {
             MoveEvent* mEvent{static_cast<MoveEvent*>(event)};
-            m_winPos = mEvent->position;
+            m_winPos = mEvent->pos;
         }
         else if (type == Event::Type::WindowClose)
         {
@@ -216,6 +219,7 @@ namespace pTK
 
     void Window::forceDrawAll()
     {
+        Clock clock{};
         m_winBackend->beginPaint();
         ContextBase *context = m_winBackend->getContext();
         SkCanvas* canvas = context->skCanvas();
@@ -235,6 +239,7 @@ namespace pTK
         canvas->flush();
         m_winBackend->swapBuffers();
         m_winBackend->endPaint();
+        std::cout << "Frametime: " << clock.milliseconds() << std::endl;
     }
 
     void Window::setPosHint(const Point& pos)

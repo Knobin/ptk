@@ -50,12 +50,12 @@ namespace pTK
         /** Constructs Event with default values with t_category
             and t_type.
          
-            @param category  category of event
-            @param type      type of event
+            @param t_category  category of event
+            @param t_type      type of event
             @return            default initialized Event
         */
-        Event(Category category, Type type)
-            : m_type{type}, m_category{category}
+        Event(Category t_category, Type t_type)
+            : category{t_category}, type{t_type}
         {
         }
 
@@ -63,22 +63,12 @@ namespace pTK
 
         */
         virtual ~Event() = default;
-        
-        /** Function for retrieving the type of the event.
-         
-            @return    Type of event
-        */
-        Type type() const { return m_type; }
-        
-        /** Function for retrieving the category of the event.
-         
-            return    Type of event
-        */
-        Category category() const { return m_category; }
 
-    protected:
-        Type m_type;
-        Category m_category;
+        // Category of the event.
+        const Category category;
+
+        // Type of the event.
+        const Type type;
     };
 }
 

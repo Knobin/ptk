@@ -311,19 +311,19 @@ namespace pTK
                 break;
             case WM_KEYDOWN:
                 {
-                    KeyEvent evt{Event::Type::KeyPressed, translateKeycode(s_keyMap, static_cast<byte>(wParam))};
+                    KeyEvent evt{KeyEvent::Pressed, translateKeycode(s_keyMap, static_cast<byte>(wParam))};
                     window->sendEvent(&evt);
                 }
                 break;
             case WM_KEYUP:
                 {
-                    KeyEvent evt{Event::Type::KeyReleased, translateKeycode(s_keyMap, static_cast<byte>(wParam))};
+                    KeyEvent evt{KeyEvent::Released, translateKeycode(s_keyMap, static_cast<byte>(wParam))};
                     window->sendEvent(&evt);
                 }
                 break;
             case WM_MOUSEMOVE:
                 {
-                    MotionEvent evt{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+                    MotionEvent evt{{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)}};
                     window->sendEvent(&evt);
                 }
                 break;
@@ -337,13 +337,14 @@ namespace pTK
             {
                 RECT rect{};
                 GetClientRect(hwnd, &rect);
-                int width = rect.right - rect.left;
-                int height = rect.bottom - rect.top;
-                window->postEvent(new ResizeEvent(width, height));
+                window->postEvent(new ResizeEvent{{
+                    static_cast<Point::value_type>(rect.right - rect.left),
+                    static_cast<Point::value_type>(rect.bottom - rect.top)
+                }});
             }
                 break;
             case WM_SIZE:
-                window->postEvent(new ResizeEvent(LOWORD(lParam), HIWORD(lParam)));
+                window->postEvent(new ResizeEvent{{LOWORD(lParam), HIWORD(lParam)}});
                 break;
             case WM_GETMINMAXINFO:
             {
@@ -381,9 +382,10 @@ namespace pTK
 
     void WinBackend::handleMouseClick(Window *window, Event::Type type, Mouse::Button btn, LPARAM lParam)
     {
-        Point::value_type xpos = static_cast<Point::value_type>(GET_X_LPARAM(lParam));
-        Point::value_type ypos = static_cast<Point::value_type>(GET_Y_LPARAM(lParam));
-        ButtonEvent evt{type, btn, xpos, ypos};
+        ButtonEvent evt{type, btn, {
+                static_cast<Point::value_type>(GET_X_LPARAM(lParam)),
+                static_cast<Point::value_type>(GET_Y_LPARAM(lParam))}
+        };
         window->sendEvent(&evt);
     }
 }

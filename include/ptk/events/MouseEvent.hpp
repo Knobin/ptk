@@ -33,143 +33,75 @@ namespace pTK
     
     /** MotionEvent class implementation.
      
-        Derived from Event, this class if for creating
-        events from the motion of the mouse.
+        Signal a mouse movement.
     */
     class MotionEvent : public Event
     {
     public:
-        /** Constructs MotionEvent with default values with t_posx and t_posy.
-         
-            @param posx    associated x position
-            @param posy    associated y position
-            @return        default initialized MotionEvent
-        */
-        MotionEvent(Point::value_type posx, Point::value_type posy)
-            : Event(Event::Category::Mouse, Event::Type::MouseMoved), m_pos{posx, posy}
-        {
-        }
-        
         /** Constructs MotionEvent with default values with pos.
          
-            @param pos     associated x and y position
-            @return        default initialized MotionEvent
+            @param t_pos    associated x and y position
+            @return         default initialized MotionEvent
         */
-        MotionEvent(const Point& pos)
-            : Event(Event::Category::Mouse, Event::Type::MouseMoved), m_pos{pos}
+        MotionEvent(const Point& t_pos)
+            : Event(Event::Category::Mouse, Event::Type::MouseMoved),
+                pos{t_pos}
         {
         }
 
-        /** Deconstructor for MotionEvent.
-
-        */
-        virtual ~MotionEvent() = default;
-
-        /** Function for retrieving the associated x position.
-         
-            @return    x position
-        */
-        Point::value_type getX() const { return m_pos.x; }
-        
-        /** Function for retrieving the associated y position.
-         
-            @return    y position
-        */
-        Point::value_type getY() const { return m_pos.y; }
-        
-        /** Function for retrieving the associated position.
-         
-            @return    y position
-        */
-        const Point& getPos() const { return m_pos; }
-    private:
-        Point m_pos;
+        // Location.
+        const Point pos;
     };
 
     /** ScrollEvent class implementation.
      
-        Derived from Event, this class if for creating
-        events from the scroll motion of the mouse.
+        Signal a mouse scroll.
     */
     class ScrollEvent : public Event
     {
     public:
-        /** Constructs ScrollEvent with default values with t_xoffset and t_yoffset.
-         
-            @param x_offset    associated x offset
-            @param y_offset    associated y offset
-            @return            default initialized ScrollEvent
-        */
-        ScrollEvent(Vec2f::value_type x_offset, Vec2f::value_type y_offset)
-            : Event(Event::Category::Mouse, Event::Type::MouseScrolled), m_offset{x_offset, y_offset}
-        {
-        }
-        
         /** Constructs ScrollEvent with default values with offset.
          
-            @param offset  associated x and y offset
-            @return        default initialized ScrollEvent
+            @param t_offset     associated x and y offset
+            @return             default initialized ScrollEvent
         */
-        ScrollEvent(const Vec2f& offset)
-            : Event(Event::Category::Mouse, Event::Type::MouseScrolled), m_offset{offset}
+        ScrollEvent(const Vec2f& t_offset)
+            : Event(Event::Category::Mouse, Event::Type::MouseScrolled),
+                offset{t_offset}
         {
         }
-        virtual ~ScrollEvent() = default;
 
-        /** Function for retrieving the associated x offset.
-         
-            @return    x offset
-        */
-        Vec2f::value_type getX() const { return m_offset.x; }
-        
-        /** Function for retrieving the associated y offset.
-         
-            @return    y offset
-        */
-        Vec2f::value_type getY() const { return m_offset.y; }
-        
-        /** Function for retrieving the associated offset.
-         
-            @return    offset
-        */
-        const Vec2f& getOffset() const { return m_offset; }
-        
-    private:
-        Vec2f m_offset;
+        // Scroll offset.
+        const Vec2f offset;
     };
 
     /** ButtonEvent class implementation.
      
-        Derived from Event, this class if for creating
-        events from the mouse. Such as button presses or
-        releases.
+        Signal a mouse press or release event.
     */
-    class ButtonEvent final : public MotionEvent
+    class ButtonEvent final : public Event
     {
     public:
         /** Constructs ButtonEvent with default values with type,
-         t_button, t_posx and t_posy.
+            type, t_button and t_pos.
          
-            @param type    press or release
-            @param button  which button
-            @param posx    associated x position
-            @param posy    associated y position
-            @return        default initialized ButtonEvent
+            @param type         press or release
+            @param t_button     which button
+            @param t_pos        associated x and y
+            @return             default initialized ButtonEvent
         */
-        ButtonEvent(Event::Type type, Mouse::Button button, Point::value_type posx, Point::value_type posy)
-            : MotionEvent(posx, posy), m_button{button}
+        ButtonEvent(Event::Type type, Mouse::Button t_button, const Point& t_pos)
+            : Event(Event::Category::Mouse, type),
+                button{t_button}, pos{t_pos}
         {
-            m_type = type;
-        }
-        virtual ~ButtonEvent() final = default;
 
-        /** Function for retrieving the associated button.
-         
-            @return    Pressed or Released button
-        */
-        Mouse::Button getButton() const { return m_button; }
-    private:
-        Mouse::Button m_button;
+        }
+
+        // Button pressed or released.
+        const Mouse::Button button;
+
+        // Location.
+        const Point pos;
     };
 }
 
