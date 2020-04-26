@@ -175,7 +175,7 @@ namespace pTK
             m_draw = true;
         } else if (type == Event::Type::WindowResize)
         {
-            ResizeEvent* rEvent{(ResizeEvent*)event};
+            ResizeEvent* rEvent{static_cast<ResizeEvent*>(event)};
             const Size size{rEvent->size};
             const Vec2f scale{m_winBackend->getDPIScale()};
             const Size cSize{static_cast<Size::value_type>(size.width * scale.x),

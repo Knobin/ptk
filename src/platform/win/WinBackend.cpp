@@ -282,7 +282,7 @@ namespace pTK
 
     LRESULT WinBackend::wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
-        Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+        Window* window{reinterpret_cast<Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA))};
         switch(msg)
         {
             case WM_CREATE:

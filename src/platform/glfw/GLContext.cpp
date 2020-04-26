@@ -40,9 +40,9 @@ namespace pTK
 		PTK_ASSERT(glInterface, "Failed to create interface!");
 		m_context.reset(GrContext::MakeGL(glInterface).release());
 
-		GrGLint buffer;
+		GrGLint buffer{};
 		GR_GL_GetIntegerv(glInterface.get(), GR_GL_FRAMEBUFFER_BINDING, &buffer);
-		GrGLFramebufferInfo info;
+		GrGLFramebufferInfo info{};
 		info.fFBOID = (GrGLuint)buffer;
 		m_info.fFormat = GL_RGBA8;
 
@@ -74,7 +74,7 @@ namespace pTK
         
         GrBackendRenderTarget backendRenderTarget(size.width, size.height, 1, 8, m_info);
 
-        SkSurface *surface = SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, &m_props).release();
+        SkSurface *surface{SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, &m_props).release()};
         PTK_ASSERT(surface, "Failed to create surface!");
         m_surface.reset(surface);
 
