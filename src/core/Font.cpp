@@ -21,15 +21,14 @@ namespace pTK
 
     bool Font::loadFromFile(const std::string& path)
     {
-        bool status = false;
-        if (path != "")
+        if (!path.empty())
         {
-            sk_sp<SkTypeface> tf = SkTypeface::MakeFromFile(path.c_str());
+            sk_sp<SkTypeface> tf{SkTypeface::MakeFromFile(path.c_str())};
             if (tf)
             {
                 m_font.setTypeface(tf);
                 PTK_INFO("Loaded font family \"{0}\" from file \"{1}\"", getFamily(), path);
-                status = true;
+                return true;
             } else
             {
                 m_font.setTypeface(SkTypeface::MakeDefault());
@@ -37,23 +36,21 @@ namespace pTK
             }
         }
         
-        return status;
+        return false;
     }
 
     bool Font::setFamily(const std::string& fontFamily)
     {
-        bool status = false;
-        if (fontFamily == "")
+        if (fontFamily.empty())
         {
             m_font.setTypeface(SkTypeface::MakeDefault());
             PTK_INFO("Loaded default font \"{0}\"", getFamily());
         } else
         {
             m_font.setTypeface(SkTypeface::MakeFromName(fontFamily.c_str(), SkFontStyle::Normal()));
-
             if (fontFamily == getFamily())
             {
-                status = true;
+                return true;
                 PTK_INFO("Loaded \"{0}\" successfully.", getFamily());
             }
 #ifdef PTK_DEBUG
@@ -62,12 +59,12 @@ namespace pTK
 #endif
         }
 
-        return status;
+        return false;
     }
     
     std::string Font::getFamily() const
     {
-        SkString str;
+        SkString str{};
         m_font.getTypeface()->getFamilyName(&str);
         
         return std::string(str.c_str());
@@ -85,7 +82,7 @@ namespace pTK
     
     Size Font::getBounds(const std::string& str) const
     {
-        SkRect bounds;
+        SkRect bounds{};
         m_font.measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &bounds);
         return Size(static_cast<int>(std::ceil(bounds.width())), static_cast<int>(std::ceil(bounds.height())));
     }

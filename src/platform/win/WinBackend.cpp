@@ -18,7 +18,6 @@
     #include "ptk/platform/win/WinGLContext.hpp"
 #endif // PTK_HW_ACCELERATION
 
-
 // Windows Headers
 #include <windowsx.h>
 
@@ -28,7 +27,7 @@ namespace pTK
     {
         if (str.empty())
             return std::wstring();
-        int sz = MultiByteToWideChar(CP_ACP, 0, &str[0], static_cast<int>(str.size()), nullptr, 0);
+        int sz{MultiByteToWideChar(CP_ACP, 0, &str[0], static_cast<int>(str.size()), nullptr, 0)};
         std::wstring res(sz, 0);
         MultiByteToWideChar(CP_ACP, 0, &str[0], static_cast<int>(str.size()), &res[0], sz);
         return res;
@@ -42,9 +41,8 @@ namespace pTK
         adjustedSize.left = 0;
         adjustedSize.right = from.width;
         AdjustWindowRectEx(&adjustedSize, style, FALSE, 0);
-        Size::value_type width = adjustedSize.right - adjustedSize.left;
-        Size::value_type height = adjustedSize.bottom - adjustedSize.top;
-        return {width, height};
+        return {adjustedSize.right - adjustedSize.left,
+                adjustedSize.bottom - adjustedSize.top};
     }
 
     static std::map<byte, int32> initKeyCodes()
@@ -69,9 +67,9 @@ namespace pTK
         return map;
     }
 
-    static int32 translateKeycode(const std::map<byte, int32>& map, byte keycode)
+    static int32 translateKeyCode(const std::map<byte, int32>& map, byte code)
     {
-        auto it{map.find(keycode)};
+        auto it{map.find(code)};
         if (it != map.end())
             return it->second;
 
@@ -113,9 +111,9 @@ namespace pTK
             throw WindowError("Window Registration Failed!");
 
         // High DPI
-        HDC screen = GetDC(nullptr);
-        auto dpiX = static_cast<float>(GetDeviceCaps(screen, LOGPIXELSX));
-        auto dpiY = static_cast<float>(GetDeviceCaps(screen, LOGPIXELSY));
+        HDC screen{GetDC(nullptr)};
+        float dpiX{static_cast<float>(GetDeviceCaps(screen, LOGPIXELSX))};
+        float dpiY{static_cast<float>(GetDeviceCaps(screen, LOGPIXELSY))};
         ReleaseDC(nullptr, screen);
         PTK_INFO("Windows Window DPI {}x{}", dpiX, dpiY);
         m_scale.x = dpiX / 96.0f;
@@ -311,13 +309,13 @@ namespace pTK
                 break;
             case WM_KEYDOWN:
                 {
-                    KeyEvent evt{KeyEvent::Pressed, translateKeycode(s_keyMap, static_cast<byte>(wParam))};
+                    KeyEvent evt{KeyEvent::Pressed, translateKeyCode(s_keyMap, static_cast<byte>(wParam))};
                     window->sendEvent(&evt);
                 }
                 break;
             case WM_KEYUP:
                 {
-                    KeyEvent evt{KeyEvent::Released, translateKeycode(s_keyMap, static_cast<byte>(wParam))};
+                    KeyEvent evt{KeyEvent::Released, translateKeyCode(s_keyMap, static_cast<byte>(wParam))};
                     window->sendEvent(&evt);
                 }
                 break;

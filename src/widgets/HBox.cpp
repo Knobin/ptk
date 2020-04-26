@@ -18,8 +18,8 @@ namespace pTK
     
     void HBox::onAdd(const Ref<Widget>&)
     {
-        Size vbSize = getSize();
-        Size minLayoutSize = calcMinSize();
+        Size vbSize{getSize()};
+        Size minLayoutSize{calcMinSize()};
         setMinSize(minLayoutSize);
         
         if ((minLayoutSize.width > vbSize.width) || (minLayoutSize.height > vbSize.height))
@@ -51,15 +51,15 @@ namespace pTK
     
     void HBox::expandOnAdd(const Size& newSize)
     {
-        Size layoutSize = newSize;
-        Size vbSize = getSize();
-        Point vbPos = getPosition();
-        size_type children = size();
+        Size layoutSize{newSize};
+        const Size vbSize{getSize()};
+        Point vbPos{getPosition()};
         
         layoutSize.height   = (vbSize.height > layoutSize.height) ? vbSize.height : layoutSize.height;
         layoutSize.width    = (vbSize.width > layoutSize.width) ? vbSize.width : layoutSize.width;
         
         setSize(layoutSize); // this will generate a Resize event.
+        const size_type children{size()};
         for (size_type i{0}; i < children; ++i)
         {
             auto child = at(i);
@@ -71,8 +71,8 @@ namespace pTK
                 Auto margin is not included.
              */
             child->setSize(cSize);
-            Margin cMargin = child->getMargin();
-            Padding cPadding = child->getPadding();
+            Margin cMargin{child->getMargin()};
+            Padding cPadding{child->getPadding()};
             vbPos.x += cMargin.left + cPadding.left;;
             child->setPosHint(Point(vbPos.x, vbPos.y + alignChildV(i, vbSize, cSize)));
             vbPos.x += cSize.width + cMargin.right + cPadding.right;
@@ -81,10 +81,8 @@ namespace pTK
     
     void HBox::refitContent(const Size& nsize)
     {
-        Size layoutSize = calcMinSize();
-        Size vbSize = nsize;
-        Point vbPos = getPosition();
-        size_type children = size();
+        const Size vbSize{nsize};
+        const size_type children{size()};
         std::vector<Size> sizes(children);
         
         // Initialize sizes.
@@ -97,22 +95,21 @@ namespace pTK
         }
         
         // Expand children to its max sizes possible.
-        Size::value_type widthLeft  = vbSize.width - layoutSize.width;
-        Size::value_type totalEachLeft = widthLeft;
+        const Size::value_type widthLeft{vbSize.width - calcMinSize().width};
+        Size::value_type totalEachLeft{widthLeft};
         
         // Distribute heightLeft.
         // Need to fix this some time.
         // TODO: it takes many iteration before the height is distributed, especially if only 1 can grow.
         while (totalEachLeft > 0)
         {
-            Size::value_type eachAdd = static_cast<Size::value_type>(std::floor(static_cast<float>(totalEachLeft) / static_cast<float>(children)));
+            Size::value_type eachAdd{static_cast<Size::value_type>(std::floor(static_cast<float>(totalEachLeft) / static_cast<float>(children)))};
             eachAdd = (totalEachLeft < static_cast<Size::value_type>(children)) ? 1 : eachAdd;
-            bool done = true;
+            bool done{true};
             for (size_type i{0}; i < children; ++i)
             {
-                Size::value_type min = sizes.at(i).width;
-                Size::value_type max = at(i)->getMaxSize().width;
-                Size::value_type delta = max - min;
+                // Max - Min
+                const Size::value_type delta{at(i)->getMaxSize().width - sizes.at(i).width};
                 
                 if (delta > 0)
                 {
@@ -142,17 +139,18 @@ namespace pTK
         }
         
         // TODO: Fix if we break in while loop (size left unused).
-        std::vector<Size::value_type> spaces = calcSpaces(totalEachLeft);
+        const std::vector<Size::value_type> spaces{calcSpaces(totalEachLeft)};
         
-        // Set sizes to childs and spaces.
+        // Set sizes to children.
+        Point vbPos{getPosition()};
         for (size_type i{0}; i != children; i++)
         {
-            auto child = at(i);
-            Size cSize = sizes.at(i);
-            child->setSize(cSize);
-            Margin cMargin = child->getMargin();
-            Padding cPadding = child->getPadding();
+            auto child{at(i)};
+            const Size cSize{sizes.at(i)};
+            const Margin cMargin{child->getMargin()};
+            const Padding cPadding{child->getPadding()};
             vbPos.x += cMargin.left + cPadding.left + spaces.at(i);
+            child->setSize(cSize);
             child->setPosHint(Point(vbPos.x, vbPos.y + alignChildV(i, vbSize, cSize)));
             vbPos.x += cSize.width + cMargin.right + cPadding.right;
         }
@@ -165,14 +163,14 @@ namespace pTK
     
     std::vector<Size::value_type> HBox::calcSpaces(Size::value_type width)
     {
-        const size_type children = size();
-        const size_type spaceCount = size() + 1;
+        const size_type children{size()};
+        const size_type spaceCount{size() + 1};
         std::vector<Size::value_type> spaces(spaceCount);
         if (width != 0)
         {
             for (size_type i{0}; i != children; i++)
             {
-                std::underlying_type<Align>::type cAlign = at(i)->getAlign();
+                const std::underlying_type<Align>::type cAlign{at(i)->getAlign()};
                 
                 if (isAlignSet(cAlign, Align::Left))
                 {
@@ -191,12 +189,12 @@ namespace pTK
                 }
             }
             
-            uint spacesToUse = 0;
+            uint spacesToUse{0};
             for (size_type i{0}; i != spaceCount; i++)
                 if (spaces.at(i) == 1)
                     ++spacesToUse;
             
-            uint spaceWidth = (spacesToUse != 0) ? static_cast<uint>(width) / spacesToUse : 0;
+            uint spaceWidth{(spacesToUse != 0) ? static_cast<uint>(width) / spacesToUse : 0};
             for (size_type i{0}; i != spaceCount; i++)
                 if (spaces.at(i) == 1)
                     spaces.at(i) = spaceWidth;
@@ -210,8 +208,8 @@ namespace pTK
         Point::value_type posy{0};
         Size cSize{childSize};
         const auto child{at(index)};
-        Margin cMargin{child->getMargin()};
-        Padding cPadding{child->getPadding()};
+        const Margin cMargin{child->getMargin()};
+        const Padding cPadding{child->getPadding()};
 
         // Pre
         cSize.height += static_cast<Size::value_type>(cPadding.top + cPadding.bottom);
@@ -232,14 +230,14 @@ namespace pTK
 
     Size HBox::calcMinSize() const
     {
-        Size contentMinSize{ Size::Min };
+        Size contentMinSize{Size::Min};
         for (auto it{ cbegin() }; it != cend(); ++it)
         {
-            Padding cPadding = (*it)->getPadding();
-            Padding::value_type vPadding = cPadding.top + cPadding.bottom;
-            Padding::value_type hPadding = cPadding.left + cPadding.right;
+            const Padding cPadding{(*it)->getPadding()};
+            const Padding::value_type vPadding{cPadding.top + cPadding.bottom};
+            const Padding::value_type hPadding{cPadding.left + cPadding.right};
 
-            Size cMinSize = (*it)->getMinSize();
+            const Size cMinSize{(*it)->getMinSize()};
             contentMinSize.width += static_cast<Size::value_type>(hPadding + cMinSize.width);
             contentMinSize.height =
                 ((cMinSize.height + static_cast<Size::value_type>(vPadding)) > contentMinSize.height)
@@ -251,14 +249,14 @@ namespace pTK
 
     Size HBox::calcMaxSize() const
     {
-        Size contentMaxSize{ Size::Max };
+        Size contentMaxSize{Size::Max};
         for (auto it{ cbegin() }; it != cend(); ++it)
         {
-            Padding cPadding = (*it)->getPadding();
-            Padding::value_type vPadding = cPadding.top + cPadding.bottom;
-            Padding::value_type hPadding = cPadding.left + cPadding.right;
+            const Padding cPadding{(*it)->getPadding()};
+            const Padding::value_type vPadding{cPadding.top + cPadding.bottom};
+            const Padding::value_type hPadding{cPadding.left + cPadding.right};
 
-            Size maxSize = (*it)->getMaxSize();
+            const Size maxSize{(*it)->getMaxSize()};
             contentMaxSize.height += (maxSize.height < (contentMaxSize.height - static_cast<Size::value_type>(vPadding)))
                 ? maxSize.height + static_cast<Size::value_type>(vPadding) : contentMaxSize.height;
             contentMaxSize.width += (maxSize.width < (contentMaxSize.width - static_cast<Size::value_type>(hPadding)))

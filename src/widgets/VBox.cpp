@@ -22,8 +22,8 @@ namespace pTK
 
     void VBox::onAdd(const Ref<Widget>&)
     {
-        Size vbSize = getSize();
-        Size minLayoutSize = calcMinSize();
+        const Size vbSize{getSize()};
+        const Size minLayoutSize{calcMinSize()};
         setMinSize(minLayoutSize);
         //setLimits(minLayoutSize, calculateMaxSize());
 
@@ -53,12 +53,12 @@ namespace pTK
     {
         if (!isConstSize())
         {
-            Size cMaxSize{calcMaxSize()};
+            const Size cMaxSize{calcMaxSize()};
             Size maxSize{getMaxSize()};
             if (cMaxSize > maxSize)
                 maxSize = cMaxSize;
 
-            Size cMinSize{calcMinSize()};
+            const Size cMinSize{calcMinSize()};
             Size minSize{getMinSize()};
             if (cMinSize > minSize)
                 minSize = cMinSize;
@@ -69,29 +69,28 @@ namespace pTK
 
     void VBox::expandOnAdd(const Size& newSize)
     {
-        Size layoutSize = newSize;
-        Size vbSize = getSize();
-        Point vbPos = getPosition();
-        size_t children = size();
-
+        Size layoutSize{newSize};
+        const Size vbSize{getSize()};
         layoutSize.height   = (vbSize.height > layoutSize.height) ? vbSize.height : layoutSize.height;
         layoutSize.width    = (vbSize.width > layoutSize.width) ? vbSize.width : layoutSize.width;
-
         setSize(layoutSize); // this will generate a Resize event.
+
+        const size_t children{size()};
+        Point vbPos{getPosition()};
         for (size_type i{0}; i < children; ++i)
         {
-            auto child = at(i);
-            Size cSize = child->getMinSize();
+            const auto child{at(i)};
+            const Size cSize{child->getMinSize()};
 
             /** We should not have to consider auto margin for children.
                 This function should only be called when adding and children wont fit in current
                 size and we only expand so the they will fit with their size and margin.
                 Auto margin is not included.
              */
-            child->setSize(cSize);
-            Margin cMargin = child->getMargin();
-            Padding cPadding = child->getPadding();
+            const Margin cMargin{child->getMargin()};
+            const Padding cPadding{child->getPadding()};
             vbPos.y += cMargin.top + cPadding.top;
+            child->setSize(cSize);
             child->setPosHint(Point(vbPos.x + alignChildH(i, newSize, cSize), vbPos.y));
             vbPos.y += cSize.height + cMargin.bottom + cPadding.bottom;
         }
@@ -99,37 +98,34 @@ namespace pTK
 
     void VBox::refitContent(const Size& nsize)
     {
-        Size layoutSize = calcMinSize();
-        Size vbSize = nsize;
-        Point vbPos = getPosition();
-        size_type children = size();
+        const Size vbSize{nsize};
+        const size_type children{size()};
         std::vector<Size> sizes(children);
 
         // Initialize sizes.
         for (uint i{0}; i < children; ++i)
         {
             sizes.at(i) = at(i)->getMinSize();
-            int maxWidth = at(i)->getMaxSize().width;
+            const Size::value_type maxWidth{at(i)->getMaxSize().width};
             sizes.at(i).width = (vbSize.width > maxWidth) ? maxWidth : vbSize.width;
         }
 
         // Expand children to its max sizes possible.
-        int heightLeft  = vbSize.height - layoutSize.height;
-        int totalEachLeft = heightLeft;
+        const Size::value_type heightLeft      = vbSize.height - calcMinSize().height;
+        Size::value_type totalEachLeft   = heightLeft;
 
         // Distribute heightLeft.
         // Need to fix this some time.
         // TODO: it takes many iteration before the height is distributed, especially if only 1 can grow.
         while (totalEachLeft > 0)
         {
-            Size::value_type eachAdd = static_cast<int>(std::floor(static_cast<float>(totalEachLeft) / static_cast<float>(children)));
-            eachAdd = (totalEachLeft < (int)children) ? 1 : eachAdd;
-            bool done = true;
+            Size::value_type eachAdd{static_cast<Size::value_type>(std::floor(static_cast<float>(totalEachLeft) / static_cast<float>(children)))};
+            eachAdd = (totalEachLeft < static_cast<Size::value_type>(children)) ? 1 : eachAdd;
+            bool done{true};
             for (size_type i{0}; i < children; ++i)
             {
-                Size::value_type min = sizes.at(i).height;
-                Size::value_type max = at(i)->getMaxSize().height;
-                Size::value_type delta = max - min;
+                // Max - Min
+                const Size::value_type delta{at(i)->getMaxSize().height - sizes.at(i).height};
 
                 if (delta > 0)
                 {
@@ -159,18 +155,18 @@ namespace pTK
         }
 
         // TODO: Fix if we break in while loop (size left unused).
-        std::vector<Size::value_type> spaces = calcSpaces(totalEachLeft);
+        const std::vector<Size::value_type> spaces{calcSpaces(totalEachLeft)};
 
         // Set sizes to childs and spaces.
+        Point vbPos{getPosition()};
         for (size_type i{0}; i != children; i++)
         {
-            auto child = at(i);
-            Size cSize = sizes.at(i);
-            child->setSize(cSize);
-
-            Margin cMargin = child->getMargin();
-            Padding cPadding = child->getPadding();
+            auto child{at(i)};
+            const Size cSize{sizes.at(i)};
+            const Margin cMargin{child->getMargin()};
+            const Padding cPadding{child->getPadding()};
             vbPos.y += cMargin.top + cPadding.top + spaces.at(i);
+            child->setSize(cSize);
             child->setPosHint(Point(vbPos.x + alignChildH(i, vbSize, cSize), vbPos.y));
             vbPos.y += cSize.height + cMargin.bottom + cPadding.bottom;
         }
@@ -183,14 +179,14 @@ namespace pTK
 
     std::vector<Size::value_type> VBox::calcSpaces(Size::value_type height)
     {
-        const size_type children = size();
-        const size_type spaceCount = size() + 1;
+        const size_type children{size()};
+        const size_type spaceCount{size() + 1};
         std::vector<Size::value_type> spaces(spaceCount);
         if (height != 0)
         {
             for (size_type i{0}; i != children; i++)
             {
-                std::underlying_type<Align>::type cAlign = at(i)->getAlign();
+                const std::underlying_type<Align>::type cAlign{at(i)->getAlign()};
 
                 if (isAlignSet(cAlign, Align::Top))
                 {
@@ -209,12 +205,12 @@ namespace pTK
                 }
             }
 
-            uint spacesToUse = 0;
+            uint spacesToUse{0};
             for (size_type i{0}; i != spaceCount; i++)
                 if (spaces.at(i) == 1)
                     ++spacesToUse;
 
-            uint spaceHeight = (spacesToUse != 0) ? height / spacesToUse : 0;
+            uint spaceHeight{(spacesToUse != 0) ? height / spacesToUse : 0};
             for (size_type i{0}; i != spaceCount; i++)
                 if (spaces.at(i) == 1)
                     spaces.at(i) = spaceHeight;
@@ -228,14 +224,14 @@ namespace pTK
     {
         Point::value_type posx{0};
         Size cSize{childSize};
-        Margin cMargin{at(index)->getMargin()};
-        Padding cPadding{at(index)->getPadding()};
+        const Margin cMargin{at(index)->getMargin()};
+        const Padding cPadding{at(index)->getPadding()};
 
         // Pre
         cSize.width += static_cast<Size::value_type>(cPadding.left + cPadding.right);
 
         // Align
-        std::underlying_type<Align>::type cAlign = at(index)->getAlign();
+        const std::underlying_type<Align>::type cAlign{at(index)->getAlign()};
         if (isAlignSet(cAlign, Align::Right))
             posx = static_cast<Point::value_type>(parentSize.width - cSize.width);
         else if (isAlignSet(cAlign, Align::Center) || isAlignSet(cAlign, Align::HCenter))
@@ -250,14 +246,14 @@ namespace pTK
 
     Size VBox::calcMinSize() const
     {
-        Size contentMinSize{ Size::Min };
-        for (auto it{ cbegin() }; it != cend(); ++it)
+        Size contentMinSize{Size::Min};
+        for (auto it{cbegin()}; it != cend(); ++it)
         {
-            Padding cPadding = (*it)->getPadding();
-            Padding::value_type vPadding = cPadding.top + cPadding.bottom;
-            Padding::value_type hPadding = cPadding.left + cPadding.right;
+            const Padding cPadding{(*it)->getPadding()};
+            const Padding::value_type vPadding{cPadding.top + cPadding.bottom};
+            const Padding::value_type hPadding{cPadding.left + cPadding.right};
 
-            Size cMinSize = (*it)->getMinSize();
+            const Size cMinSize{(*it)->getMinSize()};
             contentMinSize.height += static_cast<Size::value_type>(vPadding + cMinSize.height);
             contentMinSize.width =
                 ((cMinSize.width + static_cast<Size::value_type>(hPadding)) > contentMinSize.width)
@@ -272,11 +268,11 @@ namespace pTK
         Size contentMaxSize{ Size::Max };
         for (auto it{ cbegin() }; it != cend(); ++it)
         {
-            Padding cPadding = (*it)->getPadding();
-            Padding::value_type vPadding = cPadding.top + cPadding.bottom;
-            Padding::value_type hPadding = cPadding.left + cPadding.right;
+            const Padding cPadding{(*it)->getPadding()};
+            const Padding::value_type vPadding{cPadding.top + cPadding.bottom};
+            const Padding::value_type hPadding{cPadding.left + cPadding.right};
 
-            Size maxSize = (*it)->getMaxSize();
+            const Size maxSize{(*it)->getMaxSize()};
             contentMaxSize.height += (maxSize.height < (contentMaxSize.height - static_cast<Size::value_type>(vPadding)))
                 ? maxSize.height + static_cast<Size::value_type>(vPadding) : contentMaxSize.height;
             contentMaxSize.width += (maxSize.width < (contentMaxSize.width - static_cast<Size::value_type>(hPadding)))

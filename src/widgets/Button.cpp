@@ -36,9 +36,9 @@ namespace pTK
     void Button::setPosHint(const Point& pos)
     {
         // TODO: Possibly wrong
-        Size textSize = m_text->getSize();
-        Size rectSize = getSize();
-        Point textPos = pos;
+        const Size textSize{m_text->getSize()};
+        const Size rectSize{getSize()};
+        Point textPos{pos};
         textPos.x += ((rectSize.width - textSize.width) / 2);
         textPos.y += ((rectSize.height - textSize.height) / 2);
         m_labelPos = textPos;
@@ -61,15 +61,15 @@ namespace pTK
     {
         if (m_text.get() == widget)
         {
-            Size bSize = getSize();
+            const Size bSize = getSize();
             Size wSize = widget->getSize();
-            Point textPos = widget->getPosition();
+            const Point textPos = widget->getPosition();
             if ((wSize.width > bSize.width) || (wSize.height > bSize.height))
             {
                 // Apparently, this looks good.
-                int dMargin = (int)((float)m_borderSize*2.0f);
-                int hMargin = ((bSize.height - wSize.height) > dMargin) ? 0 : dMargin;
-                int wMargin = ((bSize.width - wSize.width) > dMargin) ? 0 : dMargin;
+                const int dMargin{static_cast<int>(static_cast<float>(m_borderSize*2.0f))};
+                const int hMargin{((bSize.height - wSize.height) > dMargin) ? 0 : dMargin};
+                const int wMargin{((bSize.width - wSize.width) > dMargin) ? 0 : dMargin};
                 wSize.width = ((wSize.width > bSize.width) ? wSize.width : bSize.width) + (wMargin);
                 wSize.height = ((wSize.height > bSize.height) ? wSize.height : bSize.height) + (hMargin);
                 Widget::setSize(wSize);
@@ -77,8 +77,8 @@ namespace pTK
             
             if (m_labelPos != textPos)
             {
-                Point pos = getPosition();
-                Size textSize = m_text->getSize();
+                Point pos{getPosition()};
+                const Size textSize{m_text->getSize()};
                 pos.x += ((bSize.width - textSize.width) / 2);
                 pos.y += ((bSize.height - textSize.height) / 2);
                 m_labelPos = pos;
@@ -239,7 +239,7 @@ namespace pTK
     
     void Button::setBounds()
     {
-        Size textBounds = m_text->getBounds();
+        Size textBounds{m_text->getBounds()};
         textBounds.height += 2*m_borderSize;
         textBounds.width += 2*m_borderSize;
         

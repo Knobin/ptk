@@ -28,13 +28,19 @@ namespace pTK
     public:
         /** typedefs for Container.
         */
-        using type                      = T;
-        using container_type            = std::vector<type>;
+        using value_type                = T;
+        using container_type            = std::vector<value_type>;
+        using allocator_type            = typename container_type::allocator_type;
+        using reference                 = value_type&;
+        using const_reference           = const value_type&;
+        using pointer                   = typename std::allocator_traits<allocator_type>::pointer;
+        using const_pointer             = typename std::allocator_traits<allocator_type>::const_pointer;
         using iterator                  = typename container_type::iterator;
         using reverse_iterator          = typename container_type::reverse_iterator;
         using const_iterator            = typename container_type::const_iterator;
         using const_reverse_iterator    = typename container_type::const_reverse_iterator;
-        using size_type                 = size_t;
+        using size_type                 = typename container_type::size_type;
+        using difference_type           = typename container_type::difference_type;
 
         /** Constructs Container with default values.
 
@@ -45,21 +51,11 @@ namespace pTK
         {
         }
 
-        /** Constructs Container with default values with item.
-
-            @return    default initialized Container
-        */
-        Container(const type& item)
-            : m_holder{}
-        {
-            add(item);
-        }
-
         /** Constructs Container with default values with list.
 
             @return    default initialized Container
         */
-        Container(std::initializer_list<type> list)
+        Container(std::initializer_list<value_type> list)
             : m_holder{}
         {
             m_holder.reserve(list.size());
@@ -104,7 +100,7 @@ namespace pTK
 
             @param item  item to add
         */
-        virtual bool add(const type& item)
+        virtual bool add(const_reference item)
         {
             m_holder.push_back(item);
             return true;
@@ -114,9 +110,9 @@ namespace pTK
 
             @param item  item to remove
         */
-        virtual void remove(const type& item)
+        virtual void remove(const_reference item)
         {
-            const_iterator it = find(item);
+            const_iterator it = std::find(cbegin(), cend(), item);
             if (it != cend())
                 m_holder.erase(it);
         }
@@ -126,7 +122,7 @@ namespace pTK
             @param index   Index
             @return        element in Container
         */
-        type at(size_type index)
+        reference at(size_type index)
         {
             if (index >= size())
                 throw std::out_of_range("Index is out of range!");
@@ -139,7 +135,7 @@ namespace pTK
             @param index   Index
             @return        element in Container
         */
-        type at(size_type index) const
+        const_reference at(size_type index) const
         {
             if (index >= size())
                 throw std::out_of_range("Index is out of range!");
@@ -152,7 +148,17 @@ namespace pTK
             @param index   Index
             @return        element in Container
         */
-        type operator[](size_type index) const
+        reference operator[](size_type index)
+        {
+            return m_holder[index];
+        }
+
+        /** Operator for retrieving the element at the index in the Container.
+
+            @param index   Index
+            @return        element in Container
+        */
+        const_reference operator[](size_type index) const
         {
             return m_holder[index];
         }
@@ -181,7 +187,19 @@ namespace pTK
 
             @return    first element in Container
         */
-        type front() const
+        reference front()
+        {
+            return m_holder.front();
+        }
+
+        /** Function for retrieving the first element in the container.
+
+            Should in no circumstances be called when the container is empty!
+            This is considered to be undefined behavior!
+
+            @return    first element in Container
+        */
+        const_reference front() const
         {
             return m_holder.front();
         }
@@ -193,7 +211,19 @@ namespace pTK
 
             @return    last element in container
         */
-        type back() const
+        reference back()
+        {
+            return m_holder.back();
+        }
+
+        /** Function for retrieving the last element in the container.
+
+            Should in no circumstances be called when the container is empty!
+            This is considered to be undefined behavior!
+
+            @return    last element in container
+        */
+        const_reference back() const
         {
             return m_holder.back();
         }
@@ -274,31 +304,6 @@ namespace pTK
         reverse_iterator rend()
         {
             return m_holder.rend();
-        }
-
-        /** Function for finding a widget in the Container.
-            Function can be used to check if a pointer to Widget exists.
-
-            @param widget  widget to find
-            @return        const_iterator to widget or end const_iterator
-        */
-        const_iterator find(const type& item) const
-        {
-            for (auto it{cbegin()}; it != cend(); ++it)
-                if ((*it) == item)
-                    return it;
-
-            return cend();
-        }
-
-        /** Function for looping over the items in the container.
-
-            @param func    function to call for each item.
-        */
-        void forEach(const std::function<void(const type& item)>& func) const
-        {
-            for (const_iterator it = cbegin(); it != cend(); it++)
-                func((*it));
         }
 
     private:

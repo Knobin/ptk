@@ -11,13 +11,15 @@
 namespace pTK
 {
     Image::Image()
-        : Widget(), m_path{}, m_image{nullptr}, m_scale{1.0f, 1.0f}
+        : Widget(),
+            m_path{}, m_image{nullptr}, m_scale{1.0f, 1.0f}
     {
         setConstSize(Size(0,0));
     }
     
     Image::Image(const std::string& path)
-        : Widget(), m_path{path}, m_image{nullptr}, m_scale{1.0f, 1.0f}
+        : Widget(),
+            m_path{path}, m_image{nullptr}, m_scale{1.0f, 1.0f}
     {
         setConstSize(Size(0,0));
         loadFromFile(path);
@@ -25,7 +27,7 @@ namespace pTK
     
     bool Image::loadFromFile(const std::string& path)
     {
-        sk_sp<SkData> data = SkData::MakeFromFileName(path.c_str());
+        sk_sp<SkData> data{SkData::MakeFromFileName(path.c_str())};
         if (data)
         {
             PTK_INFO("Loaded \"{}\" successfully.", path);
@@ -55,13 +57,12 @@ namespace pTK
         if (m_image)
         {
             // Set Size and Position
-            SkPoint pos{convertToSkPoint(getPosition())};
+            const SkPoint pos{convertToSkPoint(getPosition())};
             SkPoint size{convertToSkPoint(getSize())};
             size += pos; // skia needs the size to be pos+size.
             
-            SkRect dst;
+            SkRect dst{};
             dst.set(pos, size);
-            
             canvas->drawImageRect(m_image, dst, nullptr);
         } 
     }
@@ -93,8 +94,8 @@ namespace pTK
         if (m_image)
         {
             Size size;
-            size.width = static_cast<int>(m_image->width()*x);
-            size.height = static_cast<int>(m_image->height()*y);
+            size.width  = static_cast<Size::value_type>(m_image->width()*x);
+            size.height = static_cast<Size::value_type>(m_image->height()*y);
             setConstSize(size);
         }
     }

@@ -9,6 +9,8 @@
 #include "ptk/widgets/Cell.hpp"
 #include "ptk/Core.hpp"
 
+// TODO: Check this entire file and class for errors.
+
 namespace pTK
 {
     Cell::Cell()

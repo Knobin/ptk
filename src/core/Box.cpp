@@ -18,12 +18,13 @@ namespace pTK
 
     Box::~Box()
     {
-        forEach([](const Container<Ref<Widget>>::type& item) { item->setParent(nullptr); });
+        for (auto& item : *this)
+            item->setParent(nullptr);
     }
 
     bool Box::add(const Ref<Widget>& widget)
     {
-        if (Container::find(widget) == cend())
+        if (std::find(cbegin(), cend(), widget) == cend())
         {
             widget->setParent(this);
             Container<Ref<Widget>>::add(widget);
@@ -36,8 +37,7 @@ namespace pTK
 
     void Box::remove(const Ref<Widget>& widget)
     {
-        const_iterator it = Container::find(widget);
-        if (it != cend())
+        if (std::find(cbegin(), cend(), widget) != cend())
         {
             widget->setParent(nullptr);
             Container<Ref<Widget>>::remove(widget);
@@ -48,14 +48,12 @@ namespace pTK
 
     void Box::setPosHint(const Point& pos)
     {
-        Point currentPos = getPosition();
-        Point deltaPos = pos - currentPos;
-
-        for (auto it = begin(); it != end(); it++)
+        const Point deltaPos{pos - getPosition()};
+        for (auto& item : *this)
         {
-            Point wPos = (*it)->getPosition();
+            Point wPos{item->getPosition()};
             wPos += deltaPos;
-            (*it)->setPosHint(wPos);
+            item->setPosHint(wPos);
         }
 
         Widget::setPosHint(pos);
@@ -64,7 +62,7 @@ namespace pTK
     void Box::onDraw(SkCanvas* canvas)
     {
         // Set Size and Point
-        SkPoint pos{convertToSkPoint(getPosition())};
+        const SkPoint pos{convertToSkPoint(getPosition())};
         SkPoint size{convertToSkPoint(getSize())};
         size += pos; // skia needs the size to be pos+size.
 
@@ -74,13 +72,13 @@ namespace pTK
         paint.setARGB(m_background.a, m_background.r, m_background.g, m_background.b);
 
         // Draw Rect
-        SkRect rect;
+        SkRect rect{};
         rect.set(pos, size);
         paint.setStyle(SkPaint::kStrokeAndFill_Style);
         canvas->drawRoundRect(rect, 0, 0, paint);
 
-        for (auto it = begin(); it != end(); ++it)
-            (*it)->onDraw(canvas);
+        for (auto& item : *this)
+            item->onDraw(canvas);
     }
 
     bool Box::updateChild(Widget* widget)
@@ -88,7 +86,9 @@ namespace pTK
         if (!m_busy)
         {
             m_busy = true;
-            Box::const_iterator it = findRaw(widget);
+            Box::const_iterator it{std::find_if(cbegin(), cend(), [&](Box::const_reference item) {
+                return item.get() == widget;
+            })};
             if (it != cend())
             {
                 onChildUpdate(static_cast<size_type>(it - cbegin()));
@@ -106,7 +106,9 @@ namespace pTK
         if (!m_busy)
         {
             m_busy = true;
-            Box::const_iterator it = findRaw(widget);
+            Box::const_iterator it{std::find_if(cbegin(), cend(), [&](Box::const_reference item) {
+                return item.get() == widget;
+            })};
             if (it != cend())
             {
                 onChildDraw(static_cast<size_type>(it - cbegin()));
@@ -119,66 +121,18 @@ namespace pTK
         return false;
     }
 
-    Container<Ref<Widget>>::const_iterator Box::find(const std::string& name)
-    {
-        for (auto it{cbegin()}; it != cend(); ++it)
-            if ((*it).get()->getName() == name)
-                return it;
-
-        return cend();
-    }
-
-    Container<Ref<Widget>>::const_iterator Box::findRaw(const Widget* widget)
-    {
-        for (auto it{cbegin()}; it != cend(); ++it)
-            if ((*it).get() == widget)
-                return it;
-
-        return cend();
-    }
-
-    Container<Ref<Widget>>::const_iterator Box::find(const Point& pos)
-    {
-        for (auto it{cbegin()}; it != cend(); ++it)
-        {
-            Point wPos = (*it)->getPosition();
-            Size wSize = (*it)->getSize();
-
-            if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
-                if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
-                    return it;
-        }
-
-        return cend();
-    }
-
-    Container<Ref<Widget>>::reverse_iterator Box::rfind(const Point& pos)
-    {
-        for (auto it{rbegin()}; it != rend(); ++it)
-        {
-            Point wPos = (*it)->getPosition();
-            Size wSize = (*it)->getSize();
-
-            if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
-                if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
-                    return it;
-        }
-
-        return rend();
-    }
-
     bool Box::onClickEvent(Mouse::Button btn, const Point& pos)
     {
-        for (auto it = begin(); it != end(); it++)
+        for (auto& item : *this)
         {
-            Point wPos = (*it)->getPosition();
-            Size wSize = (*it)->getSize();
+            const Point wPos{item->getPosition()};
+            const Size wSize{item->getSize()};
             if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
             {
                 if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
                 {
-                    Widget* temp = (*it).get(); // Iterator might change, when passing the event.
-                    bool status = (*it)->handleClickEvent(btn, pos);
+                    Widget* temp{item.get()}; // Iterator might change, when passing the event.
+                    bool status{item->handleClickEvent(btn, pos)};
                     m_lastClickedWidget = temp;
                     return status;
                 }
@@ -206,19 +160,18 @@ namespace pTK
 
     bool Box::onHoverEvent(const Point& pos)
     {
-        for (auto it = begin(); it != end(); it++)
+        for (auto& it : *this)
         {
-            Point wPos = (*it)->getPosition();
-            Size wSize = (*it)->getSize();
+            const Point wPos{it->getPosition()};
+            const Size wSize{it->getSize()};
             if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
             {
                 if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
                 {
                     // Send Leave Event.
-                    if (m_currentHoverWidget != (*it).get() || m_currentHoverWidget == nullptr)
+                    if (m_currentHoverWidget != it.get() || m_currentHoverWidget == nullptr)
                     {
-                        Widget* temp =
-                            (*it).get(); // Iterator might change, when passing the event.
+                        Widget* temp{it.get()}; // Iterator might change, when passing the event.
 
                         if (m_currentHoverWidget != nullptr)
                             m_currentHoverWidget->handleLeaveEvent();
@@ -256,7 +209,7 @@ namespace pTK
     {
         if (m_currentHoverWidget != nullptr)
         {
-            bool status = m_currentHoverWidget->handleLeaveEvent();
+            bool status{m_currentHoverWidget->handleLeaveEvent()};
 
             // Reset current hovered Widget.
             m_currentHoverWidget = nullptr;
@@ -270,14 +223,22 @@ namespace pTK
     {
         if (m_currentHoverWidget != nullptr)
             return m_currentHoverWidget->handleScrollEvent(offset);
-        ;
 
         return false;
     }
 
-    void Box::setBackground(const Color& color) { m_background = color; }
+    void Box::setBackground(const Color& color)
+    {
+        m_background = color;
+    }
 
-    const Color& Box::getBackground() const { return m_background; }
+    const Color& Box::getBackground() const
+    {
+        return m_background;
+    }
 
-    bool Box::busy() const { return m_busy; }
+    bool Box::busy() const
+    {
+        return m_busy;
+    }
 } // namespace pTK

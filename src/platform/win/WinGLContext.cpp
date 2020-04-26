@@ -96,7 +96,8 @@ namespace pTK
 
         GrBackendRenderTarget backendRenderTarget(size.width, size.height, 1, 8, m_info);
 
-        SkSurface *surface = SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, &m_props).release();
+        SkSurface *surface{SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget,
+                kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, &m_props).release()};
         PTK_ASSERT(surface, "Failed to create surface!");
         m_surface.reset(surface);
 

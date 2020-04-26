@@ -13,6 +13,7 @@ namespace pTK
     Rectangle::Rectangle()
         : Shape(), m_cornerRadius{0.0f}
     {
+
     }
     
     void Rectangle::onDraw(SkCanvas* canvas)
@@ -23,21 +24,21 @@ namespace pTK
         size += pos; // skia needs the size to be pos+size.
         
         // Outline
-        float outlineThickness = getOutlineThickness();
-        float halfOutlineThickness = outlineThickness/2.0f;
+        const float outlineThickness{getOutlineThickness()};
+        const float halfOutlineThickness{outlineThickness/2.0f};
         pos.fX += halfOutlineThickness;
         pos.fY += halfOutlineThickness;
         size.fX -= halfOutlineThickness;
         size.fY -= halfOutlineThickness;
         
         // Set Color
-        SkPaint paint;
+        SkPaint paint{};
         paint.setAntiAlias(true);
-        Color color = getColor();
+        const Color color{getColor()};
         paint.setARGB(color.a, color.r, color.g, color.b);
         
         // Draw Rect
-        SkRect rect;
+        SkRect rect{};
         rect.set(pos, size);
         paint.setStrokeWidth(outlineThickness);
         if (outlineThickness > 0.0f)
@@ -50,7 +51,7 @@ namespace pTK
         if (outlineThickness > 0.0f)
         {
             // Draw Outline
-            Color outColor = getOutlineColor();
+            const Color outColor{getOutlineColor()};
             paint.setARGB(outColor.a, outColor.r, outColor.g, outColor.b);
             paint.setStyle(SkPaint::kStroke_Style);
             canvas->drawRoundRect(rect, m_cornerRadius, m_cornerRadius, paint);

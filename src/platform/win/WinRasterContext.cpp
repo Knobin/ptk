@@ -19,14 +19,15 @@ namespace pTK
 
     void WinRasterContext::resize(const Size& size)
     {
-        SkColorType m_colorType{kN32_SkColorType};
-
-        uint w = size.width;
-        uint h = size.height;
-        m_surface.reset();
+        const SkColorType m_colorType{kN32_SkColorType};
+        const uint w{static_cast<uint>(size.width)};
+        const uint h{static_cast<uint>(size.height)};
         const size_t bmpSize = sizeof(BITMAPINFOHEADER) + w * h * sizeof(uint32_t);
+
+        m_surface.reset();
         m_surfaceMemory.reset(bmpSize);
-        BITMAPINFO* bmpInfo = reinterpret_cast<BITMAPINFO*>(m_surfaceMemory.get());
+
+        BITMAPINFO* bmpInfo{reinterpret_cast<BITMAPINFO*>(m_surfaceMemory.get())};
         ZeroMemory(bmpInfo, sizeof(BITMAPINFO));
         bmpInfo->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
         bmpInfo->bmiHeader.biWidth = w;
@@ -34,9 +35,9 @@ namespace pTK
         bmpInfo->bmiHeader.biPlanes = 1;
         bmpInfo->bmiHeader.biBitCount = 32;
         bmpInfo->bmiHeader.biCompression = BI_RGB;
-        void* pixels = bmpInfo->bmiColors;
+        void *pixels = bmpInfo->bmiColors;
 
-        SkImageInfo info = SkImageInfo::Make(w, h, m_colorType, kPremul_SkAlphaType,nullptr);
+        SkImageInfo info{SkImageInfo::Make(w, h, m_colorType, kPremul_SkAlphaType,nullptr)};
         m_surface = SkSurface::MakeRasterDirect(info, pixels, sizeof(uint32_t) * w);
         if (!m_surface)
             throw ContextError("Failed to create Raster Context for Windows Window");
@@ -57,11 +58,11 @@ namespace pTK
 
     void WinRasterContext::swapBuffers()
     {
-        BITMAPINFO *bmpInfo = reinterpret_cast<BITMAPINFO*>(m_surfaceMemory.get());
-        HRGN hrgn = CreateRectRgn(0,0,0,0);
+        BITMAPINFO *bmpInfo{reinterpret_cast<BITMAPINFO*>(m_surfaceMemory.get())};
+        HRGN hrgn{CreateRectRgn(0,0,0,0)};
         GetWindowRgn(m_hwnd, hrgn);
-        HDC dc = GetDCEx(m_hwnd, hrgn, DCX_PARENTCLIP);
-        const Size size = getSize();
+        HDC dc{GetDCEx(m_hwnd, hrgn, DCX_PARENTCLIP)};
+        const Size size{getSize()};
         StretchDIBits(dc, 0, 0, size.width, size.height, 0, 0, size.width, size.height, bmpInfo->bmiColors, bmpInfo,
                       DIB_RGB_COLORS, SRCCOPY);
         DeleteObject(hrgn);

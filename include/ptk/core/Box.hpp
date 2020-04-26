@@ -80,41 +80,6 @@ namespace pTK
         */
         bool drawChild(Widget* widget) override;
 
-        /** Function for finding a widget in the Container.
-
-            Function will look for a widget with the specified name and it will grab the first
-            with the matching name.
-
-            Meaning that if two Widgets or more have the same name, only the first added will
-            be found.
-
-            @param name    name to find
-            @return        const_iterator to widget or end const_iterator
-        */
-        const_iterator find(const std::string& name);
-
-        /** Function for finding a widget in the Container.
-
-            @param widget  widget to find
-            @return        const_iterator to widget or end const_iterator
-        */
-        const_iterator findRaw(const Widget* widget);
-
-        /** Function for finding a widget in the Container.
-
-            @param pos     pos to find
-            @return        const_iterator to widget or end const_iterator
-        */
-        const_iterator find(const Point& pos);
-
-        /** Function for finding a widget in the Container.
-            In reverse order.
-
-            @param pos     pos to find
-            @return        const_iterator to widget or end const_iterator
-        */
-        reverse_iterator rfind(const Point& pos);
-
         /** Function for handling when a key is pressed or released.
 
             @param type    Key event (press or release)

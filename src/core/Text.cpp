@@ -13,11 +13,13 @@ namespace pTK
     Text::Text()
         : m_text{""}, m_font{create<Font>()}
     {
+
     }
     
     Text::Text(const Ref<Font>& font)
         : m_text{""}, m_font{font}
     {
+
     }
 
     void Text::setFont(const Ref<Font>& font)
