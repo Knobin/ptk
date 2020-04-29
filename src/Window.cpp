@@ -7,18 +7,15 @@
 
 // Local Headers
 #include "ptk/Window.hpp"
-#include "ptk/platform/Backend.hpp"
+#include "platform/Backend.hpp"
 #include "ptk/events/WindowEvent.hpp"
-
-// C++ Headers
-#include <memory>
 
 namespace pTK
 {
     Window::Window(const std::string& name, const Size& size, BackendType backend)
             : VBox(), Singleton(),
                 m_winBackend{nullptr}, m_eventQueue{}, m_draw{false}, m_close{false},
-                m_threadID{std::this_thread::get_id()}, m_winPos{}
+                m_threadID{std::this_thread::get_id()}
     {
         // Set Widget properties.
         Sizable::setSize(size);
@@ -30,7 +27,7 @@ namespace pTK
 
     void Window::onChildDraw(size_type)
     {
-        postEvent(new Event{Event::Category::Window, Event::Type::WindowDraw});
+        postEvent<Event>(Event::Category::Window, Event::Type::WindowDraw);
     }
 
     void Window::handleEvents()
@@ -68,26 +65,11 @@ namespace pTK
         handleEvent(event);
     }
 
-    void Window::postEvent(Event *event)
-    {
-        m_eventQueue.push(std::unique_ptr<Event>(event));
-
-        if (m_threadID != std::this_thread::get_id())
-            m_winBackend->notifyEvent();
-    }
-
-    Size Window::getContentSize() const
-    {
-        Size wSize{getSize()};
-        const Vec2f scale{getDPIScale()};
-        wSize.width = static_cast<Size::value_type>(wSize.width * scale.x);
-        wSize.height = static_cast<Size::value_type>(wSize.height * scale.y);
-        return wSize;
-    }
-
     Vec2f Window::getDPIScale() const
     {
-        return m_winBackend->getDPIScale();
+        if (m_winBackend)
+            return m_winBackend->getDPIScale();
+        return Vec2f{};
     }
 
     bool Window::shouldClose()
@@ -191,7 +173,7 @@ namespace pTK
         } else if (type == Event::Type::WindowMoved)
         {
             MoveEvent* mEvent{static_cast<MoveEvent*>(event)};
-            m_winPos = mEvent->pos;
+            // TODO: Add a WindowMove Callback
         }
         else if (type == Event::Type::WindowClose)
         {
@@ -220,7 +202,7 @@ namespace pTK
 
         // Apply monitor scale.
         SkMatrix matrix{};
-        Vec2f scale{getDPIScale()};
+        Vec2f scale{m_winBackend->getDPIScale()};
         matrix.setScale(scale.x, scale.y);
         canvas->setMatrix(matrix);
 
@@ -237,9 +219,14 @@ namespace pTK
         m_winBackend->setPosHint(pos);
     }
 
-    const Point& Window::getWinPos() const
+    Point Window::getWinPos() const
     {
-        return m_winPos;
+        return m_winBackend->getWinPos();
+    }
+
+    Size Window::getWinSize() const
+    {
+        return m_winBackend->getWinSize();
     }
 
     void Window::setTitle(const std::string& name)

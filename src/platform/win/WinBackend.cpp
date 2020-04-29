@@ -6,45 +6,27 @@
 //
 
 // Local Headers
-#include "ptk/platform/win/WinBackend.hpp"
+#include "WinBackend.hpp"
 #include "ptk/Window.hpp"
 #include "ptk/core/Exception.hpp"
-#include "ptk/events/WindowEvent.hpp"
+#include "WinPlatform.hpp"
+#include "WinRasterContext.hpp"
 #include "ptk/events/KeyCodes.hpp"
-#include "ptk/platform/win/WinRasterContext.hpp"
+#include "ptk/events/WindowEvent.hpp"
 
 // Include OpenGL backend if HW Acceleration is enabled.
 #ifdef PTK_HW_ACCELERATION
-    #include "ptk/platform/win/WinGLContext.hpp"
+    #include "WinGLContext.hpp"
 #endif // PTK_HW_ACCELERATION
 
 // Windows Headers
 #include <windowsx.h>
 
+// C++ Headers
+#include <cmath>
+
 namespace pTK
 {
-    static std::wstring get_utf16(const std::string& str)
-    {
-        if (str.empty())
-            return std::wstring();
-        int sz{MultiByteToWideChar(CP_ACP, 0, &str[0], static_cast<int>(str.size()), nullptr, 0)};
-        std::wstring res(sz, 0);
-        MultiByteToWideChar(CP_ACP, 0, &str[0], static_cast<int>(str.size()), &res[0], sz);
-        return res;
-    }
-
-    static Size calcAdjustedWindowSize(const Size& from, DWORD style)
-    {
-        RECT adjustedSize{};
-        adjustedSize.top = 0;
-        adjustedSize.bottom = from.height;
-        adjustedSize.left = 0;
-        adjustedSize.right = from.width;
-        AdjustWindowRectEx(&adjustedSize, style, FALSE, 0);
-        return {adjustedSize.right - adjustedSize.left,
-                adjustedSize.bottom - adjustedSize.top};
-    }
-
     static std::map<byte, int32> initKeyCodes()
     {
         std::map<byte, int32> map{};
@@ -67,18 +49,30 @@ namespace pTK
         return map;
     }
 
-    static int32 translateKeyCode(const std::map<byte, int32>& map, byte code)
+    static std::map<byte, int32> s_keyMap{initKeyCodes()};
+
+    static int32 translateKeyCode(byte code)
     {
-        auto it{map.find(code)};
-        if (it != map.end())
+        auto it{s_keyMap.find(code)};
+        if (it != s_keyMap.end())
             return it->second;
 
         return PTK_KEY_UNKNOWN;
     }
 
-    static std::map<byte, int32> s_keyMap{initKeyCodes()};
+    static Size calcAdjustedWindowSize(const Size& from, DWORD style)
+    {
+        RECT adjustedSize{};
+        adjustedSize.top = 0;
+        adjustedSize.bottom = from.height;
+        adjustedSize.left = 0;
+        adjustedSize.right = from.width;
+        AdjustWindowRectEx(&adjustedSize, style, FALSE, 0);
+        return {adjustedSize.right - adjustedSize.left,
+                adjustedSize.bottom - adjustedSize.top};
+    }
 
-    std::unique_ptr<ContextBase> createWin32Context(BackendType type, HWND hwnd, const Size& size)
+    static std::unique_ptr<ContextBase> createWin32Context(BackendType type, HWND hwnd, const Size& size)
     {
 #ifdef PTK_HW_ACCELERATION
         if (type == BackendType::HARDWARE)
@@ -89,27 +83,36 @@ namespace pTK
         return std::make_unique<WinRasterContext>(hwnd, size);
     }
 
+    static Size scaleSize(const Size& size, const Vec2f& scale)
+    {
+        Size newSize{};
+        newSize.width = static_cast<Size::value_type>(std::ceil(size.width * scale.x));
+        newSize.height = static_cast<Size::value_type>(std::ceil(size.height * scale.y));
+        return newSize;
+    }
+
+    static Point scalePoint(const Point& point, const Vec2f& scale)
+    {
+        Point newPoint{};
+        newPoint.x = static_cast<Point::value_type>(point.x * scale.x);
+        newPoint.y = static_cast<Point::value_type>(point.y * scale.y);
+        return newPoint;
+    }
+
+    struct WinBackendData
+    {
+        Window *window;
+        Vec2f scale;
+        Size size;
+        Point pos;
+    };
+
     WinBackend::WinBackend(Window *window, const std::string& name, const Size& size, BackendType backend)
         : WindowBackend(backend),
             m_parentWindow{window}, m_handle{},
             m_style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX},
             m_scale{1.0f, 1.0f}
     {
-        WNDCLASSEXW wcx{};
-        wcx.cbSize = sizeof(wcx);
-        wcx.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-        wcx.hInstance = GetModuleHandleW(nullptr);
-        wcx.lpfnWndProc = wndPro;
-        wcx.cbClsExtra = 0;
-        wcx.cbWndExtra = 0;
-        wcx.lpszMenuName = nullptr;
-        wcx.lpszClassName = L"PTK";
-        wcx.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
-        wcx.hCursor = ::LoadCursorW(nullptr, reinterpret_cast<LPCWSTR>(IDC_ARROW));
-
-        if(!RegisterClassExW(&wcx))
-            throw WindowError("Window Registration Failed!");
-
         // High DPI
         HDC screen{GetDC(nullptr)};
         float dpiX{static_cast<float>(GetDeviceCaps(screen, LOGPIXELSX))};
@@ -120,20 +123,28 @@ namespace pTK
         m_scale.y = dpiY / 96.0f;
         PTK_INFO("Windows Window Scaling {0:0.2f}x{1:0.2f}", m_scale.x, m_scale.y);
 
-        //Size wSize{calcScaling(size, m_scale)};
-        Size wSize{size};
+        Size wSize{scaleSize(size, m_scale)};
+        PTK_INFO("{}x{}", wSize.width, wSize.height);
         Size adjSize{calcAdjustedWindowSize(wSize, m_style)};
-        m_handle = CreateWindowExW(0, wcx.lpszClassName, get_utf16(name).c_str(), m_style, CW_USEDEFAULT, CW_USEDEFAULT,
-                                   adjSize.width, adjSize.height, nullptr, nullptr, GetModuleHandleW(nullptr), nullptr);
+        m_handle = CreateWindowExW(0, L"PTK", WinPlatform::stringToUTF16(name).c_str(), m_style,
+                CW_USEDEFAULT, CW_USEDEFAULT, adjSize.width, adjSize.height, nullptr, nullptr,
+                GetModuleHandleW(nullptr), nullptr);
         if (!m_handle)
             throw WindowError("Failed to create window!");
-        PTK_INFO("Created WinWindow: {}x{}", size.width, size.height);
+        PTK_INFO("Created WinWindow: {}x{}", wSize.width, wSize.height);
 
         rasterCanvas = createWin32Context(backend, m_handle, wSize);
-        SetWindowLongPtr(m_handle, GWLP_USERDATA, (LONG_PTR)m_parentWindow);
+        m_data = new WinBackendData{window, m_scale, wSize, {}};
+        SetWindowLongPtr(m_handle, GWLP_USERDATA, (LONG_PTR)m_data);
 
         ::ShowWindow(m_handle, SW_SHOW);
         ::UpdateWindow(m_handle);
+    }
+
+    WinBackend::~WinBackend()
+    {
+        WinBackendData *data{static_cast<WinBackendData*>(m_data)};
+        delete data;
     }
 
     void WinBackend::setPosHint(const Point& pos)
@@ -165,7 +176,7 @@ namespace pTK
 
     void WinBackend::setTitle(const std::string& name)
     {
-        SetWindowTextW(m_handle, get_utf16(name).c_str());
+        SetWindowTextW(m_handle, WinPlatform::stringToUTF16(name).c_str());
     }
 
     void WinBackend::setIcon(int32 width, int32 height, byte* pixels)
@@ -241,12 +252,13 @@ namespace pTK
 
     void WinBackend::resize(const Size& size)
     {
-        rasterCanvas->resize(size);
+        rasterCanvas->resize({static_cast<Size::value_type>(std::ceil(size.width * m_scale.x)),
+                             static_cast<Size::value_type>(std::ceil(size.height * m_scale.y))});
     }
 
     void WinBackend::close()
     {
-        m_parentWindow->postEvent(new Event{Event::Category::Window, Event::Type::WindowClose});
+        m_parentWindow->postEvent<Event>(Event::Category::Window, Event::Type::WindowClose);
     }
 
     void WinBackend::show()
@@ -270,6 +282,18 @@ namespace pTK
         return m_scale;
     }
 
+    Point WinBackend::getWinPos() const
+    {
+        WinBackendData *data{static_cast<WinBackendData*>(m_data)};
+        return data->pos;
+    }
+
+    Size WinBackend::getWinSize() const
+    {
+        WinBackendData *data{static_cast<WinBackendData*>(m_data)};
+        return data->size;
+    }
+
     void WinBackend::setLimits(const Size&, const Size&)
     {
         RECT rect{};
@@ -280,86 +304,112 @@ namespace pTK
                 rect.bottom - rect.top, TRUE);
     }
 
+    static void handleMouseClick(WinBackendData *data, Event::Type type, Mouse::Button btn, LPARAM lParam)
+    {
+        if (data->window)
+        {
+            const Point pos{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+            ButtonEvent evt{type, btn, {
+                    static_cast<Point::value_type>(pos.x * (1/data->scale.x)),
+                    static_cast<Point::value_type>(pos.y * (1/data->scale.y))}
+            };
+            data->window->sendEvent(&evt);
+        }
+    }
+
     LRESULT WinBackend::wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
-        Window* window{reinterpret_cast<Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA))};
+        WinBackendData *data{reinterpret_cast<WinBackendData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA))};
+        Window *window{(data) ? data->window : nullptr};
         switch(msg)
         {
             case WM_CREATE:
                 break;
             case WM_CLOSE:
                 DestroyWindow(hwnd);
-                window->postEvent(new Event{Event::Category::Window, Event::Type::WindowClose});
+                window->postEvent<Event>(Event::Category::Window, Event::Type::WindowClose);
                 break;
             case WM_DESTROY:
                 PostQuitMessage(0);
                 break;
             case WM_MOVE:
-                {
-                    MoveEvent evt{{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)}};
-                    window->sendEvent(&evt);
-                }
+            {
+                MoveEvent evt{{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)}};
+                data->pos = evt.pos;
+                window->sendEvent(&evt);
+            }
                 break;
             case WM_PAINT:
                 if (window->visible())
                 {
-                    window->postEvent(new Event{Event::Category::Window, Event::Type::WindowDraw});
+                    window->postEvent<Event>(Event::Category::Window, Event::Type::WindowDraw);
                     window->handleEvents();
                 }
                 break;
             case WM_KEYDOWN:
-                {
-                    KeyEvent evt{KeyEvent::Pressed, translateKeyCode(s_keyMap, static_cast<byte>(wParam))};
-                    window->sendEvent(&evt);
-                }
+            {
+                KeyEvent evt{KeyEvent::Pressed, translateKeyCode(static_cast<byte>(wParam))};
+                window->sendEvent(&evt);
+            }
                 break;
             case WM_KEYUP:
-                {
-                    KeyEvent evt{KeyEvent::Released, translateKeyCode(s_keyMap, static_cast<byte>(wParam))};
-                    window->sendEvent(&evt);
-                }
+            {
+                KeyEvent evt{KeyEvent::Released, translateKeyCode(static_cast<byte>(wParam))};
+                window->sendEvent(&evt);
+            }
                 break;
             case WM_MOUSEMOVE:
+            {
+                if (window)
                 {
-                    MotionEvent evt{{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)}};
+                    const Point pos{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+                    MotionEvent evt{{static_cast<Point::value_type>(pos.x * (1/data->scale.x)),
+                                            static_cast<Point::value_type>(pos.y * (1/data->scale.y))}};
                     window->sendEvent(&evt);
                 }
+            }
                 break;
             case WM_LBUTTONDOWN:
-                handleMouseClick(window, Event::Type::MouseButtonPressed, Mouse::Button::Left, lParam);
+                handleMouseClick(data, Event::Type::MouseButtonPressed, Mouse::Button::Left, lParam);
                 break;
             case WM_LBUTTONUP:
-                handleMouseClick(window, Event::Type::MouseButtonReleased, Mouse::Button::Left, lParam);
+                handleMouseClick(data, Event::Type::MouseButtonReleased, Mouse::Button::Left, lParam);
                 break;
             case WM_SIZING:
             {
                 RECT rect{};
                 GetClientRect(hwnd, &rect);
-                window->postEvent(new ResizeEvent{{
-                    static_cast<Point::value_type>(rect.right - rect.left),
-                    static_cast<Point::value_type>(rect.bottom - rect.top)
-                }});
+                const Size size{static_cast<Size::value_type>(rect.right - rect.left),
+                                static_cast<Size::value_type>(rect.bottom - rect.top)};
+                data->size = size;
+                window->postEvent<ResizeEvent>(scaleSize(size, Vec2f{1.0f/data->scale.x, 1.0f/data->scale.y}));
             }
                 break;
             case WM_SIZE:
-                window->postEvent(new ResizeEvent{{LOWORD(lParam), HIWORD(lParam)}});
+            {
+                if (window && window->getBackend())
+                {
+                    const Size size{static_cast<Size::value_type>(LOWORD(lParam)),
+                                    static_cast<Size::value_type>(HIWORD(lParam))};
+                    data->size = size;
+                    window->postEvent<ResizeEvent>(scaleSize(size, Vec2f{1.0f/data->scale.x, 1.0f/data->scale.y}));
+                }
+            }
                 break;
             case WM_GETMINMAXINFO:
             {
                 if (window)
                 {
-                    LPMINMAXINFO lpMMI = (LPMINMAXINFO)lParam;
+                    LPMINMAXINFO lpMMI{reinterpret_cast<LPMINMAXINFO>(lParam)};
                     const Size minSize{window->getMinSize()};
                     WinBackend* backend{static_cast<WinBackend*>(window->getBackend())};
-                    const Size adjMinSize{calcAdjustedWindowSize(minSize, backend->getWindowStyle())};
+                    const Size adjMinSize{calcAdjustedWindowSize(scaleSize(minSize, data->scale), backend->getWindowStyle())};
                     lpMMI->ptMinTrackSize.x = adjMinSize.width;
                     lpMMI->ptMinTrackSize.y = adjMinSize.height;
                     const Size maxSize{window->getMaxSize()};
                     if (maxSize != Size::Max)
                     {
-                        const Vec2f scale{window->getDPIScale()};
-                        const Size adjMaxSize{calcAdjustedWindowSize(maxSize, backend->getWindowStyle())};
-                        // const Size adjMaxSize{calcAdjustedWindowSize(calcScaling(maxSize, scale), backend->getWindowStyle())};
+                        const Size adjMaxSize{calcAdjustedWindowSize(scaleSize(maxSize, data->scale), backend->getWindowStyle())};
                         lpMMI->ptMaxTrackSize.x = adjMaxSize.width;
                         lpMMI->ptMaxTrackSize.y = adjMaxSize.height;
                     } else
@@ -376,14 +426,5 @@ namespace pTK
         }
 
         return 0;
-    }
-
-    void WinBackend::handleMouseClick(Window *window, Event::Type type, Mouse::Button btn, LPARAM lParam)
-    {
-        ButtonEvent evt{type, btn, {
-                static_cast<Point::value_type>(GET_X_LPARAM(lParam)),
-                static_cast<Point::value_type>(GET_Y_LPARAM(lParam))}
-        };
-        window->sendEvent(&evt);
     }
 }

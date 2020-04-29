@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "ptk/platform/win/WinRasterContext.hpp"
+#include "WinRasterContext.hpp"
 #include "ptk/core/Exception.hpp"
 
 namespace pTK

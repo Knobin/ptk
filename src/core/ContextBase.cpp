@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "ptk/core/ContextBase.hpp"
+#include "ptk/core/platform/ContextBase.hpp"
 
 namespace pTK
 {

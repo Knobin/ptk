@@ -9,7 +9,7 @@
 #define PTK_PlATFORM_WIN_WINBACKEND_HPP
 
 // Local Headers
-#include "ptk/core/WindowBackend.hpp"
+#include "ptk/core/platform/WindowBackend.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/events/MouseEvent.hpp"
 
@@ -43,7 +43,7 @@ namespace pTK
         /** Deconstructor for WinBackend.
 
         */
-        virtual ~WinBackend() = default;
+        virtual ~WinBackend();
 
         /** Function for closing the window.
 
@@ -139,15 +139,25 @@ namespace pTK
         */
         void notifyEvent() override;
 
+        /** Function for retrieving the window position.
+
+           @return     Window Position
+       */
+        Point getWinPos() const override;
+
+        /** Function for retrieving the window size.
+
+            @return     Window Size
+        */
+        Size getWinSize() const override;
+
         /** Function for retrieving the current Windows style of the Window.
 
             @return Window style
         */
         DWORD getWindowStyle() const;
 
-    private:
         static LRESULT CALLBACK wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-        static void handleMouseClick(Window *window, Event::Type type, Mouse::Button btn, LPARAM lParam);
 
     private:
         Window *m_parentWindow;
@@ -156,6 +166,7 @@ namespace pTK
         std::unique_ptr<ContextBase> rasterCanvas;
         PAINTSTRUCT ps;
         Vec2f m_scale;
+        void *m_data;
     };
 }
 

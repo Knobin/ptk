@@ -37,7 +37,7 @@ namespace pTK
             @return        default initialized Transformable
         */
         Application(int argc, char *argv[]);
-        ~Application() = default;
+        ~Application();
 
         /** Function for executing the application.
          

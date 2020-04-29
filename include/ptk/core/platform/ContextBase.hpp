@@ -1,12 +1,12 @@
 //
-//  core/ContextBase.hpp
+//  core/platform/ContextBase.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-02-09.
 //
 
-#ifndef PTK_CORE_CONTEXTBASE_HPP
-#define PTK_CORE_CONTEXTBASE_HPP
+#ifndef PTK_CORE_PLATFORM_CONTEXTBASE_HPP
+#define PTK_CORE_PLATFORM_CONTEXTBASE_HPP
 
 // Local Headers
 #include "ptk/Core.hpp"
@@ -114,4 +114,4 @@ namespace pTK
     SkPoint convertToSkPoint(const Size& size, const Vec2f& scale = {1.0f, 1.0f});
 }
 
-#endif // PTK_CORE_CONTEXTBASE_HPP
+#endif // PTK_CORE_PLATFORM_CONTEXTBASE_HPP

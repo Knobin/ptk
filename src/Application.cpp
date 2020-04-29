@@ -7,8 +7,15 @@
 
 // Local Headers
 #include "ptk/Application.hpp"
-#include "ptk/util/Clock.hpp"
-#include "ptk/Core.hpp"
+
+#ifdef PTK_PLATFORM_WINDOWS
+#include "platform/win/WinPlatform.hpp"
+#define PTK_INIT_PLATFORM WinPlatform::init
+#define PTK_DESTROY_PLATFORM WinPlatform::destroy
+#else
+#define PTK_INIT_PLATFORM()
+#define PTK_DESTROY_PLATFORM()
+#endif
 
 // C++ Headers
 #include <thread>
@@ -19,13 +26,20 @@ namespace pTK
         : Singleton(), m_waitTime(8000000)
     {
         PTK_INIT_LOGGING();
+        PTK_INIT_PLATFORM();
     }
     
     Application::Application(int, char* [])
         : Singleton(), m_waitTime(8000000)
     {
         PTK_INIT_LOGGING();
+        PTK_INIT_PLATFORM();
         // TODO: Check arguments.
+    }
+
+    Application::~Application()
+    {
+        PTK_DESTROY_PLATFORM();
     }
 
     int Application::exec(pTK::Window* window)

@@ -9,7 +9,7 @@
 #define PTK_PlATFORM_WIN_WINRASTERCONTEXT_HPP
 
 // Local Headers
-#include "ptk/core/ContextBase.hpp"
+#include "ptk/core/platform/ContextBase.hpp"
 
 // Windows Headers
 #include <windows.h>

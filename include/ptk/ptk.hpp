@@ -14,13 +14,15 @@
 #include "ptk/Window.hpp"
 
 // --- Core --------------------------
-#include "ptk/core/ContextBase.hpp"
+#include "ptk/core/platform/ContextBase.hpp"
+#include "ptk/core/platform/WindowBackend.hpp"
 #include "ptk/core/Container.hpp"
 #include "ptk/core/Drawable.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/core/EventCallbacks.hpp"
 #include "ptk/core/EventFunctions.hpp"
 #include "ptk/core/EventHandling.hpp"
+#include "ptk/core/Exception.hpp"
 #include "ptk/core/Font.hpp"
 #include "ptk/core/Shape.hpp"
 #include "ptk/core/Sizable.hpp"

@@ -1,17 +1,17 @@
 //
-//  core/WindowBackend.hpp
+//  core/platform/WindowBase.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-03-13.
 //
 
-#ifndef PTK_CORE_WINDOWBACKEND_HPP
-#define PTK_CORE_WINDOWBACKEND_HPP
+#ifndef PTK_CORE_PLATFORM_WINDOWBASE_HPP
+#define PTK_CORE_PLATFORM_WINDOWBASE_HPP
 
 // Local Headers
 #include "ptk/util/Point.hpp"
 #include "ptk/util/Size.hpp"
-#include "ptk/core/ContextBase.hpp"
+#include "ptk/core/platform/ContextBase.hpp"
 #include "ptk/Core.hpp"
 
 namespace pTK
@@ -156,9 +156,21 @@ namespace pTK
             return m_backend;
         }
 
+        /** Function for retrieving the window position.
+
+            @return     Window Position
+        */
+        virtual Point getWinPos() const = 0;
+
+        /** Function for retrieving the window size.
+
+            @return     Window Size
+        */
+        virtual Size getWinSize() const = 0;
+
     private:
         BackendType m_backend;
     };
 }
 
-#endif // PTK_CORE_WINDOWBACKEND_HPP
+#endif // PTK_CORE_PLATFORM_WINDOWBASE_HPP

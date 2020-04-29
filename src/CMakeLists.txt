@@ -32,7 +32,8 @@ if (PTK_BUILD_TYPE MATCHES Debug)
 endif()
 
 if (WIN32)
-    set(PLATFORM_FILES platform/win/WinRasterContext.cpp
+    set(PLATFORM_FILES platform/win/WinPlatform.cpp
+            platform/win/WinRasterContext.cpp
             platform/win/WinBackend.cpp)
     if (HW_ACCELERATION)
         set(PLATFORM_FILES ${PLATFORM_FILES}

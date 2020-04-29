@@ -6,8 +6,7 @@
 //
 
 // Local Headers
-#include "ptk/platform/win/WinGLContext.hpp"
-#include "ptk/Core.hpp"
+#include "WinGLContext.hpp"
 
 // OpenGL Windows Headers
 #include <GL/gl.h>
@@ -22,7 +21,6 @@
 #elif PTK_COMPILER_MSVC
 #pragma warning( push, 0 )
 #endif
-//#include "include/gpu/GrBackendSurface.h"
 #include "include/gpu/gl/GrGLInterface.h"
 #include "src/gpu/gl/GrGLUtil.h"
 #include "src/utils/win/SkWGL.h"
@@ -88,6 +86,8 @@ namespace pTK
         // Otherwise, SkRefCount will give a nice assert.
         m_surface.reset();
         m_context.reset();
+
+        PTK_INFO("Deconstructed WinGLContext");
     }
 
     void WinGLContext::resize(const Size& size)
@@ -101,7 +101,7 @@ namespace pTK
         PTK_ASSERT(surface, "Failed to create surface!");
         m_surface.reset(surface);
 
-        PTK_INFO("Created WinGLCanvas: {}x{}", size.width, size.height);
+        PTK_INFO("Constructed WinGLContext: {}x{}", size.width, size.height);
         setSize(size);
     }
 

@@ -9,7 +9,7 @@
 #define PTK_WINDOW_HPP
 
 // Local Headers
-#include "ptk/core/WindowBackend.hpp"
+#include "ptk/core/platform/WindowBackend.hpp"
 #include "ptk/util/Singleton.hpp"
 #include "ptk/widgets/VBox.hpp"
 #include "ptk/core/Event.hpp"
@@ -48,18 +48,6 @@ namespace pTK
 
         */
         virtual ~Window() = default;
-
-        /** Function for retrieving the content size.
-
-            If the monitor supports high DPI, the content of
-            the window will size*DPIScale.
-
-            If high DPI is not supported this will return the
-            window size.
-
-            @return    content size
-        */
-        Size getContentSize() const;
 
         /** Function for retrieving the DPI Scale of the window.
 
@@ -116,7 +104,15 @@ namespace pTK
 
             This function is thread safe.
         */
-        void postEvent(Event *event);
+        template<typename T, typename... Args>
+        void postEvent(Args&& ...args)
+        {
+            std::unique_ptr<T> event = std::make_unique<T>(std::forward<Args>(args)...);
+            m_eventQueue.push(std::move(event));
+
+            if (m_threadID != std::this_thread::get_id())
+                m_winBackend->notifyEvent();
+        }
 
         /** Function for forcing the window to redraw everything.
 
@@ -131,12 +127,23 @@ namespace pTK
 
         /** Function for retrieving the window position.
 
-            Note: getPosition is not used due to being internally used by either children or VBOX.
+            Note: getPosition should not be used due to being internally used by either children or VBox.
+            getPosition always return {0, 0}.
             Use this function for retrieving the Window Coordinates.
 
-            @return window postion
+            @return window position
         */
-        const Point& getWinPos() const;
+        Point getWinPos() const;
+
+        /** Function for retrieving the window size.
+
+            Note: getSize returns the content size of the window.
+            If the DPI is {1.0f, 1.0f} this function will return the same value as getSize.
+            Use this function for retrieving the window size.
+
+            @return window size
+        */
+        Size getWinSize() const;
 
         /** Function for setting the window title.
 
@@ -176,7 +183,6 @@ namespace pTK
         bool m_draw;
         bool m_close;
         std::thread::id m_threadID;
-        Point m_winPos;
     };
 }
 

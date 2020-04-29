@@ -9,7 +9,7 @@
 #define PTK_PlATFORM_WIN_WINGLCONTEXT_HPP
 
 // Local Headers
-#include "ptk/core/ContextBase.hpp"
+#include "ptk/core/platform/ContextBase.hpp"
 
 // Windows Headers
 #ifdef _WIN32
