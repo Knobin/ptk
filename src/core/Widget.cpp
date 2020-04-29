@@ -27,7 +27,7 @@ namespace pTK
         return m_parent;
     }
 
-    void Widget::onResize(const Size&)
+    void Widget::onSizeChange(const Size&)
     {
         update();
     }

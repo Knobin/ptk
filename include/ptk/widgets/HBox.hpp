@@ -42,7 +42,7 @@ namespace pTK
         void onAdd(const Ref<Widget>&) override;
         void onRemove(const Ref<Widget>&) override;
         void onChildUpdate(size_type) override;
-        void onResize(const Size& size) override;
+        void onSizeChange(const Size& size) override;
         
     private:
         void expandOnAdd(const Size& newSize);

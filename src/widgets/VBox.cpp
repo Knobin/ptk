@@ -172,7 +172,7 @@ namespace pTK
         }
     }
 
-    void VBox::onResize(const Size& size)
+    void VBox::onSizeChange(const Size& size)
     {
         refitContent(size);
     }

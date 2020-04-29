@@ -30,7 +30,7 @@ namespace pTK
 
         // Signal a size change.
         if (status & 1) // Check if first bit is set.
-            onResize(getSize());
+            onSizeChange(getSize());
 
         // Signal a limit change.
         if (status & 2) // Check if second bit is set.
@@ -71,7 +71,7 @@ namespace pTK
 
         // Signal a size change.
         if (changed)
-            onResize(m_size);
+            onSizeChange(m_size);
     }
 
     void Sizable::setConstSize(const Size& size)
@@ -82,7 +82,7 @@ namespace pTK
         m_maxLock = true;
 
         // Signal events.
-        onResize(size);
+        onSizeChange(size);
         onLimitChange(getMinSize(), getMaxSize());
     }
 
@@ -99,7 +99,7 @@ namespace pTK
 
         // Signal a size change.
         if (status & 1) // Check if first bit is set.
-            onResize(getSize());
+            onSizeChange(getSize());
 
         // Signal a limit change.
         if (status & 2) // Check if second bit is set.
@@ -130,7 +130,7 @@ namespace pTK
 
         // Signal a size change.
         if ((s1 & 1) || ((s2 & 1)))
-            onResize(getSize());
+            onSizeChange(getSize());
 
         // Check if locks are needed.
         if (s1 & 2)

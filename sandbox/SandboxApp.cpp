@@ -35,34 +35,41 @@ pTK::Color randomColor()
 
 int main(int argc, char *argv[]) {
     pTK::Application app{argc, argv};
-    pTK::Window window{"pTK Sandbox Window", {960, 540}};
+    pTK::Window window{"pTK Sandbox Window", {960, 540}, pTK::BackendType::SOFTWARE};
     window.setBackground(pTK::Color(0x232323FF));
 
-    // Set ESC key to close the window.
-    window.onKey([&](pTK::Event::Type type, int32 key) {
-        std::cout << "key pressed:" << key << std::endl;
-        if ((type == pTK::KeyEvent::Released) && (key == 27))
-            window.close();
-        if ((type == pTK::KeyEvent::Released) && (key == 32))
-            window.setPosHint({200, 50});
-        if ((type == pTK::KeyEvent::Released) && (key == PTK_KEY_A))
-            window.setTitle("Test title change");
-        if ((type == pTK::KeyEvent::Released) && (key == PTK_KEY_G))
-            std::cout << window.getWinPos().x << "x" <<  window.getWinPos().y << std::endl;
-
-        std::cout << "keycode: " << key << std::endl;
-
+    window.onFocus([&](){
+        std::cout << "FOCUS" << std::endl;
         return true;
     });
 
-    window.onHover([](const pTK::Point &) {
-        //std::cout << "pos: " << point.x << "x" << point.y << std::endl;
-        return false;
+    window.onLostFocus([&](){
+        std::cout << "LOST FOCUS" << std::endl;
+        return true;
+    });
+
+    window.onClose([&](){
+        std::cout << "CLOSE" << std::endl;
+        return true;
+    });
+
+    window.onResize([&](const pTK::Size& size){
+        std::cout << "RESIZE: " << size.width << "x" << size.height << std::endl;
+        return true;
+    });
+
+    // Set ESC key to close the window.
+    window.onKey([&](pTK::Event::Type type, int32 key) {
+        if ((type == pTK::KeyEvent::Released) && (key == PTK_KEY_ESCAPE))
+            window.close();
+
+        return true;
     });
 
     // HBox.
     pTK::Ref<pTK::HBox> hbox = pTK::create<pTK::HBox>();
     hbox->setSize({static_cast<int>(SCR_WIDTH), static_cast<int>(SCR_HEIGHT)});
+    std::cout << hbox->getSize().width << "x" << hbox->getSize().height << std::endl;
 
     // VBox as sidebar.
     pTK::Ref<pTK::VBox> sidebar = pTK::create<pTK::VBox>();

@@ -97,7 +97,7 @@ namespace pTK
         Widget::setPosHint(pos);
     }
 
-    void Cell::onResize(const Size&)
+    void Cell::onSizeChange(const Size&)
     {
         calculatePosition();
     }

@@ -231,7 +231,7 @@ namespace pTK
     private:
         void setBounds();
 
-        void onResize(const Size& size) override;
+        void onSizeChange(const Size& size) override;
         
     private:
         Ref<Label> m_text;

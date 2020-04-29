@@ -163,6 +163,14 @@ namespace pTK
         */
         WindowBackend* getBackend() const;
 
+    public:
+        // Window specific callbacks.
+        void onClose(const std::function<bool()>& callback);
+        void onMove(const std::function<bool(const Point& pos)>& callback);
+        void onResize(const std::function<bool(const Size& pos)>& callback);
+        void onFocus(const std::function<bool()>& callback);
+        void onLostFocus(const std::function<bool()>& callback);
+
     private:
         // Event processing
         void handleEvent(Event *event);
@@ -171,7 +179,7 @@ namespace pTK
         void handleWindowEvent(Event* event);
 
         void onChildDraw(size_type) override;
-        void onResize(const Size& size) override;
+        void onSizeChange(const Size& size) override;
         void onLimitChange(const Size& min, const Size& max) override;
 
         // getPosition should not be used outside this class.
@@ -183,6 +191,13 @@ namespace pTK
         bool m_draw;
         bool m_close;
         std::thread::id m_threadID;
+
+        // Window specific callbacks.
+        std::function<bool()> m_onClose = nullptr;
+        std::function<bool(const Point& pos)> m_onMove = nullptr;
+        std::function<bool(const Size& pos)> m_onResize = nullptr;
+        std::function<bool()> m_onFocus = nullptr;
+        std::function<bool()> m_onLostFocus = nullptr;
     };
 }
 

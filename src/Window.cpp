@@ -89,7 +89,7 @@ namespace pTK
         m_winBackend->hide();
     }
 
-    void Window::onResize(const Size& size)
+    void Window::onSizeChange(const Size& size)
     {
         if ((m_winBackend) && (m_winBackend->getContext()->getSize() != size))
             m_winBackend->resize(size);
@@ -99,6 +99,32 @@ namespace pTK
     {
         if (m_winBackend)
             m_winBackend->setLimits(min, max);
+    }
+
+    // Window specific callbacks.
+    void Window::onClose(const std::function<bool()>& callback)
+    {
+        m_onClose = callback;
+    }
+
+    void Window::onMove(const std::function<bool(const Point& pos)>& callback)
+    {
+        m_onMove = callback;
+    }
+
+    void Window::onResize(const std::function<bool(const Size& pos)>& callback)
+    {
+        m_onResize = callback;
+    }
+
+    void Window::onFocus(const std::function<bool()>& callback)
+    {
+        m_onFocus = callback;
+    }
+
+    void Window::onLostFocus(const std::function<bool()>& callback)
+    {
+        m_onLostFocus = callback;
     }
 
     void Window::handleEvent(Event *event)
@@ -169,15 +195,31 @@ namespace pTK
                 m_winBackend->resize(size);
                 refitContent(size);
                 m_draw = true;
+                if (m_onResize)
+                    m_onResize(size);
             }
-        } else if (type == Event::Type::WindowMoved)
+        }
+        else if (type == Event::Type::WindowMoved)
         {
             MoveEvent* mEvent{static_cast<MoveEvent*>(event)};
-            // TODO: Add a WindowMove Callback
+            if (m_onMove)
+                m_onMove(mEvent->pos);
         }
         else if (type == Event::Type::WindowClose)
         {
             m_close = true;
+            if (m_onClose)
+                m_onClose();
+        }
+        else if (type == Event::Type::WindowFocus)
+        {
+            if (m_onFocus)
+                m_onFocus();
+        }
+        else if (type == Event::Type::WindowLostFocus)
+        {
+            if (m_onLostFocus)
+                m_onLostFocus();
         }
     }
 

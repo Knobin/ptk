@@ -123,7 +123,7 @@ namespace pTK
 
     private:
         // Size functions derived from Sizable.
-        void onResize(const Size& size) override;
+        void onSizeChange(const Size& size) override;
         void onLimitChange(const Size& min, const Size& max) override;
 
         // Alignment functions derived from Alignment.

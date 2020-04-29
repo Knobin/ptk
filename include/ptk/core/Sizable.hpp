@@ -102,7 +102,7 @@ namespace pTK
 
             @param size    new size
         */
-        virtual void onResize(const Size&) {}
+        virtual void onSizeChange(const Size&) {}
 
         /** Function for knowing when the limits has been changed.
 

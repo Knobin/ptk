@@ -252,8 +252,10 @@ namespace pTK
 
     void WinBackend::resize(const Size& size)
     {
-        rasterCanvas->resize({static_cast<Size::value_type>(std::ceil(size.width * m_scale.x)),
-                             static_cast<Size::value_type>(std::ceil(size.height * m_scale.y))});
+        const Size adjSize{static_cast<Size::value_type>(std::ceil(size.width * m_scale.x)),
+                           static_cast<Size::value_type>(std::ceil(size.height * m_scale.y))};
+        if (adjSize != rasterCanvas->getSize())
+            rasterCanvas->resize(adjSize);
     }
 
     void WinBackend::close()
@@ -331,6 +333,12 @@ namespace pTK
                 break;
             case WM_DESTROY:
                 PostQuitMessage(0);
+                break;
+            case WM_SETFOCUS:
+                window->postEvent<Event>(Event::Category::Window, Event::Type::WindowFocus);
+                break;
+            case WM_KILLFOCUS:
+                window->postEvent<Event>(Event::Category::Window, Event::Type::WindowLostFocus);
                 break;
             case WM_MOVE:
             {

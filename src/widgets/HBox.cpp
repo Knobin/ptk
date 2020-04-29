@@ -156,7 +156,7 @@ namespace pTK
         }
     }
 
-    void HBox::onResize(const Size& size)
+    void HBox::onSizeChange(const Size& size)
     {
         refitContent(size);
     }
