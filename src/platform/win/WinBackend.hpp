@@ -163,7 +163,7 @@ namespace pTK
         Window *m_parentWindow;
         HWND m_handle;
         DWORD m_style;
-        std::unique_ptr<ContextBase> rasterCanvas;
+        std::unique_ptr<ContextBase> m_context;
         PAINTSTRUCT ps;
         Vec2f m_scale;
         void *m_data;

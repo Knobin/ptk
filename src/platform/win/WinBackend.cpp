@@ -111,7 +111,7 @@ namespace pTK
         : WindowBackend(backend),
             m_parentWindow{window}, m_handle{},
             m_style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX},
-            m_scale{1.0f, 1.0f}
+            m_scale{1.0f, 1.0f}, m_context{nullptr}
     {
         // High DPI
         HDC screen{GetDC(nullptr)};
@@ -133,7 +133,7 @@ namespace pTK
             throw WindowError("Failed to create window!");
         PTK_INFO("Created WinWindow: {}x{}", wSize.width, wSize.height);
 
-        rasterCanvas = createWin32Context(backend, m_handle, wSize);
+        m_context = createWin32Context(backend, m_handle, wSize);
         m_data = new WinBackendData{window, m_scale, wSize, {}};
         SetWindowLongPtr(m_handle, GWLP_USERDATA, (LONG_PTR)m_data);
 
@@ -247,15 +247,30 @@ namespace pTK
 
     void WinBackend::swapBuffers()
     {
-        rasterCanvas->swapBuffers();
+        m_context->swapBuffers();
     }
 
     void WinBackend::resize(const Size& size)
     {
-        const Size adjSize{static_cast<Size::value_type>(std::ceil(size.width * m_scale.x)),
-                           static_cast<Size::value_type>(std::ceil(size.height * m_scale.y))};
-        if (adjSize != rasterCanvas->getSize())
-            rasterCanvas->resize(adjSize);
+        // Apply the DPI scaling.
+        const Size scaledSize{static_cast<Size::value_type>(std::ceil(size.width * m_scale.x)),
+                              static_cast<Size::value_type>(std::ceil(size.height * m_scale.y))};
+        // Adjust the size depending on the window frame.
+        const Size adjSize{calcAdjustedWindowSize(scaledSize, m_style)};
+
+        // Get the window size and position.
+        RECT rect{};
+        GetWindowRect(m_handle, &rect);
+
+        WinBackendData *data{static_cast<WinBackendData*>(m_data)};
+        data->pos = Point{rect.left, rect.top};
+        data->size = scaledSize;
+
+        // Apply the new size to the context and window.
+        if (scaledSize != m_context->getSize())
+            m_context->resize(scaledSize);
+        MoveWindow(m_handle, data->pos.x, data->pos.y, adjSize.width, adjSize.height, FALSE);
+
     }
 
     void WinBackend::close()
@@ -276,7 +291,7 @@ namespace pTK
 
     ContextBase *WinBackend::getContext() const
     {
-        return rasterCanvas.get();
+        return m_context.get();
     }
 
     Vec2f WinBackend::getDPIScale() const
@@ -400,7 +415,7 @@ namespace pTK
                     const Size size{static_cast<Size::value_type>(LOWORD(lParam)),
                                     static_cast<Size::value_type>(HIWORD(lParam))};
                     data->size = size;
-                    window->postEvent<ResizeEvent>(scaleSize(size, Vec2f{1.0f/data->scale.x, 1.0f/data->scale.y}));
+                    window->postEvent<ResizeEvent>(scaleSize(size, Vec2f{1.0f/data->scale.x, 1.0f/data->scale.y}));;
                 }
             }
                 break;

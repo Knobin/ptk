@@ -156,11 +156,11 @@ namespace pTK
         Event::Type type{event->type};
         if (type == Event::Type::MouseMoved)
         {
-            MotionEvent* mEvent{static_cast<MotionEvent*>(event)};
+            MotionEvent *mEvent{static_cast<MotionEvent*>(event)};
             handleHoverEvent(mEvent->pos);
         } else if (type == Event::Type::MouseButtonPressed || type == Event::Type::MouseButtonReleased)
         {
-            ButtonEvent* bEvent{static_cast<ButtonEvent*>(event)};
+            ButtonEvent *bEvent{static_cast<ButtonEvent*>(event)};
             Point pos{bEvent->pos};
             Mouse::Button btn{bEvent->button};
             if (type == Event::Type::MouseButtonPressed)
@@ -183,17 +183,13 @@ namespace pTK
             m_draw = true;
         } else if (type == Event::Type::WindowResize)
         {
-            ResizeEvent* rEvent{static_cast<ResizeEvent*>(event)};
+            ResizeEvent *rEvent{static_cast<ResizeEvent*>(event)};
             const Size size{rEvent->size};
-            const Vec2f scale{m_winBackend->getDPIScale()};
-            const Size cSize{static_cast<Size::value_type>(size.width * scale.x),
-                             static_cast<Size::value_type>(size.height * scale.y)};
-
-            if (cSize != m_winBackend->getContext()->getSize())
+            if (size != getSize())
             {
                 setSize(size);
-                m_winBackend->resize(size);
                 refitContent(size);
+                m_winBackend->resize(size);
                 m_draw = true;
                 if (m_onResize)
                     m_onResize(size);
@@ -201,7 +197,7 @@ namespace pTK
         }
         else if (type == Event::Type::WindowMoved)
         {
-            MoveEvent* mEvent{static_cast<MoveEvent*>(event)};
+            MoveEvent *mEvent{static_cast<MoveEvent*>(event)};
             if (m_onMove)
                 m_onMove(mEvent->pos);
         }

@@ -22,6 +22,15 @@ uint colSidebar{0x252525FF};
 uint colContent{0x171717FF};
 uint colText{0xF5F5F5FF};
 
+pTK::Color interpolateColor(const pTK::Color& c1, const pTK::Color& c2, double factor)
+{
+    pTK::Color result{c1};
+    result.r = static_cast<pTK::Color::value_type>(std::round(c1.r + factor * (c2.r - c1.r)));
+    result.g = static_cast<pTK::Color::value_type>(std::round(c1.g + factor * (c2.g - c1.g)));
+    result.b = static_cast<pTK::Color::value_type>(std::round(c1.b + factor * (c2.b - c1.b)));
+    return result;
+}
+
 pTK::Color randomColor()
 {
     using color_size = pTK::Color::size_type;
@@ -35,7 +44,7 @@ pTK::Color randomColor()
 
 int main(int argc, char *argv[]) {
     pTK::Application app{argc, argv};
-    pTK::Window window{"pTK Sandbox Window", {960, 540}, pTK::BackendType::SOFTWARE};
+    pTK::Window window{"pTK Sandbox Window", {960, 540}};
     window.setBackground(pTK::Color(0x232323FF));
 
     window.onFocus([&](){
@@ -62,6 +71,8 @@ int main(int argc, char *argv[]) {
     window.onKey([&](pTK::Event::Type type, int32 key) {
         if ((type == pTK::KeyEvent::Released) && (key == PTK_KEY_ESCAPE))
             window.close();
+        if ((type == pTK::KeyEvent::Released) && (key == PTK_KEY_SPACE))
+            window.postEvent<pTK::ResizeEvent>(pTK::Size{1000, 600});
 
         return true;
     });
@@ -223,10 +234,23 @@ int main(int argc, char *argv[]) {
 
     std::atomic<bool> run{true};
     std::thread t1{[&](){
+        pTK::Color c1{randomColor()};
+        pTK::Color c2{randomColor()};
+
+        std::size_t steps{500};
+        double stepFactor{1.0 / (steps - 1.0)};
+        size_t step{0};
         while (run)
         {
-            r1->setColor(randomColor());
-            std::this_thread::sleep_for(std::chrono::milliseconds (100));
+            if (step > steps)
+            {
+                c1 = c2;
+                c2 = randomColor();
+                step = 1;
+            }
+            r1->setColor(interpolateColor(c1, c2, stepFactor * step));
+            std::this_thread::sleep_for(std::chrono::milliseconds (25));
+            ++step;
         }
     }};
 
