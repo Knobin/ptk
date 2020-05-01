@@ -9,7 +9,7 @@
 #define PTK_PLATFORM_GLCONTEXT_HPP
 
 // Local Headers
-#include "ptk/core/ContextBase.hpp"
+#include "ptk/core/platform/ContextBase.hpp"
 
 // C++ Headers
 #include <memory>

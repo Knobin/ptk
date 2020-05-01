@@ -9,8 +9,8 @@
 #define PTK_PlATFORM_GLFW_GLFWBACKEND_HPP
 
 // Local Headers
-#include "ptk/core/WindowBackend.hpp"
-#include "ptk/platform/glfw/GLContext.hpp"
+#include "ptk/core/platform/WindowBackend.hpp"
+#include "GLContext.hpp"
 
 // GLFW Headers
 #include <GLFW/glfw3.h>
@@ -93,6 +93,44 @@ namespace pTK
             @param max  maximum size of the window
         */
         void setLimits(const Size& min, const Size& max) override;
+
+        /** Function for setting the title of the window.
+
+            @param name     title to show
+        */
+        void setTitle(const std::string& name) override;
+
+        /** Function for setting the icon of the window.
+
+            Note: The function expects the pixels to be in a RGBA format with size of 32 bits (4 bytes).
+            Therefore, size of the pixel array is width * height * 32.
+            This is why a size parameter is not needed.
+
+            @param width    width of the image
+            @param height   height of the image
+            @param pixels   image pixels in a RGBA format.
+        */
+        void setIcon(int32 width, int32 height, byte* pixels) override;
+
+        /** Function for notifying the backend that an event has been pushed from
+            a different thread.
+
+            Depending on the implementation, pollEvents() might need to be exited.
+            This function will notify when that is needed.
+        */
+        void notifyEvent() override;
+
+        /** Function for retrieving the window position.
+
+            @return     Window Position
+        */
+        Point getWinPos() const override;
+
+        /** Function for retrieving the window size.
+
+            @return     Window Size
+        */
+        Size getWinSize() const override;
 
     private:
         // Window

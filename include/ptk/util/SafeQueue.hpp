@@ -298,7 +298,7 @@ namespace pTK
 
     private:
         mutable std::mutex m_mutex;
-        std::condition_variable m_conditionVariable;
+        mutable std::condition_variable m_conditionVariable;
         Container m_cont;
 
         template<typename T1, typename Container1>

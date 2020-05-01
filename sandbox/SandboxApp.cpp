@@ -91,6 +91,7 @@ int main(int argc, char *argv[]) {
     // Sidebar title.
     pTK::Ref<pTK::Label> sTitle = pTK::create<pTK::Label>();
     sTitle->setText("SandboxApp");
+    //sTitle->setFontFamily("Arial");
     sTitle->setFontSize(FLARGE);
     sTitle->setColor(pTK::Color(colText));
     sTitle->setAlign(pTK::Align::Top | pTK::Align::HCenter);

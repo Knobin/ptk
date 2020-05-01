@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "ptk/platform/glfw/GLFWBackend.hpp"
+#include "GLFWBackend.hpp"
 #include "ptk/Window.hpp"
 #include "ptk/events/KeyEvent.hpp"
 #include "ptk/events/MouseEvent.hpp"
@@ -70,14 +70,14 @@ namespace pTK
         // void window_size_callback(GLFWwindow* window, int width, int height)
         glfwSetWindowSizeCallback(m_window, [](GLFWwindow* t_window, int t_width, int t_height){
             auto window{static_cast<Window*>(glfwGetWindowUserPointer(t_window))};
-            window->postEvent(new ResizeEvent{static_cast<Size::value_type>(t_width), static_cast<Size::value_type>(t_height)});
+            window->postEvent<ResizeEvent>(Size{static_cast<Size::value_type>(t_width), static_cast<Size::value_type>(t_height)});
             window->handleEvents();
         });
 
         // void window_close_callback(GLFWwindow* window)
         glfwSetWindowCloseCallback(m_window, [](GLFWwindow* t_window){
             auto window{static_cast<Window*>(glfwGetWindowUserPointer(t_window))};
-            window->postEvent(new Event{Event::Category::Window, Event::Type::WindowClose});
+            window->postEvent<Event>(Event::Category::Window, Event::Type::WindowClose);
         });
 
         // void window_maximize_callback(GLFWwindow* window, int maximized)
@@ -86,7 +86,7 @@ namespace pTK
             auto window{static_cast<Window*>(glfwGetWindowUserPointer(t_window))};
             int width, height;
             glfwGetWindowSize(t_window, &width, &height);
-            window->postEvent(new ResizeEvent{static_cast<Size::value_type>(width), static_cast<Size::value_type>(height)});
+            window->postEvent<ResizeEvent>(Size{static_cast<Size::value_type>(width), static_cast<Size::value_type>(height)});
         });
     }
 
@@ -97,7 +97,7 @@ namespace pTK
             if (!entered)
             {
                 auto window{static_cast<Window*>(glfwGetWindowUserPointer(t_window))};
-                MotionEvent event{-1, -1};
+                MotionEvent event{{-1, -1}};
                 window->sendEvent(&event);
             }
         });
@@ -111,8 +111,8 @@ namespace pTK
             {
                 if ((t_ypos >= 0) && (t_ypos <= (wSize.height)))
                 {
-                    MotionEvent event{ static_cast<Point::value_type>(t_xpos),
-                        static_cast<Point::value_type>(t_ypos)};
+                    MotionEvent event{{static_cast<Point::value_type>(t_xpos),
+                                       static_cast<Point::value_type>(t_ypos)}};
                     window->sendEvent(&event);
                 }
             }
@@ -139,17 +139,17 @@ namespace pTK
             if (t_action == GLFW_PRESS)
             {
                 ButtonEvent event{Event::Type::MouseButtonPressed,
-                    button,
-                    static_cast<Point::value_type>(xpos),
-                    static_cast<Point::value_type>(ypos)};
+                                  button,
+                                  {static_cast<Point::value_type>(xpos),
+                                   static_cast<Point::value_type>(ypos)}};
                 window->sendEvent(&event);
             }
             else if (t_action == GLFW_RELEASE)
             {
                 ButtonEvent event{Event::Type::MouseButtonReleased,
-                    button,
-                    static_cast<Point::value_type>(xpos),
-                    static_cast<Point::value_type>(ypos)};
+                                  button,
+                                  {static_cast<Point::value_type>(xpos),
+                                   static_cast<Point::value_type>(ypos)}};
                 window->sendEvent(&event);
             }
         });
@@ -205,9 +205,12 @@ namespace pTK
         glfwSwapBuffers(m_window);
     }
 
-    void GLFWBackend::resize(const Size&)
+    void GLFWBackend::resize(const Size& size)
     {
-        m_drawCanvas->resize(m_parentWindow->getContentSize());
+        const Size scaledSize{static_cast<Size::value_type>(std::ceil(size.width * m_scale.x)),
+                              static_cast<Size::value_type>(std::ceil(size.height * m_scale.y))};
+        if (scaledSize != m_drawCanvas->getSize())
+            m_drawCanvas->resize(scaledSize);
     }
 
     void GLFWBackend::setLimits(const Size& min, const Size& max)
@@ -228,7 +231,7 @@ namespace pTK
     void GLFWBackend::close()
     {
         glfwSetWindowShouldClose(m_window, GLFW_TRUE);
-        m_parentWindow->postEvent(new Event{Event::Category::Window, Event::Type::WindowClose});
+        m_parentWindow->postEvent<Event>(Event::Category::Window, Event::Type::WindowClose);
     }
 
     // Visible
@@ -251,5 +254,36 @@ namespace pTK
     Vec2f GLFWBackend::getDPIScale() const
     {
         return m_scale;
+    }
+
+    void GLFWBackend::setTitle(const std::string& name)
+    {
+        glfwSetWindowTitle(m_window, name.c_str());
+    }
+
+    void GLFWBackend::setIcon(int32 width, int32 height, byte* pixels)
+    {
+        GLFWimage images[1];
+        images[0] = {width, height, pixels};
+        glfwSetWindowIcon(m_window, 1, images);
+    }
+
+    void GLFWBackend::notifyEvent()
+    {
+        glfwPostEmptyEvent();
+    }
+
+    Point GLFWBackend::getWinPos() const
+    {
+        Point pos{};
+        glfwGetWindowSize(m_window, &pos.x, &pos.y);
+        return pos;
+    }
+
+    Size GLFWBackend::getWinSize() const
+    {
+        Size size{};
+        glfwGetWindowSize(m_window, &size.width, &size.height);
+        return size;
     }
 }

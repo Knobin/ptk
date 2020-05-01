@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "ptk/platform/glfw/GLContext.hpp"
+#include "GLContext.hpp"
 #include "ptk/Core.hpp"
 
 // Skia Headers
@@ -67,11 +67,11 @@ namespace pTK
         m_surface.reset();
         m_context.reset();
     }
-    
+
     void GLContext::resize(const Size& size)
     {
         glViewport(0, 0, size.width, size.height);
-        
+
         GrBackendRenderTarget backendRenderTarget(size.width, size.height, 1, 8, m_info);
 
         SkSurface *surface{SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, &m_props).release()};

@@ -59,7 +59,7 @@ namespace pTK
             : m_holder{}
         {
             m_holder.reserve(list.size());
-            for (const type& item : list)
+            for (const value_type& item : list)
                 add(item);
         }
 
