@@ -13,9 +13,8 @@
 namespace pTK
 {
     Window::Window(const std::string& name, const Size& size, BackendType backend)
-            : VBox(), Singleton(),
-                m_winBackend{nullptr}, m_eventQueue{}, m_draw{false}, m_close{false},
-                m_threadID{std::this_thread::get_id()}
+        : VBox(), Singleton(), m_winBackend{nullptr}, m_eventQueue{}, m_draw{false}, m_close{false},
+          m_minimized{false}, m_threadID{std::this_thread::get_id()}
     {
         // Set Widget properties.
         Sizable::setSize(size);
@@ -60,7 +59,7 @@ namespace pTK
         }
     }
 
-    void Window::sendEvent(Event *event)
+    void Window::sendEvent(Event* event)
     {
         handleEvent(event);
     }
@@ -89,9 +88,14 @@ namespace pTK
         m_winBackend->hide();
     }
 
+    bool Window::isHidden() const
+    {
+        return m_winBackend->isHidden();
+    }
+
     void Window::onSizeChange(const Size& size)
     {
-        if ((m_winBackend) && (m_winBackend->getContext()->getSize() != size))
+        if ((m_winBackend) && (m_winBackend->getWinSize() != size))
             m_winBackend->resize(size);
     }
 
@@ -127,7 +131,17 @@ namespace pTK
         m_onLostFocus = callback;
     }
 
-    void Window::handleEvent(Event *event)
+    void Window::onMinimize(const std::function<bool()>& callback)
+    {
+        m_onMinimize = callback;
+    }
+
+    void Window::onRestore(const std::function<bool()>& callback)
+    {
+        m_onRestore = callback;
+    }
+
+    void Window::handleEvent(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
 
@@ -156,18 +170,21 @@ namespace pTK
         Event::Type type{event->type};
         if (type == Event::Type::MouseMoved)
         {
-            MotionEvent *mEvent{static_cast<MotionEvent*>(event)};
+            MotionEvent* mEvent{static_cast<MotionEvent*>(event)};
             handleHoverEvent(mEvent->pos);
-        } else if (type == Event::Type::MouseButtonPressed || type == Event::Type::MouseButtonReleased)
+        }
+        else if (type == Event::Type::MouseButtonPressed ||
+                 type == Event::Type::MouseButtonReleased)
         {
-            ButtonEvent *bEvent{static_cast<ButtonEvent*>(event)};
+            ButtonEvent* bEvent{static_cast<ButtonEvent*>(event)};
             Point pos{bEvent->pos};
             Mouse::Button btn{bEvent->button};
             if (type == Event::Type::MouseButtonPressed)
                 handleClickEvent(btn, pos);
             else if (type == Event::Type::MouseButtonReleased)
                 handleReleaseEvent(btn, pos);
-        } else if (type == Event::Type::MouseScrolled)
+        }
+        else if (type == Event::Type::MouseScrolled)
         {
             ScrollEvent* sEvent{static_cast<ScrollEvent*>(event)};
             handleScrollEvent(sEvent->offset);
@@ -181,11 +198,12 @@ namespace pTK
         if (type == Event::Type::WindowDraw)
         {
             m_draw = true;
-        } else if (type == Event::Type::WindowResize)
+        }
+        else if (type == Event::Type::WindowResize)
         {
-            ResizeEvent *rEvent{static_cast<ResizeEvent*>(event)};
+            ResizeEvent* rEvent{static_cast<ResizeEvent*>(event)};
             const Size size{rEvent->size};
-            if (size != getSize())
+            if (size != m_winBackend->getWinSize())
             {
                 setSize(size);
                 refitContent(size);
@@ -195,17 +213,14 @@ namespace pTK
                     m_onResize(size);
             }
         }
-        else if (type == Event::Type::WindowMoved)
+        else if (type == Event::Type::WindowMove)
         {
-            MoveEvent *mEvent{static_cast<MoveEvent*>(event)};
-            if (m_onMove)
-                m_onMove(mEvent->pos);
+            MoveEvent* mEvent{static_cast<MoveEvent*>(event)};
+            setPosHint(mEvent->pos);
         }
         else if (type == Event::Type::WindowClose)
         {
-            m_close = true;
-            if (m_onClose)
-                m_onClose();
+            close();
         }
         else if (type == Event::Type::WindowFocus)
         {
@@ -217,11 +232,28 @@ namespace pTK
             if (m_onLostFocus)
                 m_onLostFocus();
         }
+        else if (type == Event::Type::WindowMinimize)
+        {
+            minimize();
+        }
+        else if (type == Event::Type::WindowRestore)
+        {
+            restore();
+        }
     }
 
     void Window::close()
     {
-        m_winBackend->close();
+        if (!m_close)
+        {
+            m_close = true;
+            m_winBackend->close();
+        }
+        else
+        {
+            if (m_onClose)
+                m_onClose();
+        }
     }
 
     void Window::pollEvents()
@@ -232,11 +264,11 @@ namespace pTK
     void Window::forceDrawAll()
     {
         m_winBackend->beginPaint();
-        ContextBase *context{m_winBackend->getContext()};
+        ContextBase* context{m_winBackend->getContext()};
         SkCanvas* canvas{context->skCanvas()};
 
         Color color{getBackground()};
-        context->clear(color);
+        context->clear(Color(0x000000FF));
 
         // Apply monitor scale.
         SkMatrix matrix{};
@@ -254,7 +286,10 @@ namespace pTK
 
     void Window::setPosHint(const Point& pos)
     {
-        m_winBackend->setPosHint(pos);
+        if ((m_winBackend) && (pos != m_winBackend->getWinPos()))
+            m_winBackend->setPosHint(pos);
+        if (m_onMove)
+            m_onMove(pos);
     }
 
     Point Window::getWinPos() const
@@ -283,37 +318,77 @@ namespace pTK
             if (image)
             {
                 // Read pixels in an RGBA format.
-                const SkImageInfo imageInfo{image->imageInfo().makeColorType(SkColorType::kRGBA_8888_SkColorType)};
+                const SkImageInfo imageInfo{
+                    image->imageInfo().makeColorType(SkColorType::kRGBA_8888_SkColorType)};
                 const size_t storageSize{imageInfo.computeMinByteSize()};
                 std::unique_ptr<byte[]> pixelData{std::make_unique<byte[]>(storageSize)};
 
                 if (image->readPixels(imageInfo, pixelData.get(), imageInfo.minRowBytes(), 0, 0))
                     m_winBackend->setIcon(static_cast<int32>(image->width()),
-                        static_cast<int32>(image->height()), pixelData.get());
+                                          static_cast<int32>(image->height()), pixelData.get());
 #ifdef PTK_DEBUG
                 else
                 {
                     PTK_WARN("Failed to convert image \"{}\" to a RGBA format", path);
                 }
-#endif // PTK_DEBUG
+#endif
             }
 #ifdef PTK_DEBUG
             else
             {
                 PTK_WARN("Could not decode image \"{}\"", path);
             }
-#endif // PTK_DEBUG
+#endif
         }
 #ifdef PTK_DEBUG
         else
         {
             PTK_WARN("Failed to open \"{}\"", path);
         }
-#endif // PTK_DEBUG
+#endif
     }
 
     WindowBackend* Window::getBackend() const
     {
         return m_winBackend.get();
     }
-}
+
+    void Window::minimize()
+    {
+        if (!m_minimized)
+        {
+            if (!m_winBackend->isMinimized())
+                m_winBackend->minimize();
+
+            m_minimized = true;
+            Drawable::hide();
+            if (m_onMinimize)
+                m_onMinimize();
+        }
+    }
+
+    void Window::restore()
+    {
+        if (m_minimized)
+        {
+            if (m_winBackend->isMinimized())
+                m_winBackend->restore();
+
+            m_minimized = false;
+            Drawable::show();
+            if (m_onRestore)
+                m_onRestore();
+        }
+    }
+
+    bool Window::isMinimized() const
+    {
+        return m_minimized;
+    }
+
+    bool Window::isFocused() const
+    {
+        return m_winBackend->isFocused();
+    }
+
+} // namespace pTK

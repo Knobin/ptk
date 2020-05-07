@@ -40,7 +40,7 @@ namespace pTK
             @param backend  type of backend
             @return         default initialized WindowBackend
         */
-        WindowBackend(BackendType backend)
+        explicit WindowBackend(BackendType backend)
             : m_backend{backend}
         {
 
@@ -65,6 +65,11 @@ namespace pTK
 
         */
         virtual void hide() = 0;
+
+        /** Function for retrieving if the window is hidden.
+
+        */
+        virtual bool isHidden() const = 0;
 
         /** Function for polling the events.
 
@@ -167,6 +172,28 @@ namespace pTK
             @return     Window Size
         */
         virtual Size getWinSize() const = 0;
+
+        /** Function for minimizing the window.
+
+        */
+        virtual void minimize() = 0;
+
+        /** Function for retrieving the minimizing status of the window.
+
+            @return     status
+        */
+        virtual bool isMinimized() const = 0;
+
+        /** Function for restoring a window from the minimized state.
+
+        */
+        virtual void restore() = 0;
+
+        /** Function for retrieving the focus status of the window.
+
+            @return     status
+        */
+        virtual bool isFocused() const = 0;
 
     private:
         BackendType m_backend;

@@ -53,7 +53,7 @@ namespace pTK
 
             @return    default initialized ContextBase
         */
-        ContextBase(const Size& size);
+        explicit ContextBase(const Size& size);
 
         /** Deconstructor for ContextBase.
 

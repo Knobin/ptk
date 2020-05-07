@@ -26,12 +26,12 @@ namespace pTK::WinPlatform
         wcx.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
         wcx.hCursor = ::LoadCursorW(nullptr, reinterpret_cast<LPCWSTR>(IDC_ARROW));
 
-        return RegisterClassExW(&wcx) != 0;
+        return ::RegisterClassExW(&wcx) != 0;
     }
 
     void init()
     {
-        SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+        ::SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
         if (!registerClass())
             throw PlatformError("Failed to register class!");
@@ -41,7 +41,7 @@ namespace pTK::WinPlatform
 
     void destroy()
     {
-        UnregisterClassW(L"PTK", GetModuleHandleW(nullptr));
+        ::UnregisterClassW(L"PTK", GetModuleHandleW(nullptr));
 
         PTK_INFO("Windows platform destroyed");
     }
@@ -50,9 +50,9 @@ namespace pTK::WinPlatform
     {
         if (str.empty())
             return std::wstring();
-        int sz{MultiByteToWideChar(CP_ACP, 0, &str[0], static_cast<int>(str.size()), nullptr, 0)};
+        int sz{::MultiByteToWideChar(CP_ACP, 0, &str[0], static_cast<int>(str.size()), nullptr, 0)};
         std::wstring res(sz, 0);
-        MultiByteToWideChar(CP_ACP, 0, &str[0], static_cast<int>(str.size()), &res[0], sz);
+        ::MultiByteToWideChar(CP_ACP, 0, &str[0], static_cast<int>(str.size()), &res[0], sz);
         return res;
     }
 }

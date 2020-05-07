@@ -7,16 +7,16 @@
 
 // Local Headers
 #include "WinBackend.hpp"
-#include "ptk/Window.hpp"
-#include "ptk/core/Exception.hpp"
 #include "WinPlatform.hpp"
 #include "WinRasterContext.hpp"
+#include "ptk/Window.hpp"
+#include "ptk/core/Exception.hpp"
 #include "ptk/events/KeyCodes.hpp"
 #include "ptk/events/WindowEvent.hpp"
 
 // Include OpenGL backend if HW Acceleration is enabled.
 #ifdef PTK_HW_ACCELERATION
-    #include "WinGLContext.hpp"
+#include "WinGLContext.hpp"
 #endif // PTK_HW_ACCELERATION
 
 // Windows Headers
@@ -60,6 +60,16 @@ namespace pTK
         return PTK_KEY_UNKNOWN;
     }
 
+    static Size calcAdjustedReverseWindowSize(const Size& from, DWORD style)
+    {
+        RECT adjustedSize{};
+        ::SetRectEmpty(&adjustedSize);
+        ::AdjustWindowRectEx(&adjustedSize, style, FALSE, 0);
+
+        return {from.width - (adjustedSize.right - adjustedSize.left),
+                from.height - (adjustedSize.bottom - adjustedSize.top)};
+    }
+
     static Size calcAdjustedWindowSize(const Size& from, DWORD style)
     {
         RECT adjustedSize{};
@@ -67,12 +77,12 @@ namespace pTK
         adjustedSize.bottom = from.height;
         adjustedSize.left = 0;
         adjustedSize.right = from.width;
-        AdjustWindowRectEx(&adjustedSize, style, FALSE, 0);
-        return {adjustedSize.right - adjustedSize.left,
-                adjustedSize.bottom - adjustedSize.top};
+        ::AdjustWindowRectEx(&adjustedSize, style, FALSE, 0);
+        return {adjustedSize.right - adjustedSize.left, adjustedSize.bottom - adjustedSize.top};
     }
 
-    static std::unique_ptr<ContextBase> createWin32Context(BackendType type, HWND hwnd, const Size& size)
+    static std::unique_ptr<ContextBase> createWin32Context(BackendType type, HWND hwnd,
+                                                           const Size& size)
     {
 #ifdef PTK_HW_ACCELERATION
         if (type == BackendType::HARDWARE)
@@ -115,9 +125,9 @@ namespace pTK
     {
         // High DPI
         HDC screen{GetDC(nullptr)};
-        float dpiX{static_cast<float>(GetDeviceCaps(screen, LOGPIXELSX))};
-        float dpiY{static_cast<float>(GetDeviceCaps(screen, LOGPIXELSY))};
-        ReleaseDC(nullptr, screen);
+        float dpiX{static_cast<float>(::GetDeviceCaps(screen, LOGPIXELSX))};
+        float dpiY{static_cast<float>(::GetDeviceCaps(screen, LOGPIXELSY))};
+        ::ReleaseDC(nullptr, screen);
         PTK_INFO("Windows Window DPI {}x{}", dpiX, dpiY);
         m_scale.x = dpiX / 96.0f;
         m_scale.y = dpiY / 96.0f;
@@ -126,9 +136,9 @@ namespace pTK
         Size wSize{scaleSize(size, m_scale)};
         PTK_INFO("{}x{}", wSize.width, wSize.height);
         Size adjSize{calcAdjustedWindowSize(wSize, m_style)};
-        m_handle = CreateWindowExW(0, L"PTK", WinPlatform::stringToUTF16(name).c_str(), m_style,
-                CW_USEDEFAULT, CW_USEDEFAULT, adjSize.width, adjSize.height, nullptr, nullptr,
-                GetModuleHandleW(nullptr), nullptr);
+        m_handle = ::CreateWindowExW(0, L"PTK", WinPlatform::stringToUTF16(name).c_str(), m_style,
+                                     CW_USEDEFAULT, CW_USEDEFAULT, adjSize.width, adjSize.height,
+                                     nullptr, nullptr, ::GetModuleHandleW(nullptr), nullptr);
         if (!m_handle)
             throw WindowError("Failed to create window!");
         PTK_INFO("Created WinWindow: {}x{}", wSize.width, wSize.height);
@@ -143,22 +153,23 @@ namespace pTK
 
     WinBackend::~WinBackend()
     {
-        WinBackendData *data{static_cast<WinBackendData*>(m_data)};
+        WinBackendData* data{static_cast<WinBackendData*>(m_data)};
         delete data;
     }
 
     void WinBackend::setPosHint(const Point& pos)
     {
         RECT rect{pos.x, pos.y, pos.x, pos.y};
-        SetWindowPos(m_handle, nullptr, rect.left, rect.top, 0, 0,
-                SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
+        ::SetWindowPos(m_handle, nullptr, rect.left, rect.top, 0, 0,
+                     SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
     }
 
     void WinBackend::pollEvents()
     {
         MSG Msg;
-        if(GetMessageW(&Msg, nullptr, 0, 0) > 0 ){
-            TranslateMessage(&Msg);
+        if (::GetMessageW(&Msg, nullptr, 0, 0) > 0)
+        {
+            ::TranslateMessage(&Msg);
             DispatchMessage(&Msg);
         }
     }
@@ -171,12 +182,12 @@ namespace pTK
 
     void WinBackend::endPaint()
     {
-        EndPaint(m_handle, &ps);
+        ::EndPaint(m_handle, &ps);
     }
 
     void WinBackend::setTitle(const std::string& name)
     {
-        SetWindowTextW(m_handle, WinPlatform::stringToUTF16(name).c_str());
+        ::SetWindowTextW(m_handle, WinPlatform::stringToUTF16(name).c_str());
     }
 
     void WinBackend::setIcon(int32 width, int32 height, byte* pixels)
@@ -184,60 +195,62 @@ namespace pTK
         // DIB information.
         BITMAPV5HEADER bmInfo{};
         ZeroMemory(&bmInfo, sizeof(bmInfo));
-        bmInfo.bV5Size        = sizeof(bmInfo);
-        bmInfo.bV5Width       = width;
-        bmInfo.bV5Height      = -height;
-        bmInfo.bV5Planes      = 1;
-        bmInfo.bV5BitCount    = 32;
+        bmInfo.bV5Size = sizeof(bmInfo);
+        bmInfo.bV5Width = width;
+        bmInfo.bV5Height = -height;
+        bmInfo.bV5Planes = 1;
+        bmInfo.bV5BitCount = 32;
         bmInfo.bV5Compression = BI_BITFIELDS;
-        bmInfo.bV5RedMask     = 0x00FF0000;
-        bmInfo.bV5GreenMask   = 0x0000FF00;
-        bmInfo.bV5BlueMask    = 0x000000FF;
-        bmInfo.bV5AlphaMask   = 0xFF000000;
+        bmInfo.bV5RedMask = 0x00FF0000;
+        bmInfo.bV5GreenMask = 0x0000FF00;
+        bmInfo.bV5BlueMask = 0x000000FF;
+        bmInfo.bV5AlphaMask = 0xFF000000;
 
         // Create the DIB.
-        HDC dc{GetDC(nullptr)};
-        byte *target{nullptr};
-        HBITMAP color{CreateDIBSection(dc, reinterpret_cast<BITMAPINFO*>(&bmInfo), DIB_RGB_COLORS,
-                                         reinterpret_cast<void**>(&target) , nullptr, 0)};
+        HDC dc{::GetDC(nullptr)};
+        byte* target{nullptr};
+        HBITMAP color{::CreateDIBSection(dc, reinterpret_cast<BITMAPINFO*>(&bmInfo), DIB_RGB_COLORS,
+                                         reinterpret_cast<void**>(&target), nullptr, 0)};
         ReleaseDC(nullptr, dc);
         PTK_ASSERT(color, "Failed to create HBITMAP");
 
         // Transform pixels from RGBA to BGRA.
-        for (int i = 0;  i < width * height;  i++)
+        for (int i = 0; i < width * height; i++)
         {
-            target[(i * 4)]     = pixels[(i * 4) + 2];
+            target[(i * 4)] = pixels[(i * 4) + 2];
             target[(i * 4) + 1] = pixels[(i * 4) + 1];
             target[(i * 4) + 2] = pixels[(i * 4) + 0];
             target[(i * 4) + 3] = pixels[(i * 4) + 3];
         }
 
         // Create the mask.
-        HBITMAP mask{CreateBitmap(width, height, 1, 1, nullptr)};
+        HBITMAP mask{::CreateBitmap(width, height, 1, 1, nullptr)};
         PTK_ASSERT(mask, "Failed to create HBITMAP");
 
         // Finally, create the icon.
         ICONINFO iconInfo{true, 0, 0, mask, color};
-        HICON hIcon{CreateIconIndirect(&iconInfo)};
+        HICON hIcon{::CreateIconIndirect(&iconInfo)};
         PTK_ASSERT(hIcon, "Failed to create the icon");
 
-        DeleteObject(color);
-        DeleteObject(mask);
+        ::DeleteObject(color);
+        ::DeleteObject(mask);
 
         // Apply icon.
-        SendMessage(m_handle, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
-        SendMessage(m_handle, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+        SendMessage(m_handle, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(hIcon));
+        SendMessage(m_handle, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(hIcon));
 
-        // Ensure that the applicaton icon is changed.
-        SendMessage(GetWindow(m_handle, GW_OWNER), WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
-        SendMessage(GetWindow(m_handle, GW_OWNER), WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+        // Ensure that the application icon is changed.
+        SendMessage(::GetWindow(m_handle, GW_OWNER), WM_SETICON, ICON_SMALL,
+                    reinterpret_cast<LPARAM>(hIcon));
+        SendMessage(::GetWindow(m_handle, GW_OWNER), WM_SETICON, ICON_BIG,
+                    reinterpret_cast<LPARAM>(hIcon));
     }
 
     void WinBackend::notifyEvent()
     {
         // Event has been pushed from a different thread.
         // Signal the window to redraw.
-        RedrawWindow(m_handle, nullptr, nullptr, RDW_INTERNALPAINT | RDW_UPDATENOW);
+        ::RedrawWindow(m_handle, nullptr, nullptr, RDW_INTERNALPAINT | RDW_UPDATENOW);
     }
 
     DWORD WinBackend::getWindowStyle() const
@@ -255,27 +268,30 @@ namespace pTK
         // Apply the DPI scaling.
         const Size scaledSize{static_cast<Size::value_type>(std::ceil(size.width * m_scale.x)),
                               static_cast<Size::value_type>(std::ceil(size.height * m_scale.y))};
-        // Adjust the size depending on the window frame.
-        const Size adjSize{calcAdjustedWindowSize(scaledSize, m_style)};
 
-        // Get the window size and position.
-        RECT rect{};
-        GetWindowRect(m_handle, &rect);
+        WinBackendData* data{static_cast<WinBackendData*>(m_data)};
+        if (scaledSize != data->size)
+        {
+            // Adjust the size depending on the window frame.
+            const Size adjSize{calcAdjustedWindowSize(scaledSize, m_style)};
 
-        WinBackendData *data{static_cast<WinBackendData*>(m_data)};
-        data->pos = Point{rect.left, rect.top};
-        data->size = scaledSize;
+            // Get the window size and position.
+            RECT rect{};
+            ::GetWindowRect(m_handle, &rect);
 
-        // Apply the new size to the context and window.
-        if (scaledSize != m_context->getSize())
-            m_context->resize(scaledSize);
-        MoveWindow(m_handle, data->pos.x, data->pos.y, adjSize.width, adjSize.height, FALSE);
+            data->pos = Point{rect.left, rect.top};
+            data->size = scaledSize;
 
+            // Apply the new size to the context and window.
+            if (scaledSize != m_context->getSize())
+                m_context->resize(scaledSize);
+            ::MoveWindow(m_handle, data->pos.x, data->pos.y, adjSize.width, adjSize.height, FALSE);
+        }
     }
 
     void WinBackend::close()
     {
-        m_parentWindow->postEvent<Event>(Event::Category::Window, Event::Type::WindowClose);
+        DestroyWindow(m_handle);
     }
 
     void WinBackend::show()
@@ -289,7 +305,12 @@ namespace pTK
         ShowWindow(m_handle, SW_HIDE);
     }
 
-    ContextBase *WinBackend::getContext() const
+    bool WinBackend::isHidden() const
+    {
+        return static_cast<bool>(IsWindowVisible(m_handle));
+    }
+
+    ContextBase* WinBackend::getContext() const
     {
         return m_context.get();
     }
@@ -301,124 +322,172 @@ namespace pTK
 
     Point WinBackend::getWinPos() const
     {
-        WinBackendData *data{static_cast<WinBackendData*>(m_data)};
+        WinBackendData* data{static_cast<WinBackendData*>(m_data)};
         return data->pos;
     }
 
     Size WinBackend::getWinSize() const
     {
-        WinBackendData *data{static_cast<WinBackendData*>(m_data)};
+        WinBackendData* data{static_cast<WinBackendData*>(m_data)};
         return data->size;
     }
 
     void WinBackend::setLimits(const Size&, const Size&)
     {
         RECT rect{};
-        GetWindowRect(m_handle, &rect);
-        MoveWindow(m_handle,
-                rect.left, rect.top,
-                rect.right - rect.left,
-                rect.bottom - rect.top, TRUE);
+        ::GetWindowRect(m_handle, &rect);
+        ::MoveWindow(m_handle, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
+                     TRUE);
     }
 
-    static void handleMouseClick(WinBackendData *data, Event::Type type, Mouse::Button btn, LPARAM lParam)
+    void WinBackend::minimize()
+    {
+        ::ShowWindow(m_handle, SW_MINIMIZE);
+    }
+
+    bool WinBackend::isMinimized() const
+    {
+        return static_cast<bool>(IsMinimized(m_handle));
+    }
+
+    void WinBackend::restore()
+    {
+        ::ShowWindow(m_handle, SW_RESTORE);
+    }
+
+    bool WinBackend::isFocused() const
+    {
+        return (m_handle == ::GetFocus());
+    }
+
+    static void handleMouseClick(WinBackendData* data, Event::Type type, Mouse::Button btn,
+                                 LPARAM lParam)
     {
         if (data->window)
         {
             const Point pos{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
-            ButtonEvent evt{type, btn, {
-                    static_cast<Point::value_type>(pos.x * (1/data->scale.x)),
-                    static_cast<Point::value_type>(pos.y * (1/data->scale.y))}
-            };
+            ButtonEvent evt{type,
+                            btn,
+                            {static_cast<Point::value_type>(pos.x * (1 / data->scale.x)),
+                             static_cast<Point::value_type>(pos.y * (1 / data->scale.y))}};
             data->window->sendEvent(&evt);
         }
     }
 
     LRESULT WinBackend::wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
-        WinBackendData *data{reinterpret_cast<WinBackendData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA))};
-        Window *window{(data) ? data->window : nullptr};
-        switch(msg)
+        WinBackendData* data{
+            reinterpret_cast<WinBackendData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA))};
+        Window* window{(data) ? data->window : nullptr};
+        switch (msg)
         {
             case WM_CREATE:
                 break;
             case WM_CLOSE:
                 DestroyWindow(hwnd);
-                window->postEvent<Event>(Event::Category::Window, Event::Type::WindowClose);
                 break;
             case WM_DESTROY:
-                PostQuitMessage(0);
+            {
+                Event evt{Event::Category::Window, Event::Type::WindowClose};
+                window->handleEvents(); // Handle all events before sending close event.
+                window->sendEvent(&evt);
+                ::PostQuitMessage(0);
                 break;
+            }
             case WM_SETFOCUS:
-                window->postEvent<Event>(Event::Category::Window, Event::Type::WindowFocus);
+            {
+                Event evt{Event::Category::Window, Event::Type::WindowFocus};
+                window->sendEvent(&evt);
                 break;
+            }
             case WM_KILLFOCUS:
-                window->postEvent<Event>(Event::Category::Window, Event::Type::WindowLostFocus);
+            {
+                Event evt{Event::Category::Window, Event::Type::WindowLostFocus};
+                window->sendEvent(&evt);
                 break;
+            }
             case WM_MOVE:
             {
                 MoveEvent evt{{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)}};
                 data->pos = evt.pos;
                 window->sendEvent(&evt);
+                break;
             }
-                break;
             case WM_PAINT:
+            {
                 if (window->visible())
-                {
-                    window->postEvent<Event>(Event::Category::Window, Event::Type::WindowDraw);
-                    window->handleEvents();
-                }
+                    window->forceDrawAll();
                 break;
+            }
             case WM_KEYDOWN:
             {
                 KeyEvent evt{KeyEvent::Pressed, translateKeyCode(static_cast<byte>(wParam))};
                 window->sendEvent(&evt);
-            }
                 break;
+            }
             case WM_KEYUP:
             {
                 KeyEvent evt{KeyEvent::Released, translateKeyCode(static_cast<byte>(wParam))};
                 window->sendEvent(&evt);
-            }
                 break;
+            }
             case WM_MOUSEMOVE:
             {
                 if (window)
                 {
                     const Point pos{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
-                    MotionEvent evt{{static_cast<Point::value_type>(pos.x * (1/data->scale.x)),
-                                            static_cast<Point::value_type>(pos.y * (1/data->scale.y))}};
+                    MotionEvent evt{{static_cast<Point::value_type>(pos.x * (1 / data->scale.x)),
+                                     static_cast<Point::value_type>(pos.y * (1 / data->scale.y))}};
                     window->sendEvent(&evt);
                 }
-            }
                 break;
+            }
             case WM_LBUTTONDOWN:
-                handleMouseClick(data, Event::Type::MouseButtonPressed, Mouse::Button::Left, lParam);
+                handleMouseClick(data, Event::Type::MouseButtonPressed, Mouse::Button::Left,
+                                 lParam);
                 break;
             case WM_LBUTTONUP:
-                handleMouseClick(data, Event::Type::MouseButtonReleased, Mouse::Button::Left, lParam);
+                handleMouseClick(data, Event::Type::MouseButtonReleased, Mouse::Button::Left,
+                                 lParam);
                 break;
             case WM_SIZING:
             {
-                RECT rect{};
-                GetClientRect(hwnd, &rect);
-                const Size size{static_cast<Size::value_type>(rect.right - rect.left),
-                                static_cast<Size::value_type>(rect.bottom - rect.top)};
-                data->size = size;
-                window->postEvent<ResizeEvent>(scaleSize(size, Vec2f{1.0f/data->scale.x, 1.0f/data->scale.y}));
-            }
+                RECT* rect = reinterpret_cast<RECT*>(lParam);
+                const Size size = {static_cast<Size::value_type>(rect->right - rect->left),
+                                   static_cast<Size::value_type>(rect->bottom - rect->top)};
+                WinBackend* backend{static_cast<WinBackend*>(window->getBackend())};
+                ResizeEvent evt{calcAdjustedReverseWindowSize(
+                    scaleSize(size, Vec2f{1.0f / data->scale.x, 1.0f / data->scale.y}),
+                    backend->getWindowStyle())};
+                window->sendEvent(&evt);
+                window->forceDrawAll();
                 break;
+            }
             case WM_SIZE:
             {
                 if (window && window->getBackend())
                 {
-                    const Size size{static_cast<Size::value_type>(LOWORD(lParam)),
-                                    static_cast<Size::value_type>(HIWORD(lParam))};
-                    data->size = size;
-                    window->postEvent<ResizeEvent>(scaleSize(size, Vec2f{1.0f/data->scale.x, 1.0f/data->scale.y}));;
+                    if (wParam == SIZE_MINIMIZED)
+                    {
+                        Event evt{Event::Category::Window, Event::Type::WindowMinimize};
+                        window->sendEvent(&evt);
+                    }
+                    else if (wParam == SIZE_RESTORED)
+                    {
+                        Event evt{Event::Category::Window, Event::Type::WindowRestore};
+                        window->sendEvent(&evt);
+                    }
+                    else
+                    {
+                        const Size size{static_cast<Size::value_type>(LOWORD(lParam)),
+                                           static_cast<Size::value_type>(HIWORD(lParam))};
+                        ResizeEvent evt{scaleSize(size, Vec2f{1.0f / data->scale.x, 1.0f / data->scale.y})};
+                        window->sendEvent(&evt);
+                        window->forceDrawAll();
+                    }
                 }
-            }
                 break;
+            }
             case WM_GETMINMAXINFO:
             {
                 if (window)
@@ -426,28 +495,30 @@ namespace pTK
                     LPMINMAXINFO lpMMI{reinterpret_cast<LPMINMAXINFO>(lParam)};
                     const Size minSize{window->getMinSize()};
                     WinBackend* backend{static_cast<WinBackend*>(window->getBackend())};
-                    const Size adjMinSize{calcAdjustedWindowSize(scaleSize(minSize, data->scale), backend->getWindowStyle())};
+                    const Size adjMinSize{calcAdjustedWindowSize(scaleSize(minSize, data->scale),
+                                                                 backend->getWindowStyle())};
                     lpMMI->ptMinTrackSize.x = adjMinSize.width;
                     lpMMI->ptMinTrackSize.y = adjMinSize.height;
                     const Size maxSize{window->getMaxSize()};
                     if (maxSize != Size::Max)
                     {
-                        const Size adjMaxSize{calcAdjustedWindowSize(scaleSize(maxSize, data->scale), backend->getWindowStyle())};
+                        const Size adjMaxSize{calcAdjustedWindowSize(
+                            scaleSize(maxSize, data->scale), backend->getWindowStyle())};
                         lpMMI->ptMaxTrackSize.x = adjMaxSize.width;
                         lpMMI->ptMaxTrackSize.y = adjMaxSize.height;
-                    } else
+                    }
+                    else
                     {
-                        lpMMI->ptMaxTrackSize.x = GetSystemMetrics(SM_CXMAXTRACK);
-                        lpMMI->ptMaxTrackSize.y = GetSystemMetrics(SM_CYMAXTRACK);
+                        lpMMI->ptMaxTrackSize.x = ::GetSystemMetrics(SM_CXMAXTRACK);
+                        lpMMI->ptMaxTrackSize.y = ::GetSystemMetrics(SM_CYMAXTRACK);
                     }
                 }
-
-            }
                 break;
+            }
             default:
-                return DefWindowProcW(hwnd, msg, wParam, lParam);
+                return ::DefWindowProcW(hwnd, msg, wParam, lParam);
         }
 
         return 0;
     }
-}
+} // namespace pTK

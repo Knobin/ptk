@@ -65,6 +65,11 @@ namespace pTK
         */
         void hide() override;
 
+        /** Function for retrieving if the window is hidden.
+
+        */
+        bool isHidden() const;
+
         /** Function for closing the window.
 
             This function will set a close flag and return instantly.
@@ -163,6 +168,28 @@ namespace pTK
         */
         WindowBackend* getBackend() const;
 
+        /** Function for minimizing the window.
+
+        */
+        void minimize();
+
+        /** Function for restoring a window from the minimized state.
+
+        */
+        void restore();
+
+        /** Function for retrieving the minimizing status of the window.
+
+            @return     status
+        */
+        bool isMinimized() const;
+
+        /** Function for retrieving the focus status of the window.
+
+            @return     status
+        */
+        bool isFocused() const;
+
     public:
         // Window specific callbacks.
         void onClose(const std::function<bool()>& callback);
@@ -170,6 +197,8 @@ namespace pTK
         void onResize(const std::function<bool(const Size& pos)>& callback);
         void onFocus(const std::function<bool()>& callback);
         void onLostFocus(const std::function<bool()>& callback);
+        void onMinimize(const std::function<bool()>& callback);
+        void onRestore(const std::function<bool()>& callback);
 
     private:
         // Event processing
@@ -190,6 +219,7 @@ namespace pTK
         SafeQueue<std::unique_ptr<Event>> m_eventQueue;
         bool m_draw;
         bool m_close;
+        bool m_minimized;
         std::thread::id m_threadID;
 
         // Window specific callbacks.
@@ -198,6 +228,8 @@ namespace pTK
         std::function<bool(const Size& pos)> m_onResize = nullptr;
         std::function<bool()> m_onFocus = nullptr;
         std::function<bool()> m_onLostFocus = nullptr;
+        std::function<bool()> m_onMinimize = nullptr;
+        std::function<bool()> m_onRestore = nullptr;
     };
 }
 

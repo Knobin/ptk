@@ -42,30 +42,44 @@ pTK::Color randomColor()
     return color;
 }
 
+void setWindowCallbacks(pTK::Window& window)
+{
+    window.onFocus([&](){
+      std::cout << "FOCUS" << std::endl;
+      return true;
+    });
+
+    window.onLostFocus([&](){
+      std::cout << "LOST FOCUS" << std::endl;
+      return true;
+    });
+
+    window.onClose([&](){
+      std::cout << "CLOSE" << std::endl;
+      return true;
+    });
+
+    window.onResize([&](const pTK::Size& size){
+      std::cout << "RESIZE: " << size.width << "x" << size.height << std::endl;
+      return true;
+    });
+
+    window.onMinimize([&](){
+      std::cout << "MINIMIZED" << std::endl;
+      return true;
+    });
+
+    window.onRestore([&](){
+      std::cout << "RESTORED" << std::endl;
+      return true;
+    });
+}
+
 int main(int argc, char *argv[]) {
     pTK::Application app{argc, argv};
     pTK::Window window{"pTK Sandbox Window", {960, 540}};
     window.setBackground(pTK::Color(0x232323FF));
-
-    window.onFocus([&](){
-        std::cout << "FOCUS" << std::endl;
-        return true;
-    });
-
-    window.onLostFocus([&](){
-        std::cout << "LOST FOCUS" << std::endl;
-        return true;
-    });
-
-    window.onClose([&](){
-        std::cout << "CLOSE" << std::endl;
-        return true;
-    });
-
-    window.onResize([&](const pTK::Size& size){
-        std::cout << "RESIZE: " << size.width << "x" << size.height << std::endl;
-        return true;
-    });
+    setWindowCallbacks(window);
 
     // Set ESC key to close the window.
     window.onKey([&](pTK::Event::Type type, int32 key) {
@@ -238,14 +252,14 @@ int main(int argc, char *argv[]) {
         pTK::Color c1{randomColor()};
         pTK::Color c2{randomColor()};
 
-        std::size_t steps{500};
+        std::size_t steps{25};
         double stepFactor{1.0 / (steps - 1.0)};
         size_t step{0};
         while (run)
         {
             if (step > steps)
             {
-                c1 = c2;
+                c1 = r1->getColor();
                 c2 = randomColor();
                 step = 1;
             }

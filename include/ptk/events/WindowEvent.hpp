@@ -50,7 +50,7 @@ namespace pTK
             @return         default initialized MoveEvent
         */
         explicit MoveEvent(const Point& t_pos)
-            : Event(Event::Category::Window, Event::Type::WindowMoved), pos{t_pos}
+            : Event(Event::Category::Window, Event::Type::WindowMove), pos{t_pos}
         {
         }
 

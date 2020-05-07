@@ -60,6 +60,11 @@ namespace pTK
         */
         void hide() override;
 
+        /** Function for retrieving if the window is hidden.
+
+        */
+        bool isHidden() const override;
+
         /** Function for polling the window events.
 
         */
@@ -156,6 +161,27 @@ namespace pTK
             @return Window style
         */
         DWORD getWindowStyle() const;
+
+        /** Function for minimizing the window.
+
+        */
+        void minimize() override;
+
+        /** Function for minimizing the window.
+
+        */
+        bool isMinimized() const override;
+
+        /** Function for restoring a window from the minimized state.
+
+        */
+        void restore() override;
+
+        /** Function for retrieving the focus status of the window.
+
+            @return     status
+        */
+        bool isFocused() const override;
 
         static LRESULT CALLBACK wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
