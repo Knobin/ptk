@@ -22,6 +22,7 @@
 namespace pTK
 {
     class Window;
+    struct WinBackendData;
 
     /** WinBackend class implementation.
 
@@ -183,16 +184,21 @@ namespace pTK
         */
         bool isFocused() const override;
 
+        /** Function for hinting the scale of the window.
+
+            @param scale    scale hint
+        */
+        void setScaleHint(const Vec2f& scale);
+
         static LRESULT CALLBACK wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
     private:
         Window *m_parentWindow;
         HWND m_handle;
-        DWORD m_style;
         std::unique_ptr<ContextBase> m_context;
         PAINTSTRUCT ps;
-        Vec2f m_scale;
-        void *m_data;
+
+        std::unique_ptr<WinBackendData> m_data;
     };
 }
 

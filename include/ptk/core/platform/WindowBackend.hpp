@@ -195,6 +195,12 @@ namespace pTK
         */
         virtual bool isFocused() const = 0;
 
+        /** Function for hinting the scale of the window.
+
+            @param scale    scale hint
+        */
+        virtual void setScaleHint(const Vec2f& UNUSED(scale)) {}
+
     private:
         BackendType m_backend;
     };

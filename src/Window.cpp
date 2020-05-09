@@ -218,6 +218,12 @@ namespace pTK
             MoveEvent* mEvent{static_cast<MoveEvent*>(event)};
             setPosHint(mEvent->pos);
         }
+        else if (type == Event::Type::WindowScale)
+        {
+            ScaleEvent* sEvent{static_cast<ScaleEvent*>(event)};
+            m_winBackend->setScaleHint(sEvent->scale);
+            m_draw = true;
+        }
         else if (type == Event::Type::WindowClose)
         {
             close();

@@ -57,6 +57,27 @@ namespace pTK
         // Movement coordinates.
         const Point pos;
     };
+
+    /** ScaleEvent class implementation.
+
+        Signal a window scale change.
+    */
+    class ScaleEvent final : public Event
+    {
+    public:
+        /** ScaleEvent with default values with scale.
+
+            @param t_scale  associated x and y scale
+            @return         default initialized ScaleEvent
+        */
+        explicit ScaleEvent(const Vec2f& t_scale)
+            : Event(Event::Category::Window, Event::Type::WindowScale), scale{t_scale}
+        {
+        }
+
+        // Movement coordinates.
+        const Vec2f scale;
+    };
 }
 
 #endif // PTK_EVENTS_WINDOWEVENT_HPP

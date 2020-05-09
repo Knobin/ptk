@@ -60,24 +60,24 @@ namespace pTK
         return PTK_KEY_UNKNOWN;
     }
 
-    static Size calcAdjustedReverseWindowSize(const Size& from, DWORD style)
+    static Size calcAdjustedReverseWindowSize(const Size& from, DWORD style, uint dpi)
     {
         RECT adjustedSize{};
         ::SetRectEmpty(&adjustedSize);
-        ::AdjustWindowRectEx(&adjustedSize, style, FALSE, 0);
+        ::AdjustWindowRectExForDpi(&adjustedSize, style, FALSE, 0, dpi);
 
         return {from.width - (adjustedSize.right - adjustedSize.left),
                 from.height - (adjustedSize.bottom - adjustedSize.top)};
     }
 
-    static Size calcAdjustedWindowSize(const Size& from, DWORD style)
+    static Size calcAdjustedWindowSize(const Size& from, DWORD style, uint dpi)
     {
         RECT adjustedSize{};
         adjustedSize.top = 0;
         adjustedSize.bottom = from.height;
         adjustedSize.left = 0;
         adjustedSize.right = from.width;
-        ::AdjustWindowRectEx(&adjustedSize, style, FALSE, 0);
+        ::AdjustWindowRectExForDpi (&adjustedSize, style, FALSE, 0, dpi);
         return {adjustedSize.right - adjustedSize.left, adjustedSize.bottom - adjustedSize.top};
     }
 
@@ -101,42 +101,38 @@ namespace pTK
         return newSize;
     }
 
-    static Point scalePoint(const Point& point, const Vec2f& scale)
-    {
-        Point newPoint{};
-        newPoint.x = static_cast<Point::value_type>(point.x * scale.x);
-        newPoint.y = static_cast<Point::value_type>(point.y * scale.y);
-        return newPoint;
-    }
-
     struct WinBackendData
     {
         Window *window;
         Vec2f scale;
         Size size;
         Point pos;
+        DWORD style;
     };
 
     WinBackend::WinBackend(Window *window, const std::string& name, const Size& size, BackendType backend)
         : WindowBackend(backend),
-            m_parentWindow{window}, m_handle{},
-            m_style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX},
-            m_scale{1.0f, 1.0f}, m_context{nullptr}
+            m_parentWindow{window}, m_handle{}, m_context{nullptr}
     {
         // High DPI
         HDC screen{GetDC(nullptr)};
         float dpiX{static_cast<float>(::GetDeviceCaps(screen, LOGPIXELSX))};
         float dpiY{static_cast<float>(::GetDeviceCaps(screen, LOGPIXELSY))};
+#ifdef PTK_DEBUG
+    if (dpiX != dpiY)
+    {
+        PTK_WARN("DPI for x and y is not the same!");
+    }
+#endif
         ::ReleaseDC(nullptr, screen);
         PTK_INFO("Windows Window DPI {}x{}", dpiX, dpiY);
-        m_scale.x = dpiX / 96.0f;
-        m_scale.y = dpiY / 96.0f;
-        PTK_INFO("Windows Window Scaling {0:0.2f}x{1:0.2f}", m_scale.x, m_scale.y);
+        Vec2f scale{dpiX / 96.0f, dpiY / 96.0f};
+        PTK_INFO("Windows Window Scaling {0:0.2f}x{1:0.2f}", scale.x, scale.y);
 
-        Size wSize{scaleSize(size, m_scale)};
-        PTK_INFO("{}x{}", wSize.width, wSize.height);
-        Size adjSize{calcAdjustedWindowSize(wSize, m_style)};
-        m_handle = ::CreateWindowExW(0, L"PTK", WinPlatform::stringToUTF16(name).c_str(), m_style,
+        Size wSize{scaleSize(size, scale)};
+        DWORD style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX};
+        Size adjSize{calcAdjustedWindowSize(wSize, style, dpiX)};
+        m_handle = ::CreateWindowExW(0, L"PTK", WinPlatform::stringToUTF16(name).c_str(), style,
                                      CW_USEDEFAULT, CW_USEDEFAULT, adjSize.width, adjSize.height,
                                      nullptr, nullptr, ::GetModuleHandleW(nullptr), nullptr);
         if (!m_handle)
@@ -144,8 +140,8 @@ namespace pTK
         PTK_INFO("Created WinWindow: {}x{}", wSize.width, wSize.height);
 
         m_context = createWin32Context(backend, m_handle, wSize);
-        m_data = new WinBackendData{window, m_scale, wSize, {}};
-        SetWindowLongPtr(m_handle, GWLP_USERDATA, (LONG_PTR)m_data);
+        m_data = std::make_unique<WinBackendData>(WinBackendData{window, scale, wSize, {}, style});
+        SetWindowLongPtr(m_handle, GWLP_USERDATA, (LONG_PTR)m_data.get());
 
         ::ShowWindow(m_handle, SW_SHOW);
         ::UpdateWindow(m_handle);
@@ -153,8 +149,7 @@ namespace pTK
 
     WinBackend::~WinBackend()
     {
-        WinBackendData* data{static_cast<WinBackendData*>(m_data)};
-        delete data;
+
     }
 
     void WinBackend::setPosHint(const Point& pos)
@@ -211,7 +206,7 @@ namespace pTK
         byte* target{nullptr};
         HBITMAP color{::CreateDIBSection(dc, reinterpret_cast<BITMAPINFO*>(&bmInfo), DIB_RGB_COLORS,
                                          reinterpret_cast<void**>(&target), nullptr, 0)};
-        ReleaseDC(nullptr, dc);
+        ::ReleaseDC(nullptr, dc);
         PTK_ASSERT(color, "Failed to create HBITMAP");
 
         // Transform pixels from RGBA to BGRA.
@@ -255,7 +250,7 @@ namespace pTK
 
     DWORD WinBackend::getWindowStyle() const
     {
-        return m_style;
+        return m_data->style;
     }
 
     void WinBackend::swapBuffers()
@@ -266,48 +261,46 @@ namespace pTK
     void WinBackend::resize(const Size& size)
     {
         // Apply the DPI scaling.
-        const Size scaledSize{static_cast<Size::value_type>(std::ceil(size.width * m_scale.x)),
-                              static_cast<Size::value_type>(std::ceil(size.height * m_scale.y))};
+        const Size scaledSize{scaleSize(size, m_data->scale)};
 
-        WinBackendData* data{static_cast<WinBackendData*>(m_data)};
-        if (scaledSize != data->size)
+        if (scaledSize != m_data->size)
         {
             // Adjust the size depending on the window frame.
-            const Size adjSize{calcAdjustedWindowSize(scaledSize, m_style)};
+            const Size adjSize{calcAdjustedWindowSize(scaledSize, m_data->style, m_data->scale.x * 96.0f)};
 
             // Get the window size and position.
             RECT rect{};
             ::GetWindowRect(m_handle, &rect);
 
-            data->pos = Point{rect.left, rect.top};
-            data->size = scaledSize;
+            m_data->pos = Point{rect.left, rect.top};
+            m_data->size = scaledSize;
 
             // Apply the new size to the context and window.
             if (scaledSize != m_context->getSize())
                 m_context->resize(scaledSize);
-            ::MoveWindow(m_handle, data->pos.x, data->pos.y, adjSize.width, adjSize.height, FALSE);
+            ::MoveWindow(m_handle, m_data->pos.x, m_data->pos.y, adjSize.width, adjSize.height, FALSE);
         }
     }
 
     void WinBackend::close()
     {
-        DestroyWindow(m_handle);
+        ::DestroyWindow(m_handle);
     }
 
     void WinBackend::show()
     {
-        ShowWindow(m_handle, SW_SHOW);
+        ::ShowWindow(m_handle, SW_SHOW);
         m_parentWindow->forceDrawAll();
     }
 
     void WinBackend::hide()
     {
-        ShowWindow(m_handle, SW_HIDE);
+        ::ShowWindow(m_handle, SW_HIDE);
     }
 
     bool WinBackend::isHidden() const
     {
-        return static_cast<bool>(IsWindowVisible(m_handle));
+        return static_cast<bool>(::IsWindowVisible(m_handle));
     }
 
     ContextBase* WinBackend::getContext() const
@@ -317,19 +310,17 @@ namespace pTK
 
     Vec2f WinBackend::getDPIScale() const
     {
-        return m_scale;
+        return m_data->scale;
     }
 
     Point WinBackend::getWinPos() const
     {
-        WinBackendData* data{static_cast<WinBackendData*>(m_data)};
-        return data->pos;
+        return m_data->pos;
     }
 
     Size WinBackend::getWinSize() const
     {
-        WinBackendData* data{static_cast<WinBackendData*>(m_data)};
-        return data->size;
+        return m_data->size;
     }
 
     void WinBackend::setLimits(const Size&, const Size&)
@@ -358,6 +349,15 @@ namespace pTK
     bool WinBackend::isFocused() const
     {
         return (m_handle == ::GetFocus());
+    }
+
+    void WinBackend::setScaleHint(const Vec2f& scale)
+    {
+        if (m_data->scale != scale)
+        {
+            m_data->scale = scale;
+            resize(m_parentWindow->getSize());
+        }
     }
 
     static void handleMouseClick(WinBackendData* data, Event::Type type, Mouse::Button btn,
@@ -455,10 +455,7 @@ namespace pTK
                 RECT* rect = reinterpret_cast<RECT*>(lParam);
                 const Size size = {static_cast<Size::value_type>(rect->right - rect->left),
                                    static_cast<Size::value_type>(rect->bottom - rect->top)};
-                WinBackend* backend{static_cast<WinBackend*>(window->getBackend())};
-                ResizeEvent evt{calcAdjustedReverseWindowSize(
-                    scaleSize(size, Vec2f{1.0f / data->scale.x, 1.0f / data->scale.y}),
-                    backend->getWindowStyle())};
+                ResizeEvent evt{scaleSize(calcAdjustedReverseWindowSize(size, data->style, data->scale.x * 96.0f), Vec2f{1.0f / data->scale.x, 1.0f / data->scale.y})};
                 window->sendEvent(&evt);
                 window->forceDrawAll();
                 break;
@@ -496,14 +493,14 @@ namespace pTK
                     const Size minSize{window->getMinSize()};
                     WinBackend* backend{static_cast<WinBackend*>(window->getBackend())};
                     const Size adjMinSize{calcAdjustedWindowSize(scaleSize(minSize, data->scale),
-                                                                 backend->getWindowStyle())};
+                                                                 backend->getWindowStyle(), data->scale.x * 96.0f)};
                     lpMMI->ptMinTrackSize.x = adjMinSize.width;
                     lpMMI->ptMinTrackSize.y = adjMinSize.height;
                     const Size maxSize{window->getMaxSize()};
                     if (maxSize != Size::Max)
                     {
                         const Size adjMaxSize{calcAdjustedWindowSize(
-                            scaleSize(maxSize, data->scale), backend->getWindowStyle())};
+                            scaleSize(maxSize, data->scale), data->style, data->scale.x * 96.0f)};
                         lpMMI->ptMaxTrackSize.x = adjMaxSize.width;
                         lpMMI->ptMaxTrackSize.y = adjMaxSize.height;
                     }
@@ -513,6 +510,23 @@ namespace pTK
                         lpMMI->ptMaxTrackSize.y = ::GetSystemMetrics(SM_CYMAXTRACK);
                     }
                 }
+                break;
+            }
+            case WM_DPICHANGED:
+            {
+                // Change Window position.
+                RECT* rect = reinterpret_cast<RECT*>(lParam);
+                MoveEvent mEvt{{static_cast<Point::value_type>(rect->left),
+                                   static_cast<Point::value_type>(rect->top)}};
+                window->sendEvent(&mEvt);
+
+                // Scale Window.
+                const uint32 dpiX = static_cast<uint32>(GET_X_LPARAM(wParam));
+                const uint32 dpiY = static_cast<uint32>(GET_Y_LPARAM(wParam));
+                const Vec2f scale{dpiX / 96.0f, dpiY / 96.0f};
+                PTK_INFO("DPI CHANGED {0}x{1} SCALING {2:0.2f}x{3:0.2f}", dpiX, dpiY, scale.x, scale.y);
+                ScaleEvent sEvt{scale};
+                window->sendEvent(&sEvt);
                 break;
             }
             default:
