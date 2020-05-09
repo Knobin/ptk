@@ -71,7 +71,7 @@ namespace pTK
 
             @param color   Clear color
         */
-        void clear(const Color& color);
+        virtual void clear(const Color& color);
 
         /** Function for retrieving the SkCanvas of the context.
 

@@ -48,6 +48,12 @@ namespace pTK
         */
         void resize(const Size& size) override;
 
+        /** Function for clearing the context.
+
+            @param color   Clear color
+        */
+        void clear(const Color& color) override;
+
         /** Function for retrieving the SkCanvas of the context.
 
             @return    SkCanvas property

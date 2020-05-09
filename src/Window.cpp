@@ -274,7 +274,7 @@ namespace pTK
         SkCanvas* canvas{context->skCanvas()};
 
         Color color{getBackground()};
-        context->clear(Color(0x000000FF));
+        context->clear(color);
 
         // Apply monitor scale.
         SkMatrix matrix{};
