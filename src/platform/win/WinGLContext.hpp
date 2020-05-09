@@ -69,7 +69,7 @@ namespace pTK
         HWND m_hwnd;
         HGLRC m_hglrc;
         sk_sp<SkSurface> m_surface;
-        Ref<GrContext> m_context;
+        sk_sp<GrContext> m_context;
         GrGLFramebufferInfo m_info;
         SkColorType m_colorType;
         SkSurfaceProps m_props;

@@ -93,6 +93,10 @@ namespace pTK
     void WinGLContext::resize(const Size& size)
     {
         glViewport(0, 0, size.width, size.height);
+        glClearStencil(0);
+        glClearColor(255, 0, 0, 0);
+        glStencilMask(0xFFFFFFFF);
+        glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         GrBackendRenderTarget backendRenderTarget(size.width, size.height, 1, 8, m_info);
 

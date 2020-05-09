@@ -278,7 +278,7 @@ namespace pTK
             // Apply the new size to the context and window.
             if (scaledSize != m_context->getSize())
                 m_context->resize(scaledSize);
-            ::MoveWindow(m_handle, m_data->pos.x, m_data->pos.y, adjSize.width, adjSize.height, FALSE);
+            ::MoveWindow(m_handle, m_data->pos.x, m_data->pos.y, adjSize.width, adjSize.height, TRUE);
         }
     }
 
