@@ -22,9 +22,9 @@ namespace pTK
 
     void VBox::onAdd(const Ref<Widget>&)
     {
-        const Size vbSize{getSize()};
         const Size minLayoutSize{calcMinSize()};
         setMinSize(minLayoutSize);
+        const Size vbSize{getSize()};
         //setLimits(minLayoutSize, calculateMaxSize());
 
         if ((minLayoutSize.width > vbSize.width) || (minLayoutSize.height > vbSize.height))
@@ -39,7 +39,7 @@ namespace pTK
             /** Childs will fit in the current size.
 
              Only need to resize and position children.
-             */
+            */
             refitContent(vbSize);
         }
     }

@@ -48,21 +48,25 @@ namespace pTK
 
         /** Function for closing the window.
 
+            @return     true if operation is successful, otherwise false
         */
-        void close() override;
+        bool close() override;
 
         /** Function for showing the window.
 
+            @return     true if operation is successful, otherwise false
         */
-        void show() override;
+        bool show() override;
 
         /** Function for hiding the window.
 
+            @return     true if operation is successful, otherwise false
         */
-        void hide() override;
+        bool hide() override;
 
         /** Function for retrieving if the window is hidden.
 
+            @return     true if window is hidden, otherwise false
         */
         bool isHidden() const override;
 
@@ -71,11 +75,12 @@ namespace pTK
         */
         void pollEvents() override;
 
-        /** Function for setting the window position.
+        /** Function for setting the position of the window.
 
-            @param pos  requested position of the Window.
+            @param pos  position to set
+            @return     true if operation is successful, otherwise false
         */
-        void setPosHint(const Point& pos) override;
+        bool setPosHint(const Point& pos) override;
 
         /** Function for retrieving the Context.
 
@@ -97,15 +102,17 @@ namespace pTK
         /** Function for resizing the window.
 
             @param size  size to set
+            @return     true if operation is successful, otherwise false
         */
-        void resize(const Size& size) override;
+        bool resize(const Size& size) override;
 
         /** Function for setting the size limits the window.
 
             @param min  minimal size of the window
             @param max  maximum size of the window
+            @return     true if operation is successful, otherwise false
         */
-        void setLimits(const Size&, const Size&) override;
+        bool setLimits(const Size&, const Size&) override;
 
         /** Function for initiating the drawing.
 
@@ -122,8 +129,9 @@ namespace pTK
         /** Function for setting the title of the window.
 
             @param name     title to show
+            @return         true if operation is successful, otherwise false
         */
-        void setTitle(const std::string& name) override;
+        bool setTitle(const std::string& name) override;
 
         /** Function for setting the icon of the window.
 
@@ -134,8 +142,9 @@ namespace pTK
             @param width    width of the image
             @param height   height of the image
             @param pixels   image pixels in a RGBA format.
+            @return         true if operation is successful, otherwise false
         */
-        void setIcon(int32 width, int32 height, byte* pixels)  override;
+        bool setIcon(int32 width, int32 height, byte* pixels)  override;
 
         /** Function for notifying the backend that an event has been pushed from
             a different thread.
@@ -165,8 +174,9 @@ namespace pTK
 
         /** Function for minimizing the window.
 
+            @return     true if operation is successful, otherwise false
         */
-        void minimize() override;
+        bool minimize() override;
 
         /** Function for minimizing the window.
 
@@ -175,8 +185,9 @@ namespace pTK
 
         /** Function for restoring a window from the minimized state.
 
+            @return     true if operation is successful, otherwise false
         */
-        void restore() override;
+        bool restore() override;
 
         /** Function for retrieving the focus status of the window.
 
@@ -187,8 +198,9 @@ namespace pTK
         /** Function for hinting the scale of the window.
 
             @param scale    scale hint
+            @return         true if operation is successful, otherwise false
         */
-        void setScaleHint(const Vec2f& scale);
+        bool setScaleHint(const Vec2f& scale) override;
 
         static LRESULT CALLBACK wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 

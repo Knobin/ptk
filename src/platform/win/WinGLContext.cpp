@@ -93,7 +93,6 @@ namespace pTK
     void WinGLContext::resize(const Size& size)
     {
         glViewport(0, 0, size.width, size.height);
-        clear(Color{0xFFFFFFFF});
 
         GrBackendRenderTarget backendRenderTarget(size.width, size.height, 1, 8, m_info);
 
@@ -102,16 +101,9 @@ namespace pTK
         PTK_ASSERT(surface, "Failed to create surface!");
         m_surface.reset(surface);
 
+        //clear(Color{0xFFFFFFFF});
         PTK_INFO("Constructed WinGLContext: {}x{}", size.width, size.height);
         setSize(size);
-    }
-
-    void WinGLContext::clear(const Color& color)
-    {
-        glClearStencil(0);
-        glClearColor(color.r, color.g, color.b, color.a);
-        glStencilMask(0xFFFFFFFF);
-        glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     }
 
     SkCanvas* WinGLContext::skCanvas() const

@@ -19,7 +19,7 @@ namespace pTK
 
     void ContextBase::clear(const Color& color)
     {
-        skCanvas()->clear(SkColorSetARGB(255, color.r, color.g, color.b));
+        skCanvas()->clear(SkColorSetARGB(color.a, color.r, color.g, color.b));
     }
 
     const Size& ContextBase::getSize() const

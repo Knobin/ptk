@@ -108,6 +108,7 @@ namespace pTK
         Size size;
         Point pos;
         DWORD style;
+        bool minimized;
     };
 
     WinBackend::WinBackend(Window *window, const std::string& name, const Size& size, BackendType backend)
@@ -140,7 +141,7 @@ namespace pTK
         PTK_INFO("Created WinWindow: {}x{}", wSize.width, wSize.height);
 
         m_context = createWin32Context(backend, m_handle, wSize);
-        m_data = std::make_unique<WinBackendData>(WinBackendData{window, scale, wSize, {}, style});
+        m_data = std::make_unique<WinBackendData>(WinBackendData{window, scale, wSize, {}, style, false});
         SetWindowLongPtr(m_handle, GWLP_USERDATA, (LONG_PTR)m_data.get());
 
         ::ShowWindow(m_handle, SW_SHOW);
@@ -152,11 +153,22 @@ namespace pTK
 
     }
 
-    void WinBackend::setPosHint(const Point& pos)
+    bool WinBackend::setPosHint(const Point& pos)
     {
-        RECT rect{pos.x, pos.y, pos.x, pos.y};
-        ::SetWindowPos(m_handle, nullptr, rect.left, rect.top, 0, 0,
-                     SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
+        if (m_data->pos != pos)
+        {
+            RECT rc{0};
+            if (::GetWindowRect(m_handle, &rc))
+            {
+                if (::MoveWindow(m_handle, pos.x, pos.y, rc.right - rc.left, rc.bottom - rc.top, FALSE))
+                {
+                    m_data->pos = pos;
+                    return true;
+                }
+            }
+
+        }
+        return false;
     }
 
     void WinBackend::pollEvents()
@@ -180,12 +192,12 @@ namespace pTK
         ::EndPaint(m_handle, &ps);
     }
 
-    void WinBackend::setTitle(const std::string& name)
+    bool WinBackend::setTitle(const std::string& name)
     {
-        ::SetWindowTextW(m_handle, WinPlatform::stringToUTF16(name).c_str());
+        return ::SetWindowTextW(m_handle, WinPlatform::stringToUTF16(name).c_str());
     }
 
-    void WinBackend::setIcon(int32 width, int32 height, byte* pixels)
+    bool WinBackend::setIcon(int32 width, int32 height, byte* pixels)
     {
         // DIB information.
         BITMAPV5HEADER bmInfo{};
@@ -207,7 +219,11 @@ namespace pTK
         HBITMAP color{::CreateDIBSection(dc, reinterpret_cast<BITMAPINFO*>(&bmInfo), DIB_RGB_COLORS,
                                          reinterpret_cast<void**>(&target), nullptr, 0)};
         ::ReleaseDC(nullptr, dc);
-        PTK_ASSERT(color, "Failed to create HBITMAP");
+        if (!color)
+        {
+            PTK_ASSERT(false, "Failed to create HBITMAP");
+            return false;
+        }
 
         // Transform pixels from RGBA to BGRA.
         for (int i = 0; i < width * height; i++)
@@ -220,12 +236,20 @@ namespace pTK
 
         // Create the mask.
         HBITMAP mask{::CreateBitmap(width, height, 1, 1, nullptr)};
-        PTK_ASSERT(mask, "Failed to create HBITMAP");
+        if (!mask)
+        {
+            PTK_ASSERT(false, "Failed to create HBITMAP");
+            return false;
+        }
 
         // Finally, create the icon.
         ICONINFO iconInfo{true, 0, 0, mask, color};
         HICON hIcon{::CreateIconIndirect(&iconInfo)};
-        PTK_ASSERT(hIcon, "Failed to create the icon");
+        if (!hIcon)
+        {
+            PTK_ASSERT(false, "Failed to create the icon");
+            return false;
+        }
 
         ::DeleteObject(color);
         ::DeleteObject(mask);
@@ -239,6 +263,8 @@ namespace pTK
                     reinterpret_cast<LPARAM>(hIcon));
         SendMessage(::GetWindow(m_handle, GW_OWNER), WM_SETICON, ICON_BIG,
                     reinterpret_cast<LPARAM>(hIcon));
+
+        return true;
     }
 
     void WinBackend::notifyEvent()
@@ -258,7 +284,7 @@ namespace pTK
         m_context->swapBuffers();
     }
 
-    void WinBackend::resize(const Size& size)
+    bool WinBackend::resize(const Size& size)
     {
         // Apply the DPI scaling.
         const Size scaledSize{scaleSize(size, m_data->scale)};
@@ -279,28 +305,37 @@ namespace pTK
             if (scaledSize != m_context->getSize())
                 m_context->resize(scaledSize);
             ::MoveWindow(m_handle, m_data->pos.x, m_data->pos.y, adjSize.width, adjSize.height, TRUE);
+
+            return true;
         }
+
+        return false;
     }
 
-    void WinBackend::close()
+    bool WinBackend::close()
     {
-        ::DestroyWindow(m_handle);
+        return ::DestroyWindow(m_handle);
     }
 
-    void WinBackend::show()
+    bool WinBackend::show()
     {
-        ::ShowWindow(m_handle, SW_SHOW);
-        m_parentWindow->forceDrawAll();
+        if (!::ShowWindow(m_handle, SW_SHOW))
+        {
+            m_parentWindow->forceDrawAll();
+            return true;
+        }
+
+        return false;
     }
 
-    void WinBackend::hide()
+    bool WinBackend::hide()
     {
-        ::ShowWindow(m_handle, SW_HIDE);
+        return ::ShowWindow(m_handle, SW_HIDE);
     }
 
     bool WinBackend::isHidden() const
     {
-        return static_cast<bool>(::IsWindowVisible(m_handle));
+        return !static_cast<bool>(::IsWindowVisible(m_handle));
     }
 
     ContextBase* WinBackend::getContext() const
@@ -320,20 +355,25 @@ namespace pTK
 
     Size WinBackend::getWinSize() const
     {
-        return m_data->size;
+        RECT rect{};
+        ::GetWindowRect(m_handle, &rect);
+        return {rect.right - rect.left, rect.bottom - rect.top};
     }
 
-    void WinBackend::setLimits(const Size&, const Size&)
+    bool WinBackend::setLimits(const Size&, const Size&)
     {
         RECT rect{};
         ::GetWindowRect(m_handle, &rect);
         ::MoveWindow(m_handle, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
                      TRUE);
+        return true;
     }
 
-    void WinBackend::minimize()
+    bool WinBackend::minimize()
     {
-        ::ShowWindow(m_handle, SW_MINIMIZE);
+        bool test = ::ShowWindow(m_handle, SW_MINIMIZE);
+        PTK_INFO("minimize {}", test);
+        return true;
     }
 
     bool WinBackend::isMinimized() const
@@ -341,9 +381,11 @@ namespace pTK
         return static_cast<bool>(IsMinimized(m_handle));
     }
 
-    void WinBackend::restore()
+    bool WinBackend::restore()
     {
-        ::ShowWindow(m_handle, SW_RESTORE);
+        bool test = ::ShowWindow(m_handle, SW_RESTORE);
+        PTK_INFO("restore {}", test);
+        return true;
     }
 
     bool WinBackend::isFocused() const
@@ -351,13 +393,15 @@ namespace pTK
         return (m_handle == ::GetFocus());
     }
 
-    void WinBackend::setScaleHint(const Vec2f& scale)
+    bool WinBackend::setScaleHint(const Vec2f& scale)
     {
         if (m_data->scale != scale)
         {
             m_data->scale = scale;
             resize(m_parentWindow->getSize());
+            return true;
         }
+        return false;
     }
 
     static void handleMouseClick(WinBackendData* data, Event::Type type, Mouse::Button btn,
@@ -384,7 +428,7 @@ namespace pTK
             case WM_CREATE:
                 break;
             case WM_CLOSE:
-                DestroyWindow(hwnd);
+                ::DestroyWindow(hwnd);
                 break;
             case WM_DESTROY:
             {
@@ -403,13 +447,6 @@ namespace pTK
             case WM_KILLFOCUS:
             {
                 Event evt{Event::Category::Window, Event::Type::WindowLostFocus};
-                window->sendEvent(&evt);
-                break;
-            }
-            case WM_MOVE:
-            {
-                MoveEvent evt{{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)}};
-                data->pos = evt.pos;
                 window->sendEvent(&evt);
                 break;
             }
@@ -460,31 +497,6 @@ namespace pTK
                 window->forceDrawAll();
                 break;
             }
-            case WM_SIZE:
-            {
-                if (window && window->getBackend())
-                {
-                    if (wParam == SIZE_MINIMIZED)
-                    {
-                        Event evt{Event::Category::Window, Event::Type::WindowMinimize};
-                        window->sendEvent(&evt);
-                    }
-                    else if (wParam == SIZE_RESTORED)
-                    {
-                        Event evt{Event::Category::Window, Event::Type::WindowRestore};
-                        window->sendEvent(&evt);
-                    }
-                    else
-                    {
-                        const Size size{static_cast<Size::value_type>(LOWORD(lParam)),
-                                           static_cast<Size::value_type>(HIWORD(lParam))};
-                        ResizeEvent evt{scaleSize(size, Vec2f{1.0f / data->scale.x, 1.0f / data->scale.y})};
-                        window->sendEvent(&evt);
-                        window->forceDrawAll();
-                    }
-                }
-                break;
-            }
             case WM_GETMINMAXINFO:
             {
                 if (window)
@@ -527,6 +539,66 @@ namespace pTK
                 PTK_INFO("DPI CHANGED {0}x{1} SCALING {2:0.2f}x{3:0.2f}", dpiX, dpiY, scale.x, scale.y);
                 ScaleEvent sEvt{scale};
                 window->sendEvent(&sEvt);
+                break;
+            }
+            case WM_WINDOWPOSCHANGED:
+            {
+                if (window)
+                {
+                    WINDOWPOS* winData{reinterpret_cast<WINDOWPOS*>(lParam)};
+                    WindowBackend* backend{window->getBackend()};
+
+                    // Window was moved.
+                    if (!(winData->flags & SWP_NOMOVE))
+                    {
+                        if (winData->x != data->pos.x || winData->y != data->pos.y)
+                        {
+                            MoveEvent evt{{winData->x, winData->y}};
+                            window->sendEvent(&evt);
+                        }
+                    }
+
+                    // Window was resized.
+                    if (!(winData->flags & SWP_NOSIZE))
+                    {
+                        RECT rc{0};
+                        if (::GetClientRect(hwnd, &rc) && (rc.right != 0 && rc.bottom != 0))
+                        {
+                            if (rc.right != data->size.width || rc.bottom != data->size.height)
+                            {
+                                if (backend)
+                                {
+                                    const Size size{static_cast<Size::value_type>(rc.right),
+                                                    static_cast<Size::value_type>(rc.bottom)};
+                                    ResizeEvent evt{scaleSize(size, Vec2f{1.0f / data->scale.x, 1.0f
+                                                                                                / data->scale.y})}; window->sendEvent(&evt); window->forceDrawAll();
+                                }
+                            }
+                        }
+                    }
+
+                    // Window was shown.
+                    if (!(winData->flags & SWP_SHOWWINDOW) && backend)
+                    {
+                        if (!backend->isMinimized() && data->minimized)
+                        {
+                            data->minimized = false;
+                            Event evt{Event::Category::Window, Event::Type::WindowRestore};
+                            window->sendEvent(&evt);
+                        }
+                    }
+
+                    // Window was hidden.
+                    if (!(winData->flags & SWP_HIDEWINDOW) && backend)
+                    {
+                        if (backend->isMinimized() && !data->minimized)
+                        {
+                            data->minimized = true;
+                            Event evt{Event::Category::Window, Event::Type::WindowMinimize};
+                            window->sendEvent(&evt);
+                        }
+                    }
+                }
                 break;
             }
             default:

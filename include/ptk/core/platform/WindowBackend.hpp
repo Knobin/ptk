@@ -53,21 +53,25 @@ namespace pTK
 
         /** Function for showing the window.
 
+            @return     true if operation is successful, otherwise false
         */
-        virtual void show() = 0;
+        virtual bool show() = 0;
 
         /** Function for closing the window.
 
+            @return     true if operation is successful, otherwise false
         */
-        virtual void close() = 0;
+        virtual bool close() = 0;
 
         /** Function for hiding the window.
 
+            @return     true if operation is successful, otherwise false
         */
-        virtual void hide() = 0;
+        virtual bool hide() = 0;
 
         /** Function for retrieving if the window is hidden.
 
+            @return     true if window is hidden, otherwise false
         */
         virtual bool isHidden() const = 0;
 
@@ -79,21 +83,24 @@ namespace pTK
         /** Function for setting the position of the window.
 
             @param pos  position to set
+            @return     true if operation is successful, otherwise false
         */
-        virtual void setPosHint(const Point& UNUSED(pos)) = 0;
+        virtual bool setPosHint(const Point& UNUSED(pos)) = 0;
 
         /** Function for resizing the window.
 
             @param size  size to set
+            @return     true if operation is successful, otherwise false
         */
-        virtual void resize(const Size& UNUSED(size)) = 0;
+        virtual bool resize(const Size& UNUSED(size)) = 0;
 
         /** Function for setting the size limits the window.
 
             @param min  minimal size of the window
             @param max  maximum size of the window
+            @return     true if operation is successful, otherwise false
         */
-        virtual void setLimits(const Size& UNUSED(min), const Size& UNUSED(max)) = 0;
+        virtual bool setLimits(const Size& UNUSED(min), const Size& UNUSED(max)) = 0;
 
         /** Function for swapping the buffers.
 
@@ -129,8 +136,9 @@ namespace pTK
         /** Function for setting the title of the window.
 
             @param name     title to show
+            @return         true if operation is successful, otherwise false
         */
-        virtual void setTitle(const std::string& UNUSED(name)) = 0;
+        virtual bool setTitle(const std::string& UNUSED(name)) = 0;
 
         /** Function for setting the icon of the window.
 
@@ -141,8 +149,9 @@ namespace pTK
             @param width    width of the image
             @param height   height of the image
             @param pixels   image pixels in a RGBA format.
+            @return         true if operation is successful, otherwise false
         */
-        virtual void setIcon(int32 UNUSED(width), int32 UNUSED(height), byte* UNUSED(pixels)) = 0;
+        virtual bool setIcon(int32 UNUSED(width), int32 UNUSED(height), byte* UNUSED(pixels)) = 0;
 
         /** Function for notifying the backend that an event has been pushed from
             a different thread.
@@ -175,31 +184,35 @@ namespace pTK
 
         /** Function for minimizing the window.
 
+            @return     true if operation is successful, otherwise false
         */
-        virtual void minimize() = 0;
+        virtual bool minimize() = 0;
 
         /** Function for retrieving the minimizing status of the window.
 
-            @return     status
+            @return     true if window is minimized, otherwise false
         */
         virtual bool isMinimized() const = 0;
 
         /** Function for restoring a window from the minimized state.
 
+            @return     true if operation is successful, otherwise false
         */
-        virtual void restore() = 0;
+        virtual bool restore() = 0;
 
         /** Function for retrieving the focus status of the window.
 
-            @return     status
+            @return     true if window is focused, otherwise false
         */
         virtual bool isFocused() const = 0;
 
         /** Function for hinting the scale of the window.
 
             @param scale    scale hint
+            @return         true if operation is successful, otherwise false
         */
-        virtual void setScaleHint(const Vec2f& UNUSED(scale)) {}
+        virtual bool setScaleHint(const Vec2f& UNUSED(scale)) {
+            return true;}
 
     private:
         BackendType m_backend;

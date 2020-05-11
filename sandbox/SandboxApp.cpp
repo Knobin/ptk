@@ -7,6 +7,7 @@
 #include <random>
 #include <thread>
 #include <atomic>
+#include <chrono>
 
 // settings
 const unsigned int SCR_WIDTH = 960;
@@ -45,33 +46,38 @@ pTK::Color randomColor()
 void setWindowCallbacks(pTK::Window& window)
 {
     window.onFocus([&](){
-      std::cout << "FOCUS" << std::endl;
-      return true;
+        std::cout << "FOCUS" << std::endl;
+        return true;
+    });
+
+    window.onMove([&](const pTK::Point& pos){
+        std::cout << "MOVE " << pos.x << "x" << pos.y << std::endl;
+        return true;
     });
 
     window.onLostFocus([&](){
-      std::cout << "LOST FOCUS" << std::endl;
-      return true;
+        std::cout << "LOST FOCUS" << std::endl;
+        return true;
     });
 
     window.onClose([&](){
-      std::cout << "CLOSE" << std::endl;
-      return true;
+        std::cout << "CLOSE" << std::endl;
+        return true;
     });
 
     window.onResize([&](const pTK::Size& size){
-      std::cout << "RESIZE: " << size.width << "x" << size.height << std::endl;
-      return true;
+        std::cout << "RESIZE: " << size.width << "x" << size.height << std::endl;
+        return true;
     });
 
     window.onMinimize([&](){
-      std::cout << "MINIMIZED" << std::endl;
-      return true;
+        std::cout << "MINIMIZED" << std::endl;
+        return true;
     });
 
     window.onRestore([&](){
-      std::cout << "RESTORED" << std::endl;
-      return true;
+        std::cout << "RESTORED" << std::endl;
+        return true;
     });
 }
 
@@ -245,7 +251,7 @@ int main(int argc, char *argv[]) {
     // Add hbox to window.
     window.add(hbox);
 
-    window.setMaxSize({1280, 720});
+    //window.setMaxSize({1280, 720});
 
     std::atomic<bool> run{true};
     std::thread t1{[&](){

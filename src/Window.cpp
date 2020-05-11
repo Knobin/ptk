@@ -95,8 +95,12 @@ namespace pTK
 
     void Window::onSizeChange(const Size& size)
     {
-        if ((m_winBackend) && (m_winBackend->getWinSize() != size))
+        refitContent(size);
+        if (m_winBackend)
             m_winBackend->resize(size);
+        m_draw = true;
+        if (m_onResize)
+            m_onResize(size);
     }
 
     void Window::onLimitChange(const Size& min, const Size& max)
@@ -202,16 +206,7 @@ namespace pTK
         else if (type == Event::Type::WindowResize)
         {
             ResizeEvent* rEvent{static_cast<ResizeEvent*>(event)};
-            const Size size{rEvent->size};
-            if (size != m_winBackend->getWinSize())
-            {
-                setSize(size);
-                refitContent(size);
-                m_winBackend->resize(size);
-                m_draw = true;
-                if (m_onResize)
-                    m_onResize(size);
-            }
+            setSize(rEvent->size);
         }
         else if (type == Event::Type::WindowMove)
         {
@@ -292,10 +287,9 @@ namespace pTK
 
     void Window::setPosHint(const Point& pos)
     {
-        if ((m_winBackend) && (pos != m_winBackend->getWinPos()))
-            m_winBackend->setPosHint(pos);
-        if (m_onMove)
-            m_onMove(pos);
+        if (m_winBackend && m_winBackend->setPosHint(pos))
+            if (m_onMove)
+                m_onMove(pos);
     }
 
     Point Window::getWinPos() const
@@ -363,6 +357,8 @@ namespace pTK
     {
         if (!m_minimized)
         {
+            // Window might not be minimized when handling the event.
+            // Minimize it if so.
             if (!m_winBackend->isMinimized())
                 m_winBackend->minimize();
 
@@ -377,6 +373,8 @@ namespace pTK
     {
         if (m_minimized)
         {
+            // Window might be minimized when handling the event.
+            // Restore it if so.
             if (m_winBackend->isMinimized())
                 m_winBackend->restore();
 
