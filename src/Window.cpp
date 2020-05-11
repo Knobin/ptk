@@ -207,6 +207,7 @@ namespace pTK
         {
             ResizeEvent* rEvent{static_cast<ResizeEvent*>(event)};
             setSize(rEvent->size);
+            m_draw = true;
         }
         else if (type == Event::Type::WindowMove)
         {

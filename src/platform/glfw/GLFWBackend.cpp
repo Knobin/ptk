@@ -86,6 +86,7 @@ namespace pTK
             auto data{static_cast<GLFWBackendData*>(glfwGetWindowUserPointer(window))};
             ResizeEvent evt{{static_cast<Size::value_type>(width), static_cast<Size::value_type>(height)}};
             data->window->sendEvent(&evt);
+            data->window->forceDrawAll();
         });
 
         // void window_iconify_callback(GLFWwindow* window, int iconify)
@@ -256,6 +257,7 @@ namespace pTK
     {
         if (size != m_data->size)
         {
+            m_data->size = size;
             const Size scaledSize{static_cast<Size::value_type>(std::ceil(size.width * m_scale.x)),
                                   static_cast<Size::value_type>(std::ceil(size.height * m_scale.y))};
             if (scaledSize != m_drawCanvas->getSize())
