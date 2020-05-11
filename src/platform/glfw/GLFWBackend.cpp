@@ -16,9 +16,18 @@
 
 namespace pTK
 {
+
+    struct GLFWBackendData
+    {
+        Window *window;
+        Size size;
+        Point pos;
+        bool hidden;
+    };
+
     GLFWBackend::GLFWBackend(Window *window, const std::string& name, const Size& size, BackendType backend)
         : WindowBackend(backend),
-            m_window{nullptr}, m_drawCanvas{nullptr}, m_parentWindow{window}, m_scale{1.0f, 1.0f}
+          m_window{nullptr}, m_drawCanvas{nullptr}, m_parentWindow{window}, m_scale{1.0f, 1.0f}
     {
         initGLFW();
 
@@ -26,6 +35,10 @@ namespace pTK
         m_window = glfwCreateWindow(static_cast<int>(size.width), static_cast<int>(size.height), name.c_str(), nullptr, nullptr);
         PTK_ASSERT(m_window, "Failed to create GLFW Window");
         PTK_INFO("GLFW Window Created, {0:d}x{1:d}", static_cast<int>(size.width), static_cast<int>(size.height));
+
+        // Get position
+        Point pos{};
+        glfwGetWindowPos(m_window, &pos.x, &pos.y);
 
         // Get Monitor Scale
         glfwGetWindowContentScale(m_window, &m_scale.x, &m_scale.y);
@@ -42,7 +55,8 @@ namespace pTK
         PTK_ASSERT(m_drawCanvas, "Failed to create Canvas");
 
         // Set Callbacks
-        glfwSetWindowUserPointer(m_window, m_parentWindow);
+        m_data = std::make_unique<GLFWBackendData>(GLFWBackendData{window, size, pos, false});
+        glfwSetWindowUserPointer(m_window, m_data.get());
         setWindowCallbacks();
         setMouseCallbacks();
         setKeyCallbacks();
@@ -68,115 +82,141 @@ namespace pTK
     void GLFWBackend::setWindowCallbacks()
     {
         // void window_size_callback(GLFWwindow* window, int width, int height)
-        glfwSetWindowSizeCallback(m_window, [](GLFWwindow* t_window, int t_width, int t_height){
-            auto window{static_cast<Window*>(glfwGetWindowUserPointer(t_window))};
-            window->postEvent<ResizeEvent>(Size{static_cast<Size::value_type>(t_width), static_cast<Size::value_type>(t_height)});
-            window->handleEvents();
+        glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height){
+            auto data{static_cast<GLFWBackendData*>(glfwGetWindowUserPointer(window))};
+            ResizeEvent evt{{static_cast<Size::value_type>(width), static_cast<Size::value_type>(height)}};
+            data->window->sendEvent(&evt);
+        });
+
+        // void window_iconify_callback(GLFWwindow* window, int iconify)
+        glfwSetWindowIconifyCallback(m_window, [](GLFWwindow* window, int iconify){
+            auto data{static_cast<GLFWBackendData*>(glfwGetWindowUserPointer(window))};
+            Event::Type type{(iconify) ? Event::Type::WindowMinimize: Event::Type::WindowRestore};
+            Event evt{Event::Category::Window, type};
+            data->window->sendEvent(&evt);
+        });
+
+        // void window_pos_callback(GLFWwindow* window, int xpos, int ypos)
+        glfwSetWindowPosCallback(m_window, [](GLFWwindow* window, int xpos, int ypos){
+            auto data{static_cast<GLFWBackendData*>(glfwGetWindowUserPointer(window))};
+            Point pos{xpos, ypos};
+            if (pos != data->pos)
+            {
+                MoveEvent evt{pos};
+                data->window->sendEvent(&evt);
+            }
         });
 
         // void window_close_callback(GLFWwindow* window)
-        glfwSetWindowCloseCallback(m_window, [](GLFWwindow* t_window){
-            auto window{static_cast<Window*>(glfwGetWindowUserPointer(t_window))};
-            window->postEvent<Event>(Event::Category::Window, Event::Type::WindowClose);
+        glfwSetWindowCloseCallback(m_window, [](GLFWwindow* window){
+            auto data{static_cast<GLFWBackendData*>(glfwGetWindowUserPointer(window))};
+            data->window->postEvent<Event>(Event::Category::Window, Event::Type::WindowClose);
+        });
+
+        // void window_focus_callback(GLFWwindow* window, int focused)
+        glfwSetWindowFocusCallback(m_window, [](GLFWwindow* window, int focused){
+            auto data{static_cast<GLFWBackendData*>(glfwGetWindowUserPointer(window))};
+            Event::Type type{(focused) ? Event::Type::WindowFocus : Event::Type::WindowLostFocus};
+            Event evt{Event::Category::Window, type};
+            data->window->sendEvent(&evt);
         });
 
         // void window_maximize_callback(GLFWwindow* window, int maximized)
-        glfwSetWindowMaximizeCallback(m_window, [](GLFWwindow* t_window, int){
-            // TODO: Should create a resize EventFunction.
-            auto window{static_cast<Window*>(glfwGetWindowUserPointer(t_window))};
-            int width, height;
-            glfwGetWindowSize(t_window, &width, &height);
-            window->postEvent<ResizeEvent>(Size{static_cast<Size::value_type>(width), static_cast<Size::value_type>(height)});
+        glfwSetWindowMaximizeCallback(m_window, [](GLFWwindow* window, int){
+            auto data{static_cast<GLFWBackendData*>(glfwGetWindowUserPointer(window))};
+            int width{0}, height{0};
+            glfwGetWindowSize(window, &width, &height);
+            data->window->postEvent<ResizeEvent>(Size{static_cast<Size::value_type>(width), static_cast<Size::value_type>(height)});
         });
     }
 
     void GLFWBackend::setMouseCallbacks()
     {
         // void cursor_enter_callback(GLFWwindow* window, int entered)
-        glfwSetCursorEnterCallback(m_window,[](GLFWwindow* t_window, int entered){
+        glfwSetCursorEnterCallback(m_window,[](GLFWwindow* window, int entered){
             if (!entered)
             {
-                auto window{static_cast<Window*>(glfwGetWindowUserPointer(t_window))};
+                auto data{static_cast<GLFWBackendData*>(glfwGetWindowUserPointer(window))};
                 MotionEvent event{{-1, -1}};
-                window->sendEvent(&event);
+                data->window->sendEvent(&event);
             }
         });
 
         // void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
-        glfwSetCursorPosCallback(m_window, [](GLFWwindow* t_window, double t_xpos, double t_ypos){
-            auto window{static_cast<Window*>(glfwGetWindowUserPointer(t_window))};
-            Size wSize{window->getSize()};
+        glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xpos, double ypos){
+            auto data{static_cast<GLFWBackendData*>(glfwGetWindowUserPointer(window))};
+            Size wSize{data->size};
 
-            if ((t_xpos >= 0) && (t_xpos <= (wSize.width)))
+            if ((xpos >= 0) && (xpos <= (wSize.width)))
             {
-                if ((t_ypos >= 0) && (t_ypos <= (wSize.height)))
+                if ((ypos >= 0) && (ypos <= (wSize.height)))
                 {
-                    MotionEvent event{{static_cast<Point::value_type>(t_xpos),
-                                       static_cast<Point::value_type>(t_ypos)}};
-                    window->sendEvent(&event);
+                    MotionEvent event{{static_cast<Point::value_type>(xpos),
+                                       static_cast<Point::value_type>(ypos)}};
+                    data->window->sendEvent(&event);
                 }
             }
 
 
         });
         // void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
-        glfwSetMouseButtonCallback(m_window, [](GLFWwindow* t_window, int t_button, int t_action, int){
-            auto window{static_cast<Window*>(glfwGetWindowUserPointer(t_window))};
+        glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int){
+            auto data{static_cast<GLFWBackendData*>(glfwGetWindowUserPointer(window))};
 
             double xpos, ypos;
-            glfwGetCursorPos(t_window, &xpos, &ypos);
+            glfwGetCursorPos(window, &xpos, &ypos);
 
-            Mouse::Button button;
-            if (t_button == GLFW_MOUSE_BUTTON_LEFT)
-                button = Mouse::Button::Left;
-            else if (t_button == GLFW_MOUSE_BUTTON_MIDDLE)
-                button = Mouse::Button::Middle;
-            else if (t_button == GLFW_MOUSE_BUTTON_RIGHT)
-                button = Mouse::Button::Right;
+            Mouse::Button btn;
+            if (button == GLFW_MOUSE_BUTTON_LEFT)
+                btn = Mouse::Button::Left;
+            else if (button == GLFW_MOUSE_BUTTON_MIDDLE)
+                btn = Mouse::Button::Middle;
+            else if (button == GLFW_MOUSE_BUTTON_RIGHT)
+                btn = Mouse::Button::Right;
             else
-                button = Mouse::Button::NONE;
+                btn = Mouse::Button::NONE;
 
-            if (t_action == GLFW_PRESS)
+            if (action == GLFW_PRESS)
             {
                 ButtonEvent event{Event::Type::MouseButtonPressed,
-                                  button,
+                                  btn,
                                   {static_cast<Point::value_type>(xpos),
                                    static_cast<Point::value_type>(ypos)}};
-                window->sendEvent(&event);
+                data->window->sendEvent(&event);
             }
-            else if (t_action == GLFW_RELEASE)
+            else if (action == GLFW_RELEASE)
             {
                 ButtonEvent event{Event::Type::MouseButtonReleased,
-                                  button,
+                                  btn,
                                   {static_cast<Point::value_type>(xpos),
                                    static_cast<Point::value_type>(ypos)}};
-                window->sendEvent(&event);
+                data->window->sendEvent(&event);
             }
         });
 
         // void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-        glfwSetScrollCallback(m_window, [](GLFWwindow* t_window, double xoffset, double yoffset){
-            auto window{static_cast<Window*>(glfwGetWindowUserPointer(t_window))};
+        glfwSetScrollCallback(m_window, [](GLFWwindow* window, double xoffset, double yoffset){
+            auto data{static_cast<GLFWBackendData*>(glfwGetWindowUserPointer(window))};
             Vec2f v{static_cast<float>(xoffset), static_cast<float>(yoffset)};
             ScrollEvent event{v};
-            window->sendEvent(&event);
+            data->window->sendEvent(&event);
         });
     }
 
     void GLFWBackend::setKeyCallbacks()
     {
         // void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-        glfwSetKeyCallback(m_window, [](GLFWwindow* t_window, int t_key, int, int t_action, int){
-            auto window{static_cast<Window*>(glfwGetWindowUserPointer(t_window))};
-            if (t_action == GLFW_PRESS)
+        glfwSetKeyCallback(m_window, [](GLFWwindow* window, int key, int, int action, int){
+            auto data{static_cast<GLFWBackendData*>(glfwGetWindowUserPointer(window))};
+            if (action == GLFW_PRESS)
             {
-                KeyEvent event{KeyEvent::Pressed, t_key};
-                window->sendEvent(&event);
+                KeyEvent event{KeyEvent::Pressed, key};
+                data->window->sendEvent(&event);
             }
-            else if (t_action == GLFW_RELEASE)
+            else if (action == GLFW_RELEASE)
             {
-                KeyEvent event{KeyEvent::Released, t_key};
-                window->sendEvent(&event);
+                KeyEvent event{KeyEvent::Released, key};
+                data->window->sendEvent(&event);
             }
         });
     }
@@ -190,9 +230,16 @@ namespace pTK
         PTK_INFO("Window Destroyed");
     }
 
-    void GLFWBackend::setPosHint(const Point& pos)
+    bool GLFWBackend::setPosHint(const Point& pos)
     {
-        glfwSetWindowPos(m_window, pos.x, pos.y);
+        if (pos != m_data->pos)
+        {
+            m_data->pos = pos;
+            glfwSetWindowPos(m_window, pos.x, pos.y);
+            return true;
+        }
+
+        return false;
     }
 
     void GLFWBackend::pollEvents()
@@ -205,45 +252,57 @@ namespace pTK
         glfwSwapBuffers(m_window);
     }
 
-    void GLFWBackend::resize(const Size& size)
+    bool GLFWBackend::resize(const Size& size)
     {
-        const Size scaledSize{static_cast<Size::value_type>(std::ceil(size.width * m_scale.x)),
-                              static_cast<Size::value_type>(std::ceil(size.height * m_scale.y))};
-        if (scaledSize != m_drawCanvas->getSize())
-            m_drawCanvas->resize(scaledSize);
+        if (size != m_data->size)
+        {
+            const Size scaledSize{static_cast<Size::value_type>(std::ceil(size.width * m_scale.x)),
+                                  static_cast<Size::value_type>(std::ceil(size.height * m_scale.y))};
+            if (scaledSize != m_drawCanvas->getSize())
+                m_drawCanvas->resize(scaledSize);
+            return true;
+        }
+
+        return false;
     }
 
-    void GLFWBackend::setLimits(const Size& min, const Size& max)
-    {
-        setLimits2(min, max);
-    }
-
-    void GLFWBackend::setLimits2(const Size& minSize, const Size& maxSize)
+    bool GLFWBackend::setLimits(const Size& min, const Size& max)
     {
         if (m_window)
         {
-            int width{(maxSize.width == Size::Limits::Max) ? GLFW_DONT_CARE : maxSize.width};
-            int height{(maxSize.height == Size::Limits::Max) ? GLFW_DONT_CARE : maxSize.height};
-            glfwSetWindowSizeLimits(m_window, static_cast<int>(minSize.width), static_cast<int>(minSize.height), width, height);
+            int width{(max.width == Size::Limits::Max) ? GLFW_DONT_CARE : max.width};
+            int height{(max.height == Size::Limits::Max) ? GLFW_DONT_CARE : max.height};
+            glfwSetWindowSizeLimits(m_window, static_cast<int>(min.width), static_cast<int>(min.height), width, height);
+            return true;
         }
+
+        return false;
     }
 
-    void GLFWBackend::close()
+    bool GLFWBackend::close()
     {
         glfwSetWindowShouldClose(m_window, GLFW_TRUE);
         m_parentWindow->postEvent<Event>(Event::Category::Window, Event::Type::WindowClose);
+        return true;
     }
 
     // Visible
-    void GLFWBackend::show()
+    bool GLFWBackend::show()
     {
         glfwShowWindow(m_window);
         m_parentWindow->forceDrawAll();
+        return true;
     }
 
-    void GLFWBackend::hide()
+    bool GLFWBackend::hide()
     {
         glfwHideWindow(m_window);
+        return true;
+    }
+
+    bool GLFWBackend::isHidden() const
+    {
+        return static_cast<bool>(glfwGetWindowAttrib(m_window, GLFW_VISIBLE));
     }
 
     ContextBase *GLFWBackend::getContext() const
@@ -256,16 +315,18 @@ namespace pTK
         return m_scale;
     }
 
-    void GLFWBackend::setTitle(const std::string& name)
+    bool GLFWBackend::setTitle(const std::string& name)
     {
         glfwSetWindowTitle(m_window, name.c_str());
+        return true;
     }
 
-    void GLFWBackend::setIcon(int32 width, int32 height, byte* pixels)
+    bool GLFWBackend::setIcon(int32 width, int32 height, byte* pixels)
     {
         GLFWimage images[1];
         images[0] = {width, height, pixels};
         glfwSetWindowIcon(m_window, 1, images);
+        return true;
     }
 
     void GLFWBackend::notifyEvent()
@@ -275,9 +336,7 @@ namespace pTK
 
     Point GLFWBackend::getWinPos() const
     {
-        Point pos{};
-        glfwGetWindowSize(m_window, &pos.x, &pos.y);
-        return pos;
+        return m_data->pos;
     }
 
     Size GLFWBackend::getWinSize() const
@@ -285,5 +344,27 @@ namespace pTK
         Size size{};
         glfwGetWindowSize(m_window, &size.width, &size.height);
         return size;
+    }
+
+    bool GLFWBackend::minimize()
+    {
+        glfwIconifyWindow(m_window);
+        return true;
+    }
+
+    bool GLFWBackend::isMinimized() const
+    {
+        return static_cast<bool>(glfwGetWindowAttrib(m_window, GLFW_ICONIFIED));
+    }
+
+    bool GLFWBackend::restore()
+    {
+        glfwRestoreWindow(m_window);
+        return true;
+    }
+
+    bool GLFWBackend::isFocused() const
+    {
+        return static_cast<bool>(glfwGetWindowAttrib(m_window, GLFW_FOCUSED));
     }
 }

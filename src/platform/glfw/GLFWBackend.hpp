@@ -18,6 +18,7 @@
 namespace pTK
 {
     class Window;
+    struct GLFWBackendData;
 
     /** GLFWBackend class implementation.
 
@@ -41,17 +42,22 @@ namespace pTK
         /** Function for closing the window.
 
         */
-        void close() override;
+        bool close() override;
 
         /** Function for showing the window.
 
         */
-        void show() override;
+        bool show() override;
 
         /** Function for hiding the window.
 
         */
-        void hide() override;
+        bool hide() override;
+
+        /** Function for retrieving if the window is hidden.
+
+        */
+        bool isHidden() const override;
 
         /** Function for polling the window events.
 
@@ -62,7 +68,7 @@ namespace pTK
 
              @param pos  requested position of the Window.
          */
-        void setPosHint(const Point& pos) override;
+        bool setPosHint(const Point& pos) override;
 
         /** Function for retrieving the Context.
 
@@ -85,20 +91,20 @@ namespace pTK
 
             @param size  size to set
         */
-        void resize(const Size& size) override;
+        bool resize(const Size& size) override;
 
         /** Function for setting the size limits the window.
 
             @param min  minimal size of the window
             @param max  maximum size of the window
         */
-        void setLimits(const Size& min, const Size& max) override;
+        bool setLimits(const Size& min, const Size& max) override;
 
         /** Function for setting the title of the window.
 
             @param name     title to show
         */
-        void setTitle(const std::string& name) override;
+        bool setTitle(const std::string& name) override;
 
         /** Function for setting the icon of the window.
 
@@ -110,7 +116,7 @@ namespace pTK
             @param height   height of the image
             @param pixels   image pixels in a RGBA format.
         */
-        void setIcon(int32 width, int32 height, byte* pixels) override;
+        bool setIcon(int32 width, int32 height, byte* pixels) override;
 
         /** Function for notifying the backend that an event has been pushed from
             a different thread.
@@ -132,12 +138,35 @@ namespace pTK
         */
         Size getWinSize() const override;
 
+        /** Function for minimizing the window.
+
+        */
+        bool minimize() override;
+
+        /** Function for retrieving the minimizing status of the window.
+
+            @return     status
+        */
+        bool isMinimized() const override;
+
+        /** Function for restoring a window from the minimized state.
+
+        */
+        bool restore() override;
+
+        /** Function for retrieving the focus status of the window.
+
+            @return     status
+        */
+        bool isFocused() const override;
+
     private:
         // Window
         GLFWwindow* m_window;
         std::unique_ptr<GLContext> m_drawCanvas;
         Window *m_parentWindow;
         Vec2f m_scale;
+        std::unique_ptr<GLFWBackendData> m_data;
 
         // Init Functions
         void initGLFW();
@@ -146,8 +175,6 @@ namespace pTK
         void setWindowCallbacks();
         void setMouseCallbacks();
         void setKeyCallbacks();
-
-        void setLimits2(const Size& minSize, const Size& maxSize);
     };
 }
 

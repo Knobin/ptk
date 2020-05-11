@@ -76,6 +76,8 @@ namespace pTK
 
         SkSurface *surface{SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget, kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, &m_props).release()};
         PTK_ASSERT(surface, "Failed to create surface!");
+
+        PTK_INFO("Resized GLContext {}x{}", size.width, size.height);
         m_surface.reset(surface);
 
         setSize(size);
