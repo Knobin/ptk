@@ -418,6 +418,78 @@ namespace pTK
         }
     }
 
+    static void handleDPIChange(WinBackendData* data, WPARAM wParam, LPARAM lParam)
+    {
+        // Change Window position.
+        RECT* rect = reinterpret_cast<RECT*>(lParam);
+        MoveEvent mEvt{{static_cast<Point::value_type>(rect->left),
+                           static_cast<Point::value_type>(rect->top)}};
+        data->window->sendEvent(&mEvt);
+
+        // Scale Window.
+        const uint32 dpiX{static_cast<uint32>(GET_X_LPARAM(wParam))};
+        const uint32 dpiY{static_cast<uint32>(GET_Y_LPARAM(wParam))};
+        const Vec2f scale{dpiX / 96.0f, dpiY / 96.0f};
+        PTK_INFO("DPI CHANGED {0}x{1} SCALING {2:0.2f}x{3:0.2f}", dpiX, dpiY, scale.x, scale.y);
+        ScaleEvent sEvt{scale};
+        data->window->sendEvent(&sEvt);
+    }
+
+    static void handleWindowLimits(WinBackendData* data, LPARAM lParam)
+    {
+        Window *window{data->window};
+        LPMINMAXINFO lpMMI{reinterpret_cast<LPMINMAXINFO>(lParam)};
+        const Size minSize{window->getMinSize()};
+        WinBackend* backend{static_cast<WinBackend*>(window->getBackend())};
+        const Size adjMinSize{calcAdjustedWindowSize(scaleSize(minSize, data->scale),
+                                                     backend->getWindowStyle(), data->scale.x * 96.0f)};
+        lpMMI->ptMinTrackSize.x = adjMinSize.width;
+        lpMMI->ptMinTrackSize.y = adjMinSize.height;
+        const Size maxSize{window->getMaxSize()};
+        if (maxSize != Size::Max)
+        {
+            const Size adjMaxSize{calcAdjustedWindowSize(
+                scaleSize(maxSize, data->scale), data->style, data->scale.x * 96.0f)};
+            lpMMI->ptMaxTrackSize.x = adjMaxSize.width;
+            lpMMI->ptMaxTrackSize.y = adjMaxSize.height;
+        }
+        else
+        {
+            lpMMI->ptMaxTrackSize.x = ::GetSystemMetrics(SM_CXMAXTRACK);
+            lpMMI->ptMaxTrackSize.y = ::GetSystemMetrics(SM_CYMAXTRACK);
+        }
+    }
+
+    static void handleWindowMinimize(WinBackendData* data, bool minimize)
+    {
+        data->minimized = minimize;
+        Event::Type type{(minimize) ? Event::Type::WindowMinimize : Event::Type::WindowRestore};
+        Event evt{Event::Category::Window, type};
+        data->window->sendEvent(&evt);
+    }
+
+    static void handleWindowResize(WinBackendData* data, WindowBackend *backend, HWND hwnd)
+    {
+        Window *window{data->window};
+        RECT rc{0};
+        if (::GetClientRect(hwnd, &rc) && (rc.right != 0 && rc.bottom != 0))
+        {
+            if (rc.right != data->size.width || rc.bottom != data->size.height)
+            {
+                if (backend)
+                {
+                    const Size size{static_cast<Size::value_type>(rc.right),
+                                    static_cast<Size::value_type>(rc.bottom)};
+                    ResizeEvent evt{scaleSize(size,
+                                              Vec2f{1.0f / data->scale.x,
+                                                    1.0f / data->scale.y})};
+                    window->sendEvent(&evt);
+                    window->forceDrawAll();
+                }
+            }
+        }
+    }
+
     LRESULT WinBackend::wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         WinBackendData* data{
@@ -492,53 +564,24 @@ namespace pTK
                 RECT* rect = reinterpret_cast<RECT*>(lParam);
                 const Size size = {static_cast<Size::value_type>(rect->right - rect->left),
                                    static_cast<Size::value_type>(rect->bottom - rect->top)};
-                ResizeEvent evt{scaleSize(calcAdjustedReverseWindowSize(size, data->style, data->scale.x * 96.0f), Vec2f{1.0f / data->scale.x, 1.0f / data->scale.y})};
-                window->sendEvent(&evt);
-                window->forceDrawAll();
+                ResizeEvent evt{scaleSize(calcAdjustedReverseWindowSize(size, data->style, data->scale.x * 96.0f),
+                                          Vec2f{1.0f / data->scale.x, 1.0f / data->scale.y})};
+                if (evt.size != data->size)
+                {
+                    window->sendEvent(&evt);
+                    window->forceDrawAll();
+                }
                 break;
             }
             case WM_GETMINMAXINFO:
             {
                 if (window)
-                {
-                    LPMINMAXINFO lpMMI{reinterpret_cast<LPMINMAXINFO>(lParam)};
-                    const Size minSize{window->getMinSize()};
-                    WinBackend* backend{static_cast<WinBackend*>(window->getBackend())};
-                    const Size adjMinSize{calcAdjustedWindowSize(scaleSize(minSize, data->scale),
-                                                                 backend->getWindowStyle(), data->scale.x * 96.0f)};
-                    lpMMI->ptMinTrackSize.x = adjMinSize.width;
-                    lpMMI->ptMinTrackSize.y = adjMinSize.height;
-                    const Size maxSize{window->getMaxSize()};
-                    if (maxSize != Size::Max)
-                    {
-                        const Size adjMaxSize{calcAdjustedWindowSize(
-                            scaleSize(maxSize, data->scale), data->style, data->scale.x * 96.0f)};
-                        lpMMI->ptMaxTrackSize.x = adjMaxSize.width;
-                        lpMMI->ptMaxTrackSize.y = adjMaxSize.height;
-                    }
-                    else
-                    {
-                        lpMMI->ptMaxTrackSize.x = ::GetSystemMetrics(SM_CXMAXTRACK);
-                        lpMMI->ptMaxTrackSize.y = ::GetSystemMetrics(SM_CYMAXTRACK);
-                    }
-                }
+                    handleWindowLimits(data, lParam);
                 break;
             }
             case WM_DPICHANGED:
             {
-                // Change Window position.
-                RECT* rect = reinterpret_cast<RECT*>(lParam);
-                MoveEvent mEvt{{static_cast<Point::value_type>(rect->left),
-                                   static_cast<Point::value_type>(rect->top)}};
-                window->sendEvent(&mEvt);
-
-                // Scale Window.
-                const uint32 dpiX = static_cast<uint32>(GET_X_LPARAM(wParam));
-                const uint32 dpiY = static_cast<uint32>(GET_Y_LPARAM(wParam));
-                const Vec2f scale{dpiX / 96.0f, dpiY / 96.0f};
-                PTK_INFO("DPI CHANGED {0}x{1} SCALING {2:0.2f}x{3:0.2f}", dpiX, dpiY, scale.x, scale.y);
-                ScaleEvent sEvt{scale};
-                window->sendEvent(&sEvt);
+                handleDPIChange(data, wParam, lParam);
                 break;
             }
             case WM_WINDOWPOSCHANGED:
@@ -560,44 +603,17 @@ namespace pTK
 
                     // Window was resized.
                     if (!(winData->flags & SWP_NOSIZE))
-                    {
-                        RECT rc{0};
-                        if (::GetClientRect(hwnd, &rc) && (rc.right != 0 && rc.bottom != 0))
-                        {
-                            if (rc.right != data->size.width || rc.bottom != data->size.height)
-                            {
-                                if (backend)
-                                {
-                                    const Size size{static_cast<Size::value_type>(rc.right),
-                                                    static_cast<Size::value_type>(rc.bottom)};
-                                    ResizeEvent evt{scaleSize(size, Vec2f{1.0f / data->scale.x, 1.0f
-                                                                                                / data->scale.y})}; window->sendEvent(&evt); window->forceDrawAll();
-                                }
-                            }
-                        }
-                    }
+                        handleWindowResize(data, backend, hwnd);
 
                     // Window was shown.
                     if (!(winData->flags & SWP_SHOWWINDOW) && backend)
-                    {
                         if (!backend->isMinimized() && data->minimized)
-                        {
-                            data->minimized = false;
-                            Event evt{Event::Category::Window, Event::Type::WindowRestore};
-                            window->sendEvent(&evt);
-                        }
-                    }
+                            handleWindowMinimize(data, false);
 
                     // Window was hidden.
                     if (!(winData->flags & SWP_HIDEWINDOW) && backend)
-                    {
                         if (backend->isMinimized() && !data->minimized)
-                        {
-                            data->minimized = true;
-                            Event evt{Event::Category::Window, Event::Type::WindowMinimize};
-                            window->sendEvent(&evt);
-                        }
-                    }
+                            handleWindowMinimize(data, true);
                 }
                 break;
             }
