@@ -27,7 +27,7 @@
 
 namespace pTK
 {
-    static std::map<byte, int32> initKeyCodes()
+    static std::map<byte, int32> initKeyCodes() noexcept
     {
         std::map<byte, int32> map{};
         map[0x00] = PTK_KEY_UNKNOWN;
@@ -49,35 +49,35 @@ namespace pTK
         return map;
     }
 
-    static std::map<byte, int32> s_keyMap{initKeyCodes()};
+    static const std::map<byte, int32> s_keyMap{initKeyCodes()};
 
     static int32 translateKeyCode(byte code)
     {
-        auto it{s_keyMap.find(code)};
-        if (it != s_keyMap.end())
+        std::map<byte, int32>::const_iterator it{s_keyMap.find(code)};
+        if (it != s_keyMap.cend())
             return it->second;
 
         return PTK_KEY_UNKNOWN;
     }
 
-    static Size calcAdjustedReverseWindowSize(const Size& from, DWORD style, uint dpi)
+    static Size calcAdjustedReverseWindowSize(const Size& from, DWORD style, float dpi)
     {
         RECT adjustedSize{};
         ::SetRectEmpty(&adjustedSize);
-        ::AdjustWindowRectExForDpi(&adjustedSize, style, FALSE, 0, dpi);
+        ::AdjustWindowRectExForDpi(&adjustedSize, style, FALSE, 0, static_cast<UINT>(dpi));
 
         return {from.width - (adjustedSize.right - adjustedSize.left),
                 from.height - (adjustedSize.bottom - adjustedSize.top)};
     }
 
-    static Size calcAdjustedWindowSize(const Size& from, DWORD style, uint dpi)
+    static Size calcAdjustedWindowSize(const Size& from, DWORD style, float dpi)
     {
         RECT adjustedSize{};
         adjustedSize.top = 0;
         adjustedSize.bottom = from.height;
         adjustedSize.left = 0;
         adjustedSize.right = from.width;
-        ::AdjustWindowRectExForDpi (&adjustedSize, style, FALSE, 0, dpi);
+        ::AdjustWindowRectExForDpi (&adjustedSize, style, FALSE, 0, static_cast<UINT>(dpi));
         return {adjustedSize.right - adjustedSize.left, adjustedSize.bottom - adjustedSize.top};
     }
 
@@ -93,7 +93,7 @@ namespace pTK
         return std::make_unique<WinRasterContext>(hwnd, size);
     }
 
-    static Size scaleSize(const Size& size, const Vec2f& scale)
+    static Size scaleSize(const Size& size, const Vec2f& scale) noexcept
     {
         Size newSize{};
         newSize.width = static_cast<Size::value_type>(std::ceil(size.width * scale.x));
@@ -113,7 +113,7 @@ namespace pTK
 
     WinBackend::WinBackend(Window *window, const std::string& name, const Size& size, BackendType backend)
         : WindowBackend(backend),
-            m_parentWindow{window}, m_handle{}, m_context{nullptr}
+            m_parentWindow{window}
     {
         // High DPI
         HDC screen{GetDC(nullptr)};
@@ -133,24 +133,19 @@ namespace pTK
         Size wSize{scaleSize(size, scale)};
         DWORD style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX};
         Size adjSize{calcAdjustedWindowSize(wSize, style, dpiX)};
-        m_handle = ::CreateWindowExW(0, L"PTK", WinPlatform::stringToUTF16(name).c_str(), style,
+        m_hwnd = ::CreateWindowExW(0, L"PTK", WinPlatform::stringToUTF16(name).c_str(), style,
                                      CW_USEDEFAULT, CW_USEDEFAULT, adjSize.width, adjSize.height,
                                      nullptr, nullptr, ::GetModuleHandleW(nullptr), nullptr);
-        if (!m_handle)
+        if (!m_hwnd)
             throw WindowError("Failed to create window!");
         PTK_INFO("Created WinWindow: {}x{}", wSize.width, wSize.height);
 
-        m_context = createWin32Context(backend, m_handle, wSize);
+        m_context = createWin32Context(backend, m_hwnd, wSize);
         m_data = std::make_unique<WinBackendData>(WinBackendData{window, scale, wSize, {}, style, false});
-        SetWindowLongPtr(m_handle, GWLP_USERDATA, (LONG_PTR)m_data.get());
+        SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)m_data.get());
 
-        ::ShowWindow(m_handle, SW_SHOW);
-        ::UpdateWindow(m_handle);
-    }
-
-    WinBackend::~WinBackend()
-    {
-
+        ::ShowWindow(m_hwnd, SW_SHOW);
+        ::UpdateWindow(m_hwnd);
     }
 
     bool WinBackend::setPosHint(const Point& pos)
@@ -158,9 +153,9 @@ namespace pTK
         if (m_data->pos != pos)
         {
             RECT rc{0};
-            if (::GetWindowRect(m_handle, &rc))
+            if (::GetWindowRect(m_hwnd, &rc))
             {
-                if (::MoveWindow(m_handle, pos.x, pos.y, rc.right - rc.left, rc.bottom - rc.top, FALSE))
+                if (::MoveWindow(m_hwnd, pos.x, pos.y, rc.right - rc.left, rc.bottom - rc.top, FALSE))
                 {
                     m_data->pos = pos;
                     return true;
@@ -173,7 +168,7 @@ namespace pTK
 
     void WinBackend::pollEvents()
     {
-        MSG Msg;
+        MSG Msg{};
         if (::GetMessageW(&Msg, nullptr, 0, 0) > 0)
         {
             ::TranslateMessage(&Msg);
@@ -183,18 +178,18 @@ namespace pTK
 
     void WinBackend::beginPaint()
     {
-        ps = PAINTSTRUCT();
-        HDC hdc{BeginPaint(m_handle, &ps)};
+        m_ps = PAINTSTRUCT();
+        m_hdc = BeginPaint(m_hwnd, &m_ps);
     }
 
     void WinBackend::endPaint()
     {
-        ::EndPaint(m_handle, &ps);
+        ::EndPaint(m_hwnd, &m_ps);
     }
 
     bool WinBackend::setTitle(const std::string& name)
     {
-        return ::SetWindowTextW(m_handle, WinPlatform::stringToUTF16(name).c_str());
+        return ::SetWindowTextW(m_hwnd, WinPlatform::stringToUTF16(name).c_str());
     }
 
     bool WinBackend::setIcon(int32 width, int32 height, byte* pixels)
@@ -255,13 +250,13 @@ namespace pTK
         ::DeleteObject(mask);
 
         // Apply icon.
-        SendMessage(m_handle, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(hIcon));
-        SendMessage(m_handle, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(hIcon));
+        SendMessage(m_hwnd, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(hIcon));
+        SendMessage(m_hwnd, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(hIcon));
 
         // Ensure that the application icon is changed.
-        SendMessage(::GetWindow(m_handle, GW_OWNER), WM_SETICON, ICON_SMALL,
+        SendMessage(::GetWindow(m_hwnd, GW_OWNER), WM_SETICON, ICON_SMALL,
                     reinterpret_cast<LPARAM>(hIcon));
-        SendMessage(::GetWindow(m_handle, GW_OWNER), WM_SETICON, ICON_BIG,
+        SendMessage(::GetWindow(m_hwnd, GW_OWNER), WM_SETICON, ICON_BIG,
                     reinterpret_cast<LPARAM>(hIcon));
 
         return true;
@@ -271,7 +266,7 @@ namespace pTK
     {
         // Event has been pushed from a different thread.
         // Signal the window to redraw.
-        ::RedrawWindow(m_handle, nullptr, nullptr, RDW_INTERNALPAINT | RDW_UPDATENOW);
+        ::RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INTERNALPAINT | RDW_UPDATENOW);
     }
 
     DWORD WinBackend::getWindowStyle() const
@@ -296,7 +291,7 @@ namespace pTK
 
             // Get the window size and position.
             RECT rect{};
-            ::GetWindowRect(m_handle, &rect);
+            ::GetWindowRect(m_hwnd, &rect);
 
             m_data->pos = Point{rect.left, rect.top};
             m_data->size = scaledSize;
@@ -304,7 +299,7 @@ namespace pTK
             // Apply the new size to the context and window.
             if (scaledSize != m_context->getSize())
                 m_context->resize(scaledSize);
-            ::MoveWindow(m_handle, m_data->pos.x, m_data->pos.y, adjSize.width, adjSize.height, TRUE);
+            ::MoveWindow(m_hwnd, m_data->pos.x, m_data->pos.y, adjSize.width, adjSize.height, TRUE);
 
             return true;
         }
@@ -314,12 +309,12 @@ namespace pTK
 
     bool WinBackend::close()
     {
-        return ::DestroyWindow(m_handle);
+        return ::DestroyWindow(m_hwnd);
     }
 
     bool WinBackend::show()
     {
-        if (!::ShowWindow(m_handle, SW_SHOW))
+        if (!::ShowWindow(m_hwnd, SW_SHOW))
         {
             m_parentWindow->forceDrawAll();
             return true;
@@ -330,12 +325,12 @@ namespace pTK
 
     bool WinBackend::hide()
     {
-        return ::ShowWindow(m_handle, SW_HIDE);
+        return ::ShowWindow(m_hwnd, SW_HIDE);
     }
 
     bool WinBackend::isHidden() const
     {
-        return !static_cast<bool>(::IsWindowVisible(m_handle));
+        return !static_cast<bool>(::IsWindowVisible(m_hwnd));
     }
 
     ContextBase* WinBackend::getContext() const
@@ -356,41 +351,39 @@ namespace pTK
     Size WinBackend::getWinSize() const
     {
         RECT rect{};
-        ::GetWindowRect(m_handle, &rect);
+        ::GetWindowRect(m_hwnd, &rect);
         return {rect.right - rect.left, rect.bottom - rect.top};
     }
 
     bool WinBackend::setLimits(const Size&, const Size&)
     {
         RECT rect{};
-        ::GetWindowRect(m_handle, &rect);
-        ::MoveWindow(m_handle, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
+        ::GetWindowRect(m_hwnd, &rect);
+        ::MoveWindow(m_hwnd, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
                      TRUE);
         return true;
     }
 
     bool WinBackend::minimize()
     {
-        bool test = ::ShowWindow(m_handle, SW_MINIMIZE);
-        PTK_INFO("minimize {}", test);
+        ::ShowWindow(m_hwnd, SW_MINIMIZE);
         return true;
     }
 
     bool WinBackend::isMinimized() const
     {
-        return static_cast<bool>(IsMinimized(m_handle));
+        return static_cast<bool>(IsMinimized(m_hwnd));
     }
 
     bool WinBackend::restore()
     {
-        bool test = ::ShowWindow(m_handle, SW_RESTORE);
-        PTK_INFO("restore {}", test);
+        ::ShowWindow(m_hwnd, SW_RESTORE);
         return true;
     }
 
     bool WinBackend::isFocused() const
     {
-        return (m_handle == ::GetFocus());
+        return (m_hwnd == ::GetFocus());
     }
 
     bool WinBackend::setScaleHint(const Vec2f& scale)

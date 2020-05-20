@@ -62,10 +62,13 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY
         MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 # Compiler flags for ptk
-if (NOT MSVC)
+if (MSVC)
+    target_compile_options(${PROJECT_NAME} PUBLIC /permissive- /W4 /w14640)
+else()
     target_compile_options(${PROJECT_NAME} PUBLIC
-            -Wall -Wextra -Wpedantic -fvisibility=hidden)
-endif (NOT MSVC)
+            -Wall -Wextra -Wpedantic -fvisibility=hidden -Wshadow -Wnon-virtual-dtor -Wold-style-cast -Wcast-align
+            -Wunused -Woverloaded-virtual -Wconversion -Wsign-conversion -Wdouble-promotion -Wformat=2)
+endif ()
 
 # Skia
 target_link_libraries(${PROJECT_NAME} ${SKIA_PLATFORM_DEPENDENCIES} skia)

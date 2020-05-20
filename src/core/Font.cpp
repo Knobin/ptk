@@ -50,8 +50,8 @@ namespace pTK
             m_font.setTypeface(SkTypeface::MakeFromName(fontFamily.c_str(), SkFontStyle::Normal()));
             if (fontFamily == getFamily())
             {
-                return true;
                 PTK_INFO("Loaded \"{0}\" successfully.", getFamily());
+                return true;
             }
 #ifdef PTK_DEBUG
             else

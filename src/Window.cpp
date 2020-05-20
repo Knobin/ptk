@@ -13,8 +13,7 @@
 namespace pTK
 {
     Window::Window(const std::string& name, const Size& size, BackendType backend)
-        : VBox(), Singleton(), m_winBackend{nullptr}, m_eventQueue{}, m_draw{false}, m_close{false},
-          m_minimized{false}, m_threadID{std::this_thread::get_id()}
+        : VBox(), Singleton(), m_threadID{std::this_thread::get_id()}
     {
         // Set Widget properties.
         Sizable::setSize(size);
@@ -32,7 +31,7 @@ namespace pTK
     void Window::handleEvents()
     {
         using queueSizeType = SafeQueue<std::unique_ptr<Event>>::size_type;
-        const queueSizeType eventCount = m_eventQueue.size();
+        const queueSizeType eventCount{m_eventQueue.size()};
         for (queueSizeType i{0}; i < eventCount; i++)
         {
             std::unique_ptr<Event> event{std::move(m_eventQueue.front())};
@@ -358,12 +357,13 @@ namespace pTK
     {
         if (!m_minimized)
         {
+            m_minimized = true;
+
             // Window might not be minimized when handling the event.
             // Minimize it if so.
             if (!m_winBackend->isMinimized())
                 m_winBackend->minimize();
 
-            m_minimized = true;
             Drawable::hide();
             if (m_onMinimize)
                 m_onMinimize();

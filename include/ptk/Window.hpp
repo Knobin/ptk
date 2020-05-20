@@ -215,21 +215,21 @@ namespace pTK
         using VBox::getPosition;
 
     private:
-        std::unique_ptr<WindowBackend> m_winBackend;
-        SafeQueue<std::unique_ptr<Event>> m_eventQueue;
-        bool m_draw;
-        bool m_close;
-        bool m_minimized;
+        std::unique_ptr<WindowBackend> m_winBackend{nullptr};
+        SafeQueue<std::unique_ptr<Event>> m_eventQueue{};
+        bool m_draw{false};
+        bool m_close{false};
+        bool m_minimized{false};
         std::thread::id m_threadID;
 
         // Window specific callbacks.
-        std::function<bool()> m_onClose = nullptr;
-        std::function<bool(const Point& pos)> m_onMove = nullptr;
-        std::function<bool(const Size& pos)> m_onResize = nullptr;
-        std::function<bool()> m_onFocus = nullptr;
-        std::function<bool()> m_onLostFocus = nullptr;
-        std::function<bool()> m_onMinimize = nullptr;
-        std::function<bool()> m_onRestore = nullptr;
+        std::function<bool()> m_onClose{nullptr};
+        std::function<bool(const Point& pos)> m_onMove{nullptr};
+        std::function<bool(const Size& pos)> m_onResize{nullptr};
+        std::function<bool()> m_onFocus{nullptr};
+        std::function<bool()> m_onLostFocus{nullptr};
+        std::function<bool()> m_onMinimize{nullptr};
+        std::function<bool()> m_onRestore{nullptr};
     };
 }
 

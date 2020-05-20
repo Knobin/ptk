@@ -44,7 +44,7 @@ namespace pTK
         /** Deconstructor for WinBackend.
 
         */
-        virtual ~WinBackend();
+        virtual ~WinBackend() = default;
 
         /** Function for closing the window.
 
@@ -206,9 +206,10 @@ namespace pTK
 
     private:
         Window *m_parentWindow;
-        HWND m_handle;
+        HWND m_hwnd;
         std::unique_ptr<ContextBase> m_context;
-        PAINTSTRUCT ps;
+        PAINTSTRUCT m_ps;
+        [[maybe_unused]] HDC m_hdc;
 
         std::unique_ptr<WinBackendData> m_data;
     };
