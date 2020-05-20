@@ -16,17 +16,17 @@
 
 #ifdef PTK_DEBUG
     #define PTK_ENABLE_ASSERT
+#endif
 
-    // Unused parameter.
-    #ifdef PTK_COMPILER_GCC
-        #define UNUSED(x) x __attribute__((unused))
-    #elif PTK_COMPILER_CLANG
-        #define UNUSED(x) x __attribute__((unused))
-    #else
-        #define UNUSED(x)
-    #endif
+// Unused parameter.
+#ifdef PTK_COMPILER_GCC
+    #define UNUSED(x) x __attribute__((unused))
+#elif PTK_COMPILER_CLANG
+    #define UNUSED(x) x __attribute__((unused))
+#elif PTK_COMPILER_MSVC
+    #define UNUSED(x) __pragma(warning(suppress:4100)) x
 #else
-    #define UNUSED(x) x
+    #define UNUSED(x)
 #endif
 
 // Enable Asserts
