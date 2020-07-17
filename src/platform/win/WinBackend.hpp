@@ -72,8 +72,9 @@ namespace pTK
 
         /** Function for polling the window events.
 
+            @param ms   max time to wait for an event
         */
-        void pollEvents() override;
+        void pollEvents(uint ms) override;
 
         /** Function for setting the position of the window.
 

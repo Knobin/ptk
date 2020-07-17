@@ -29,7 +29,7 @@ namespace pTK
         enum class Type
         {
             NONE = 0,
-            WindowClose, WindowLostFocus, WindowFocus, WindowDraw, WindowResize,
+            WindowClose, WindowLostFocus, WindowFocus, WindowPaint, WindowResize,
             WindowMove, WindowMinimize, WindowRestore, WindowScale,
             KeyPressed, KeyReleased,
             MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled

@@ -32,10 +32,10 @@ namespace pTK
         
         /** Function for handling when a key is pressed or released.
          
-            @param type    Key event (press or release)
-            @param int     Keycode
+            @param type     Key event (press or release)
+            @param KeyCode  Keycode
         */
-        virtual bool onKeyEvent(Event::Type, int32) { return false; }
+        virtual bool onKeyEvent(Event::Type, KeyCode) { return false; }
         
         /** Function for handling when mouse is hovering.
          

@@ -25,30 +25,17 @@ namespace pTK
 
     void Window::onChildDraw(size_type)
     {
-        postEvent<Event>(Event::Category::Window, Event::Type::WindowDraw);
+        postEvent<PaintEvent>(Point{0, 0}, getSize());
     }
 
     void Window::handleEvents()
     {
-        using queueSizeType = SafeQueue<std::unique_ptr<Event>>::size_type;
-        const queueSizeType eventCount{m_eventQueue.size()};
-        for (queueSizeType i{0}; i < eventCount; i++)
+        const std::size_t eventCount{m_eventQueue.size()};
+        for (std::size_t i{0}; i < eventCount; i++)
         {
-            std::unique_ptr<Event> event{std::move(m_eventQueue.front())};
+            Event* event{m_eventQueue.front().get()};
+            handleEvent(event);
             m_eventQueue.pop();
-
-            handleEvent(event.get());
-        }
-
-        // Quick fix when previous event cause a draw event.
-        if (!m_eventQueue.empty())
-        {
-            Ref<Event> event{std::move(m_eventQueue.front())};
-            if (event->category == Event::Category::Window)
-            {
-                handleWindowEvent(event.get());
-                m_eventQueue.pop();
-            }
         }
 
         if (m_draw)
@@ -70,7 +57,7 @@ namespace pTK
         return Vec2f{};
     }
 
-    bool Window::shouldClose()
+    bool Window::shouldClose() const
     {
         return m_close;
     }
@@ -198,48 +185,65 @@ namespace pTK
     {
         PTK_ASSERT(event, "Undefined Event");
         Event::Type type{event->type};
-        if (type == Event::Type::WindowDraw)
+        switch (type)
         {
-            m_draw = true;
-        }
-        else if (type == Event::Type::WindowResize)
-        {
-            ResizeEvent* rEvent{static_cast<ResizeEvent*>(event)};
-            setSize(rEvent->size);
-            m_draw = true;
-        }
-        else if (type == Event::Type::WindowMove)
-        {
-            MoveEvent* mEvent{static_cast<MoveEvent*>(event)};
-            setPosHint(mEvent->pos);
-        }
-        else if (type == Event::Type::WindowScale)
-        {
-            ScaleEvent* sEvent{static_cast<ScaleEvent*>(event)};
-            m_winBackend->setScaleHint(sEvent->scale);
-            m_draw = true;
-        }
-        else if (type == Event::Type::WindowClose)
-        {
-            close();
-        }
-        else if (type == Event::Type::WindowFocus)
-        {
-            if (m_onFocus)
-                m_onFocus();
-        }
-        else if (type == Event::Type::WindowLostFocus)
-        {
-            if (m_onLostFocus)
-                m_onLostFocus();
-        }
-        else if (type == Event::Type::WindowMinimize)
-        {
-            minimize();
-        }
-        else if (type == Event::Type::WindowRestore)
-        {
-            restore();
+            case Event::Type::WindowPaint:
+            {
+                m_draw = true;
+                break;
+            }
+            case Event::Type::WindowResize:
+            {
+                ResizeEvent* rEvent{static_cast<ResizeEvent*>(event)};
+                setSize(rEvent->size);
+                m_draw = true;
+                break;
+            }
+            case Event::Type::WindowMove:
+            {
+                MoveEvent* mEvent{static_cast<MoveEvent*>(event)};
+                setPosHint(mEvent->pos);
+                break;
+            }
+            case Event::Type::WindowScale:
+            {
+                ScaleEvent* sEvent{static_cast<ScaleEvent*>(event)};
+                m_winBackend->setScaleHint(sEvent->scale);
+                m_draw = true;
+                break;
+            }
+            case Event::Type::WindowClose:
+            {
+                close();
+                break;
+            }
+            case Event::Type::WindowFocus:
+            {
+                if (m_onFocus)
+                    m_onFocus();
+                break;
+            }
+            case Event::Type::WindowLostFocus:
+            {
+                if (m_onLostFocus)
+                    m_onLostFocus();
+                break;
+            }
+            case Event::Type::WindowMinimize:
+            {
+                minimize();
+                break;
+            }
+            case Event::Type::WindowRestore:
+            {
+                restore();
+                break;
+            }
+            default:
+            {
+                PTK_WARN("Unknown Window event");
+                break;
+            }
         }
     }
 
@@ -257,9 +261,9 @@ namespace pTK
         }
     }
 
-    void Window::pollEvents()
+    void Window::pollEvents(uint ms)
     {
-        m_winBackend->pollEvents();
+        m_winBackend->pollEvents(ms);
     }
 
     void Window::forceDrawAll()
@@ -307,7 +311,7 @@ namespace pTK
         m_winBackend->setTitle(name);
     }
 
-    void Window::setIcon(const std::string& path)
+    bool Window::setIcon(const std::string& path)
     {
         // Load file.
         sk_sp<SkData> imageData{SkData::MakeFromFileName(path.c_str())};
@@ -324,7 +328,7 @@ namespace pTK
                 std::unique_ptr<byte[]> pixelData{std::make_unique<byte[]>(storageSize)};
 
                 if (image->readPixels(imageInfo, pixelData.get(), imageInfo.minRowBytes(), 0, 0))
-                    m_winBackend->setIcon(static_cast<int32>(image->width()),
+                    return m_winBackend->setIcon(static_cast<int32>(image->width()),
                                           static_cast<int32>(image->height()), pixelData.get());
 #ifdef PTK_DEBUG
                 else
@@ -346,6 +350,7 @@ namespace pTK
             PTK_WARN("Failed to open \"{}\"", path);
         }
 #endif
+        return false;
     }
 
     WindowBackend* Window::getBackend() const

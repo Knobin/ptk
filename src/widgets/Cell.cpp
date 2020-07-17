@@ -142,7 +142,7 @@ namespace pTK
         return false;
     }
     
-    bool Cell::onKeyEvent(Event::Type type, int32 keycode)
+    bool Cell::onKeyEvent(Event::Type type, KeyCode keycode)
     {
         if (m_clicked)
         {

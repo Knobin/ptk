@@ -37,7 +37,7 @@ namespace pTK
             @return        default initialized Transformable
         */
         Application(int argc, char *argv[]);
-        ~Application();
+        virtual ~Application();
 
         /** Function for executing the application.
          
@@ -49,9 +49,9 @@ namespace pTK
          
             Default is currently 8ms, about 120 times / second.
          
-            @param duration  time to wait
+            @param duration  time to wait in milliseconds
         */
-        void delayPoll(std::chrono::duration<uint64> const& duration);
+        void delayPoll(uint duration);
         
         // TODO: Menubar
         // TODO: Thread safe option
@@ -59,7 +59,7 @@ namespace pTK
         // TODO: window id
         
     private:
-        std::chrono::nanoseconds m_waitTime;
+        uint m_waitTime{8};
     };
 }
 

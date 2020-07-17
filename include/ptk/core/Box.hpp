@@ -82,10 +82,10 @@ namespace pTK
 
         /** Function for handling when a key is pressed or released.
 
-            @param type    Key event (press or release)
-            @param int     Keycode
+            @param type     Key event (press or release)
+            @param KeyCode  Keycode
         */
-        bool onKeyEvent(Event::Type type, int32 keycode) override;
+        bool onKeyEvent(Event::Type type, KeyCode keycode) override;
 
         /** Function for handling when mouse is hovering.
 

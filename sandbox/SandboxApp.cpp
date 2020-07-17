@@ -16,7 +16,7 @@ const unsigned int SCR_HEIGHT = 540;
 // Label sizes
 const unsigned int FLARGE = 20;
 const unsigned int FSIDEBAR = 16;
-const unsigned int FNORMAL = 12;
+const unsigned int FNORMAL = 13;
 
 // Colors
 uint colSidebar{0x252525FF};
@@ -83,16 +83,25 @@ void setWindowCallbacks(pTK::Window& window)
 
 int main(int argc, char *argv[]) {
     pTK::Application app{argc, argv};
-    pTK::Window window{"pTK Sandbox Window", {960, 540}};
+    pTK::Window window{"pTK Sandbox Window", {960, 540}, pTK::BackendType::HARDWARE};
     window.setBackground(pTK::Color(0x232323FF));
     setWindowCallbacks(window);
 
     // Set ESC key to close the window.
-    window.onKey([&](pTK::Event::Type type, int32 key) {
-        if ((type == pTK::KeyEvent::Released) && (key == PTK_KEY_ESCAPE))
+    window.onKey([&](pTK::Event::Type type, pTK::KeyCode key) {
+        if ((type == pTK::KeyEvent::Released) && (key == pTK::Key::Escape))
             window.close();
-        if ((type == pTK::KeyEvent::Released) && (key == PTK_KEY_SPACE))
+        if ((type == pTK::KeyEvent::Released) && (key == pTK::Key::Space))
             window.postEvent<pTK::ResizeEvent>(pTK::Size{1000, 600});
+        if ((type == pTK::KeyEvent::Released) && (key == pTK::Key::M))
+        {
+            window.minimize();
+            using namespace std::chrono_literals;
+            std::this_thread::sleep_for(1s);
+            window.minimize();
+            std::this_thread::sleep_for(1s);
+            window.restore();
+        }
 
         return true;
     });
@@ -169,20 +178,20 @@ int main(int argc, char *argv[]) {
     cTitle->setFontSize(FLARGE);
     cTitle->setPadding({18, 9, 18, 18});
     cTitle->setColor(pTK::Color(colText));
-    cTitle->setAlign(pTK::Align::Left | pTK::Align::Top);
+    //cTitle->setAlign(pTK::Align::Left | pTK::Align::Top);
 
     pTK::Ref<pTK::Rectangle> r1 = pTK::create<pTK::Rectangle>();
     r1->setColor(pTK::Color(0x2D2D2DFF));
     r1->setConstSize({250, 125});
     r1->setCornerRadius(5.0f);
     r1->setPadding({10, 10, 18, 18});
-    r1->onClick([&](pTK::Mouse::Button btn, const pTK::Point&) {
-        if (btn == pTK::Mouse::Button::Left)
-            r1->setColor(randomColor());
-        return true;
-    });
 
     pTK::Ref<pTK::Rectangle> r2 = pTK::create<pTK::Rectangle>(*r1.get());
+    r2->onClick([&](pTK::Mouse::Button btn, const pTK::Point&) {
+      if (btn == pTK::Mouse::Button::Left)
+          r2->setColor(randomColor());
+      return true;
+    });
 
     pTK::Ref<pTK::HBox> h1 = pTK::create<pTK::HBox>();
     h1->setAlign(pTK::Align::Left);
@@ -192,10 +201,10 @@ int main(int argc, char *argv[]) {
     // This should be a pTK::TextArea (when that is implemented).
     pTK::Ref<pTK::Label> cText = pTK::create<pTK::Label>();
     cText->setText("This should be a multiline text!");
-    cText->setFontSize(FNORMAL);
+    cText->setFontSize(16);
     cText->setPadding({9, 18, 18, 18});
     cText->setColor(pTK::Color(colText));
-    cText->setAlign(pTK::Align::Left | pTK::Align::Top);
+    //cText->setAlign(pTK::Align::Left | pTK::Align::Bottom);
 
     pTK::Ref<pTK::Checkbox> checkbox = pTK::create<pTK::Checkbox>();
     checkbox->setConstSize({ 25, 25 });
@@ -203,7 +212,7 @@ int main(int argc, char *argv[]) {
     checkbox->setOutlineThickness(1.5f); // 5% of size
     checkbox->setColor(pTK::Color(0x00FF00FF));
     checkbox->setOutlineColor(pTK::Color(0xFF00FFFF));
-    checkbox->setAlign(pTK::Align::Left | pTK::Align::Bottom);
+    checkbox->setAlign(pTK::Align::Bottom | pTK::Align::HCenter);
     checkbox->setPadding({ 18, 9, 18, 18 });
 
     pTK::Ref<pTK::Label> cStatus = pTK::create<pTK::Label>();
@@ -211,7 +220,7 @@ int main(int argc, char *argv[]) {
     cStatus->setFontSize(25);
     cStatus->setPadding({ 18, 9, 18, 18 });
     cStatus->setColor(pTK::Color(colText));
-    cStatus->setAlign(pTK::Align::Left | pTK::Align::Top);
+    // cStatus->setAlign(pTK::Align::Left | pTK::Align::Bottom);
 
     checkbox->onToggle([&](bool status) {
         std::string statusText = "Checkbox Status: ";
@@ -258,9 +267,10 @@ int main(int argc, char *argv[]) {
         pTK::Color c1{randomColor()};
         pTK::Color c2{randomColor()};
 
-        std::size_t steps{25};
+        std::size_t steps{250};
         double stepFactor{1.0 / (steps - 1.0)};
         size_t step{0};
+
         while (run)
         {
             if (step > steps)
@@ -270,7 +280,7 @@ int main(int argc, char *argv[]) {
                 step = 1;
             }
             r1->setColor(interpolateColor(c1, c2, stepFactor * step));
-            std::this_thread::sleep_for(std::chrono::milliseconds (25));
+            std::this_thread::sleep_for(std::chrono::milliseconds (1000 / 144));
             ++step;
         }
     }};

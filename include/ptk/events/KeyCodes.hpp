@@ -8,51 +8,62 @@
 #ifndef PTK_KEYCODES_HPP
 #define PTK_KEYCODES_HPP
 
+// Local Headers
+#include "ptk/Core.hpp"
+
 // TODO: Add more keycodes.
 
-#define PTK_KEY_UNKNOWN         -1
+namespace pTK
+{
+    typedef enum class KeyCode : byte
+    {
+        None    = 0,
+        Escape  = 27,
+        Space   = 32,
 
-#define PTK_KEY_ESCAPE          27
-#define PTK_KEY_SPACE           32
+        // Numbers
+        D0      = 48,
+        D1      = 49,
+        D2      = 50,
+        D3      = 51,
+        D4      = 52,
+        D5      = 53,
+        D6      = 54,
+        D7      = 55,
+        D8      = 56,
+        D9      = 57,
 
-// Numbers
-#define PTK_KEY_0               48
-#define PTK_KEY_1               49
-#define PTK_KEY_2               50
-#define PTK_KEY_3               51
-#define PTK_KEY_4               52
-#define PTK_KEY_5               53
-#define PTK_KEY_6               54
-#define PTK_KEY_7               55
-#define PTK_KEY_8               56
-#define PTK_KEY_9               57
+        // Letters
+        A       = 65,
+        B       = 66,
+        C       = 67,
+        D       = 68,
+        E       = 69,
+        F       = 70,
+        G       = 71,
+        H       = 72,
+        I       = 73,
+        J       = 74,
+        K       = 75,
+        L       = 76,
+        M       = 77,
+        N       = 78,
+        O       = 79,
+        P       = 80,
+        Q       = 81,
+        R       = 82,
+        S       = 83,
+        T       = 84,
+        U       = 85,
+        V       = 86,
+        W       = 87,
+        X       = 88,
+        Y       = 89,
+        Z       = 90
 
-// Letters
-#define PTK_KEY_A               65
-#define PTK_KEY_B               66
-#define PTK_KEY_C               67
-#define PTK_KEY_D               68
-#define PTK_KEY_E               69
-#define PTK_KEY_F               70
-#define PTK_KEY_G               71
-#define PTK_KEY_H               72
-#define PTK_KEY_I               73
-#define PTK_KEY_J               74
-#define PTK_KEY_K               75
-#define PTK_KEY_L               76
-#define PTK_KEY_M               77
-#define PTK_KEY_N               78
-#define PTK_KEY_O               79
-#define PTK_KEY_P               80
-#define PTK_KEY_Q               81
-#define PTK_KEY_R               82
-#define PTK_KEY_S               83
-#define PTK_KEY_T               84
-#define PTK_KEY_U               85
-#define PTK_KEY_V               86
-#define PTK_KEY_W               87
-#define PTK_KEY_X               88
-#define PTK_KEY_Y               89
-#define PTK_KEY_Z               90
+    } Key;
+}
+
+
 
 #endif //PTK_KEYCODES_HPP

@@ -11,6 +11,7 @@
 // Local Headers
 #include "ptk/core/EventCallbacks.hpp"
 #include "ptk/core/EventFunctions.hpp"
+#include "ptk/events/KeyCodes.hpp"
 
 namespace pTK
 {
@@ -43,7 +44,7 @@ namespace pTK
             @param type    Key event (press or release)
             @param int     Keycode
         */
-        bool handleKeyEvent(Event::Type type, int32 keycode);
+        bool handleKeyEvent(Event::Type type, KeyCode keycode);
         
         /** Function for handling when mouse is hovering.
          

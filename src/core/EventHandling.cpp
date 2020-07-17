@@ -16,7 +16,7 @@ namespace pTK
     {
     }
     
-    bool EventHandling::handleKeyEvent(Event::Type type, int32 keycode)
+    bool EventHandling::handleKeyEvent(Event::Type type, KeyCode keycode)
     {
         bool status = false;
         if (m_keyCallback != nullptr)

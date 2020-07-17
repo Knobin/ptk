@@ -78,6 +78,32 @@ namespace pTK
         // Movement coordinates.
         const Vec2f scale;
     };
+
+    /** PaintEvent class implementation.
+
+        Signal to paint to the window.
+    */
+    class PaintEvent final : public Event
+    {
+    public:
+        /** PaintEvent with default values with pos and size.
+
+            @param t_pos    coordinates
+            @param t_size   area
+            @return         default initialized PaintEvent
+        */
+        PaintEvent(const Point& t_pos, const Size& t_size)
+            : Event(Event::Category::Window, Event::Type::WindowPaint),
+                pos{t_pos}, size{t_size}
+        {
+        }
+
+        // Coordinates.
+        const Point pos;
+
+        // Area.
+        const Size size;
+    };
 }
 
 #endif // PTK_EVENTS_WINDOWEVENT_HPP

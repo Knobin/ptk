@@ -27,37 +27,36 @@
 
 namespace pTK
 {
-    static std::map<byte, int32> initKeyCodes() noexcept
+    static std::map<byte, KeyCode> initKeyCodes() noexcept
     {
-        std::map<byte, int32> map{};
-        map[0x00] = PTK_KEY_UNKNOWN;
-        map[VK_SPACE] = PTK_KEY_SPACE; map[VK_ESCAPE] = PTK_KEY_ESCAPE;
-        map[0x30] = PTK_KEY_0; map[0x31] = PTK_KEY_1; map[0x32] = PTK_KEY_2; map[0x33] = PTK_KEY_3;
-        map[0x34] = PTK_KEY_4; map[0x35] = PTK_KEY_5; map[0x36] = PTK_KEY_6; map[0x37] = PTK_KEY_7;
-        map[0x38] = PTK_KEY_8; map[0x39] = PTK_KEY_9;
-        map[VK_NUMPAD0] = PTK_KEY_0; map[VK_NUMPAD1] = PTK_KEY_1; map[VK_NUMPAD2] = PTK_KEY_2;
-        map[VK_NUMPAD3] = PTK_KEY_3; map[VK_NUMPAD4] = PTK_KEY_4; map[VK_NUMPAD5] = PTK_KEY_5;
-        map[VK_NUMPAD6] = PTK_KEY_6; map[VK_NUMPAD7] = PTK_KEY_7; map[VK_NUMPAD8] = PTK_KEY_8;
-        map[VK_NUMPAD9] = PTK_KEY_9;
-        map[0x41] = PTK_KEY_A; map[0x42] = PTK_KEY_B; map[0x43] = PTK_KEY_C; map[0x44] = PTK_KEY_D;
-        map[0x45] = PTK_KEY_E; map[0x46] = PTK_KEY_F; map[0x47] = PTK_KEY_G; map[0x48] = PTK_KEY_H;
-        map[0x49] = PTK_KEY_I; map[0x4A] = PTK_KEY_J; map[0x4B] = PTK_KEY_K; map[0x4C] = PTK_KEY_L;
-        map[0x4D] = PTK_KEY_M; map[0x4E] = PTK_KEY_N; map[0x4F] = PTK_KEY_O; map[0x50] = PTK_KEY_P;
-        map[0x51] = PTK_KEY_Q; map[0x52] = PTK_KEY_R; map[0x53] = PTK_KEY_S; map[0x54] = PTK_KEY_T;
-        map[0x55] = PTK_KEY_U; map[0x56] = PTK_KEY_V; map[0x57] = PTK_KEY_W; map[0x58] = PTK_KEY_X;
-        map[0x59] = PTK_KEY_Y; map[0x5A] = PTK_KEY_Z;
+        std::map<byte, KeyCode> map{};
+        map[VK_SPACE] = Key::Space; map[VK_ESCAPE] = Key::Escape;
+        map[0x30] = Key::D0; map[0x31] = Key::D1; map[0x32] = Key::D2; map[0x33] = Key::D3;
+        map[0x34] = Key::D4; map[0x35] = Key::D5; map[0x36] = Key::D6; map[0x37] = Key::D7;
+        map[0x38] = Key::D8; map[0x39] = Key::D9;
+        map[VK_NUMPAD0] = Key::D0; map[VK_NUMPAD1] = Key::D1; map[VK_NUMPAD2] = Key::D2;
+        map[VK_NUMPAD3] = Key::D3; map[VK_NUMPAD4] = Key::D4; map[VK_NUMPAD5] = Key::D5;
+        map[VK_NUMPAD6] = Key::D6; map[VK_NUMPAD7] = Key::D7; map[VK_NUMPAD8] = Key::D8;
+        map[VK_NUMPAD9] = Key::D9;
+        map[0x41] = Key::A; map[0x42] = Key::B; map[0x43] = Key::C; map[0x44] = Key::D;
+        map[0x45] = Key::E; map[0x46] = Key::F; map[0x47] = Key::G; map[0x48] = Key::H;
+        map[0x49] = Key::I; map[0x4A] = Key::J; map[0x4B] = Key::K; map[0x4C] = Key::L;
+        map[0x4D] = Key::M; map[0x4E] = Key::N; map[0x4F] = Key::O; map[0x50] = Key::P;
+        map[0x51] = Key::Q; map[0x52] = Key::R; map[0x53] = Key::S; map[0x54] = Key::T;
+        map[0x55] = Key::U; map[0x56] = Key::V; map[0x57] = Key::W; map[0x58] = Key::X;
+        map[0x59] = Key::Y; map[0x5A] = Key::Z;
         return map;
     }
 
-    static const std::map<byte, int32> s_keyMap{initKeyCodes()};
+    static const std::map<byte, KeyCode> s_keyMap{initKeyCodes()};
 
-    static int32 translateKeyCode(byte code)
+    static Key translateKeyCode(byte code)
     {
-        std::map<byte, int32>::const_iterator it{s_keyMap.find(code)};
+        std::map<byte, KeyCode>::const_iterator it{s_keyMap.find(code)};
         if (it != s_keyMap.cend())
             return it->second;
 
-        return PTK_KEY_UNKNOWN;
+        return Key::None;
     }
 
     static Size calcAdjustedReverseWindowSize(const Size& from, DWORD style, float dpi)
@@ -109,6 +108,7 @@ namespace pTK
         Point pos;
         DWORD style;
         bool minimized;
+        uint wait;
     };
 
     WinBackend::WinBackend(Window *window, const std::string& name, const Size& size, BackendType backend)
@@ -141,7 +141,7 @@ namespace pTK
         PTK_INFO("Created WinWindow: {}x{}", wSize.width, wSize.height);
 
         m_context = createWin32Context(backend, m_hwnd, wSize);
-        m_data = std::make_unique<WinBackendData>(WinBackendData{window, scale, wSize, {}, style, false});
+        m_data = std::make_unique<WinBackendData>(WinBackendData{window, scale, wSize, {}, style, false, 0});
         SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)m_data.get());
 
         ::ShowWindow(m_hwnd, SW_SHOW);
@@ -166,13 +166,15 @@ namespace pTK
         return false;
     }
 
-    void WinBackend::pollEvents()
+    void WinBackend::pollEvents(uint ms)
     {
-        MSG Msg{};
-        if (::GetMessageW(&Msg, nullptr, 0, 0) > 0)
+        MSG msg{};
+        MsgWaitForMultipleObjects(0, nullptr, FALSE, static_cast<DWORD>(ms), QS_ALLEVENTS);
+        m_data->wait = ms;
+        while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
         {
-            ::TranslateMessage(&Msg);
-            DispatchMessage(&Msg);
+            ::TranslateMessage(&msg);
+            DispatchMessage(&msg);
         }
     }
 
@@ -264,9 +266,8 @@ namespace pTK
 
     void WinBackend::notifyEvent()
     {
-        // Event has been pushed from a different thread.
-        // Signal the window to redraw.
-        ::RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INTERNALPAINT | RDW_UPDATENOW);
+        // Signal the window to exit the event wait.
+        PostMessage(m_hwnd, WM_NULL, 0, 0);
     }
 
     DWORD WinBackend::getWindowStyle() const
@@ -607,6 +608,24 @@ namespace pTK
                     if (!(winData->flags & SWP_HIDEWINDOW) && backend)
                         if (backend->isMinimized() && !data->minimized)
                             handleWindowMinimize(data, true);
+                }
+                break;
+            }
+            case WM_ENTERSIZEMOVE:
+            {
+                SetTimer(hwnd, 1, data->wait, nullptr);
+                break;
+            }
+            case WM_EXITSIZEMOVE:
+            {
+                KillTimer(hwnd, 1);
+                break;
+            }
+            case WM_TIMER:
+            {
+                if (wParam == 1)
+                {
+                    window->handleEvents();
                 }
                 break;
             }

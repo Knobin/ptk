@@ -150,7 +150,7 @@ namespace pTK
         return false;
     }
 
-    bool Box::onKeyEvent(Event::Type type, int32 keycode)
+    bool Box::onKeyEvent(Event::Type type, KeyCode keycode)
     {
         if (m_lastClickedWidget != nullptr)
             return m_lastClickedWidget->handleKeyEvent(type, keycode);

@@ -13,6 +13,7 @@
 #include "ptk/util/Size.hpp"
 #include "ptk/core/platform/ContextBase.hpp"
 #include "ptk/Core.hpp"
+#include "ptk/core/Event.hpp"
 
 namespace pTK
 {
@@ -77,8 +78,9 @@ namespace pTK
 
         /** Function for polling the events.
 
+            @param ms   max time to wait for an event
         */
-        virtual void pollEvents() = 0;
+        virtual void pollEvents(uint UNUSED(ms)) = 0;
 
         /** Function for setting the position of the window.
 

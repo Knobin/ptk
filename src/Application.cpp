@@ -23,14 +23,14 @@
 namespace pTK
 {
     Application::Application()
-        : Singleton(), m_waitTime(8000000)
+        : Singleton()
     {
         PTK_INIT_LOGGING();
         PTK_INIT_PLATFORM();
     }
     
     Application::Application(int, char* [])
-        : Singleton(), m_waitTime(8000000)
+        : Singleton()
     {
         PTK_INIT_LOGGING();
         PTK_INIT_PLATFORM();
@@ -52,11 +52,8 @@ namespace pTK
         while (!window->shouldClose())
         {
             // Events
-            window->pollEvents();
+            window->pollEvents(m_waitTime);
             window->handleEvents();
-
-            // To lower cpu usage, we wait.
-            std::this_thread::sleep_for(m_waitTime);
         }
 
         window->hide();
@@ -64,9 +61,8 @@ namespace pTK
         return 0;
     }
     
-    void Application::delayPoll(std::chrono::duration<uint64> const& duration)
+    void Application::delayPoll(uint duration)
     {
-        using namespace std::chrono;
-        m_waitTime = duration_cast<nanoseconds>(duration);
+        m_waitTime = duration;
     }
 }

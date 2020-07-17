@@ -14,12 +14,13 @@
 #include "ptk/widgets/VBox.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/util/Vec2.hpp"
-#include "ptk/util/SafeQueue.hpp"
+#include "ptk/core/EventQueue.hpp"
 
 // C++ Headers
 #include <memory>
 #include <string>
 #include <thread>
+#include <type_traits>
 
 namespace pTK
 {
@@ -81,12 +82,12 @@ namespace pTK
 
             @return     close status
         */
-        bool shouldClose();
+        bool shouldClose() const;
 
         /** Function for polling the window events.
 
         */
-        void pollEvents();
+        void pollEvents(uint ms);
 
         /** Function for handling the window events.
 
@@ -112,11 +113,7 @@ namespace pTK
         template<typename T, typename... Args>
         void postEvent(Args&& ...args)
         {
-            std::unique_ptr<T> event = std::make_unique<T>(std::forward<Args>(args)...);
-            m_eventQueue.push(std::move(event));
-
-            if (m_threadID != std::this_thread::get_id())
-                m_winBackend->notifyEvent();
+            m_eventQueue.push<T>(std::forward<Args>(args)...);
         }
 
         /** Function for forcing the window to redraw everything.
@@ -160,7 +157,7 @@ namespace pTK
 
             @param path     path to image
         */
-        void setIcon(const std::string& path);
+        bool setIcon(const std::string& path);
 
         /** Function for retrieving the backend.
 
@@ -215,12 +212,12 @@ namespace pTK
         using VBox::getPosition;
 
     private:
+        EventQueue<std::deque> m_eventQueue{};
         std::unique_ptr<WindowBackend> m_winBackend{nullptr};
-        SafeQueue<std::unique_ptr<Event>> m_eventQueue{};
+        std::thread::id m_threadID;
         bool m_draw{false};
         bool m_close{false};
         bool m_minimized{false};
-        std::thread::id m_threadID;
 
         // Window specific callbacks.
         std::function<bool()> m_onClose{nullptr};

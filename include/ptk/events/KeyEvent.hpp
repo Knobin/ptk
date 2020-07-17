@@ -11,6 +11,7 @@
 // Local Headers
 #include "ptk/core/Event.hpp"
 #include "ptk/core/Types.hpp"
+#include "ptk/events/KeyCodes.hpp"
 
 namespace pTK
 {
@@ -34,14 +35,14 @@ namespace pTK
             @param code     associated keycode
             @return         default initialized KeyEvent
         */
-        KeyEvent(Event::Type type, int32 code)
+        KeyEvent(Event::Type type, KeyCode code)
             : Event(Event::Category::Key, type), keycode{code}
         {
 
         }
 
         // Key code.
-        const int32 keycode;
+        const KeyCode keycode;
     };
 }
 

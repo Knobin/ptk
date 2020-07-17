@@ -59,7 +59,7 @@ namespace pTK
         return *this;
     }
     
-    void EventCallbacks::onKey(const std::function<bool(Event::Type, int32)>& callback)
+    void EventCallbacks::onKey(const std::function<bool(Event::Type, KeyCode)>& callback)
     {
         m_keyCallback = callback;
     }

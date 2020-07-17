@@ -85,7 +85,7 @@ namespace pTK
             @param other    to move from
             @return         SafeQueue with values moved from other
         */
-        SafeQueue(SafeQueue&& other)
+        SafeQueue(SafeQueue&& other) noexcept
         {
             std::unique_lock<std::mutex> lock(other.m_mutex);
             std::swap(m_cont, other.m_cont);
@@ -119,7 +119,7 @@ namespace pTK
             @param other    to move from
             @return         SafeQueue with values moved from other
         */
-        SafeQueue& operator=(SafeQueue&& other)
+        SafeQueue& operator=(SafeQueue&& other) noexcept
         {
             if (this == &other)
                 return *this;
