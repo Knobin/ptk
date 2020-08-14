@@ -111,10 +111,7 @@ namespace pTK
             This function is thread safe.
         */
         template<typename T, typename... Args>
-        void postEvent(Args&& ...args)
-        {
-            m_eventQueue.push<T>(std::forward<Args>(args)...);
-        }
+        void postEvent(Args&& ...args);
 
         /** Function for forcing the window to redraw everything.
 
@@ -228,6 +225,15 @@ namespace pTK
         std::function<bool()> m_onMinimize{nullptr};
         std::function<bool()> m_onRestore{nullptr};
     };
+
+    template<typename T, typename... Args>
+    void Window::postEvent(Args&& ...args)
+    {
+        m_eventQueue.lock();
+        m_eventQueue.push<T>(std::forward<Args>(args)...);
+        m_eventQueue.unlock();
+    }
+    
 }
 
 #endif // PTK_WINDOW_HPP

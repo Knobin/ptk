@@ -30,13 +30,16 @@ namespace pTK
 
     void Window::handleEvents()
     {
+        m_eventQueue.lock();
         const std::size_t eventCount{m_eventQueue.size()};
+        PTK_INFO("HANDLE EVENTS, {} in queue", eventCount);
         for (std::size_t i{0}; i < eventCount; i++)
         {
             Event* event{m_eventQueue.front().get()};
-            handleEvent(event);
             m_eventQueue.pop();
+            handleEvent(event);
         }
+        m_eventQueue.unlock();
 
         if (m_draw)
         {

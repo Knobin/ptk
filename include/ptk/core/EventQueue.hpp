@@ -49,10 +49,9 @@ namespace pTK
         virtual ~EventQueue() = default;
 
         template<typename T, typename... Args>
-        void push(Args&& ...args)
+        bool push(Args&& ...args)
         {
             static_assert(std::is_base_of<Event, T>::value, "T should inherit from Event");
-            std::unique_lock<std::mutex> lock(m_mutex);
 
             Ref<Event> event = create<T>(std::forward<Args>(args)...);
             if constexpr (std::is_same_v<PaintEvent, T>)
@@ -65,67 +64,45 @@ namespace pTK
                         PaintEvent *evt{dynamic_cast<PaintEvent*>((*it).get())};
                         if (evt)
                             if ((pEvent->pos == evt->pos) && (pEvent->size == evt->size))
-                                return;
+                                return false;
                     }
                 }
+
             }
             m_queue.push_back(event);
-            m_condVar.notify_one();
+            return true;
         }
 
         void pop()
         {
-            std::unique_lock<std::mutex> lock(m_mutex);
-
-            if (!m_queue.empty())
-                m_queue.pop_front();
+            m_queue.pop_front();
         }
 
         [[nodiscard]] std::size_t size() const
         {
-            std::unique_lock<std::mutex> lock(m_mutex);
             return m_queue.size();
         }
 
         /** Function for retrieving the item at the front in the queue.
 
-            This function will block the thread until push() has been called.
-            If multiple threads is waiting in this function, multiple push()
-            may need to be called before the thread will wake up. Due to
-            notify_one() in push().
-
             @return    reference to item at the front
         */
         [[nodiscard]] reference front()
         {
-            std::unique_lock<std::mutex> lock(m_mutex);
-            while (m_queue.empty())
-                m_condVar.wait(lock);
-
             return m_queue.front();
         }
 
         /** Function for retrieving the item at the front in the queue.
 
-            This function will block the thread until push() has been called.
-            If multiple threads is waiting in this function, multiple push()
-            may need to be called before the thread will wake up. Due to
-            notify_one() in push().
-
             @return    const reference to item at the front
         */
         [[nodiscard]] const_reference front() const
         {
-            std::unique_lock<std::mutex> lock(m_mutex);
-            while (m_queue.empty())
-                m_condVar.wait(lock);
-
             return m_queue.front();
         }
 
         [[nodiscard]] bool empty() const
         {
-            std::unique_lock<std::mutex> lock(m_mutex);
             return m_queue.empty();
         }
 
@@ -144,7 +121,7 @@ namespace pTK
 
             @return    lock status
         */
-        bool try_lock()
+        [[nodiscard]] bool try_lock()
         {
             return m_mutex.try_lock();
         }
@@ -161,7 +138,6 @@ namespace pTK
     private:
         container_type m_queue{};
         mutable std::mutex m_mutex;
-        mutable std::condition_variable m_condVar;
     };
 }
 

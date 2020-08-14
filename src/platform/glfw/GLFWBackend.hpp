@@ -62,7 +62,7 @@ namespace pTK
         /** Function for polling the window events.
 
         */
-        void pollEvents() override;
+        void pollEvents(uint ms) override;
 
         /** Function for setting the window position.
 

@@ -111,7 +111,9 @@ namespace pTK
         // void window_close_callback(GLFWwindow* window)
         glfwSetWindowCloseCallback(m_window, [](GLFWwindow* window){
             auto data{static_cast<GLFWBackendData*>(glfwGetWindowUserPointer(window))};
-            data->window->postEvent<Event>(Event::Category::Window, Event::Type::WindowClose);
+            Event evt{Event::Category::Window, Event::Type::WindowClose};
+            data->window->handleEvents(); // Handle all events before sending close event.
+            data->window->sendEvent(&evt);
         });
 
         // void window_focus_callback(GLFWwindow* window, int focused)
@@ -211,12 +213,12 @@ namespace pTK
             auto data{static_cast<GLFWBackendData*>(glfwGetWindowUserPointer(window))};
             if (action == GLFW_PRESS)
             {
-                KeyEvent event{KeyEvent::Pressed, key};
+                KeyEvent event{KeyEvent::Pressed, static_cast<Key>(key)};
                 data->window->sendEvent(&event);
             }
             else if (action == GLFW_RELEASE)
             {
-                KeyEvent event{KeyEvent::Released, key};
+                KeyEvent event{KeyEvent::Released, static_cast<Key>(key)};
                 data->window->sendEvent(&event);
             }
         });
@@ -243,9 +245,9 @@ namespace pTK
         return false;
     }
 
-    void GLFWBackend::pollEvents()
+    void GLFWBackend::pollEvents(uint ms)
     {
-        glfwWaitEvents();
+        glfwWaitEventsTimeout(static_cast<int>(ms / 1000));
     }
 
     void GLFWBackend::swapBuffers()
