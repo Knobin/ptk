@@ -365,7 +365,7 @@ namespace pTK
         return false;
     }
 
-    WindowBackend* Window::getBackend() const
+    MainWindowBase* Window::getBackend() const
     {
         return m_winBackend.get();
     }

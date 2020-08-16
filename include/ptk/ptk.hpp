@@ -15,7 +15,7 @@
 
 // --- Core --------------------------
 #include "ptk/core/platform/ContextBase.hpp"
-#include "ptk/core/platform/WindowBackend.hpp"
+#include "ptk/core/platform/MainWindowBase.hpp"
 #include "ptk/core/Container.hpp"
 #include "ptk/core/Drawable.hpp"
 #include "ptk/core/Event.hpp"

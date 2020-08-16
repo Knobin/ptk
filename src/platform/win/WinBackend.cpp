@@ -112,7 +112,7 @@ namespace pTK
     };
 
     WinBackend::WinBackend(Window *window, const std::string& name, const Size& size, BackendType backend)
-        : WindowBackend(backend),
+        : MainWindowBase(backend),
             m_parentWindow{window}
     {
         // High DPI
@@ -473,7 +473,7 @@ namespace pTK
         data->window->sendEvent(&evt);
     }
 
-    static void handleWindowResize(WinBackendData* data, WindowBackend *backend, HWND hwnd)
+    static void handleWindowResize(WinBackendData* data, MainWindowBase *backend, HWND hwnd)
     {
         Window *window{data->window};
         RECT rc{0};
@@ -594,7 +594,7 @@ namespace pTK
                 if (window)
                 {
                     WINDOWPOS* winData{reinterpret_cast<WINDOWPOS*>(lParam)};
-                    WindowBackend* backend{window->getBackend()};
+                    MainWindowBase* backend{window->getBackend()};
 
                     // Window was moved.
                     if (!(winData->flags & SWP_NOMOVE))

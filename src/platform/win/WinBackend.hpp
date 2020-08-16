@@ -9,7 +9,7 @@
 #define PTK_PlATFORM_WIN_WINBACKEND_HPP
 
 // Local Headers
-#include "ptk/core/platform/WindowBackend.hpp"
+#include "ptk/core/platform/MainWindowBase.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/events/MouseEvent.hpp"
 
@@ -28,7 +28,7 @@ namespace pTK
 
         This class handles the Windows Window.
     */
-    class WinBackend : public WindowBackend
+    class WinBackend : public MainWindowBase
     {
     public:
         /** Constructs WinBackend with default values.

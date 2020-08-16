@@ -9,7 +9,7 @@
 #define PTK_PlATFORM_GLFW_GLFWBACKEND_HPP
 
 // Local Headers
-#include "ptk/core/platform/WindowBackend.hpp"
+#include "ptk/core/platform/MainWindowBase.hpp"
 #include "GLContext.hpp"
 
 // GLFW Headers
@@ -23,7 +23,7 @@ namespace pTK
     /** GLFWBackend class implementation.
 
     */
-    class GLFWBackend : public WindowBackend
+    class GLFWBackend : public MainWindowBase
     {
     public:
         /** Window Button with default values with name, width and height.

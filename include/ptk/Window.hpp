@@ -9,7 +9,7 @@
 #define PTK_WINDOW_HPP
 
 // Local Headers
-#include "ptk/core/platform/WindowBackend.hpp"
+#include "ptk/core/platform/MainWindowBase.hpp"
 #include "ptk/util/Singleton.hpp"
 #include "ptk/widgets/VBox.hpp"
 #include "ptk/core/Event.hpp"
@@ -170,7 +170,7 @@ namespace pTK
 
             @return    backend
         */
-        WindowBackend* getBackend() const;
+        MainWindowBase* getBackend() const;
 
         /** Function for minimizing the window.
 
@@ -220,7 +220,7 @@ namespace pTK
 
     private:
         EventQueue<std::deque> m_eventQueue{};
-        std::unique_ptr<WindowBackend> m_winBackend{nullptr};
+        std::unique_ptr<MainWindowBase> m_winBackend{nullptr};
         std::thread::id m_threadID;
         bool m_draw{false};
         bool m_close{false};
@@ -247,7 +247,7 @@ namespace pTK
        }
         m_eventQueue.unlock();
     }
-    
+
 }
 
 #endif // PTK_WINDOW_HPP

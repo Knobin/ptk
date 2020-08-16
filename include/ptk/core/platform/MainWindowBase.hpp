@@ -1,12 +1,12 @@
 //
-//  core/platform/WindowBase.hpp
+//  core/platform/MainWindowBase.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-03-13.
 //
 
-#ifndef PTK_CORE_PLATFORM_WINDOWBASE_HPP
-#define PTK_CORE_PLATFORM_WINDOWBASE_HPP
+#ifndef PTK_CORE_PLATFORM_MAINWINDOWBASE_HPP
+#define PTK_CORE_PLATFORM_MAINWINDOWBASE_HPP
 
 // Local Headers
 #include "ptk/util/Point.hpp"
@@ -21,36 +21,36 @@ namespace pTK
 
         Specifies which backend that should be used.
     */
-    enum class BackendType
+    enum class BackendType : byte
     {
         SOFTWARE = 1,
         HARDWARE
     };
 
-    /** WindowBackend class implementation
+    /** MainWindowBase class implementation
 
         Specifies the backend API that the platform must implement.
     */
-    class WindowBackend
+    class MainWindowBase
     {
     public:
-        WindowBackend() = delete;
+        MainWindowBase() = delete;
 
-        /** Constructs WindowBackend with default values.
+        /** Constructs MainWindowBase with default values.
 
             @param backend  type of backend
-            @return         default initialized WindowBackend
+            @return         default initialized MainWindowBase
         */
-        explicit WindowBackend(BackendType backend)
+        explicit MainWindowBase(BackendType backend)
             : m_backend{backend}
         {
 
         }
 
-        /** Deconstructor for WindowBackend.
+        /** Deconstructor for MainWindowBase.
 
         */
-        virtual ~WindowBackend() = default;
+        virtual ~MainWindowBase() = default;
 
         /** Function for showing the window.
 
@@ -231,4 +231,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_CORE_PLATFORM_WINDOWBASE_HPP
+#endif // PTK_CORE_PLATFORM_MAINWINDOWBASE_HPP
