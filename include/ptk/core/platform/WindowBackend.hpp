@@ -74,13 +74,23 @@ namespace pTK
 
             @return     true if window is hidden, otherwise false
         */
-        virtual bool isHidden() const = 0;
+        [[nodiscard]] virtual bool isHidden() const = 0;
 
-        /** Function for polling the events.
+        /** Function for polling all the window events.
+
+        */
+        virtual void pollEvents() = 0;
+
+        /** Function for waiting for an event.
+
+        */
+        virtual void waitEvents() = 0;
+
+        /** Function for waiting for an event with a timout.
 
             @param ms   max time to wait for an event
         */
-        virtual void pollEvents(uint UNUSED(ms)) = 0;
+        virtual void waitEventsTimeout(uint UNUSED(ms)) = 0;
 
         /** Function for setting the position of the window.
 
@@ -113,13 +123,13 @@ namespace pTK
 
             @return     Context
         */
-        virtual ContextBase *getContext() const = 0;
+        [[nodiscard]] virtual ContextBase *getContext() const = 0;
 
         /** Function for retrieving the scaling of the Window.
 
             @return     scaling
         */
-        virtual Vec2f getDPIScale() const { return {1.0f, 1.0f}; }
+        [[nodiscard]] virtual Vec2f getDPIScale() const { return {1.0f, 1.0f}; }
 
         /** Function for initiating the drawing.
 
@@ -167,7 +177,7 @@ namespace pTK
 
             @return     backend type
         */
-        BackendType getBackendType() const
+        [[nodiscard]] BackendType getBackendType() const
         {
             return m_backend;
         }
@@ -176,13 +186,13 @@ namespace pTK
 
             @return     Window Position
         */
-        virtual Point getWinPos() const = 0;
+        [[nodiscard]] virtual Point getWinPos() const = 0;
 
         /** Function for retrieving the window size.
 
             @return     Window Size
         */
-        virtual Size getWinSize() const = 0;
+        [[nodiscard]] virtual Size getWinSize() const = 0;
 
         /** Function for minimizing the window.
 
@@ -194,7 +204,7 @@ namespace pTK
 
             @return     true if window is minimized, otherwise false
         */
-        virtual bool isMinimized() const = 0;
+        [[nodiscard]] virtual bool isMinimized() const = 0;
 
         /** Function for restoring a window from the minimized state.
 
@@ -206,7 +216,7 @@ namespace pTK
 
             @return     true if window is focused, otherwise false
         */
-        virtual bool isFocused() const = 0;
+        [[nodiscard]] virtual bool isFocused() const = 0;
 
         /** Function for hinting the scale of the window.
 

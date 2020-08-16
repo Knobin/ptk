@@ -68,13 +68,23 @@ namespace pTK
 
             @return     true if window is hidden, otherwise false
         */
-        bool isHidden() const override;
+        [[nodiscard]] bool isHidden() const override;
 
-        /** Function for polling the window events.
+        /** Function for polling all the window events.
+
+        */
+        void pollEvents() override;
+
+        /** Function for waiting for an event.
+
+        */
+        void waitEvents() override;
+
+        /** Function for waiting for an event with a timout.
 
             @param ms   max time to wait for an event
         */
-        void pollEvents(uint ms) override;
+        void waitEventsTimeout(uint ms) override;
 
         /** Function for setting the position of the window.
 
@@ -87,7 +97,7 @@ namespace pTK
 
             @return context
         */
-        ContextBase *getContext() const override;
+        [[nodiscard]] ContextBase *getContext() const override;
 
         /** Function for swapping the buffers.
 
@@ -98,7 +108,7 @@ namespace pTK
 
             @return     scaling
         */
-        Vec2f getDPIScale() const override;
+        [[nodiscard]] Vec2f getDPIScale() const override;
 
         /** Function for resizing the window.
 
@@ -159,7 +169,7 @@ namespace pTK
 
            @return     Window Position
        */
-        Point getWinPos() const override;
+        [[nodiscard]] Point getWinPos() const override;
 
         /** Function for retrieving the window size.
 
@@ -171,7 +181,7 @@ namespace pTK
 
             @return Window style
         */
-        DWORD getWindowStyle() const;
+        [[nodiscard]] DWORD getWindowStyle() const;
 
         /** Function for minimizing the window.
 
@@ -182,7 +192,7 @@ namespace pTK
         /** Function for minimizing the window.
 
         */
-        bool isMinimized() const override;
+        [[nodiscard]] bool isMinimized() const override;
 
         /** Function for restoring a window from the minimized state.
 
@@ -194,7 +204,7 @@ namespace pTK
 
             @return     status
         */
-        bool isFocused() const override;
+        [[nodiscard]] bool isFocused() const override;
 
         /** Function for hinting the scale of the window.
 

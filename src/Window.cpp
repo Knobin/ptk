@@ -32,12 +32,11 @@ namespace pTK
     {
         m_eventQueue.lock();
         const std::size_t eventCount{m_eventQueue.size()};
-        PTK_INFO("HANDLE EVENTS, {} in queue", eventCount);
         for (std::size_t i{0}; i < eventCount; i++)
         {
             Event* event{m_eventQueue.front().get()};
-            m_eventQueue.pop();
             handleEvent(event);
+            m_eventQueue.pop();
         }
         m_eventQueue.unlock();
 
@@ -264,9 +263,19 @@ namespace pTK
         }
     }
 
-    void Window::pollEvents(uint ms)
+    void Window::pollEvents()
     {
-        m_winBackend->pollEvents(ms);
+        m_winBackend->pollEvents();
+    }
+
+    void Window::waitEvents()
+    {
+        m_winBackend->waitEvents();
+    }
+
+    void Window::waitEventsTimeout(uint ms)
+    {
+        m_winBackend->waitEventsTimeout(ms);
     }
 
     void Window::forceDrawAll()

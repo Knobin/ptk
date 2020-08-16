@@ -245,7 +245,17 @@ namespace pTK
         return false;
     }
 
-    void GLFWBackend::pollEvents(uint ms)
+    void GLFWBackend::pollEvents()
+    {
+        glfwPollEvents();
+    }
+
+    void GLFWBackend::waitEvents()
+    {
+        glfwWaitEvents();
+    }
+
+    void GLFWBackend::waitEventsTimeout(uint ms)
     {
         glfwWaitEventsTimeout(static_cast<int>(ms / 1000));
     }

@@ -84,15 +84,25 @@ namespace pTK
         */
         bool shouldClose() const;
 
-        /** Function for polling the window events.
-
-        */
-        void pollEvents(uint ms);
-
         /** Function for handling the window events.
 
         */
         void handleEvents();
+
+        /** Function for polling all the window events.
+
+        */
+        void pollEvents();
+
+        /** Function for polling the window events.
+
+        */
+        void waitEvents();
+
+        /** Function for polling the window events.
+            // TODO: Add comments here.
+        */
+        void waitEventsTimeout(uint ms);
 
         /** Function for sending events to the window to
             be handled directly.
@@ -231,6 +241,10 @@ namespace pTK
     {
         m_eventQueue.lock();
         m_eventQueue.push<T>(std::forward<Args>(args)...);
+       if (std::this_thread::get_id() != m_threadID)
+       {
+           m_winBackend->notifyEvent();
+       }
         m_eventQueue.unlock();
     }
     

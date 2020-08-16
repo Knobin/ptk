@@ -48,11 +48,12 @@ namespace pTK
         
         window->show();
         
-        // Render loop.
+        // Event loop.
         while (!window->shouldClose())
         {
             // Events
-            window->pollEvents(m_waitTime);
+            //std::this_thread::sleep_for(std::chrono::milliseconds{m_waitTime});
+            window->waitEvents();
             window->handleEvents();
         }
 

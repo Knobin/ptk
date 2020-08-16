@@ -166,16 +166,27 @@ namespace pTK
         return false;
     }
 
-    void WinBackend::pollEvents(uint ms)
+    void WinBackend::pollEvents()
     {
         MSG msg{};
-        MsgWaitForMultipleObjects(0, nullptr, FALSE, static_cast<DWORD>(ms), QS_ALLEVENTS);
-        m_data->wait = ms;
         while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
         {
             ::TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+    }
+
+    void WinBackend::waitEvents()
+    {
+        WaitMessage();
+        pollEvents();
+    }
+
+    void WinBackend::waitEventsTimeout(uint ms)
+    {
+        MsgWaitForMultipleObjects(0, nullptr, FALSE, static_cast<DWORD>(ms), QS_ALLEVENTS);
+        m_data->wait = ms;
+        pollEvents();
     }
 
     void WinBackend::beginPaint()

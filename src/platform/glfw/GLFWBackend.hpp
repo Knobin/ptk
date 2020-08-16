@@ -59,10 +59,21 @@ namespace pTK
         */
         bool isHidden() const override;
 
-        /** Function for polling the window events.
+        /** Function for polling all the window events.
 
         */
-        void pollEvents(uint ms) override;
+        void pollEvents() override;
+
+        /** Function for waiting for an event.
+
+        */
+        void waitEvents() override;
+
+        /** Function for waiting for an event with a timout.
+
+            @param ms   max time to wait for an event
+        */
+        void waitEventsTimeout(uint ms) override;
 
         /** Function for setting the window position.
 
