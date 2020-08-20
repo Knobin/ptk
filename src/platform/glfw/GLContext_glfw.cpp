@@ -1,12 +1,12 @@
 //
-//  platform/GLContext.cpp
+//  platform/glfw/GLContext_glfw.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-02-09.
 //
 
 // Local Headers
-#include "GLContext.hpp"
+#include "GLContext_glfw.hpp"
 #include "ptk/Core.hpp"
 
 // Skia Headers
@@ -32,7 +32,7 @@
 
 namespace pTK
 {
-    GLContext::GLContext(const Size& size)
+    GLContext_glfw::GLContext_glfw(const Size& size)
         : ContextBase(size), m_context{nullptr}, m_info{}, m_colorType{},
             m_props{SkSurfaceProps::kUseDeviceIndependentFonts_Flag, SkSurfaceProps::kLegacyFontHost_InitType}
     {
@@ -60,7 +60,7 @@ namespace pTK
         resize(size);
     }
 
-    GLContext::~GLContext()
+    GLContext_glfw::~GLContext_glfw()
     {
         // Apparently, surface needs to be destroyed before context.
         // Otherwise, SkRefCount will give a nice assert.
@@ -68,7 +68,7 @@ namespace pTK
         m_context.reset();
     }
 
-    void GLContext::resize(const Size& size)
+    void GLContext_glfw::resize(const Size& size)
     {
         glViewport(0, 0, size.width, size.height);
 
@@ -83,12 +83,12 @@ namespace pTK
         setSize(size);
     }
 
-    SkCanvas* GLContext::skCanvas() const
+    SkCanvas* GLContext_glfw::skCanvas() const
     {
         return m_surface->getCanvas();
     }
 
-    SkSurface* GLContext::skSurface() const
+    SkSurface* GLContext_glfw::skSurface() const
     {
         return m_surface.get();
     }

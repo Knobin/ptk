@@ -32,19 +32,22 @@ if (PTK_BUILD_TYPE MATCHES Debug)
 endif()
 
 if (WIN32)
-    set(PLATFORM_FILES platform/win/WinPlatform.cpp
-            platform/win/WinRasterContext.cpp
-            platform/win/WinBackend.cpp)
+    set(PLATFORM_FILES platform/win/Platform_win.cpp
+            platform/win/RasterContext_win.cpp
+            platform/win/MainWindow_win.cpp)
     if (HW_ACCELERATION)
         set(PLATFORM_FILES ${PLATFORM_FILES}
-                platform/win/WinGLContext.cpp)
+                platform/win/GLContext_win.cpp)
     endif (HW_ACCELERATION)
     message(STATUS "Using Windows backend")
-else()
-    set(PLATFORM_FILES platform/glfw/GLContext.cpp
-            platform/glfw/GLFWBackend.cpp)
+elseif (APPLE)
+    set(PLATFORM_FILES platform/mac/MainWindow_mac.cpp)
+    message(STATUS "Using macOS backend")
+  else()
+    set(PLATFORM_FILES platform/glfw/GLContext_glfw.cpp
+            platform/glfw/MainWindow_glfw.cpp)
     message(STATUS "Using GLFW backend")
-endif()
+  endif()
 
 set(SOURCE_FILES Application.cpp Window.cpp
         ${CORE_FILES}

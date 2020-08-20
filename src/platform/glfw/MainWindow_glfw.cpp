@@ -1,12 +1,12 @@
 //
-//  Window.cpp
+//  MainWindow_glfw.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2019-06-12.
 //
 
 // Local Headers
-#include "GLFWBackend.hpp"
+#include "MainWindow_glfw.hpp"
 #include "ptk/Window.hpp"
 #include "ptk/events/KeyEvent.hpp"
 #include "ptk/events/MouseEvent.hpp"
@@ -25,7 +25,7 @@ namespace pTK
         bool hidden;
     };
 
-    GLFWBackend::GLFWBackend(Window *window, const std::string& name, const Size& size, BackendType backend)
+    MainWindow_glfw::MainWindow_glfw(Window *window, const std::string& name, const Size& size, BackendType backend)
         : MainWindowBase(backend),
           m_window{nullptr}, m_drawCanvas{nullptr}, m_parentWindow{window}, m_scale{1.0f, 1.0f}
     {
@@ -51,7 +51,7 @@ namespace pTK
         Size wSize{};
         wSize.width = static_cast<Size::value_type>(size.width * m_scale.x);
         wSize.height = static_cast<Size::value_type>(size.height * m_scale.y);
-        m_drawCanvas = std::make_unique<GLContext>(Size(wSize.width, wSize.height));
+        m_drawCanvas = std::make_unique<GLContext_glfw>(Size(wSize.width, wSize.height));
         PTK_ASSERT(m_drawCanvas, "Failed to create Canvas");
 
         // Set Callbacks
@@ -65,7 +65,7 @@ namespace pTK
     }
 
     // Init Functions
-    void GLFWBackend::initGLFW()
+    void MainWindow_glfw::initGLFW()
     {
         // Initialize and configure of GLFW.
         glfwInit();
@@ -79,7 +79,7 @@ namespace pTK
     }
 
     // Set Event Callbacks
-    void GLFWBackend::setWindowCallbacks()
+    void MainWindow_glfw::setWindowCallbacks()
     {
         // void window_size_callback(GLFWwindow* window, int width, int height)
         glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height){
@@ -133,7 +133,7 @@ namespace pTK
         });
     }
 
-    void GLFWBackend::setMouseCallbacks()
+    void MainWindow_glfw::setMouseCallbacks()
     {
         // void cursor_enter_callback(GLFWwindow* window, int entered)
         glfwSetCursorEnterCallback(m_window,[](GLFWwindow* window, int entered){
@@ -206,7 +206,7 @@ namespace pTK
         });
     }
 
-    void GLFWBackend::setKeyCallbacks()
+    void MainWindow_glfw::setKeyCallbacks()
     {
         // void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
         glfwSetKeyCallback(m_window, [](GLFWwindow* window, int key, int, int action, int){
@@ -224,7 +224,7 @@ namespace pTK
         });
     }
 
-    GLFWBackend::~GLFWBackend()
+    MainWindow_glfw::~MainWindow_glfw()
     {
 		// Free canvas before glfw to avoid OpenGL errors.
 		m_drawCanvas.reset(nullptr);
@@ -233,7 +233,7 @@ namespace pTK
         PTK_INFO("Window Destroyed");
     }
 
-    bool GLFWBackend::setPosHint(const Point& pos)
+    bool MainWindow_glfw::setPosHint(const Point& pos)
     {
         if (pos != m_data->pos)
         {
@@ -245,27 +245,27 @@ namespace pTK
         return false;
     }
 
-    void GLFWBackend::pollEvents()
+    void MainWindow_glfw::pollEvents()
     {
         glfwPollEvents();
     }
 
-    void GLFWBackend::waitEvents()
+    void MainWindow_glfw::waitEvents()
     {
         glfwWaitEvents();
     }
 
-    void GLFWBackend::waitEventsTimeout(uint ms)
+    void MainWindow_glfw::waitEventsTimeout(uint ms)
     {
         glfwWaitEventsTimeout(static_cast<int>(ms / 1000));
     }
 
-    void GLFWBackend::swapBuffers()
+    void MainWindow_glfw::swapBuffers()
     {
         glfwSwapBuffers(m_window);
     }
 
-    bool GLFWBackend::resize(const Size& size)
+    bool MainWindow_glfw::resize(const Size& size)
     {
         if (size != m_data->size)
         {
@@ -280,7 +280,7 @@ namespace pTK
         return false;
     }
 
-    bool GLFWBackend::setLimits(const Size& min, const Size& max)
+    bool MainWindow_glfw::setLimits(const Size& min, const Size& max)
     {
         if (m_window)
         {
@@ -293,7 +293,7 @@ namespace pTK
         return false;
     }
 
-    bool GLFWBackend::close()
+    bool MainWindow_glfw::close()
     {
         glfwSetWindowShouldClose(m_window, GLFW_TRUE);
         m_parentWindow->postEvent<Event>(Event::Category::Window, Event::Type::WindowClose);
@@ -301,41 +301,41 @@ namespace pTK
     }
 
     // Visible
-    bool GLFWBackend::show()
+    bool MainWindow_glfw::show()
     {
         glfwShowWindow(m_window);
         m_parentWindow->forceDrawAll();
         return true;
     }
 
-    bool GLFWBackend::hide()
+    bool MainWindow_glfw::hide()
     {
         glfwHideWindow(m_window);
         return true;
     }
 
-    bool GLFWBackend::isHidden() const
+    bool MainWindow_glfw::isHidden() const
     {
         return static_cast<bool>(glfwGetWindowAttrib(m_window, GLFW_VISIBLE));
     }
 
-    ContextBase *GLFWBackend::getContext() const
+    ContextBase *MainWindow_glfw::getContext() const
     {
         return m_drawCanvas.get();
     }
 
-    Vec2f GLFWBackend::getDPIScale() const
+    Vec2f MainWindow_glfw::getDPIScale() const
     {
         return m_scale;
     }
 
-    bool GLFWBackend::setTitle(const std::string& name)
+    bool MainWindow_glfw::setTitle(const std::string& name)
     {
         glfwSetWindowTitle(m_window, name.c_str());
         return true;
     }
 
-    bool GLFWBackend::setIcon(int32 width, int32 height, byte* pixels)
+    bool MainWindow_glfw::setIcon(int32 width, int32 height, byte* pixels)
     {
         GLFWimage images[1];
         images[0] = {width, height, pixels};
@@ -343,41 +343,41 @@ namespace pTK
         return true;
     }
 
-    void GLFWBackend::notifyEvent()
+    void MainWindow_glfw::notifyEvent()
     {
         glfwPostEmptyEvent();
     }
 
-    Point GLFWBackend::getWinPos() const
+    Point MainWindow_glfw::getWinPos() const
     {
         return m_data->pos;
     }
 
-    Size GLFWBackend::getWinSize() const
+    Size MainWindow_glfw::getWinSize() const
     {
         Size size{};
         glfwGetWindowSize(m_window, &size.width, &size.height);
         return size;
     }
 
-    bool GLFWBackend::minimize()
+    bool MainWindow_glfw::minimize()
     {
         glfwIconifyWindow(m_window);
         return true;
     }
 
-    bool GLFWBackend::isMinimized() const
+    bool MainWindow_glfw::isMinimized() const
     {
         return static_cast<bool>(glfwGetWindowAttrib(m_window, GLFW_ICONIFIED));
     }
 
-    bool GLFWBackend::restore()
+    bool MainWindow_glfw::restore()
     {
         glfwRestoreWindow(m_window);
         return true;
     }
 
-    bool GLFWBackend::isFocused() const
+    bool MainWindow_glfw::isFocused() const
     {
         return static_cast<bool>(glfwGetWindowAttrib(m_window, GLFW_FOCUSED));
     }

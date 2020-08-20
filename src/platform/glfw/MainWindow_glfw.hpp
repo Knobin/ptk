@@ -1,16 +1,16 @@
 //
-//  platform/glfw/GLFWWindow.hpp
+//  platform/glfw/MainWindow_glfw.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2019-06-12.
 //
 
-#ifndef PTK_PlATFORM_GLFW_GLFWBACKEND_HPP
-#define PTK_PlATFORM_GLFW_GLFWBACKEND_HPP
+#ifndef PTK_PlATFORM_GLFW_MAINWINDOW_HPP
+#define PTK_PlATFORM_GLFW_MAINWINDOW_HPP
 
 // Local Headers
 #include "ptk/core/platform/MainWindowBase.hpp"
-#include "GLContext.hpp"
+#include "GLContext_glfw.hpp"
 
 // GLFW Headers
 #include <GLFW/glfw3.h>
@@ -20,10 +20,10 @@ namespace pTK
     class Window;
     struct GLFWBackendData;
 
-    /** GLFWBackend class implementation.
+    /** MainWindow_glfw class implementation.
 
     */
-    class GLFWBackend : public MainWindowBase
+    class MainWindow_glfw : public MainWindowBase
     {
     public:
         /** Window Button with default values with name, width and height.
@@ -36,8 +36,8 @@ namespace pTK
             @param height  height of the window
             @return        default initialized Window
         */
-        GLFWBackend(Window *window, const std::string& name, const Size& size, BackendType backend);
-        virtual ~GLFWBackend();
+        MainWindow_glfw(Window *window, const std::string& name, const Size& size, BackendType backend);
+        virtual ~MainWindow_glfw();
 
         /** Function for closing the window.
 
@@ -174,7 +174,7 @@ namespace pTK
     private:
         // Window
         GLFWwindow* m_window;
-        std::unique_ptr<GLContext> m_drawCanvas;
+        std::unique_ptr<GLContext_glfw> m_drawCanvas;
         Window *m_parentWindow;
         Vec2f m_scale;
         std::unique_ptr<GLFWBackendData> m_data;
@@ -189,4 +189,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_PlATFORM_GLFW_GLFWBACKEND_HPP
+#endif // PTK_PlATFORM_GLFW_MAINWINDOW_HPP

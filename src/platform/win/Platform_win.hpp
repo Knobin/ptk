@@ -1,19 +1,19 @@
 //
-//  platform/win/WinPlatform.hpp
+//  platform/win/Platform_win.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-04-26.
 //
 
-#ifndef PTK_PLATFORM_WIN_WINPLATFORM_HPP
-#define PTK_PLATFORM_WIN_WINPLATFORM_HPP
+#ifndef PTK_PLATFORM_WIN_PLATFORM_HPP
+#define PTK_PLATFORM_WIN_PLATFORM_HPP
 
 // C++ Headers
 #include <string>
 
 namespace pTK
 {
-    namespace WinPlatform
+    namespace Platform_win
     {
         /** Function for initializing the Windows platform.
 
@@ -38,4 +38,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_PLATFORM_WIN_WINPLATFORM_HPP
+#endif // PTK_PLATFORM_WIN_PLATFORM_HPP

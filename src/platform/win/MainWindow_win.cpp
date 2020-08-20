@@ -1,14 +1,14 @@
 //
-//  platform/win/WinBackend.cpp
+//  platform/win/MainWindow_win.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-02-07.
 //
 
 // Local Headers
-#include "WinBackend.hpp"
-#include "WinPlatform.hpp"
-#include "WinRasterContext.hpp"
+#include "MainWindow_win.hpp"
+#include "Platform_win.hpp"
+#include "RasterContext_win.hpp"
 #include "ptk/Window.hpp"
 #include "ptk/core/Exception.hpp"
 #include "ptk/events/KeyCodes.hpp"
@@ -16,7 +16,7 @@
 
 // Include OpenGL backend if HW Acceleration is enabled.
 #ifdef PTK_HW_ACCELERATION
-#include "WinGLContext.hpp"
+#include "GLContext_win.hpp"
 #endif // PTK_HW_ACCELERATION
 
 // Windows Headers
@@ -85,11 +85,11 @@ namespace pTK
     {
 #ifdef PTK_HW_ACCELERATION
         if (type == BackendType::HARDWARE)
-            return std::make_unique<WinGLContext>(hwnd, size);
+            return std::make_unique<GLContext_win>(hwnd, size);
 #endif // PTK_HW_ACCELERATION
 
         // Software backend is always available.
-        return std::make_unique<WinRasterContext>(hwnd, size);
+        return std::make_unique<RasterContext_win>(hwnd, size);
     }
 
     static Size scaleSize(const Size& size, const Vec2f& scale) noexcept
@@ -111,7 +111,7 @@ namespace pTK
         uint wait;
     };
 
-    WinBackend::WinBackend(Window *window, const std::string& name, const Size& size, BackendType backend)
+    MainWindow_win::MainWindow_win(Window *window, const std::string& name, const Size& size, BackendType backend)
         : MainWindowBase(backend),
             m_parentWindow{window}
     {
@@ -148,7 +148,7 @@ namespace pTK
         ::UpdateWindow(m_hwnd);
     }
 
-    bool WinBackend::setPosHint(const Point& pos)
+    bool MainWindow_win::setPosHint(const Point& pos)
     {
         if (m_data->pos != pos)
         {
@@ -166,7 +166,7 @@ namespace pTK
         return false;
     }
 
-    void WinBackend::pollEvents()
+    void MainWindow_win::pollEvents()
     {
         MSG msg{};
         while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -176,36 +176,36 @@ namespace pTK
         }
     }
 
-    void WinBackend::waitEvents()
+    void MainWindow_win::waitEvents()
     {
         WaitMessage();
         pollEvents();
     }
 
-    void WinBackend::waitEventsTimeout(uint ms)
+    void MainWindow_win::waitEventsTimeout(uint ms)
     {
         MsgWaitForMultipleObjects(0, nullptr, FALSE, static_cast<DWORD>(ms), QS_ALLEVENTS);
         m_data->wait = ms;
         pollEvents();
     }
 
-    void WinBackend::beginPaint()
+    void MainWindow_win::beginPaint()
     {
         m_ps = PAINTSTRUCT();
         m_hdc = BeginPaint(m_hwnd, &m_ps);
     }
 
-    void WinBackend::endPaint()
+    void MainWindow_win::endPaint()
     {
         ::EndPaint(m_hwnd, &m_ps);
     }
 
-    bool WinBackend::setTitle(const std::string& name)
+    bool MainWindow_win::setTitle(const std::string& name)
     {
         return ::SetWindowTextW(m_hwnd, WinPlatform::stringToUTF16(name).c_str());
     }
 
-    bool WinBackend::setIcon(int32 width, int32 height, byte* pixels)
+    bool MainWindow_win::setIcon(int32 width, int32 height, byte* pixels)
     {
         // DIB information.
         BITMAPV5HEADER bmInfo{};
@@ -275,23 +275,23 @@ namespace pTK
         return true;
     }
 
-    void WinBackend::notifyEvent()
+    void MainWindow_win::notifyEvent()
     {
         // Signal the window to exit the event wait.
         PostMessage(m_hwnd, WM_NULL, 0, 0);
     }
 
-    DWORD WinBackend::getWindowStyle() const
+    DWORD MainWindow_win::getWindowStyle() const
     {
         return m_data->style;
     }
 
-    void WinBackend::swapBuffers()
+    void MainWindow_win::swapBuffers()
     {
         m_context->swapBuffers();
     }
 
-    bool WinBackend::resize(const Size& size)
+    bool MainWindow_win::resize(const Size& size)
     {
         // Apply the DPI scaling.
         const Size scaledSize{scaleSize(size, m_data->scale)};
@@ -319,12 +319,12 @@ namespace pTK
         return false;
     }
 
-    bool WinBackend::close()
+    bool MainWindow_win::close()
     {
         return ::DestroyWindow(m_hwnd);
     }
 
-    bool WinBackend::show()
+    bool MainWindow_win::show()
     {
         if (!::ShowWindow(m_hwnd, SW_SHOW))
         {
@@ -335,39 +335,39 @@ namespace pTK
         return false;
     }
 
-    bool WinBackend::hide()
+    bool MainWindow_win::hide()
     {
         return ::ShowWindow(m_hwnd, SW_HIDE);
     }
 
-    bool WinBackend::isHidden() const
+    bool MainWindow_win::isHidden() const
     {
         return !static_cast<bool>(::IsWindowVisible(m_hwnd));
     }
 
-    ContextBase* WinBackend::getContext() const
+    ContextBase* MainWindow_win::getContext() const
     {
         return m_context.get();
     }
 
-    Vec2f WinBackend::getDPIScale() const
+    Vec2f MainWindow_win::getDPIScale() const
     {
         return m_data->scale;
     }
 
-    Point WinBackend::getWinPos() const
+    Point MainWindow_win::getWinPos() const
     {
         return m_data->pos;
     }
 
-    Size WinBackend::getWinSize() const
+    Size MainWindow_win::getWinSize() const
     {
         RECT rect{};
         ::GetWindowRect(m_hwnd, &rect);
         return {rect.right - rect.left, rect.bottom - rect.top};
     }
 
-    bool WinBackend::setLimits(const Size&, const Size&)
+    bool MainWindow_win::setLimits(const Size&, const Size&)
     {
         RECT rect{};
         ::GetWindowRect(m_hwnd, &rect);
@@ -376,29 +376,29 @@ namespace pTK
         return true;
     }
 
-    bool WinBackend::minimize()
+    bool MainWindow_win::minimize()
     {
         ::ShowWindow(m_hwnd, SW_MINIMIZE);
         return true;
     }
 
-    bool WinBackend::isMinimized() const
+    bool MainWindow_win::isMinimized() const
     {
         return static_cast<bool>(IsMinimized(m_hwnd));
     }
 
-    bool WinBackend::restore()
+    bool MainWindow_win::restore()
     {
         ::ShowWindow(m_hwnd, SW_RESTORE);
         return true;
     }
 
-    bool WinBackend::isFocused() const
+    bool MainWindow_win::isFocused() const
     {
         return (m_hwnd == ::GetFocus());
     }
 
-    bool WinBackend::setScaleHint(const Vec2f& scale)
+    bool MainWindow_win::setScaleHint(const Vec2f& scale)
     {
         if (m_data->scale != scale)
         {
@@ -445,7 +445,7 @@ namespace pTK
         Window *window{data->window};
         LPMINMAXINFO lpMMI{reinterpret_cast<LPMINMAXINFO>(lParam)};
         const Size minSize{window->getMinSize()};
-        WinBackend* backend{static_cast<WinBackend*>(window->getBackend())};
+        MainWindow_win* backend{static_cast<MainWindow_win*>(window->getBackend())};
         const Size adjMinSize{calcAdjustedWindowSize(scaleSize(minSize, data->scale),
                                                      backend->getWindowStyle(), data->scale.x * 96.0f)};
         lpMMI->ptMinTrackSize.x = adjMinSize.width;
@@ -495,7 +495,7 @@ namespace pTK
         }
     }
 
-    LRESULT WinBackend::wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    LRESULT MainWindow_win::wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         WinBackendData* data{
             reinterpret_cast<WinBackendData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA))};

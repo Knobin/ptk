@@ -1,12 +1,12 @@
 //
-//  platform/GLContext.hpp
+//  platform/glfw/GLContext_glfw.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-02-09.
 //
 
-#ifndef PTK_PLATFORM_GLCONTEXT_HPP
-#define PTK_PLATFORM_GLCONTEXT_HPP
+#ifndef PTK_PLATFORM_GLFW_GLCONTEXT_HPP
+#define PTK_PLATFORM_GLFW_GLCONTEXT_HPP
 
 // Local Headers
 #include "ptk/core/platform/ContextBase.hpp"
@@ -27,26 +27,26 @@
 
 namespace pTK
 {
-    /** GLContext class implementation.
-     
+    /** GLContext_glfw class implementation.
+
         Canvas for setting up OpenGL rendering.
     */
-    class GLContext : public ContextBase
+    class GLContext_glfw : public ContextBase
     {
     public:
-        /** Constructs GLContext with default values.
-         
+        /** Constructs GLContext_glfw with default values.
+
             @return    default initialized GLContext
         */
-        GLContext(const Size& size);
+        GLContext_glfw(const Size& size);
 
         /** Deconstructor for GLContext.
 
         */
-        virtual ~GLContext();
-        
+        virtual ~GLContext_glfw();
+
         /** Function for resizing the context.
-         
+
             @param width   New width of context
             @param width   New height of context
         */
@@ -63,7 +63,7 @@ namespace pTK
             @return    SkSurface property
         */
         SkSurface* skSurface() const override;
-        
+
     private:
         // Skia
         sk_sp<SkSurface> m_surface;
@@ -74,4 +74,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_PLATFORM_GLCONTEXT_HPP
+#endif // PTK_PLATFORM_GLFW_GLCONTEXT_HPP

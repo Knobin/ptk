@@ -7,7 +7,7 @@
 
 // Local Headers
 #include "ptk/Window.hpp"
-#include "platform/Backend.hpp"
+#include "platform/Platform.hpp"
 #include "ptk/events/WindowEvent.hpp"
 
 namespace pTK
@@ -20,7 +20,7 @@ namespace pTK
         setName(name);
         Drawable::hide();
 
-        m_winBackend = std::make_unique<BACKEND>(this, name, size, backend);
+        m_winBackend = std::make_unique<MAINWINDOW>(this, name, size, backend);
     }
 
     void Window::onChildDraw(size_type)

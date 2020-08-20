@@ -7,15 +7,7 @@
 
 // Local Headers
 #include "ptk/Application.hpp"
-
-#ifdef PTK_PLATFORM_WINDOWS
-#include "platform/win/WinPlatform.hpp"
-#define PTK_INIT_PLATFORM WinPlatform::init
-#define PTK_DESTROY_PLATFORM WinPlatform::destroy
-#else
-#define PTK_INIT_PLATFORM()
-#define PTK_DESTROY_PLATFORM()
-#endif
+#include "platform/Platform.hpp"
 
 // C++ Headers
 #include <thread>
@@ -28,7 +20,7 @@ namespace pTK
         PTK_INIT_LOGGING();
         PTK_INIT_PLATFORM();
     }
-    
+
     Application::Application(int, char* [])
         : Singleton()
     {
@@ -45,9 +37,9 @@ namespace pTK
     int Application::exec(pTK::Window* window)
     {
         PTK_ASSERT(window, "Window is nullptr");
-        
+
         window->show();
-        
+
         // Event loop.
         while (!window->shouldClose())
         {
@@ -61,7 +53,7 @@ namespace pTK
 
         return 0;
     }
-    
+
     void Application::delayPoll(uint duration)
     {
         m_waitTime = duration;

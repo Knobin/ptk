@@ -1,12 +1,12 @@
 //
-//  platform/win/WinBackend.hpp
+//  platform/win/MainWindow_win.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-02-07.
 //
 
-#ifndef PTK_PlATFORM_WIN_WINBACKEND_HPP
-#define PTK_PlATFORM_WIN_WINBACKEND_HPP
+#ifndef PTK_PlATFORM_WIN_MAINWINDOW_HPP
+#define PTK_PlATFORM_WIN_MAINWINDOW_HPP
 
 // Local Headers
 #include "ptk/core/platform/MainWindowBase.hpp"
@@ -24,27 +24,27 @@ namespace pTK
     class Window;
     struct WinBackendData;
 
-    /** WinBackend class implementation.
+    /** MainWindow_win class implementation.
 
         This class handles the Windows Window.
     */
-    class WinBackend : public MainWindowBase
+    class MainWindow_win : public MainWindowBase
     {
     public:
-        /** Constructs WinBackend with default values.
+        /** Constructs MainWindow_win with default values.
 
             @param window   parent Window class
             @param name     name of the window
             @param size     size of the window
             @param backend  type of backend
-            @return         default initialized WinBackend
+            @return         default initialized MainWindow_win
         */
-        WinBackend(Window *window, const std::string& name, const Size& size, BackendType backend);
+        MainWindow_win(Window *window, const std::string& name, const Size& size, BackendType backend);
 
-        /** Deconstructor for WinBackend.
+        /** Deconstructor for MainWindow_win.
 
         */
-        virtual ~WinBackend() = default;
+        virtual ~MainWindow_win() = default;
 
         /** Function for closing the window.
 
@@ -226,4 +226,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_PlATFORM_WIN_WINBACKEND_HPP
+#endif // PTK_PlATFORM_WIN_MAINWINDOW_HPP
