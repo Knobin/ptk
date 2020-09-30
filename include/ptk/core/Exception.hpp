@@ -5,6 +5,9 @@
 //  Created by Robin Gustafsson on 2020-02-09.
 //
 
+#ifndef PTK_CORE_EXCEPTION_HPP
+#define PTK_CORE_EXCEPTION_HPP
+
 // C++ Headers
 #include <stdexcept>
 
@@ -34,3 +37,5 @@ namespace pTK
         using Exception::Exception;
     };
 }
+
+#endif // PTK_CORE_EXCEPTION_HPP
