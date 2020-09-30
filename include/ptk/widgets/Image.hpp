@@ -5,6 +5,9 @@
 //  Created by Robin Gustafsson on 2019-11-25.
 //
 
+#ifndef PTK_WIDGETS_IMAGE_HPP
+#define PTK_WIDGETS_IMAGE_HPP
+
 // Local Headers
 #include "ptk/core/Widget.hpp"
 #include "ptk/util/Vec2.hpp"
@@ -86,3 +89,6 @@ namespace pTK
         Vec2f m_scale;
     };
 }
+
+
+#endif // PTK_WIDGETS_IMAGE_HPP
