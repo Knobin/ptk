@@ -35,7 +35,6 @@ function(define_test)
 endfunction()
 
 # Add tests here!
-define_test(NAME ClockTest FILES ${PTK_INCLUDE}/util/Clock.hpp ${PTK_SRC}/util/Clock.cpp ClockTest.cpp)
 define_test(NAME ColorTest FILES ${PTK_INCLUDE}/util/Color.hpp ${PTK_SRC}/util/Color.cpp ColorTest.cpp)
 define_test(NAME PointTest FILES ${PTK_INCLUDE}/util/Point.hpp ${PTK_SRC}/util/Point.cpp PointTest.cpp)
 define_test(NAME RectangleTest FILES ${PTK_HEADER_FILES} RectangleTest.cpp LINKS ptk)
