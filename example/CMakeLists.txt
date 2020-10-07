@@ -9,6 +9,7 @@ foreach(FILE ${TEST_SOURCE_FILES})
     add_executable(${EXECUTABLE} ${FILE})
     set_property(TARGET ${EXECUTABLE} PROPERTY
             MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    target_include_directories(${EXECUTABLE} PRIVATE "${CMAKE_SOURCE_DIR}/include")
     target_link_libraries(${EXECUTABLE} ${SKIA_PLATFORM_DEPENDENCIES} skia ptk)
     set(EXAMPLE_LIST "${EXAMPLE_LIST}${EXECUTABLE};")
 endforeach()

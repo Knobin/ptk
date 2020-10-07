@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     });
     
     pTK::Ref<pTK::Button> customSizeBtn = pTK::create<pTK::Button>(style);
-    customSizeBtn->setSize(pTK::Size(250, 100));
+    customSizeBtn->setConstSize(pTK::Size(250, 100));
     customSizeBtn->setText("Custom Size Button");
     window.add(customSizeBtn);
     customSizeBtn->onClick([&customSizeBtn](pTK::Mouse::Button, const pTK::Point&){
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
     
     pTK::Ref<pTK::Button> customLabelSizeBtn = pTK::create<pTK::Button>(style);
     customLabelSizeBtn->setFontSize(24);
-    customLabelSizeBtn->setText("Custom Label Size Button");
+    customLabelSizeBtn->setText("Custom Font Size Button");
     window.add(customLabelSizeBtn);
     customLabelSizeBtn->onClick([&customLabelSizeBtn](pTK::Mouse::Button, const pTK::Point&){
         std::cout << customLabelSizeBtn->getText() << " clicked!\n";
