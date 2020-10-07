@@ -1,7 +1,6 @@
 
 # Source files
 set(CORE_FILES core/Box.cpp
-        core/ContextBase.cpp
         core/EventCallbacks.cpp
         core/EventHandling.cpp
         core/Font.cpp
@@ -9,10 +8,11 @@ set(CORE_FILES core/Box.cpp
         core/Sizable.cpp
         core/Text.cpp
         core/Widget.cpp
+        core/platform/ApplicationBase.cpp
+        core/platform/ContextBase.cpp
         )
 
 set(UTIL_FILES util/Alignment.cpp
-        util/Clock.cpp
         util/Color.cpp
         util/Point.cpp
         util/Semaphore.cpp
@@ -24,6 +24,7 @@ set(WIDGET_FILES widgets/Button.cpp
         widgets/HBox.cpp
         widgets/Image.cpp
         widgets/Label.cpp
+        widgets/Layer.cpp
         widgets/Rectangle.cpp
         widgets/VBox.cpp)
 
@@ -31,34 +32,63 @@ if (PTK_BUILD_TYPE MATCHES Debug)
     set(LOG_FILES Log.cpp)
 endif()
 
+# MacOS files
+set(PLATFORM_FILES_MAC platform/mac/Application_mac.hpp
+    platform/mac/Application_mac.mm
+    platform/mac/MainWindow_mac.hpp
+    platform/mac/MainWindow_mac.mm)
+set(PLATFORM_FILES_MAC_METAL platform/mac/MetalContext_mac.h
+    platform/mac/MetalContext_mac.mm)
+
+# Windows files
+set(PLATFORM_FILES_WIN platform/win/Application_win.cpp
+    platform/win/MainWindow_win.cpp
+    platform/win/RasterPolicy_win.cpp)
+set(PLATFORM_FILES_WIN_OPENGL platform/win/GLContext_win.cpp)
+
+# Platform files
+set(PLATFORM_FILES ${PLATFORM_FILES} platform/Platform.hpp)
 if (WIN32)
-    set(PLATFORM_FILES platform/win/Platform_win.cpp
-            platform/win/RasterContext_win.cpp
-            platform/win/MainWindow_win.cpp)
-    if (HW_ACCELERATION)
+    set(PLATFORM_FILES ${PLATFORM_FILES}
+        ${PLATFORM_FILES_WIN})
+    if (ENABLE_OPENGL)
         set(PLATFORM_FILES ${PLATFORM_FILES}
-                platform/win/GLContext_win.cpp)
-    endif (HW_ACCELERATION)
+            ${PLATFORM_FILES_WIN_OPENGL})
+    endif (ENABLE_OPENGL)
     message(STATUS "Using Windows backend")
 elseif (APPLE)
-    set(PLATFORM_FILES platform/mac/MainWindow_mac.cpp)
+    set(PLATFORM_FILES ${PLATFORM_FILES}
+        ${PLATFORM_FILES_MAC})
+    if (ENABLE_METAL)
+        set(PLATFORM_FILES ${PLATFORM_FILES}
+            ${PLATFORM_FILES_MAC_METAL})
+    endif (ENABLE_METAL)
     message(STATUS "Using macOS backend")
-  else()
-    set(PLATFORM_FILES platform/glfw/GLContext_glfw.cpp
-            platform/glfw/MainWindow_glfw.cpp)
-    message(STATUS "Using GLFW backend")
-  endif()
+else()
+    message(FATAL_ERROR "Unsupported platform")
+endif()
 
+# Header files
+file(GLOB_RECURSE HEADER_FILES ${CMAKE_SOURCE_DIR}/include/ptk/*.hpp)
+source_group(TREE "${CMAKE_SOURCE_DIR}/include/ptk" PREFIX "Header Files" FILES ${HEADER_FILES})
+
+# Source files
 set(SOURCE_FILES Application.cpp Window.cpp
         ${CORE_FILES}
         ${PLATFORM_FILES}
         ${UTIL_FILES}
         ${WIDGET_FILES}
         ${LOG_FILES})
-source_group(TREE "${CMAKE_SOURCE_DIR}/src" PREFIX "Source Files" FILES ${SOURCE_FILES})
+set(SOURCE_FILES_ALL ${SOURCE_FILES}
+    ${PLATFORM_FILES_MAC}
+    ${PLATFORM_FILES_MAC_HW}
+    ${PLATFORM_FILES_WIN}
+    ${PLATFORM_FILES_WIN_HW})
+source_group(TREE "${CMAKE_SOURCE_DIR}/src" PREFIX "Source Files" FILES ${SOURCE_FILES_ALL})
 
 # Define library
 add_library(${PROJECT_NAME} STATIC ${HEADER_FILES} ${SOURCE_FILES})
+target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/include")
 
 # Set runtime library to MT or MTd (Release / Debug)
 set_property(TARGET ${PROJECT_NAME} PROPERTY
@@ -77,15 +107,10 @@ endif ()
 target_link_libraries(${PROJECT_NAME} ${SKIA_PLATFORM_DEPENDENCIES} skia)
 
 # OpenGL
-if (HW_ACCELERATION)
+if (ENABLE_OPENGL)
     target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIRS})
     target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES})
-endif (HW_ACCELERATION)
-
-# GLFW
-if (NOT WIN32)
-    target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
-endif (NOT WIN32)
+endif (ENABLE_OPENGL)
 
 # spdlog
 if (PTK_BUILD_TYPE MATCHES Debug)

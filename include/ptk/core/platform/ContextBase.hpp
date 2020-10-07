@@ -67,23 +67,11 @@ namespace pTK
         */
         virtual void resize(const Size& size) = 0;
 
-        /** Function for clearing the context.
-
-            @param color   Clear color
-        */
-        virtual void clear(const Color& color);
-
-        /** Function for retrieving the SkCanvas of the context.
-
-            @return    SkCanvas property
-        */
-        virtual SkCanvas* skCanvas() const = 0;
-
         /** Function for retrieving the SkSurface of the context.
 
             @return    SkSurface property
         */
-        virtual SkSurface* skSurface() const = 0;
+        virtual sk_sp<SkSurface> surface() const = 0;
 
         /** Function for retrieving the size of the context.
 

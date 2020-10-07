@@ -20,7 +20,7 @@ namespace pTK
         setName(name);
         Drawable::hide();
 
-        m_winBackend = std::make_unique<MAINWINDOW>(this, name, size, backend);
+        m_winBackend = std::make_unique<PTK_MAINWINDOW_TYPE>(this, name, size, backend);
     }
 
     void Window::onChildDraw(size_type)
@@ -255,9 +255,6 @@ namespace pTK
         {
             m_close = true;
             m_winBackend->close();
-        }
-        else
-        {
             if (m_onClose)
                 m_onClose();
         }
@@ -282,21 +279,27 @@ namespace pTK
     {
         m_winBackend->beginPaint();
         ContextBase* context{m_winBackend->getContext()};
-        SkCanvas* canvas{context->skCanvas()};
-
-        Color color{getBackground()};
-        context->clear(color);
+        sk_sp<SkSurface> surface = context->surface();
+        SkCanvas* canvas{surface->getCanvas()};
 
         // Apply monitor scale.
         SkMatrix matrix{};
         Vec2f scale{m_winBackend->getDPIScale()};
         matrix.setScale(scale.x, scale.y);
         canvas->setMatrix(matrix);
-
+    
+        // Background.
+        Size size{getSize()};
+        SkRect rect{0, 0, static_cast<float>(size.width), static_cast<float>(size.height)};
+        Color bg{getBackground()};
+        SkPaint paint{};
+        paint.setARGB(255, bg.r, bg.g, bg.b);
+        canvas->drawRect(rect, paint);
+        
         for (auto& widget : *this)
             widget->onDraw(canvas);
 
-        canvas->flush();
+        surface->flushAndSubmit();
         m_winBackend->swapBuffers();
         m_winBackend->endPaint();
     }
