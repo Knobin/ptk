@@ -10,18 +10,24 @@
 #include <chrono>
 
 // settings
-const unsigned int SCR_WIDTH = 960;
-const unsigned int SCR_HEIGHT = 540;
+constexpr unsigned int SCR_WIDTH{960};
+constexpr unsigned int SCR_HEIGHT{540};
 
 // Label sizes
-const unsigned int FLARGE = 20;
-const unsigned int FSIDEBAR = 16;
-const unsigned int FNORMAL = 13;
+constexpr unsigned int FLARGE{20};
+constexpr unsigned int FSIDEBAR{16};
+constexpr unsigned int FNORMAL{13};
 
 // Colors
-uint colSidebar{0x252525FF};
-uint colContent{0x171717FF};
-uint colText{0xF5F5F5FF};
+uint colSidebar{0xF2F3F5FF};
+uint colContent{0xFFFFFFFF};
+uint colText{0x1C1D19FF};
+
+// Sidebar button style
+const pTK::Button::Style sbBtnStyle{pTK::Color(0xE3E5E8FF),
+                            pTK::Color(0xE0E2E5FF),
+                            pTK::Color(0xDCDFE2FF),
+                            pTK::Color(colText), 0.0f};
 
 pTK::Color interpolateColor(const pTK::Color& c1, const pTK::Color& c2, double factor)
 {
@@ -126,20 +132,16 @@ int main(int argc, char *argv[]) {
     sTitle->setAlign(pTK::Align::Top | pTK::Align::HCenter);
     sTitle->setPadding({18, 18, 18, 18});
 
-    // Button style for sidebar.
-    pTK::Button::Style sbBtnStyle;
-    sbBtnStyle.color = pTK::Color(0x212121FF);
-    sbBtnStyle.clickColor = pTK::Color(0x171717FF);
-    sbBtnStyle.hoverColor = pTK::Color(0x1f1f1fFF);
-    sbBtnStyle.textColor = pTK::Color(colText);
-    sbBtnStyle.cornerRadius = 0.0f;
-
     // First button in sidebar.
     pTK::Ref<pTK::Button> b1 = pTK::create<pTK::Button>(sbBtnStyle);
     b1->setText("Button 1");
     b1->setFontSize(FSIDEBAR);
     b1->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
     b1->setAlign(pTK::Top);
+    b1->onRelease([](pTK::Mouse::Button, const pTK::Point&) {
+        std::cout << "Do stuff with B1" << std::endl;
+        return true;
+    });
 
     // Second button in sidebar.
     pTK::Ref<pTK::Button> b2 = pTK::create<pTK::Button>(sbBtnStyle);
@@ -147,6 +149,10 @@ int main(int argc, char *argv[]) {
     b2->setFontSize(FSIDEBAR);
     b2->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
     b2->setAlign(pTK::Top);
+    b2->onRelease([](pTK::Mouse::Button, const pTK::Point&) {
+      std::cout << "Do stuff with B2" << std::endl;
+      return true;
+    });
 
     // Third button in sidebar.
     pTK::Ref<pTK::Button> b3 = pTK::create<pTK::Button>(sbBtnStyle);
@@ -154,6 +160,10 @@ int main(int argc, char *argv[]) {
     b3->setFontSize(FSIDEBAR);
     b3->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
     b3->setAlign(pTK::Top);
+    b3->onRelease([](pTK::Mouse::Button, const pTK::Point&) {
+      std::cout << "Do stuff with B3" << std::endl;
+      return true;
+    });
 
     // Bottom button in sidebar.
     pTK::Ref<pTK::Button> quit = pTK::create<pTK::Button>(pTK::Button::Style::Danger);
@@ -181,12 +191,17 @@ int main(int argc, char *argv[]) {
     //cTitle->setAlign(pTK::Align::Left | pTK::Align::Top);
 
     pTK::Ref<pTK::Rectangle> r1 = pTK::create<pTK::Rectangle>();
-    r1->setColor(pTK::Color(0x2D2D2DFF));
+    pTK::Color rColor{randomColor()};
+    rColor.a = 255;
+    r1->setColor(rColor);
     r1->setConstSize({250, 125});
     r1->setCornerRadius(5.0f);
     r1->setPadding({10, 10, 18, 18});
 
     pTK::Ref<pTK::Rectangle> r2 = pTK::create<pTK::Rectangle>(*r1.get());
+    rColor = randomColor();
+    rColor.a = 255;
+    r2->setColor(rColor);
     r2->onClick([&](pTK::Mouse::Button btn, const pTK::Point&) {
       if (btn == pTK::Mouse::Button::Left)
           r2->setColor(randomColor());
@@ -260,7 +275,7 @@ int main(int argc, char *argv[]) {
     // Add hbox to window.
     window.add(hbox);
 
-    //window.setMaxSize({1280, 720});
+    window.setMaxSize({1280, 720});
 
     std::atomic<bool> run{true};
     std::thread t1{[&](){
@@ -270,6 +285,7 @@ int main(int argc, char *argv[]) {
         std::size_t steps{250};
         double stepFactor{1.0 / (steps - 1.0)};
         size_t step{0};
+        constexpr size_t fps{72};
 
         while (run)
         {
@@ -280,7 +296,7 @@ int main(int argc, char *argv[]) {
                 step = 1;
             }
             r1->setColor(interpolateColor(c1, c2, stepFactor * step));
-            std::this_thread::sleep_for(std::chrono::milliseconds (1000 / 144));
+            std::this_thread::sleep_for(std::chrono::milliseconds (1000 / fps));
             ++step;
         }
     }};
