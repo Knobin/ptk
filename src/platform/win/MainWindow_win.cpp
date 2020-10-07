@@ -7,17 +7,14 @@
 
 // Local Headers
 #include "MainWindow_win.hpp"
-#include "Platform_win.hpp"
-#include "RasterContext_win.hpp"
-#include "ptk/Window.hpp"
-#include "ptk/core/Exception.hpp"
-#include "ptk/events/KeyCodes.hpp"
-#include "ptk/events/WindowEvent.hpp"
+#include "Application_win.hpp"
+#include "../common/RasterContext.hpp"
+#include "RasterPolicy_win.hpp"
 
 // Include OpenGL backend if HW Acceleration is enabled.
-#ifdef PTK_HW_ACCELERATION
+#ifdef PTK_OPENGL
 #include "GLContext_win.hpp"
-#endif // PTK_HW_ACCELERATION
+#endif // PTK_OPENGL
 
 // Windows Headers
 #include <windowsx.h>
@@ -27,6 +24,21 @@
 
 namespace pTK
 {
+    static std::unique_ptr<ContextBase> createWin32Context([[maybe_unused]] BackendType type, HWND hwnd,
+                                                           const Size& size)
+    {
+#ifdef PTK_OPENGL
+        if (type == BackendType::HARDWARE)
+            return std::make_unique<GLContext_win>(hwnd, size);
+#endif // PTK_OPENGL
+
+        // Software backend is always available.
+        RasterPolicy_win policy{hwnd};
+        return std::make_unique<RasterContext<RasterPolicy_win>>(size, policy);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+
     static std::map<byte, KeyCode> initKeyCodes() noexcept
     {
         std::map<byte, KeyCode> map{};
@@ -59,6 +71,8 @@ namespace pTK
         return Key::None;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////
+
     static Size calcAdjustedReverseWindowSize(const Size& from, DWORD style, float dpi)
     {
         RECT adjustedSize{};
@@ -80,18 +94,6 @@ namespace pTK
         return {adjustedSize.right - adjustedSize.left, adjustedSize.bottom - adjustedSize.top};
     }
 
-    static std::unique_ptr<ContextBase> createWin32Context(BackendType type, HWND hwnd,
-                                                           const Size& size)
-    {
-#ifdef PTK_HW_ACCELERATION
-        if (type == BackendType::HARDWARE)
-            return std::make_unique<GLContext_win>(hwnd, size);
-#endif // PTK_HW_ACCELERATION
-
-        // Software backend is always available.
-        return std::make_unique<RasterContext_win>(hwnd, size);
-    }
-
     static Size scaleSize(const Size& size, const Vec2f& scale) noexcept
     {
         Size newSize{};
@@ -99,6 +101,8 @@ namespace pTK
         newSize.height = static_cast<Size::value_type>(std::ceil(size.height * scale.y));
         return newSize;
     }
+
+    ///////////////////////////////////////////////////////////////////////////////
 
     struct WinBackendData
     {
@@ -111,14 +115,16 @@ namespace pTK
         uint wait;
     };
 
+    ///////////////////////////////////////////////////////////////////////////////
+    
     MainWindow_win::MainWindow_win(Window *window, const std::string& name, const Size& size, BackendType backend)
         : MainWindowBase(backend),
             m_parentWindow{window}
     {
         // High DPI
         HDC screen{GetDC(nullptr)};
-        float dpiX{static_cast<float>(::GetDeviceCaps(screen, LOGPIXELSX))};
-        float dpiY{static_cast<float>(::GetDeviceCaps(screen, LOGPIXELSY))};
+        const float dpiX{static_cast<float>(::GetDeviceCaps(screen, LOGPIXELSX))};
+        const float dpiY{static_cast<float>(::GetDeviceCaps(screen, LOGPIXELSY))};
 #ifdef PTK_DEBUG
     if (dpiX != dpiY)
     {
@@ -130,10 +136,10 @@ namespace pTK
         Vec2f scale{dpiX / 96.0f, dpiY / 96.0f};
         PTK_INFO("Windows Window Scaling {0:0.2f}x{1:0.2f}", scale.x, scale.y);
 
-        Size wSize{scaleSize(size, scale)};
-        DWORD style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX};
-        Size adjSize{calcAdjustedWindowSize(wSize, style, dpiX)};
-        m_hwnd = ::CreateWindowExW(0, L"PTK", WinPlatform::stringToUTF16(name).c_str(), style,
+        const Size wSize{scaleSize(size, scale)};
+        constexpr DWORD style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX};
+        const Size adjSize{calcAdjustedWindowSize(wSize, style, dpiX)};
+        m_hwnd = ::CreateWindowExW(0, L"PTK", Application_win::stringToUTF16(name).c_str(), style,
                                      CW_USEDEFAULT, CW_USEDEFAULT, adjSize.width, adjSize.height,
                                      nullptr, nullptr, ::GetModuleHandleW(nullptr), nullptr);
         if (!m_hwnd)
@@ -202,7 +208,7 @@ namespace pTK
 
     bool MainWindow_win::setTitle(const std::string& name)
     {
-        return ::SetWindowTextW(m_hwnd, WinPlatform::stringToUTF16(name).c_str());
+        return ::SetWindowTextW(m_hwnd, Application_win::stringToUTF16(name).c_str());
     }
 
     bool MainWindow_win::setIcon(int32 width, int32 height, byte* pixels)

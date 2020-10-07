@@ -219,8 +219,8 @@ namespace pTK
         Window *m_parentWindow;
         HWND m_hwnd;
         std::unique_ptr<ContextBase> m_context;
-        PAINTSTRUCT m_ps;
-        [[maybe_unused]] HDC m_hdc;
+        PAINTSTRUCT m_ps{};
+        [[maybe_unused]] HDC m_hdc{};
 
         std::unique_ptr<WinBackendData> m_data;
     };

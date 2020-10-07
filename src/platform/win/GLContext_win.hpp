@@ -22,24 +22,24 @@
 
 namespace pTK
 {
-    /** WinGLContext class implementation.
+    /** GLContext_win class implementation.
 
         Context for a hardware based OpenGL Windows backend.
         All drawings will be done using the GPU.
     */
-    class WinGLContext : public ContextBase
+    class GLContext_win : public ContextBase
     {
     public:
-        /** Constructs WinGLContext with default values.
+        /** Constructs GLContext_win with default values.
 
-            @return    default initialized WinGLContext
+            @return    default initialized GLContext_win
         */
-        WinGLContext(HWND handle, const Size& size);
+        GLContext_win(HWND handle, const Size& size);
 
         /** Win32RasterCanvas for GLCanvas.
 
         */
-        virtual ~WinGLContext();
+        virtual ~GLContext_win();
 
         /** Function for resizing the context.
 
@@ -48,17 +48,11 @@ namespace pTK
         */
         void resize(const Size& size) override;
 
-        /** Function for retrieving the SkCanvas of the context.
-
-            @return    SkCanvas property
-        */
-        SkCanvas* skCanvas() const override;
-
         /** Function for retrieving the SkSurface of the context.
 
             @return    SkSurface property
         */
-        SkSurface* skSurface() const override;
+        sk_sp<SkSurface> surface() const override;
 
         /** Function for swapping the buffers
 

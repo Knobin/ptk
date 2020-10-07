@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "WinGLContext.hpp"
+#include "GLContext_win.hpp"
 
 // OpenGL Windows Headers
 #include <GL/gl.h>
@@ -34,7 +34,7 @@
 
 namespace pTK
 {
-    WinGLContext::WinGLContext(HWND hwnd, const Size& size)
+    GLContext_win::GLContext_win(HWND hwnd, const Size& size)
         : ContextBase(size), m_hwnd{hwnd}, m_hglrc{}, m_context{nullptr}, m_info{}, m_colorType{},
             m_props{SkSurfaceProps::kUseDeviceIndependentFonts_Flag, SkSurfaceProps::kLegacyFontHost_InitType}
     {
@@ -58,18 +58,8 @@ namespace pTK
             GrGLFramebufferInfo info;
             info.fFBOID = (GrGLuint)buffer;
             m_info.fFormat = GL_RGBA8;
+            m_colorType = kRGBA_8888_SkColorType;
 
-#ifdef PTK_COMPILER_MSVC
-#pragma warning( push )
-#pragma warning( disable : 4127)
-#endif
-            if (kRGBA_8888_GrPixelConfig == kSkia8888_GrPixelConfig)
-                m_colorType = kRGBA_8888_SkColorType;
-            else
-                m_colorType = kBGRA_8888_SkColorType;
-#ifdef PTK_COMPILER_MSVC
-#pragma warning (pop )
-#endif
             resize(size);
         }
 #ifdef PTK_DEBUG
@@ -80,17 +70,17 @@ namespace pTK
 #endif
     }
 
-    WinGLContext::~WinGLContext()
+    GLContext_win::~GLContext_win()
     {
         // Apparently, surface needs to be destroyed before context.
         // Otherwise, SkRefCount will give a nice assert.
         m_surface.reset();
         m_context.reset();
 
-        PTK_INFO("Deconstructed WinGLContext");
+        PTK_INFO("Deconstructed GLContext_win");
     }
 
-    void WinGLContext::resize(const Size& size)
+    void GLContext_win::resize(const Size& size)
     {
         glViewport(0, 0, size.width, size.height);
 
@@ -102,21 +92,16 @@ namespace pTK
         m_surface.reset(surface);
 
         //clear(Color{0xFFFFFFFF});
-        PTK_INFO("Constructed WinGLContext: {}x{}", size.width, size.height);
+        PTK_INFO("Constructed GLContext_win: {}x{}", size.width, size.height);
         setSize(size);
     }
 
-    SkCanvas* WinGLContext::skCanvas() const
+    sk_sp<SkSurface> GLContext_win::surface() const
     {
-        return m_surface->getCanvas();
+        return m_surface;
     }
 
-    SkSurface* WinGLContext::skSurface() const
-    {
-        return m_surface.get();
-    }
-
-    void WinGLContext::swapBuffers()
+    void GLContext_win::swapBuffers()
     {
         HDC dc{GetDC(m_hwnd)};
         SwapBuffers(dc);
