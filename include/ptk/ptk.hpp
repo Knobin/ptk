@@ -14,8 +14,6 @@
 #include "ptk/Window.hpp"
 
 // --- Core --------------------------
-#include "ptk/core/platform/ContextBase.hpp"
-#include "ptk/core/platform/MainWindowBase.hpp"
 #include "ptk/core/Container.hpp"
 #include "ptk/core/Drawable.hpp"
 #include "ptk/core/Event.hpp"
@@ -44,7 +42,6 @@
 #include "ptk/util/SafeQueue.hpp"
 #include "ptk/util/Semaphore.hpp"
 #include "ptk/util/Size.hpp"
-#include "ptk/util/Clock.hpp"
 #include "ptk/util/Vec2.hpp"
 
 // --- Widgets -----------------------
