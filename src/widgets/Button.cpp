@@ -22,6 +22,7 @@ namespace pTK
         setStyle(Style::Default);
         m_text->setParent(this);
         m_text->setFontSize(14);
+        setConstSize({});
     }
     
     Button::Button(const Style& style)
@@ -31,6 +32,7 @@ namespace pTK
         setStyle(style);
         m_text->setParent(this);
         m_text->setFontSize(14);
+        setConstSize({});
     }
     
     void Button::setPosHint(const Point& pos)
@@ -72,7 +74,10 @@ namespace pTK
                 const int wMargin{((bSize.width - wSize.width) > dMargin) ? 0 : dMargin};
                 wSize.width = ((wSize.width > bSize.width) ? wSize.width : bSize.width) + (wMargin);
                 wSize.height = ((wSize.height > bSize.height) ? wSize.height : bSize.height) + (hMargin);
-                Widget::setSize(wSize);
+                if (isConstSize())
+                    setConstSize(wSize);
+                else
+                    setSize(wSize);
             }
             
             if (m_labelPos != textPos)
@@ -226,13 +231,15 @@ namespace pTK
     
     bool Button::onReleaseEvent(Mouse::Button, const Point&)
     {
-        if (m_hover)
-            setColor(m_hoverColor);
-        else
-            setColor(m_colorCopy);
-        
+        if (m_click)
+        {
+            if (m_hover)
+                setColor(m_hoverColor);
+            else
+                setColor(m_colorCopy);
+        }
+
         m_click = false;
-        
         
         return true;
     }
@@ -242,10 +249,19 @@ namespace pTK
         Size textBounds{m_text->getBounds()};
         textBounds.height += 2*m_borderSize;
         textBounds.width += 2*m_borderSize;
-        
-        if ((textBounds.height > getSize().height) || (textBounds.width > getSize().width))
-            setSize(textBounds);
-        
-        setMinSize(textBounds);
+
+        PTK_INFO("BUTTON \"{}\" IS CONST: {}", m_text->getText(), isConstSize());
+
+        if (!isConstSize())
+            setMinSize(textBounds);
+
+        Size cSize{getSize()};
+        if ((textBounds.height > cSize.height) || (textBounds.width > cSize.width))
+        {
+            if (isConstSize())
+                setConstSize(textBounds);
+            else
+                setSize(textBounds);
+        }
     }
 }
