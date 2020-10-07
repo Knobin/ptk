@@ -61,22 +61,9 @@ namespace pTK
 
     void Box::onDraw(SkCanvas* canvas)
     {
-        // Set Size and Point
-        const SkPoint pos{convertToSkPoint(getPosition())};
-        SkPoint size{convertToSkPoint(getSize())};
-        size += pos; // skia needs the size to be pos+size.
-
-        // Set Color
-        SkPaint paint;
-        paint.setAntiAlias(true);
-        paint.setARGB(m_background.a, m_background.r, m_background.g, m_background.b);
-
-        // Draw Rect
-        SkRect rect{};
-        rect.set(pos, size);
-        paint.setStyle(SkPaint::kStrokeAndFill_Style);
-        canvas->drawRoundRect(rect, 0, 0, paint);
-
+        PTK_ASSERT(canvas, "Canvas is undefined");
+        
+        drawBackground(canvas);
         for (auto& item : *this)
             item->onDraw(canvas);
     }
@@ -241,4 +228,26 @@ namespace pTK
     {
         return m_busy;
     }
+
+    void Box::drawBackground(SkCanvas *canvas) const
+    {
+        PTK_ASSERT(canvas, "Canvas is undefined");
+        
+        // Set Size and Point
+        const SkPoint pos{convertToSkPoint(getPosition())};
+        SkPoint size{convertToSkPoint(getSize())};
+        size += pos; // skia needs the size to be pos+size.
+
+        // Set Color
+        SkPaint paint;
+        paint.setAntiAlias(true);
+        paint.setARGB(m_background.a, m_background.r, m_background.g, m_background.b);
+
+        // Draw Rect
+        SkRect rect{};
+        rect.set(pos, size);
+        paint.setStyle(SkPaint::kStrokeAndFill_Style);
+        canvas->drawRoundRect(rect, 0, 0, paint);
+    }
+
 } // namespace pTK

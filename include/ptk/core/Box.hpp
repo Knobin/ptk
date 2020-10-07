@@ -135,7 +135,7 @@ namespace pTK
 
             @return    current background color
         */
-        const Color& getBackground() const;
+        [[nodiscard]] const Color& getBackground() const;
 
     protected:
         /** Function for checking if a child has called a parent function.
@@ -145,7 +145,10 @@ namespace pTK
 
             @return     status
         */
-        bool busy() const;
+        [[nodiscard]] bool busy() const;
+        
+        // TODO: Add doc.
+        void drawBackground(SkCanvas *canvas) const;
 
     private:
         /** Callback to use when a Widget has been successfully added.
