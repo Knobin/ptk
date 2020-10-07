@@ -90,7 +90,8 @@ namespace pTK
             const Margin cMargin{child->getMargin()};
             const Padding cPadding{child->getPadding()};
             vbPos.y += cMargin.top + cPadding.top;
-            child->setSize(cSize);
+            if (child->getSize() != cSize)
+                child->setSize(cSize);
             child->setPosHint(Point(vbPos.x + alignChildH(i, newSize, cSize), vbPos.y));
             vbPos.y += cSize.height + cMargin.bottom + cPadding.bottom;
         }
@@ -166,7 +167,8 @@ namespace pTK
             const Margin cMargin{child->getMargin()};
             const Padding cPadding{child->getPadding()};
             vbPos.y += cMargin.top + cPadding.top + spaces.at(i);
-            child->setSize(cSize);
+            if (child->getSize() != cSize)
+                child->setSize(cSize);
             child->setPosHint(Point(vbPos.x + alignChildH(i, vbSize, cSize), vbPos.y));
             vbPos.y += cSize.height + cMargin.bottom + cPadding.bottom;
         }
@@ -205,12 +207,12 @@ namespace pTK
                 }
             }
 
-            uint spacesToUse{0};
+            Size::value_type spacesToUse{0};
             for (size_type i{0}; i != spaceCount; i++)
                 if (spaces.at(i) == 1)
                     ++spacesToUse;
 
-            uint spaceHeight{(spacesToUse != 0) ? height / spacesToUse : 0};
+            Size::value_type spaceHeight{(spacesToUse != 0) ? height / spacesToUse : 0};
             for (size_type i{0}; i != spaceCount; i++)
                 if (spaces.at(i) == 1)
                     spaces.at(i) = spaceHeight;

@@ -71,7 +71,11 @@ namespace pTK
 
         // Signal a size change.
         if (changed)
+        {
+            m_minLock = false;
+            m_maxLock = false;
             onSizeChange(m_size);
+        }
     }
 
     void Sizable::setConstSize(const Size& size)

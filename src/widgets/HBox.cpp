@@ -70,7 +70,8 @@ namespace pTK
                 size and we only expand so the they will fit with their size and margin.
                 Auto margin is not included.
              */
-            child->setSize(cSize);
+            if (child->getSize() != cSize)
+                child->setSize(cSize);
             Margin cMargin{child->getMargin()};
             Padding cPadding{child->getPadding()};
             vbPos.x += cMargin.left + cPadding.left;;
@@ -150,7 +151,8 @@ namespace pTK
             const Margin cMargin{child->getMargin()};
             const Padding cPadding{child->getPadding()};
             vbPos.x += cMargin.left + cPadding.left + spaces.at(i);
-            child->setSize(cSize);
+            if (child->getSize() != cSize)
+                child->setSize(cSize);
             child->setPosHint(Point(vbPos.x, vbPos.y + alignChildV(i, vbSize, cSize)));
             vbPos.x += cSize.width + cMargin.right + cPadding.right;
         }
@@ -189,12 +191,12 @@ namespace pTK
                 }
             }
             
-            uint spacesToUse{0};
+            Size::value_type spacesToUse{0};
             for (size_type i{0}; i != spaceCount; i++)
                 if (spaces.at(i) == 1)
                     ++spacesToUse;
             
-            uint spaceWidth{(spacesToUse != 0) ? static_cast<uint>(width) / spacesToUse : 0};
+            Size::value_type spaceWidth{(spacesToUse != 0) ? static_cast<Size::value_type>(width) / spacesToUse : 0};
             for (size_type i{0}; i != spaceCount; i++)
                 if (spaces.at(i) == 1)
                     spaces.at(i) = spaceWidth;

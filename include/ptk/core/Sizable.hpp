@@ -31,7 +31,7 @@ namespace pTK
 
             @return  default initialized Sizable
         */
-        Sizable(const Size& size);
+        explicit Sizable(const Size& size);
 
         /** Deconstructor for Sizable.
 
@@ -48,7 +48,7 @@ namespace pTK
 
             @return    minimal size
         */
-        Size getMinSize() const;
+        [[nodiscard]] Size getMinSize() const;
 
         /** Function for setting size.
 
@@ -66,7 +66,7 @@ namespace pTK
 
             @return    size
         */
-        const Size& getSize() const;
+        [[nodiscard]] const Size& getSize() const;
 
         /** Function for setting maximal size.
 
@@ -78,7 +78,7 @@ namespace pTK
 
             @return    maximal size
         */
-        Size getMaxSize() const;
+        [[nodiscard]] Size getMaxSize() const;
 
         /** Function for setting both minimal and maximal size.
 
@@ -91,7 +91,7 @@ namespace pTK
 
             @return    status
          */
-        bool isConstSize() const;
+        [[nodiscard]] bool isConstSize() const;
 
     private:
         /** Function for knowing when the size has been changed.
