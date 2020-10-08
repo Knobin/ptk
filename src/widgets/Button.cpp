@@ -250,8 +250,6 @@ namespace pTK
         textBounds.height += 2*m_borderSize;
         textBounds.width += 2*m_borderSize;
 
-        PTK_INFO("BUTTON \"{}\" IS CONST: {}", m_text->getText(), isConstSize());
-
         if (!isConstSize())
             setMinSize(textBounds);
 

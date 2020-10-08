@@ -24,7 +24,6 @@ set(WIDGET_FILES widgets/Button.cpp
         widgets/HBox.cpp
         widgets/Image.cpp
         widgets/Label.cpp
-        widgets/Layer.cpp
         widgets/Rectangle.cpp
         widgets/VBox.cpp)
 
