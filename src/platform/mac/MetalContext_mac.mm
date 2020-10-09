@@ -29,7 +29,9 @@ namespace pTK
     {
         @autoreleasepool {
             m_mainView = static_cast<NSView*>(mainView);
-            m_device = MTLCreateSystemDefaultDevice();
+            CGDirectDisplayID viewDisplayID = (CGDirectDisplayID) [m_mainView.window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntegerValue];
+            m_device = CGDirectDisplayCopyCurrentMetalDevice(viewDisplayID);
+            // m_device = MTLCreateSystemDefaultDevice();
             m_queue = [m_device newCommandQueue];
             PTK_ASSERT(m_queue, "Could not create command queue");
             [m_queue setLabel:@"PTK Main Queue"];
