@@ -304,9 +304,6 @@ namespace pTK
 
         if (scaledSize != m_data->size)
         {
-            // Adjust the size depending on the window frame.
-            const Size adjSize{calcAdjustedWindowSize(scaledSize, m_data->style, m_data->scale.x * 96.0f)};
-
             // Get the window size and position.
             RECT rect{};
             ::GetWindowRect(m_hwnd, &rect);
