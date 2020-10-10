@@ -31,14 +31,26 @@ namespace pTK
     void Window::handleEvents()
     {
         m_eventQueue.lock();
-        const std::size_t eventCount{m_eventQueue.size()};
-        for (std::size_t i{0}; i < eventCount; i++)
-        {
-            Event* event{m_eventQueue.front().get()};
-            handleEvent(event);
-            m_eventQueue.pop();
-        }
+        std::size_t eventCount{m_eventQueue.size()};
         m_eventQueue.unlock();
+        
+        while (eventCount > 0)
+        {
+            m_eventQueue.lock();
+            std::unique_ptr<Event> event = std::move(m_eventQueue.front());
+            m_eventQueue.pop();
+            m_eventQueue.unlock();
+            
+            handleEvent(event.get());
+            
+            --eventCount;
+            if (eventCount == 0)
+            {
+                m_eventQueue.lock();
+                eventCount = m_eventQueue.size();
+                m_eventQueue.unlock();
+            }
+        }
 
         if (m_draw)
         {

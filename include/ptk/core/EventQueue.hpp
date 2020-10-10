@@ -18,6 +18,8 @@
 #include <mutex>
 #include <condition_variable>
 #include <utility>
+#include <memory>
+#include <iostream>
 
 namespace pTK
 {
@@ -30,7 +32,7 @@ namespace pTK
     class EventQueue : public Singleton
     {
     public:
-        using container_type = Container<Ref<Event>, alloc<Ref<Event>>>;
+        using container_type = Container<std::unique_ptr<Event>, alloc<std::unique_ptr<Event>>>;
         using value_type = typename container_type::value_type;
         using reference = typename container_type::reference;
         using const_reference = typename container_type::const_reference;
@@ -53,7 +55,7 @@ namespace pTK
         {
             static_assert(std::is_base_of<Event, T>::value, "T should inherit from Event");
 
-            Ref<Event> event = create<T>(std::forward<Args>(args)...);
+            std::unique_ptr<Event> event = std::make_unique<T>(std::forward<Args>(args)...);
             if constexpr (std::is_same_v<PaintEvent, T>)
             {
                 PaintEvent *pEvent{static_cast<PaintEvent*>(event.get())};
@@ -69,7 +71,7 @@ namespace pTK
                 }
 
             }
-            m_queue.push_back(event);
+            m_queue.push_back(std::move(event));
             return true;
         }
 
