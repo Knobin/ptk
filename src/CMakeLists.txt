@@ -30,43 +30,8 @@ if (PTK_BUILD_TYPE MATCHES Debug)
     set(LOG_FILES Log.cpp)
 endif()
 
-# MacOS files
-set(PLATFORM_FILES_MAC platform/mac/Application_mac.hpp
-    platform/mac/Application_mac.mm
-    platform/mac/MainWindow_mac.hpp
-    platform/mac/MainWindow_mac.mm
-    platform/mac/RasterPolicy_mac.hpp
-    platform/mac/RasterPolicy_mac.mm)
-set(PLATFORM_FILES_MAC_METAL platform/mac/MetalContext_mac.hpp
-    platform/mac/MetalContext_mac.mm)
-
-# Windows files
-set(PLATFORM_FILES_WIN platform/win/Application_win.cpp
-    platform/win/MainWindow_win.cpp
-    platform/win/RasterPolicy_win.cpp)
-set(PLATFORM_FILES_WIN_OPENGL platform/win/GLContext_win.cpp)
-
-# Platform files
-set(PLATFORM_FILES ${PLATFORM_FILES} platform/Platform.hpp)
-if (WIN32)
-    set(PLATFORM_FILES ${PLATFORM_FILES}
-        ${PLATFORM_FILES_WIN})
-    if (ENABLE_OPENGL)
-        set(PLATFORM_FILES ${PLATFORM_FILES}
-            ${PLATFORM_FILES_WIN_OPENGL})
-    endif (ENABLE_OPENGL)
-    message(STATUS "Using Windows backend")
-elseif (APPLE)
-    set(PLATFORM_FILES ${PLATFORM_FILES}
-        ${PLATFORM_FILES_MAC})
-    if (ENABLE_METAL)
-        set(PLATFORM_FILES ${PLATFORM_FILES}
-            ${PLATFORM_FILES_MAC_METAL})
-    endif (ENABLE_METAL)
-    message(STATUS "Using macOS backend")
-else()
-    message(FATAL_ERROR "Unsupported platform")
-endif()
+# Get platform files
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/platform)
 
 # Header files
 file(GLOB_RECURSE HEADER_FILES ${CMAKE_SOURCE_DIR}/include/ptk/*.hpp)

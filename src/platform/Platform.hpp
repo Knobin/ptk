@@ -14,8 +14,10 @@
     #include "win/MainWindow_win.hpp"
     using PTK_MAINWINDOW_TYPE = pTK::MainWindow_win;
 #elif defined(PTK_PLATFORM_UNIX)
-    // TODO: Implement X11 Window.
-    #error "Implement platform!"
+    #include "unix/Application_unix.hpp"
+    using PTK_APPLICATION_TYPE = pTK::Application_unix;
+    #include "unix/MainWindow_unix.hpp"
+    using PTK_MAINWINDOW_TYPE = pTK::MainWindow_unix;
 #elif defined(PTK_PLATFORM_APPLE)
     #include "mac/Application_mac.hpp"
     using PTK_APPLICATION_TYPE = pTK::Application_mac;
