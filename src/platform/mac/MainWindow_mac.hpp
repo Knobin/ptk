@@ -213,6 +213,11 @@ namespace pTK
 
         WinData *m_data;
     };
+
+    /*
+     
+     
+     */
 }
 
 #endif // PTK_PlATFORM_MAC_MAINWINDOW_HPP

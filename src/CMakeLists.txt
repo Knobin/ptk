@@ -9,8 +9,7 @@ set(CORE_FILES core/Box.cpp
         core/Text.cpp
         core/Widget.cpp
         core/platform/ApplicationBase.cpp
-        core/platform/ContextBase.cpp
-        )
+        core/platform/ContextBase.cpp)
 
 set(UTIL_FILES util/Alignment.cpp
         util/Color.cpp
@@ -35,8 +34,10 @@ endif()
 set(PLATFORM_FILES_MAC platform/mac/Application_mac.hpp
     platform/mac/Application_mac.mm
     platform/mac/MainWindow_mac.hpp
-    platform/mac/MainWindow_mac.mm)
-set(PLATFORM_FILES_MAC_METAL platform/mac/MetalContext_mac.h
+    platform/mac/MainWindow_mac.mm
+    platform/mac/RasterPolicy_mac.hpp
+    platform/mac/RasterPolicy_mac.mm)
+set(PLATFORM_FILES_MAC_METAL platform/mac/MetalContext_mac.hpp
     platform/mac/MetalContext_mac.mm)
 
 # Windows files

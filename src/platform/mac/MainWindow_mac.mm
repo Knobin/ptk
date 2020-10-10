@@ -14,10 +14,11 @@
 
 #include "../common/RasterContext.hpp"
 #include "Application_mac.hpp"
+#include "RasterPolicy_mac.hpp"
 
 // Include Metal backend.
 #ifdef PTK_METAL
-    #include "MetalContext_mac.h"
+    #include "MetalContext_mac.hpp"
 #endif
 
 // macOS Headers
@@ -272,69 +273,6 @@ namespace pTK
 
     */
 
-    class RC_policy
-    {
-    public:
-        RC_policy() = default;
-
-        ~RC_policy()
-        {
-            @autoreleasepool {
-                CGContextRelease(gc);
-
-                delete [] static_cast<uint32_t*>(pixels);;
-            }
-        }
-
-        bool resize(const Size& nSize)
-        {
-            @autoreleasepool {
-                delete [] static_cast<uint32_t*>(pixels);
-                CGContextRelease(gc);
-
-                const std::size_t width{static_cast<std::size_t>(nSize.width)};
-                const std::size_t height{static_cast<std::size_t>(nSize.height)};
-
-                uint32_t *buffer = new (std::nothrow) uint32_t[width * height];
-                if (!buffer)
-                    return false;
-
-                pixels = static_cast<void*>(buffer);
-                size = sizeof(uint32_t) * width * height;
-
-                CGColorSpaceRef rgb = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-                uint32_t bmInfo = kCGImageByteOrder32Big | kCGImageAlphaPremultipliedLast;
-                gc = CGBitmapContextCreate(pixels, width, height, 8, sizeof(uint32_t) * width, rgb, bmInfo);
-                CGColorSpaceRelease(rgb);
-
-                return static_cast<bool>(gc);
-            }
-
-        }
-
-        void swapBuffers() const
-        {
-            @autoreleasepool {
-                CGImageRef image = CGBitmapContextCreateImage(gc);
-                window.contentView.wantsLayer = YES;
-#ifdef PTK_COMPILER_CLANG
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wold-style-cast"
-                window.contentView.layer.contents = (__bridge id)image;
-#pragma clang diagnostic pop
-#endif
-                CGImageRelease(image);
-            }
-
-        }
-
-        std::size_t size{0};
-        CGContextRef gc;
-        void *pixels{nullptr};
-        NSWindow *window;
-        const SkColorType colorType{kN32_SkColorType};
-    };
-
     static std::unique_ptr<ContextBase> createMacContext(BackendType type, MainWindow_mac::WinData *data, void *view)
     {
 #ifdef PTK_DEBUG
@@ -349,9 +287,8 @@ namespace pTK
 #endif
 
         // Software backend is always available.
-        RC_policy policy{};
-        policy.window = data->window;
-        return std::make_unique<RasterContext<RC_policy>>(scaledSize, policy);
+        RasterPolicy_mac policy(data->window);
+        return std::make_unique<RasterContext<RasterPolicy_mac>>(scaledSize, policy);
     }
 
     MainWindow_mac::MainWindow_mac(Window *window, const std::string& name, const Size& size, BackendType backend)
