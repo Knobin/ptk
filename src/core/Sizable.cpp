@@ -24,6 +24,9 @@ namespace pTK
 
     void Sizable::setMinSize(const Size& size)
     {
+        if (size == getMinSize())
+            return;
+        
         // Update minimal sizes.
         byte status{updateMinWidth(size.width)};
         status |= updateMinHeight(size.height);
@@ -51,6 +54,9 @@ namespace pTK
 
     void Sizable::setSize(const Size& size)
     {
+        if (size == getSize())
+            return;
+        
         bool changed = false;
 
         // Height
@@ -97,6 +103,9 @@ namespace pTK
 
     void Sizable::setMaxSize(const Size& size)
     {
+        if (size == getMaxSize())
+            return;
+        
         // Update maximum sizes.
         byte status{updateMaxWidth(size.width)};
         status |= updateMaxHeight(size.height);
