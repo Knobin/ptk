@@ -18,6 +18,7 @@
 
 // Windows Headers
 #include <windowsx.h>
+#include <Dwmapi.h>
 
 // C++ Headers
 #include <cmath>
@@ -113,6 +114,7 @@ namespace pTK
         DWORD style;
         bool minimized;
         uint wait;
+        bool ignoreSize;
     };
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -147,7 +149,7 @@ namespace pTK
         PTK_INFO("Created WinWindow: {}x{}", wSize.width, wSize.height);
 
         m_context = createWin32Context(backend, m_hwnd, wSize);
-        m_data = std::make_unique<WinBackendData>(WinBackendData{window, scale, wSize, {}, style, false, 0});
+        m_data = std::make_unique<WinBackendData>(WinBackendData{window, scale, wSize, {}, style, false, 0, false});
         SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)m_data.get());
 
         ::ShowWindow(m_hwnd, SW_SHOW);
@@ -302,27 +304,18 @@ namespace pTK
         // Apply the DPI scaling.
         const Size scaledSize{scaleSize(size, m_data->scale)};
 
-        if (scaledSize != m_data->size)
+        // Apply the new size to the context and window.
+        if (scaledSize != m_context->getSize())
+            m_context->resize(scaledSize);
+
+        if (!m_data->ignoreSize)
         {
-            // Get the window size and position.
-            RECT rect{};
-            ::GetWindowRect(m_hwnd, &rect);
-
-            m_data->pos = Point{rect.left, rect.top};
-            m_data->size = scaledSize;
-
-            // Apply the new size to the context and window.
-            if (scaledSize != m_context->getSize())
-                m_context->resize(scaledSize);
-
-            RECT rc{0};
-            if (::GetWindowRect(m_hwnd, &rc))
-                ::MoveWindow(m_hwnd, m_data->pos.x, m_data->pos.y, rc.right - rc.left, rc.bottom - rc.top, TRUE);
-
-            return true;
+            const Size adjSize{calcAdjustedWindowSize(scaledSize, m_data->style, m_data->scale.x * 96.0f)};
+            ::SetWindowPos(m_hwnd, 0, 0, 0, adjSize.width, adjSize.height, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
         }
 
-        return false;
+        m_data->ignoreSize = false;
+        return true;
     }
 
     bool MainWindow_win::close()
@@ -494,6 +487,7 @@ namespace pTK
                     ResizeEvent evt{scaleSize(size,
                                               Vec2f{1.0f / data->scale.x,
                                                     1.0f / data->scale.y})};
+                    data->ignoreSize = true;
                     window->sendEvent(&evt);
                     window->forceDrawAll();
                 }
@@ -579,6 +573,7 @@ namespace pTK
                                           Vec2f{1.0f / data->scale.x, 1.0f / data->scale.y})};
                 if (evt.size != data->size)
                 {
+                    data->ignoreSize = true;
                     window->sendEvent(&evt);
                     window->forceDrawAll();
                 }
