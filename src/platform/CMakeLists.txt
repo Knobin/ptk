@@ -22,7 +22,7 @@ set(PLATFORM_FILES_UNIX platform/unix/Application_unix.cpp
     platform/win/MainWindow_unix.cpp)
 
 # Set platform files
-set(PLATFORM_FILES ${PLATFORM_FILES} platform/Platform.hpp)
+set(PLATFORM_FILES platform/Platform.hpp)
 if (PTK_PLATFORM STREQUAL "Unix")
     set(PLATFORM_FILES ${PLATFORM_FILES}
         ${PLATFORM_FILES_UNIX})
@@ -45,3 +45,13 @@ elseif (PTK_PLATFORM STREQUAL "macOS")
 else()
     message(FATAL_ERROR "Unsupported platform")
 endif()
+
+set(PLATFORM_FILES ${PLATFORM_FILES} PARENT_SCOPE)
+
+# All platform files
+set(PLATFORM_FILES_ALL ${PLATFORM_FILES}
+    ${PLATFORM_FILES_MAC}
+    ${PLATFORM_FILES_MAC_HW}
+    ${PLATFORM_FILES_WIN}
+    ${PLATFORM_FILES_WIN_HW}
+    PARENT_SCOPE)

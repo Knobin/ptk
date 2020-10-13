@@ -67,6 +67,7 @@ elseif(APPLE)
 else()
     message(FATAL_ERROR "Unsupported platform!")
 endif()
+message(STATUS "pTK platform: ${PTK_PLATFORM}")
 message(STATUS "pTK dependencies: ${PTK_DEPENDENCIES}")
 
 # Define HW if enabled.

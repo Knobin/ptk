@@ -36,7 +36,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/platform)
 # Header files
 file(GLOB_RECURSE HEADER_FILES ${CMAKE_SOURCE_DIR}/include/ptk/*.hpp)
 source_group(TREE "${CMAKE_SOURCE_DIR}/include/ptk" PREFIX "Header Files" FILES ${HEADER_FILES})
-
+message(STATUS "pf: ${PLATFORM_FILES}")
 # Source files
 set(SOURCE_FILES Application.cpp Window.cpp
         ${CORE_FILES}
@@ -45,10 +45,7 @@ set(SOURCE_FILES Application.cpp Window.cpp
         ${WIDGET_FILES}
         ${LOG_FILES})
 set(SOURCE_FILES_ALL ${SOURCE_FILES}
-    ${PLATFORM_FILES_MAC}
-    ${PLATFORM_FILES_MAC_HW}
-    ${PLATFORM_FILES_WIN}
-    ${PLATFORM_FILES_WIN_HW})
+    ${PLATFORM_FILES_ALL})
 source_group(TREE "${CMAKE_SOURCE_DIR}/src" PREFIX "Source Files" FILES ${SOURCE_FILES_ALL})
 
 # Define library
