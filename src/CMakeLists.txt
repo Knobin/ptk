@@ -65,8 +65,12 @@ else()
             -Wunused -Woverloaded-virtual -Wconversion -Wsign-conversion -Wdouble-promotion -Wformat=2)
 endif ()
 
+# includes and deps
+target_include_directories(${PROJECT_NAME} PRIVATE ${PTK_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} ${PTK_DEPENDENCIES})
+
 # Skia
-target_link_libraries(${PROJECT_NAME} ${SKIA_PLATFORM_DEPENDENCIES} skia)
+target_link_libraries(${PROJECT_NAME} skia)
 
 # OpenGL
 if (ENABLE_OPENGL)

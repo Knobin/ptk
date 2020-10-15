@@ -12,6 +12,7 @@
 namespace pTK
 {
     MainWindow_unix::MainWindow_unix(Window *window, const std::string& name, const Size& size, BackendType backend)
+        : MainWindowBase(window, backend)
     {
         // TODO
     }

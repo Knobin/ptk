@@ -11,6 +11,9 @@
 // Local Headers
 #include "ptk/core/platform/ApplicationBase.hpp"
 
+// X11 Heades
+#include <X11/Xlib.h>
+
 namespace pTK
 {
     /** Application_unix class implementation.
@@ -25,12 +28,12 @@ namespace pTK
 
             @return        default initialized Application_unix
         */
-        Application_unix() = default;
+        Application_unix();
 
         /** Deconstructor for Application_unix
 
         */
-        virtual ~Application_unix() = default;
+        virtual ~Application_unix();
 
         int messageLoop() override;
 
@@ -38,6 +41,11 @@ namespace pTK
 
         */
         void close() override;
+
+        static Display *getDisplay();
+
+    private:
+        bool init();
     };
 }
 

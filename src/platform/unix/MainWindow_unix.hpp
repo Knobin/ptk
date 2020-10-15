@@ -204,7 +204,6 @@ namespace pTK
         bool setScaleHint(const Vec2f& scale) override;
 
     private:
-        Window *m_parentWindow;
         std::unique_ptr<ContextBase> m_context;
     };
 }
