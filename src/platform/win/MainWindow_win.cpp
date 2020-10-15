@@ -120,8 +120,7 @@ namespace pTK
     ///////////////////////////////////////////////////////////////////////////////
     
     MainWindow_win::MainWindow_win(Window *window, const std::string& name, const Size& size, BackendType backend)
-        : MainWindowBase(backend),
-            m_parentWindow{window}
+        : MainWindowBase(window, backend)
     {
         // High DPI
         HDC screen{GetDC(nullptr)};
@@ -327,7 +326,7 @@ namespace pTK
     {
         if (!::ShowWindow(m_hwnd, SW_SHOW))
         {
-            m_parentWindow->forceDrawAll();
+            parent()->forceDrawAll();
             return true;
         }
 
@@ -402,7 +401,7 @@ namespace pTK
         if (m_data->scale != scale)
         {
             m_data->scale = scale;
-            resize(m_parentWindow->getSize());
+            resize(parent()->getSize());
             return true;
         }
         return false;

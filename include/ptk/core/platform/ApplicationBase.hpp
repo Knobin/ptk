@@ -52,14 +52,14 @@ namespace pTK
             @param window       pointer to the window
             @return         window id
         */
-        int32 addWindow(Window *window);
+        virtual int32 addWindow(Window *window);
 
         /** Function for removing a window from the app.
 
             @param key    window id
             @return       true if removed, otherwise false
         */
-        bool removeWindow(int32 key);
+        virtual bool removeWindow(int32 key);
         
         [[nodiscard]] container::size_type windowCount() const;
 
@@ -70,6 +70,9 @@ namespace pTK
         [[nodiscard]] const std::map<int32, Window*>& windows() const;
         
         virtual int messageLoop() = 0;
+
+    protected:
+        container& getContainer() { return m_mainWindows; }
 
     private:
         container m_mainWindows;

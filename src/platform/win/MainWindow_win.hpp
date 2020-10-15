@@ -44,7 +44,7 @@ namespace pTK
         /** Deconstructor for MainWindow_win.
 
         */
-        virtual ~MainWindow_win() = default;
+        ~MainWindow_win() override = default;
 
         /** Function for closing the window.
 
@@ -216,7 +216,6 @@ namespace pTK
         static LRESULT CALLBACK wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
     private:
-        Window *m_parentWindow;
         HWND m_hwnd;
         std::unique_ptr<ContextBase> m_context;
         PAINTSTRUCT m_ps{};

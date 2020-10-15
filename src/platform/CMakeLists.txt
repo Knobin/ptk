@@ -19,7 +19,7 @@ set(PLATFORM_FILES_WIN_OPENGL platform/win/GLContext_win.cpp)
 
 # Unix files
 set(PLATFORM_FILES_UNIX platform/unix/Application_unix.cpp
-    platform/win/MainWindow_unix.cpp)
+    platform/unix/MainWindow_unix.cpp)
 
 # Set platform files
 set(PLATFORM_FILES platform/Platform.hpp)

@@ -17,6 +17,8 @@
 
 namespace pTK
 {
+    class Window;
+
     /** Backend enum class implementation
 
         Specifies which backend that should be used.
@@ -41,8 +43,8 @@ namespace pTK
             @param backend  type of backend
             @return         default initialized MainWindowBase
         */
-        explicit MainWindowBase(BackendType backend)
-            : m_backend{backend}
+        MainWindowBase(Window *window, BackendType backend)
+            : m_parent{window}, m_backend{backend}
         {
 
         }
@@ -226,7 +228,14 @@ namespace pTK
         virtual bool setScaleHint(const Vec2f& UNUSED(scale)) {
             return true;}
 
+        /** Function for retrieving the parent Window.
+
+            @return     parent Window
+        */
+        [[nodiscard]] Window *parent() const { return m_parent; }
+
     private:
+        Window *m_parent;
         BackendType m_backend;
     };
 }
