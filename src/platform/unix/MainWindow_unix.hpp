@@ -10,11 +10,12 @@
 
 // Local Headers
 #include "ptk/core/platform/MainWindowBase.hpp"
-#include "ptk/core/Event.hpp"
-#include "ptk/events/MouseEvent.hpp"
 
 // C++ Headers
 #include <map>
+
+// X11 Heades
+#include <X11/Xlib.h>
 
 namespace pTK
 {
@@ -205,6 +206,14 @@ namespace pTK
 
     private:
         std::unique_ptr<ContextBase> m_context;
+
+        sk_sp<SkSurface> m_surface;
+        GC m_gc;
+
+        Display *m_display;
+        ::Window m_window;
+
+        Size m_size;
     };
 }
 

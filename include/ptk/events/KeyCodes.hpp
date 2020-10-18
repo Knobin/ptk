@@ -17,7 +17,7 @@ namespace pTK
 {
     typedef enum class KeyCode : byte
     {
-        None    = 0,
+        Unknown = 0,
         Escape  = 27,
         Space   = 32,
 

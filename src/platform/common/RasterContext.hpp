@@ -52,7 +52,6 @@ namespace pTK
             if (!m_policy.resize(size))
                 throw ContextError("Policy failed to resize in Raster Context");
 
-            m_surfaceMemory.reset(m_policy.size);
             void *pixels{static_cast<void*>(m_policy.pixels)};
 
             const int w{static_cast<int>(size.width)};
@@ -84,7 +83,6 @@ namespace pTK
         }
 
     private:
-        SkAutoMalloc  m_surfaceMemory;
         sk_sp<SkSurface> m_surface;
         Policy m_policy;
     };

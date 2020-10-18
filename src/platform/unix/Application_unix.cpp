@@ -35,6 +35,18 @@ namespace pTK
 
     int Application_unix::messageLoop()
     {
+        Window *window{windows().at(1)};
+        PaintEvent evt{Point{0, 0}, window->getSize()};
+        window->sendEvent(&evt);
+        window->show();
+
+        while (true) 
+        {
+            window->forceDrawAll();
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            window->handleEvents();
+            // window->pollEvents();
+        }
         // TODO
         return 0;
     }
