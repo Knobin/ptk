@@ -57,7 +57,7 @@ namespace pTK
         if (it != s_keyMap.cend())
             return it->second;
 
-        return Key::None;
+        return Key::Unknown;
     }
 
     struct MainWindow_mac::WinData
