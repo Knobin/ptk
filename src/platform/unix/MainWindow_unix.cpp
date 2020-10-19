@@ -51,6 +51,12 @@ namespace pTK
         XMapWindow(m_display, m_window);
         XFlush(m_display);
 
+        m_atomWmDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", false);
+        if (!XSetWMProtocols(m_display, m_window, &m_atomWmDeleteWindow, 1))
+        {
+            PTK_WARN("Could not register WM_DELETE_WINDOW property");   
+        }
+
         RasterPolicy_unix policy{m_display, m_window, info};
         m_context = std::make_unique<RasterContext<RasterPolicy_unix>>(size, policy);
     }
@@ -77,22 +83,6 @@ namespace pTK
     {
         // TODO
         return false;
-    }
-
-    void MainWindow_unix::pollEvents() 
-    {
-        XEvent event;
-        XNextEvent(m_display, &event);
-    }
-
-    void MainWindow_unix::waitEvents() 
-    {
-        // TODO
-    }
-
-    void MainWindow_unix::waitEventsTimeout(uint ms) 
-    {
-        // TODO
     }
 
     bool MainWindow_unix::setPosHint(const Point& pos) 
@@ -201,5 +191,15 @@ namespace pTK
     {
         // TODO
         return true;
+    }
+
+    ::Window MainWindow_unix::xWindow() const
+    {
+        return m_window;
+    }
+
+    Atom MainWindow_unix::deleteAtom() const
+    {
+        return m_atomWmDeleteWindow;
     }
 }

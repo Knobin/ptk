@@ -16,6 +16,8 @@
 
 namespace pTK
 {
+    class MainWindow_unix;
+
     /** Application_unix class implementation.
 
         Base application implementation for Unix.
@@ -44,8 +46,19 @@ namespace pTK
 
         static Display *getDisplay();
 
+        void pollEvents() override;
+        void waitEvents() override;
+        void waitEventsTimeout(uint ms) override;
+
+    private:
+        void onWindowAdd(int32) override;
+        void onWindowRemove(int32) override;
+
     private:
         bool init();
+
+    private:
+        bool m_run;
     };
 }
 

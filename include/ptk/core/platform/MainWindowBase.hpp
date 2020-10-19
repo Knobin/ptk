@@ -78,22 +78,6 @@ namespace pTK
         */
         [[nodiscard]] virtual bool isHidden() const = 0;
 
-        /** Function for polling all the window events.
-
-        */
-        virtual void pollEvents() = 0;
-
-        /** Function for waiting for an event.
-
-        */
-        virtual void waitEvents() = 0;
-
-        /** Function for waiting for an event with a timout.
-
-            @param ms   max time to wait for an event
-        */
-        virtual void waitEventsTimeout(uint UNUSED(ms)) = 0;
-
         /** Function for setting the position of the window.
 
             @param pos  position to set

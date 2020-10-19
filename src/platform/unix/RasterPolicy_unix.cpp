@@ -42,7 +42,8 @@ namespace pTK
         size = sizeof(uint32_t) * width * height;
         
         wSize = nSize;
-        m_image = XCreateImage(m_display, m_info.visual, 24, ZPixmap, 0, static_cast<char*>(pixels), wSize.width, wSize.height, 32, 0);
+        m_image = XCreateImage(m_display, m_info.visual, 24, ZPixmap, 0, static_cast<char*>(pixels), 
+                                static_cast<unsigned int>(nSize.width), static_cast<unsigned int>(nSize.height), 32, 0);
         
         return true;
     }

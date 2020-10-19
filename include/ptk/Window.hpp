@@ -89,21 +89,6 @@ namespace pTK
         */
         void handleEvents();
 
-        /** Function for polling all the window events.
-
-        */
-        void pollEvents();
-
-        /** Function for polling the window events.
-
-        */
-        void waitEvents();
-
-        /** Function for polling the window events.
-            // TODO: Add comments here.
-        */
-        void waitEventsTimeout(uint ms);
-
         /** Function for sending events to the window to
             be handled directly.
 

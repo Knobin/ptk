@@ -7,14 +7,25 @@
 
 // Local Headers
 #include "Application_unix.hpp"
+#include "MainWindow_unix.hpp"
 #include "ptk/core/Exception.hpp"
+#include "ptk/core/Event.hpp"
+
+// C++ Headers
+#include <map>
+
+// X11 Headers
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 namespace pTK
 {
     static Display *s_display = nullptr;
+    static std::map<::Window, std::pair<Window*, MainWindow_unix*>> s_windowMap = {};
 
     Application_unix::Application_unix()
-        : ApplicationBase()
+        : ApplicationBase(),
+            m_run{true}
     {
         if (!init())
             throw PlatformError("Failed to create Application_unix");
@@ -40,12 +51,10 @@ namespace pTK
         window->sendEvent(&evt);
         window->show();
 
-        while (true) 
+        while (m_run) 
         {
-            window->forceDrawAll();
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             window->handleEvents();
-            // window->pollEvents();
+            pollEvents();
         }
         // TODO
         return 0;
@@ -59,5 +68,91 @@ namespace pTK
     Display *Application_unix::getDisplay()
     {
         return s_display;
+    }
+
+    void Application_unix::pollEvents()
+    {
+        XPending(s_display);
+
+        bool close = false;
+        while(QLength(s_display))
+        {
+            XEvent event = {};
+            XNextEvent(s_display, &event);
+
+            switch (event.type)
+            {
+            case DestroyNotify:
+            {
+                XDestroyWindowEvent *dEvent = reinterpret_cast<XDestroyWindowEvent*>(&event);
+                auto it{s_windowMap.find(dEvent->window)};
+                if (it != s_windowMap.end())
+                {
+                    Event evt{Event::Category::Window, Event::Type::WindowClose};
+                    it->second.first->handleEvents(); // Handle all events before sending close event.
+                    it->second.first->sendEvent(&evt);
+                    close = true; // TODO: Should not really be here.
+                }
+                break;
+            }
+            case ClientMessage:
+            {
+                XClientMessageEvent *cEvent = reinterpret_cast<XClientMessageEvent*>(&event);
+                auto it{s_windowMap.find(cEvent->window)};
+                if (it != s_windowMap.end())
+                {
+                    if (static_cast<Atom>(cEvent->data.l[0]) == it->second.second->deleteAtom())
+                    {
+                        XDestroyWindow(s_display, cEvent->window);
+                    }
+                }
+            }
+            default:
+                break;
+            }
+        }
+
+        if (close)
+            m_run = false;
+
+        XFlush(s_display);
+    }
+
+    void Application_unix::waitEvents()
+    {
+        // TODO
+        pollEvents();
+    }
+
+    void Application_unix::waitEventsTimeout(uint ms)
+    {
+        // TODO
+        pollEvents();
+    }
+
+    void Application_unix::onWindowAdd(int32 key)
+    {
+        Window *pwindow{find(key)};
+        MainWindow_unix *mainwindow{dynamic_cast<MainWindow_unix*>(pwindow->getBackend())};
+        if (mainwindow)
+        {
+            PTK_INFO("Added MainWindow_unix to Application_unix");
+            s_windowMap.insert({mainwindow->xWindow(), {pwindow, mainwindow}});
+        }    
+    }
+
+    void Application_unix::onWindowRemove(int32 key)
+    {
+        Window *pwindow{find(key)};
+        MainWindow_unix *mainwindow{dynamic_cast<MainWindow_unix*>(pwindow->getBackend())};
+        if (mainwindow)
+        {
+            auto it{s_windowMap.find(mainwindow->xWindow())};
+            if (it != s_windowMap.end())
+            {
+                PTK_INFO("Removed MainWindow_unix from Application_unix");
+                s_windowMap.erase(it);
+            }
+        }
     }
 }

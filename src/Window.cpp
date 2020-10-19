@@ -272,21 +272,6 @@ namespace pTK
         }
     }
 
-    void Window::pollEvents()
-    {
-        m_winBackend->pollEvents();
-    }
-
-    void Window::waitEvents()
-    {
-        m_winBackend->waitEvents();
-    }
-
-    void Window::waitEventsTimeout(uint ms)
-    {
-        m_winBackend->waitEventsTimeout(ms);
-    }
-
     void Window::forceDrawAll()
     {
         m_winBackend->beginPaint();

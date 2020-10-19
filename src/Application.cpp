@@ -37,7 +37,14 @@ namespace pTK
 
     Application::~Application()
     {
-
+        const std::map<int32, Window*>& map{m_appBase->windows()};
+        std::size_t size{map.size()};
+        for (std::size_t i{0}; i < size; ++i) 
+        {
+            auto it = map.cbegin();
+            if (it != map.cend())
+                m_appBase->removeWindow(it->first);
+        }
     }
 
     int Application::exec(Window *window)

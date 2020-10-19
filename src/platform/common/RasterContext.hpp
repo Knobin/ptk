@@ -57,7 +57,7 @@ namespace pTK
             const int w{static_cast<int>(size.width)};
             const int h{static_cast<int>(size.height)};
             SkImageInfo info{SkImageInfo::Make(w, h, m_policy.colorType, kPremul_SkAlphaType,nullptr)};
-            m_surface = SkSurface::MakeRasterDirect(info, pixels, sizeof(uint32_t) * static_cast<unsigned long>(w));
+            m_surface = SkSurface::MakeRasterDirect(info, pixels, sizeof(uint32_t) * static_cast<decltype(sizeof(uint32_t))>(w));
             if (!m_surface)
                 throw ContextError("Failed to create Raster Context");
 

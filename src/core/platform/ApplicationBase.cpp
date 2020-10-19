@@ -23,6 +23,7 @@ namespace pTK
 
         try {
             m_mainWindows.insert({id, window});
+            onWindowAdd(id);
         } catch (const std::exception&) {
             return -1;
         }
@@ -35,6 +36,7 @@ namespace pTK
         auto it{m_mainWindows.find(key)};
         if (it != m_mainWindows.end())
         {
+            onWindowRemove(key);
             m_mainWindows.erase(it);
             return true;
         }
@@ -50,5 +52,11 @@ namespace pTK
     ApplicationBase::container::size_type ApplicationBase::windowCount() const
     {
         return m_mainWindows.size();
+    }
+
+    Window *ApplicationBase::find(int32 key) const 
+    { 
+        auto it = m_mainWindows.find(key);
+        return (it != m_mainWindows.end()) ? it->second : nullptr;
     }
 }
