@@ -173,29 +173,6 @@ namespace pTK
         return false;
     }
 
-    void MainWindow_win::pollEvents()
-    {
-        MSG msg{};
-        while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
-        {
-            ::TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-    }
-
-    void MainWindow_win::waitEvents()
-    {
-        WaitMessage();
-        pollEvents();
-    }
-
-    void MainWindow_win::waitEventsTimeout(uint ms)
-    {
-        MsgWaitForMultipleObjects(0, nullptr, FALSE, static_cast<DWORD>(ms), QS_ALLEVENTS);
-        m_data->wait = ms;
-        pollEvents();
-    }
-
     void MainWindow_win::beginPaint()
     {
         m_ps = PAINTSTRUCT();

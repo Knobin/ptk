@@ -59,7 +59,7 @@ namespace pTK
         while (!window->shouldClose())
         {
             window->handleEvents();
-            window->waitEvents();
+            waitEvents();
         }
 
         window->hide();
@@ -70,6 +70,28 @@ namespace pTK
     void Application_win::close()
     {
         // TODO: close app.
+    }
+
+    void Application_win::pollEvents()
+    {
+        MSG msg{};
+        while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
+        {
+            ::TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    }
+
+    void Application_win::waitEvents()
+    {
+        WaitMessage();
+        pollEvents();
+    }
+
+    void Application_win::waitEventsTimeout(uint ms)
+    {
+        MsgWaitForMultipleObjects(0, nullptr, FALSE, static_cast<DWORD>(ms), QS_ALLEVENTS);
+        pollEvents();
     }
 
     std::wstring Application_win::stringToUTF16(const std::string& str)

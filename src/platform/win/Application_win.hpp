@@ -42,6 +42,22 @@ namespace pTK
         */
         void close() override;
 
+        /** Function for polling all the window events.
+
+        */
+        void pollEvents() override;
+
+        /** Function for waiting for an event.
+
+        */
+        void waitEvents() override;
+
+        /** Function for waiting for an event with a timout.
+
+            @param ms   max time to wait for an event
+        */
+        void waitEventsTimeout(uint ms) override;
+
         /** Function for converting std::string to UTF16 std::stringw.
 
             @param str  string to convert
