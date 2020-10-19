@@ -66,22 +66,6 @@ namespace pTK
         */
         [[nodiscard]] bool isHidden() const override;
 
-        /** Function for polling all the window events.
-
-        */
-        void pollEvents() override;
-
-        /** Function for waiting for an event.
-
-        */
-        void waitEvents() override;
-
-        /** Function for waiting for an event with a timout.
-
-            @param ms   max time to wait for an event
-        */
-        void waitEventsTimeout(uint ms) override;
-
         /** Function for setting the position of the window.
 
             @param pos  position to set
@@ -203,14 +187,10 @@ namespace pTK
         */
         bool setScaleHint(const Vec2f& scale) override;
 
-        Window *parent() const;
-
         struct WinData;
+        
     private:
-        Window *m_parentWindow;
         std::unique_ptr<ContextBase> m_context;
-
-
         WinData *m_data;
     };
 

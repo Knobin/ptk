@@ -150,7 +150,7 @@ namespace pTK
         {
             @autoreleasepool {
                 window->handleEvents();
-                window->waitEvents();
+                waitEvents();
             }
         }
         
@@ -174,4 +174,45 @@ namespace pTK
             appData.windows.erase(it);
         }
     }
-}
+
+    void Application_mac::pollEvents()
+    {
+        @autoreleasepool {
+            NSEvent *event = nil;
+            do {
+                event = [NSApp nextEventMatchingMask:NSEventMaskAny
+                                           untilDate:[NSDate distantPast]
+                                              inMode:NSDefaultRunLoopMode
+                                             dequeue:YES];
+                [NSApp sendEvent:event];
+            } while(event != nil);
+        }
+    }
+
+    void Application_mac::waitEvents()
+    {
+        @autoreleasepool {
+            NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny
+                                                untilDate:[NSDate distantFuture]
+                                                   inMode:NSDefaultRunLoopMode
+                                                  dequeue:YES];
+            [NSApp sendEvent:event];
+
+            pollEvents();
+        }
+    }
+
+    void Application_mac::waitEventsTimeout(uint ms)
+    {
+        @autoreleasepool {
+            NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny
+                                                untilDate:[NSDate dateWithTimeIntervalSinceNow:(ms / 1000)]
+                                                   inMode:NSDefaultRunLoopMode
+                                                  dequeue:YES];
+            [NSApp sendEvent:event];
+
+            pollEvents();
+        }
+    }
+
+} // namespace pTK

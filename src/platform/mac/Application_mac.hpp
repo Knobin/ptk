@@ -43,6 +43,10 @@ namespace pTK
 
         static void addMacWindow(long key, MainWindow_mac* window);
         static void removeMacWindow(long key);
+        
+        void pollEvents() override;
+        void waitEvents() override;
+        void waitEventsTimeout(uint ms) override;
     };
 }
 

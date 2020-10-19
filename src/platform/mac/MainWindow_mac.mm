@@ -304,8 +304,7 @@ namespace pTK
     }
 
     MainWindow_mac::MainWindow_mac(Window *window, const std::string& name, const Size& size, BackendType backend)
-        : MainWindowBase(backend),
-            m_parentWindow{window}
+        : MainWindowBase(window, backend)
     {
         m_data = new (std::nothrow) WinData{};
         if (!m_data)
@@ -381,46 +380,6 @@ namespace pTK
             }
         }
         return false;
-    }
-
-    void MainWindow_mac::pollEvents()
-    {
-        @autoreleasepool {
-            NSEvent *event = nil;
-            do {
-                event = [NSApp nextEventMatchingMask:NSEventMaskAny
-                                           untilDate:[NSDate distantPast]
-                                              inMode:NSDefaultRunLoopMode
-                                             dequeue:YES];
-                [NSApp sendEvent:event];
-            } while(event != nil);
-        }
-    }
-
-    void MainWindow_mac::waitEvents()
-    {
-        @autoreleasepool {
-            NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny
-                                                untilDate:[NSDate distantFuture]
-                                                   inMode:NSDefaultRunLoopMode
-                                                  dequeue:YES];
-            [NSApp sendEvent:event];
-
-            pollEvents();
-        }
-    }
-
-    void MainWindow_mac::waitEventsTimeout(uint ms)
-    {
-        @autoreleasepool {
-            NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny
-                                                untilDate:[NSDate dateWithTimeIntervalSinceNow:(ms / 1000)]
-                                                   inMode:NSDefaultRunLoopMode
-                                                  dequeue:YES];
-            [NSApp sendEvent:event];
-
-            pollEvents();
-        }
     }
 
     void MainWindow_mac::beginPaint()
@@ -605,15 +564,10 @@ namespace pTK
         if (m_data->scale != scale)
         {
             m_data->scale = scale;
-            resize(m_parentWindow->getSize());
+            resize(parent()->getSize());
             return true;
         }
         return false;
-    }
-
-    Window *MainWindow_mac::parent() const
-    {
-        return m_parentWindow;
     }
 
 } // namespace pTK
