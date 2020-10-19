@@ -18,20 +18,12 @@
 // C++ Headers
 #include <map>
 
-namespace pTK
-{
-    struct AppData
-    {
-        std::map<long, MainWindow_mac*> windows;
-    };
-}
-
 @interface AppDelegate : NSObject<NSApplicationDelegate, NSWindowDelegate>
 {
-    pTK::AppData *appData;
+    pTK::Application_mac *app;
 }
 
-- (AppDelegate*)initWithData:(pTK::AppData*)initData;
+- (AppDelegate*)initWithData:(pTK::Application_mac*)initData;
 
 @property (nonatomic, assign) BOOL run;
 
@@ -41,11 +33,11 @@ namespace pTK
 
 @synthesize run = _run;
 
-- (AppDelegate*)initWithData:(pTK::AppData*)initData {
+- (AppDelegate*)initWithData:(pTK::Application_mac*)initData {
     self = [super init];
     if (self != nil)
     {
-        appData = initData;
+        app = initData;
         _run = TRUE;
     }
 
@@ -70,8 +62,8 @@ namespace pTK
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *) __unused sender {
     PTK_INFO("APP Should Terminate");
-    for (const std::pair<int32, pTK::MainWindow_mac*>& pair : appData->windows)
-        pair.second->parent()->close();
+    for (const std::pair<int32, pTK::Window*>& pair : app->windows())
+        pair.second->close();
 
     _run = FALSE;
     return NSTerminateCancel;
@@ -84,8 +76,7 @@ namespace pTK
 {
     AppDelegate* appDelegate;
     NSMenu* menuBar;
-    AppData appData{};
-
+    
     Application_mac::Application_mac()
         : ApplicationBase()
     {
@@ -110,7 +101,7 @@ namespace pTK
             [item release];
             [subMenu release];
 
-            appDelegate = [[AppDelegate alloc] initWithData:&appData];
+            appDelegate = [[AppDelegate alloc] initWithData:this];
             [NSApp setDelegate:appDelegate];
 
             if (![[NSRunningApplication currentApplication] isFinishedLaunching])
@@ -157,22 +148,6 @@ namespace pTK
         window->hide();
         
         return 0;
-    }
-
-    void Application_mac::addMacWindow(long key, MainWindow_mac* window)
-    {
-        PTK_INFO("Added MainWindow_mac id:{} to Application_mac", key);
-        appData.windows.insert({key, window});
-    }
-
-    void Application_mac::removeMacWindow(long key)
-    {
-        auto it{appData.windows.find(key)};
-        if (it != appData.windows.end())
-        {
-            PTK_INFO("Removed MainWindow_mac id:{} from Application_mac", it->first);
-            appData.windows.erase(it);
-        }
     }
 
     void Application_mac::pollEvents()

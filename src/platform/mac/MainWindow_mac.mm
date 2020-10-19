@@ -333,7 +333,6 @@ namespace pTK
             [view release];
 
             m_data->id = m_data->window.windowNumber;
-            Application_mac::addMacWindow(m_data->id, this);
 
             const NSRect fRect = [m_data->window.contentView frame];
             const NSRect pRect = [m_data->window.contentView convertRectToBacking:fRect];
@@ -354,7 +353,6 @@ namespace pTK
     {
         if (m_data)
         {
-            Application_mac::removeMacWindow(m_data->id);
             if (m_data->window != nil)
             {
                 [m_data->window close];
@@ -568,6 +566,16 @@ namespace pTK
             return true;
         }
         return false;
+    }
+
+    long MainWindow_mac::windowID() const
+    {
+        return m_data->id;
+    }
+
+    void *MainWindow_mac::nsWindow() const
+    {
+        return static_cast<void*>(m_data->window);
     }
 
 } // namespace pTK

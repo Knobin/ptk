@@ -40,9 +40,6 @@ namespace pTK
         void close() override;
         
         int messageLoop() override;
-
-        static void addMacWindow(long key, MainWindow_mac* window);
-        static void removeMacWindow(long key);
         
         void pollEvents() override;
         void waitEvents() override;

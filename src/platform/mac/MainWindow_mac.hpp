@@ -186,6 +186,9 @@ namespace pTK
             @return         true if operation is successful, otherwise false
         */
         bool setScaleHint(const Vec2f& scale) override;
+        
+        long windowID() const;
+        void *nsWindow() const;
 
         struct WinData;
         
@@ -193,11 +196,6 @@ namespace pTK
         std::unique_ptr<ContextBase> m_context;
         WinData *m_data;
     };
-
-    /*
-     
-     
-     */
 }
 
 #endif // PTK_PlATFORM_MAC_MAINWINDOW_HPP
