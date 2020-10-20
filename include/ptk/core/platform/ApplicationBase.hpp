@@ -42,6 +42,9 @@ namespace pTK
 
         /** Function for closing the application.
         
+            This will close all the windows added to the
+            application and terminate. Only use this when
+            it is time to end the app.
         */
         virtual void close() = 0;
 
@@ -50,7 +53,7 @@ namespace pTK
             Note: returns -1 if an error occured.
 
             @param window       pointer to the window
-            @return         window id
+            @return             window id
         */
         int32 addWindow(Window *window);
 
@@ -61,6 +64,10 @@ namespace pTK
         */
         bool removeWindow(int32 key);
         
+        /** Function for retrieving the size of the internal table.
+         
+            @return     table size
+        */
         [[nodiscard]] container::size_type windowCount() const;
 
         /** Function for retrieving all windows from the app.
@@ -69,17 +76,48 @@ namespace pTK
         */
         [[nodiscard]] const std::map<int32, Window*>& windows() const;
 
+        /** Function for finding a Window by its key in the table.
+         
+            @param key  ptk window id
+            @return     pointer to the window, may be nullptr
+        */
         [[nodiscard]] Window *find(int32 key) const;
         
+        /** Message loop for the application.
+         
+        */
         virtual int messageLoop() = 0;
 
+        /** Function for polling all the window events.
+        
+        */
         virtual void pollEvents() = 0;
+        
+        /** Function for waiting for an event.
+        
+        */
         virtual void waitEvents() = 0;
+        
+        /** Function for waiting for an event with a timout.
+            
+            @param ms   max time to wait for an event
+        */
         virtual void waitEventsTimeout(uint ms) = 0;
 
     private:
-        virtual void onWindowAdd(int32) {}
-        virtual void onWindowRemove(int32) {}
+        /** Callback that will be called when a window is added to the
+            application.
+         
+            @param key  ptk window id
+        */
+        virtual void onWindowAdd(int32 UNUSED(key)) {}
+        
+        /** Callback that will be called when a window is removed from the
+            application.
+         
+            @param key  ptk window id
+        */
+        virtual void onWindowRemove(int32 UNUSED(key)) {}
 
     private:
         container m_mainWindows;

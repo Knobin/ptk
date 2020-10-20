@@ -27,13 +27,37 @@ namespace pTK
             m_props{SkSurfaceProps::kUseDeviceIndependentFonts_Flag, SkSurfaceProps::kLegacyFontHost_InitType},
             m_drawableHandle{nullptr}
     {
+        init(mainView, size, scale);
+    }
+
+    MetalContext_mac::~MetalContext_mac()
+    {
+        @autoreleasepool {
+            if (m_context)
+            {
+                m_context->abandonContext();
+                m_context.reset();
+            }
+            
+            m_mainView.layer = nil;
+            m_mainView.wantsLayer = NO;
+            
+            m_metalLayer = nil;
+            [m_queue release];
+            [m_device release];
+        } // autoreleasepool
+    }
+
+    void MetalContext_mac::init(void* mainView, const Size& size, const Vec2f& scale)
+    {
         @autoreleasepool {
             m_mainView = static_cast<NSView*>(mainView);
-            CGDirectDisplayID viewDisplayID = (CGDirectDisplayID) [m_mainView.window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntegerValue];
+            CGDirectDisplayID viewDisplayID = static_cast<CGDirectDisplayID>( [m_mainView.window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntegerValue]);
             m_device = CGDirectDisplayCopyCurrentMetalDevice(viewDisplayID);
             // m_device = MTLCreateSystemDefaultDevice();
             m_queue = [m_device newCommandQueue];
-            PTK_ASSERT(m_queue, "Could not create command queue");
+            if (!m_queue)
+                throw ContextError("Could not create command queue");
             [m_queue setLabel:@"PTK Main Queue"];
                 
             m_metalLayer = [CAMetalLayer layer];
@@ -61,7 +85,8 @@ namespace pTK
             m_mainView.layer = m_metalLayer;
 
             m_context = GrContext::MakeMetal([m_device retain], [m_queue retain]);
-            PTK_ASSERT(m_context, "Could not create context");
+            if (!m_context)
+                throw ContextError("Could not create GrContext");
                 
             Size fSize{static_cast<Size::value_type>(rect.size.width),
                 static_cast<Size::value_type>(rect.size.height)};
@@ -69,25 +94,7 @@ namespace pTK
             PTK_INFO("macOS Metal context initialized {}x{}", size.width, size.height);
         } // autoreleasepool
     }
-
-    MetalContext_mac::~MetalContext_mac()
-    {
-        @autoreleasepool {
-            if (m_context)
-            {
-                m_context->abandonContext();
-                m_context.reset();
-            }
-            
-            m_mainView.layer = nil;
-            m_mainView.wantsLayer = NO;
-            
-            m_metalLayer = nil;
-            [m_queue release];
-            [m_device release];
-        } // autoreleasepool
-    }
-
+    
     void MetalContext_mac::resize(const Size& size)
     {
         @autoreleasepool {

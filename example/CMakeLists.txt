@@ -13,5 +13,3 @@ foreach(FILE ${TEST_SOURCE_FILES})
     target_link_libraries(${EXECUTABLE} ${SKIA_PLATFORM_DEPENDENCIES} skia ptk)
     set(EXAMPLE_LIST "${EXAMPLE_LIST}${EXECUTABLE};")
 endforeach()
-
-message(STATUS "Examples: ${EXAMPLE_LIST}")

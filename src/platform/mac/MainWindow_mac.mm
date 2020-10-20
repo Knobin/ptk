@@ -60,6 +60,8 @@ namespace pTK
         return Key::Unknown;
     }
 
+///////////////////////////////////////////////////////////////////////////////
+
     struct MainWindow_mac::WinData
     {
         NSWindow *window;
@@ -68,8 +70,10 @@ namespace pTK
         Vec2f scale;
         long id;
     };
-}
 
+} // namespace pTK
+
+///////////////////////////////////////////////////////////////////////////////
 
 @interface WindowDelegate : NSObject<NSWindowDelegate>
 {
@@ -111,10 +115,8 @@ namespace pTK
                          static_cast<pTK::Size::value_type>(rect.size.height)};
     if (size != data->size)
     {
-        PTK_INFO("RESIZE");
         pTK::ResizeEvent evt{size};
         ptkWindow->parent()->sendEvent(&evt);
-        PTK_INFO("BEFORE DRAW");
         ptkWindow->parent()->forceDrawAll();
     }
 
@@ -155,6 +157,8 @@ namespace pTK
 }
 
 @end
+
+///////////////////////////////////////////////////////////////////////////////
 
 @interface MainView : NSView
 {
@@ -282,10 +286,11 @@ namespace pTK
 
 @end
 
+///////////////////////////////////////////////////////////////////////////////
 
 namespace pTK
 {
-    static std::unique_ptr<ContextBase> createMacContext(BackendType type, MainWindow_mac::WinData *data, void *view)
+    static std::unique_ptr<ContextBase> createMacContext(BackendType type, const std::unique_ptr<MainWindow_mac::WinData>& data)
     {
 #ifdef PTK_DEBUG
       if (data->scale.x != data->scale.y)
@@ -295,32 +300,52 @@ namespace pTK
                             static_cast<Size::value_type>(data->size.height * data->scale.y)};
 #ifdef PTK_METAL
         if (type == BackendType::HARDWARE)
-            return std::make_unique<MetalContext_mac>(view, scaledSize, data->scale);
+            return std::make_unique<MetalContext_mac>(static_cast<void*>([data->window contentView]), scaledSize, data->scale);
 #endif
 
         // Software backend is always available.
+        // Altough, it is slow on macOS and should be avoided.
         RasterPolicy_mac policy(data->window);
         return std::make_unique<RasterContext<RasterPolicy_mac>>(scaledSize, policy);
     }
 
+///////////////////////////////////////////////////////////////////////////////
+
     MainWindow_mac::MainWindow_mac(Window *window, const std::string& name, const Size& size, BackendType backend)
         : MainWindowBase(window, backend)
     {
-        m_data = new (std::nothrow) WinData{};
-        if (!m_data)
+        init(name, size);
+    }
+
+    MainWindow_mac::~MainWindow_mac()
+    {
+        if (m_data->window != nil)
+        {
+            [m_data->window close];
+            m_data->window = nil;
+        }
+        PTK_INFO("macOS Window Deconstructed");
+    }
+
+    void MainWindow_mac::init(const std::string& name, const Size& size)
+    {
+        try {
+            m_data = std::make_unique<MainWindow_mac::WinData>();
+        } catch (const std::bad_alloc&) {
             throw WindowError("Failed to allocate memory for MainWindow_mac");
+        }
 
         m_data->size = size;
         m_data->pos = {};
 
         @autoreleasepool {
-            WindowDelegate *winDelegate = [[WindowDelegate alloc] initWithWindow:this:m_data];
+            WindowDelegate *winDelegate = [[WindowDelegate alloc] initWithWindow:this:m_data.get()];
 
             NSRect rect = NSMakeRect(100, 100, size.width, size.height);
             NSUInteger style = (NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable);
             m_data->window = [[NSWindow alloc] initWithContentRect:rect styleMask:style backing:NSBackingStoreBuffered defer:NO];
 
-            MainView *view = [[MainView alloc] initWithWindow:this:m_data];
+            MainView *view = [[MainView alloc] initWithWindow:this:m_data.get()];
             if (view == nil)
                 throw WindowError("Failed to allocate Mainview");
 
@@ -343,24 +368,10 @@ namespace pTK
             setTitle(name);
             m_data->pos = getWinPos();
 
-            m_context = createMacContext(backend, m_data, static_cast<void*>([m_data->window contentView]));
+            m_context = createMacContext(getBackendType(), m_data);
 
         }
         PTK_INFO("macOS Window Initialized");
-    }
-
-    MainWindow_mac::~MainWindow_mac()
-    {
-        if (m_data)
-        {
-            if (m_data->window != nil)
-            {
-                [m_data->window close];
-                m_data->window = nil;
-            }
-        }
-        delete m_data;
-        PTK_INFO("macOS Window Deconstructed");
     }
 
     bool MainWindow_mac::setPosHint(const Point& pos)
@@ -378,16 +389,6 @@ namespace pTK
             }
         }
         return false;
-    }
-
-    void MainWindow_mac::beginPaint()
-    {
-        // TODO
-    }
-
-    void MainWindow_mac::endPaint()
-    {
-        // TODO
     }
 
     bool MainWindow_mac::setTitle(const std::string& name)
@@ -426,7 +427,6 @@ namespace pTK
 
     void MainWindow_mac::swapBuffers()
     {
-        PTK_ASSERT(m_context, "Context is undefined!");
         m_context->swapBuffers();
     }
 

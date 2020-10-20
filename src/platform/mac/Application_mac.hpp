@@ -35,14 +35,32 @@ namespace pTK
         virtual ~Application_mac();
 
         /** Function for closing the application.
-
+        
+            This will close all the windows added to the
+            application and terminate. Only use this when
+            it is time to end the app.
         */
         void close() override;
         
+        /** Message loop for the application.
+         
+        */
         int messageLoop() override;
         
+        /** Function for polling all the window events.
+        
+        */
         void pollEvents() override;
+        
+        /** Function for waiting for an event.
+        
+        */
         void waitEvents() override;
+        
+        /** Function for waiting for an event with a timout.
+            
+            @param ms   max time to wait for an event
+        */
         void waitEventsTimeout(uint ms) override;
     };
 }

@@ -59,6 +59,9 @@ namespace pTK
         void swapBuffers() override;
 
     private:
+        void init(void* mainView, const Size& size, const Vec2f& scale);
+        
+    private:
         sk_sp<GrContext> m_context;
         SkSurfaceProps m_props;
         

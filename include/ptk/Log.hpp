@@ -12,7 +12,14 @@
 #ifdef PTK_DEBUG
 
     // spdlog Headers
+    #ifdef PTK_COMPILER_CLANG
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdouble-promotion"
+    #endif
     #include "spdlog/spdlog.h"
+    #ifdef PTK_COMPILER_CLANG
+        #pragma clang diagnostic pop
+    #endif
 
     // C++ Headers
     #include <memory>

@@ -36,7 +36,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/platform)
 # Header files
 file(GLOB_RECURSE HEADER_FILES ${CMAKE_SOURCE_DIR}/include/ptk/*.hpp)
 source_group(TREE "${CMAKE_SOURCE_DIR}/include/ptk" PREFIX "Header Files" FILES ${HEADER_FILES})
-message(STATUS "pf: ${PLATFORM_FILES}")
+
 # Source files
 set(SOURCE_FILES Application.cpp Window.cpp
         ${CORE_FILES}

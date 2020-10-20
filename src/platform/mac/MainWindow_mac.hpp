@@ -22,7 +22,7 @@ namespace pTK
 
     /** MainWindow_mac class implementation.
 
-        This class handles the Mac Cocoa Window.
+        This class handles the macOS Cocoa Window.
     */
     class MainWindow_mac : public MainWindowBase
     {
@@ -105,18 +105,6 @@ namespace pTK
         */
         bool setLimits(const Size&, const Size&) override;
 
-        /** Function for initiating the drawing.
-
-            This function will be called before any drawing is supposed to be done.
-        */
-        void beginPaint() override;
-
-        /** Function for ending the drawing.
-
-            This function will be called after the drawing is completed.
-        */
-        void endPaint() override;
-
         /** Function for setting the title of the window.
 
             @param name     title to show
@@ -187,14 +175,30 @@ namespace pTK
         */
         bool setScaleHint(const Vec2f& scale) override;
         
-        long windowID() const;
-        void *nsWindow() const;
+        /** Function for retrieving the NSWindow id.
+         
+            @return     id of the NSWindow
+        */
+        [[nodiscard]] long windowID() const;
+        
+        /** Function for retrieving the NSWindow pointer.
+            
+            Be sure to cast this to a NSWindow*.
+         
+            @return     pointer to NSWindow
+        */
+        [[nodiscard]] void *nsWindow() const;
 
+    public:
+        // Structure for internal window data.
         struct WinData;
         
     private:
+        void init(const std::string& name, const Size& size);
+        
+    private:
         std::unique_ptr<ContextBase> m_context;
-        WinData *m_data;
+        std::unique_ptr<WinData> m_data;
     };
 }
 
