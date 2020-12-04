@@ -13,6 +13,7 @@
 
 // X11 Heades
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 namespace pTK
 {
@@ -45,6 +46,7 @@ namespace pTK
         void close() override;
 
         static Display *getDisplay();
+        static XContext getXContext();
 
         void pollEvents() override;
         void waitEvents() override;

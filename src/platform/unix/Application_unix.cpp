@@ -16,11 +16,13 @@
 
 // X11 Headers
 #include <X11/Xlib.h>
+#include <X11/Xresource.h>
 #include <X11/Xutil.h>
 
 namespace pTK
 {
     static Display *s_display = nullptr;
+    static XContext s_xcontext = -1;
     static std::map<::Window, std::pair<Window*, MainWindow_unix*>> s_windowMap = {};
 
     Application_unix::Application_unix()
@@ -35,6 +37,7 @@ namespace pTK
     {
         XInitThreads();
         s_display = XOpenDisplay(nullptr);
+        s_xcontext = XUniqueContext();
 
         return true;
     }
@@ -69,6 +72,11 @@ namespace pTK
     {
         return s_display;
     }
+    
+    XContext Application_unix::getXContext()
+    {
+        return s_xcontext;
+    }
 
     void Application_unix::pollEvents()
     {
@@ -79,33 +87,39 @@ namespace pTK
         {
             XEvent event = {};
             XNextEvent(s_display, &event);
-
+            
+            Window *window{nullptr};
+            if (XFindContext(s_display, event.xany.window, s_xcontext, reinterpret_cast<XPointer*>(&window)) != 0)
+                continue;
+                
             switch (event.type)
             {
             case DestroyNotify:
             {
-                XDestroyWindowEvent *dEvent = reinterpret_cast<XDestroyWindowEvent*>(&event);
-                auto it{s_windowMap.find(dEvent->window)};
-                if (it != s_windowMap.end())
-                {
-                    Event evt{Event::Category::Window, Event::Type::WindowClose};
-                    it->second.first->handleEvents(); // Handle all events before sending close event.
-                    it->second.first->sendEvent(&evt);
-                    close = true; // TODO: Should not really be here.
-                }
+                // XDestroyWindowEvent *dEvent = reinterpret_cast<XDestroyWindowEvent*>(&event);
+                Event evt{Event::Category::Window, Event::Type::WindowClose};
+                window->handleEvents(); // Handle all events before sending close event.
+                window->sendEvent(&evt);
+                close = true; // TODO: Should not really be here.
                 break;
             }
             case ClientMessage:
             {
-                XClientMessageEvent *cEvent = reinterpret_cast<XClientMessageEvent*>(&event);
-                auto it{s_windowMap.find(cEvent->window)};
-                if (it != s_windowMap.end())
+                PTK_INFO("TEST SADSAD");
+                if (auto uWindow = dynamic_cast<MainWindow_unix*>(window->getBackend()))
                 {
-                    if (static_cast<Atom>(cEvent->data.l[0]) == it->second.second->deleteAtom())
+                    XClientMessageEvent *cEvent = reinterpret_cast<XClientMessageEvent*>(&event);
+                    if (static_cast<Atom>(cEvent->data.l[0]) == uWindow->deleteAtom())
                     {
                         XDestroyWindow(s_display, cEvent->window);
                     }
                 }
+                break;
+            }
+            case ButtonPress:
+            {
+                
+                break;
             }
             default:
                 break;

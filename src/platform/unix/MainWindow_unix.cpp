@@ -49,6 +49,7 @@ namespace pTK
         setTitle(name);
 
         XMapWindow(m_display, m_window);
+        XSaveContext(m_display, m_window, Application_unix::getXContext(), reinterpret_cast<XPointer>(window));
         XFlush(m_display);
 
         m_atomWmDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", false);
