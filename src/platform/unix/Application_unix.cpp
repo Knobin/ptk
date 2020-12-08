@@ -147,10 +147,57 @@ namespace pTK
                 }
                 break;
             }
+            case ButtonPress:
+            {
+                switch (event.xbutton.button)
+                {
+                    case Button1:
+                    {
+                        ButtonEvent bEvt{Event::Type::MouseButtonPressed, Mouse::Button::Left, {event.xbutton.x, event.xbutton.y}};
+                        window->sendEvent(&bEvt);
+                        break;
+                    }
+                    case Button4:
+                    {
+                        ScrollEvent sEvt{{0.0f, 1.0f}};
+                        window->sendEvent(&sEvt);
+                        break;
+                    }
+                    case Button5:
+                    {
+                        ScrollEvent sEvt{{0.0f, -1.0f}};
+                        window->sendEvent(&sEvt);
+                        break;
+                    }
+                }
+                break;
+            }
+            case ButtonRelease:
+            {
+                if (event.xbutton.button == Button1)
+                {
+                    ButtonEvent bEvt{Event::Type::MouseButtonReleased, Mouse::Button::Left, {event.xbutton.x, event.xbutton.y}};
+                    window->sendEvent(&bEvt);
+                }
+                break;
+            }
+            case MotionNotify:
+            {
+                MotionEvent mEvt{{static_cast<Point::value_type>(event.xbutton.x), 
+                                    static_cast<Point::value_type>(event.xbutton.y)}};
+                window->sendEvent(&mEvt);
+                break;
+            }
             case KeyPress:
             {
-                KeyEvent evt{KeyEvent::Pressed, translateKeyCode(XLookupKeysym(&event.xkey, 0))};
-                window->sendEvent(&evt);
+                KeyEvent kEvt{KeyEvent::Pressed, translateKeyCode(XLookupKeysym(&event.xkey, 0))};
+                window->sendEvent(&kEvt);
+                break;
+            }
+            case KeyRelease:
+            {
+                KeyEvent kEvt{KeyEvent::Released, translateKeyCode(XLookupKeysym(&event.xkey, 0))};
+                window->sendEvent(&kEvt);
                 break;
             }
             default:

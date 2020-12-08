@@ -15,6 +15,9 @@
 
 // X11 Headers
 #include <X11/Xutil.h>
+#include <X11/Xatom.h>
+
+#include <thread>
 
 namespace pTK
 {
@@ -25,9 +28,8 @@ namespace pTK
         int root = DefaultRootWindow(m_display);
         int defaultScreen = DefaultScreen(m_display);
         int screenBitDepth{24};
-        XVisualInfo info{};
 
-        if (!XMatchVisualInfo(m_display, defaultScreen, screenBitDepth, TrueColor, &info))
+        if (!XMatchVisualInfo(m_display, defaultScreen, screenBitDepth, TrueColor, &m_info))
             throw WindowError("No matching visual info");
 
         const unsigned long eventMask = ExposureMask | StructureNotifyMask |
@@ -36,12 +38,12 @@ namespace pTK
 
         XSetWindowAttributes attr{};
         attr.event_mask = eventMask;
-        attr.colormap = XCreateColormap(m_display, root, info.visual, AllocNone);
+        attr.colormap = XCreateColormap(m_display, root, m_info.visual, AllocNone);
         const unsigned long attrMask = CWEventMask | CWColormap;
         
         const unsigned int width{static_cast<unsigned int>(size.width)};
         const unsigned int height{static_cast<unsigned int>(size.height)};
-        m_window = XCreateWindow(m_display, root, 0, 0, width, height, 0, 24, InputOutput,info.visual, attrMask, &attr);
+        m_window = XCreateWindow(m_display, root, 0, 0, width, height, 0, 24, InputOutput, m_info.visual, attrMask, &attr);
 
         if (!m_window)
             throw WindowError("Failed to create Window");
@@ -58,25 +60,25 @@ namespace pTK
             PTK_WARN("Could not register WM_DELETE_WINDOW property");   
         }
 
-        RasterPolicy_unix policy{m_display, m_window, info};
+        RasterPolicy_unix policy{m_display, m_window, m_info};
         m_context = std::make_unique<RasterContext<RasterPolicy_unix>>(size, policy);
     }
 
     bool MainWindow_unix::close() 
     {
-        // TODO
+        XDestroyWindow(m_display, m_window);
         return true;
     }
 
     bool MainWindow_unix::show() 
     {
-        // TODO
+        XMapWindow(m_display, m_window);
         return true;
     }
 
     bool MainWindow_unix::hide() 
     {
-        // TODO
+        XUnmapWindow(m_display, m_window);
         return true;
     }
 
@@ -166,19 +168,32 @@ namespace pTK
 
     bool MainWindow_unix::minimize() 
     {
-        // TODO
+        XIconifyWindow(m_display, m_window, m_info.screen);
+        XFlush(m_display);
         return true;
     }
 
     bool MainWindow_unix::isMinimized() const 
     {
-        // TODO
-        return false;
+        int state{WithdrawnState};
+        Atom wm_state{XInternAtom(m_display, "WM_STATE", False)};
+        auto property = getWindowProperty(wm_state, wm_state);
+        if (property.second)
+        {
+            if (property.first >= 2) 
+            {
+                state = *(uint32_t*)property.second;
+            }
+            XFree(property.second);
+        }
+
+        return state == IconicState;
     }
 
     bool MainWindow_unix::restore() 
     {
-        // TODO
+        XMapWindow(m_display, m_window);
+        XFlush(m_display);
         return true;
     }
 
@@ -192,6 +207,16 @@ namespace pTK
     {
         // TODO
         return true;
+    }
+
+    std::pair<unsigned long, unsigned char*> MainWindow_unix::getWindowProperty(Atom property, Atom type) const
+    {
+        Atom realType;
+        int realFormat;
+        unsigned long left;
+        std::pair<unsigned long, unsigned char*> data{};
+        XGetWindowProperty(m_display, m_window, property, 0L, 2L, False, type, &realType, &realFormat, &data.first, &left, &data.second);
+        return data;
     }
 
     ::Window MainWindow_unix::xWindow() const

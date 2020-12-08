@@ -16,6 +16,7 @@
 
 // X11 Heades
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 namespace pTK
 {
@@ -192,14 +193,18 @@ namespace pTK
         Atom deleteAtom() const;
 
     private:
+        std::pair<unsigned long, unsigned char*> getWindowProperty(Atom property, Atom type) const;
+
+    private:
         std::unique_ptr<ContextBase> m_context;
 
         sk_sp<SkSurface> m_surface;
-        GC m_gc;
+        // GC m_gc;
 
         Display *m_display;
         ::Window m_window;
         Atom m_atomWmDeleteWindow;
+        XVisualInfo m_info;
 
         Size m_size;
     };
