@@ -54,7 +54,7 @@ namespace pTK
         XSaveContext(m_display, m_window, Application_unix::getXContext(), reinterpret_cast<XPointer>(window));
         XFlush(m_display);
 
-        m_atomWmDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", false);
+        m_atomWmDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
         if (!XSetWMProtocols(m_display, m_window, &m_atomWmDeleteWindow, 1))
         {
             PTK_WARN("Could not register WM_DELETE_WINDOW property");   
@@ -139,19 +139,54 @@ namespace pTK
 
     bool MainWindow_unix::setTitle(const std::string& name) 
     {
-        XStoreName(m_display, m_window, name.c_str());
+        const Atom utf8_string = XInternAtom(m_display, "UTF8_STRING", False);
+        const Atom net_wm_name = XInternAtom(m_display, "_NET_WM_NAME", False);
+        const Atom net_wm_icon_name = XInternAtom(m_display, "_NET_WM_ICON_NAME", False);
+        
+        XChangeProperty(m_display, m_window, net_wm_name, utf8_string, 8, PropModeReplace, (unsigned char*)name.c_str(), name.size());
+        XChangeProperty(m_display, m_window, net_wm_icon_name, utf8_string, 8, PropModeReplace, (unsigned char*)name.c_str(), name.size());
+ 
+        XFlush(m_display);
         return true;
     }
 
     bool MainWindow_unix::setIcon(int32 width, int32 height, byte* pixels)  
     {
-        // TODO
+        const Atom net_wm_icon = XInternAtom(m_display, "_NET_WM_ICON", False);
+        const Atom cardinal = XInternAtom(m_display, "CARDINAL", False);
+        const std::size_t longCount{static_cast<std::size_t>(2 + (width * height))};
+        std::unique_ptr<long[]> longData{std::make_unique<long[]>(longCount)};
+        longData[0] = static_cast<long>(width);
+        longData[1] = static_cast<long>(height);
+
+        // Expects ARGB, pixel array is RGBA.
+        for (std::size_t i{2}; i < longCount; ++i)
+        {
+            byte r{pixels[(i * 4)]};
+            byte g{pixels[(i * 4) + 1]};
+            byte b{pixels[(i * 4) + 2]};
+            byte a{pixels[(i * 4) + 3]};
+
+            longData[i] = (static_cast<long>(a) << 24) | (static_cast<long>(r) << 16) | (static_cast<long>(g) << 8) | static_cast<long>(b);
+        }
+
+        XChangeProperty(m_display, m_window, net_wm_icon, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)longData.get(), (int)longCount);
+        //XChangeProperty(m_display, m_window, net_wm_icon, cardinal, 32, PropModeReplace, (unsigned char*)longData.get(), longCount);
+        XFlush(m_display);
         return true;
     }
 
     void MainWindow_unix::notifyEvent() 
     {
-        // TODO
+        const Atom nullAtom{XInternAtom(m_display, "NULL", False)};
+
+        XEvent event{ClientMessage};
+        event.xclient.window = m_window;
+        event.xclient.format = 32;
+        event.xclient.message_type = nullAtom;
+
+        XSendEvent(m_display, m_window, False, 0, &event);
+        XFlush(m_display);
     }
 
     Point MainWindow_unix::getWinPos() const 
