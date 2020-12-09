@@ -21,6 +21,10 @@
 
 namespace pTK
 {   
+    // 
+    // Will probably rework keyboard input at some point, this works for now.
+    //
+
     static std::map<unsigned long, KeyCode> initKeyCodes() noexcept
     {
         std::map<unsigned long, KeyCode> map{};
@@ -42,6 +46,17 @@ namespace pTK
         return map;
     }
 
+    static Key translateKeyCode(const std::map<unsigned long, KeyCode> & map, unsigned long code)
+    {
+        std::map<unsigned long, KeyCode>::const_iterator it{map.find(code)};
+        if (it != map.cend())
+            return it->second;
+        
+        return Key::Unknown;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
     struct AppUnixData
     {
         const std::map<unsigned long, KeyCode> keyMap{initKeyCodes()};
@@ -52,26 +67,20 @@ namespace pTK
 
     static AppUnixData s_appData{};
     
-    static Key translateKeyCode(unsigned long code)
-    {
-        std::map<unsigned long, KeyCode>::const_iterator it{s_appData.keyMap.find(code)};
-        if (it != s_appData.keyMap.cend())
-            return it->second;
-        
-        return Key::Unknown;
-    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     Application_unix::Application_unix()
         : ApplicationBase(),
             m_run{true}
     {
         if (!init())
-            throw PlatformError("Failed to create Application_unix");
+            throw PlatformError("Failed to initialize unix application");
     }
 
     bool Application_unix::init()
     {
         XInitThreads();
+
         s_appData.display = XOpenDisplay(nullptr);
         s_appData.xcontext = XUniqueContext();
 
@@ -103,6 +112,7 @@ namespace pTK
     void Application_unix::close()
     {
         // TODO
+        m_run = false;
     }
 
     Display *Application_unix::getDisplay()
@@ -214,13 +224,13 @@ namespace pTK
             }
             case KeyPress:
             {
-                KeyEvent kEvt{KeyEvent::Pressed, translateKeyCode(XLookupKeysym(&event->xkey, 0))};
+                KeyEvent kEvt{KeyEvent::Pressed, translateKeyCode(s_appData.keyMap, XLookupKeysym(&event->xkey, 0))};
                 window->sendEvent(&kEvt);
                 break;
             }
             case KeyRelease:
             {
-                KeyEvent kEvt{KeyEvent::Released, translateKeyCode(XLookupKeysym(&event->xkey, 0))};
+                KeyEvent kEvt{KeyEvent::Released, translateKeyCode(s_appData.keyMap, XLookupKeysym(&event->xkey, 0))};
                 window->sendEvent(&kEvt);
                 break;
             }

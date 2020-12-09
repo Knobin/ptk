@@ -13,7 +13,7 @@ namespace pTK
     int32 ApplicationBase::addWindow(Window *window)
     {
         int32 id{1};
-        for (const std::pair<int32, Window*>& pair : m_mainWindows)
+        for (const std::pair<const int32, Window*>& pair : m_mainWindows)
         {
             if (pair.first == id)
             {

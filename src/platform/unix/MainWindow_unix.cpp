@@ -17,15 +17,13 @@
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
 
-#include <thread>
-
 namespace pTK
 {
     MainWindow_unix::MainWindow_unix(Window *window, const std::string& name, const Size& size, BackendType backend)
         : MainWindowBase(window, backend), m_display{Application_unix::getDisplay()}
     {
         m_size = size;
-        int root = DefaultRootWindow(m_display);
+        ::Window root = DefaultRootWindow(m_display);
         int defaultScreen = DefaultScreen(m_display);
         int screenBitDepth{24};
 
@@ -57,7 +55,7 @@ namespace pTK
         m_atomWmDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
         if (!XSetWMProtocols(m_display, m_window, &m_atomWmDeleteWindow, 1))
         {
-            PTK_WARN("Could not register WM_DELETE_WINDOW property");   
+            PTK_WARN("Could not register WM_DELETE_WINDOW property");
         }
 
         RasterPolicy_unix policy{m_display, m_window, m_info};
@@ -143,8 +141,8 @@ namespace pTK
         const Atom net_wm_name = XInternAtom(m_display, "_NET_WM_NAME", False);
         const Atom net_wm_icon_name = XInternAtom(m_display, "_NET_WM_ICON_NAME", False);
         
-        XChangeProperty(m_display, m_window, net_wm_name, utf8_string, 8, PropModeReplace, (unsigned char*)name.c_str(), name.size());
-        XChangeProperty(m_display, m_window, net_wm_icon_name, utf8_string, 8, PropModeReplace, (unsigned char*)name.c_str(), name.size());
+        XChangeProperty(m_display, m_window, net_wm_name, utf8_string, 8, PropModeReplace, reinterpret_cast<const unsigned char*>(name.c_str()), static_cast<int>(name.size()));
+        XChangeProperty(m_display, m_window, net_wm_icon_name, utf8_string, 8, PropModeReplace, reinterpret_cast<const unsigned char*>(name.c_str()),  static_cast<int>(name.size()));
  
         XFlush(m_display);
         return true;
@@ -153,9 +151,10 @@ namespace pTK
     bool MainWindow_unix::setIcon(int32 width, int32 height, byte* pixels)  
     {
         const Atom net_wm_icon = XInternAtom(m_display, "_NET_WM_ICON", False);
-        const Atom cardinal = XInternAtom(m_display, "CARDINAL", False);
         const std::size_t longCount{static_cast<std::size_t>(2 + (width * height))};
         std::unique_ptr<long[]> longData{std::make_unique<long[]>(longCount)};
+
+        // Apparently width and height must be located in the beginning of the data.
         longData[0] = static_cast<long>(width);
         longData[1] = static_cast<long>(height);
 
@@ -170,7 +169,7 @@ namespace pTK
             longData[i] = (static_cast<long>(a) << 24) | (static_cast<long>(r) << 16) | (static_cast<long>(g) << 8) | static_cast<long>(b);
         }
 
-        XChangeProperty(m_display, m_window, net_wm_icon, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)longData.get(), (int)longCount);
+        XChangeProperty(m_display, m_window, net_wm_icon, XA_CARDINAL, 32, PropModeReplace, reinterpret_cast<unsigned char*>(longData.get()), static_cast<int>(longCount));
         //XChangeProperty(m_display, m_window, net_wm_icon, cardinal, 32, PropModeReplace, (unsigned char*)longData.get(), longCount);
         XFlush(m_display);
         return true;
@@ -210,14 +209,14 @@ namespace pTK
 
     bool MainWindow_unix::isMinimized() const 
     {
-        int state{WithdrawnState};
+        uint32 state{WithdrawnState};
         Atom wm_state{XInternAtom(m_display, "WM_STATE", False)};
         auto property = getWindowProperty(wm_state, wm_state);
         if (property.second)
         {
             if (property.first >= 2) 
             {
-                state = *(uint32_t*)property.second;
+                state = *reinterpret_cast<uint32*>(property.second);
             }
             XFree(property.second);
         }

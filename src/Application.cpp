@@ -63,7 +63,7 @@ namespace pTK
     bool Application::removeWindow(Window *window)
     {
         int32 key{-1};
-        for (const std::pair<int32, Window*>& pair : m_appBase->windows())
+        for (const std::pair<const int32, Window*>& pair : m_appBase->windows())
             if (pair.second == window)
                 key = pair.first;
         

@@ -77,7 +77,7 @@ namespace pTK
         m_surface.reset();
         m_context.reset();
 
-        PTK_INFO("Deconstructed GLContext_win");
+        PTK_INFO("Destroyed GLContext_win");
     }
 
     void GLContext_win::resize(const Size& size)
