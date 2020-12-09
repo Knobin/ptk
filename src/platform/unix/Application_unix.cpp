@@ -20,11 +20,7 @@
 #include <X11/Xutil.h>
 
 namespace pTK
-{
-    static Display *s_display = nullptr;
-    static XContext s_xcontext = -1;
-    static std::map<::Window, std::pair<Window*, MainWindow_unix*>> s_windowMap = {};
-    
+{   
     static std::map<unsigned long, KeyCode> initKeyCodes() noexcept
     {
         std::map<unsigned long, KeyCode> map{};
@@ -46,12 +42,20 @@ namespace pTK
         return map;
     }
 
-    static const std::map<unsigned long, KeyCode> s_keyMap{initKeyCodes()};
+    struct AppUnixData
+    {
+        const std::map<unsigned long, KeyCode> keyMap{initKeyCodes()};
+        std::map<::Window, std::pair<Window*, MainWindow_unix*>> windowMap{};
+        Display *display{nullptr};
+        XContext xcontext{-1};
+    };
+
+    static AppUnixData s_appData{};
     
     static Key translateKeyCode(unsigned long code)
     {
-        std::map<unsigned long, KeyCode>::const_iterator it{s_keyMap.find(code)};
-        if (it != s_keyMap.cend())
+        std::map<unsigned long, KeyCode>::const_iterator it{s_appData.keyMap.find(code)};
+        if (it != s_appData.keyMap.cend())
             return it->second;
         
         return Key::Unknown;
@@ -68,15 +72,15 @@ namespace pTK
     bool Application_unix::init()
     {
         XInitThreads();
-        s_display = XOpenDisplay(nullptr);
-        s_xcontext = XUniqueContext();
+        s_appData.display = XOpenDisplay(nullptr);
+        s_appData.xcontext = XUniqueContext();
 
         return true;
     }
 
     Application_unix::~Application_unix()
     {
-        XCloseDisplay(s_display);
+        XCloseDisplay(s_appData.display);
     }
 
     int Application_unix::messageLoop()
@@ -85,11 +89,12 @@ namespace pTK
         PaintEvent evt{Point{0, 0}, window->getSize()};
         window->sendEvent(&evt);
         window->show();
+        window->handleEvents();
 
         while (m_run) 
         {
+            waitEvents();
             window->handleEvents();
-            pollEvents();
         }
         // TODO
         return 0;
@@ -102,58 +107,77 @@ namespace pTK
 
     Display *Application_unix::getDisplay()
     {
-        return s_display;
+        return s_appData.display;
     }
     
     XContext Application_unix::getXContext()
     {
-        return s_xcontext;
+        return s_appData.xcontext;
     }
 
     void Application_unix::pollEvents()
     {
-        XPending(s_display);
+        XPending(s_appData.display);
 
-        bool close = false;
-        while(QLength(s_display))
+        while(QLength(s_appData.display))
         {
             XEvent event = {};
-            XNextEvent(s_display, &event);
+            XNextEvent(s_appData.display, &event);
+            handleEvent(&event);
+        }
+
+        XFlush(s_appData.display);
+    }
+
+    void Application_unix::waitEvents()
+    {
+        XEvent event = {};
+        XNextEvent(s_appData.display, &event);
+        handleEvent(&event);
+        pollEvents();
+    }
+
+    void Application_unix::waitEventsTimeout(uint ms)
+    {
+        // TODO
+        pollEvents();
+    }
+
+    void Application_unix::handleEvent(XEvent *event)
+    {
+        PTK_ASSERT(event, "Undefined XEvent!");
+
+        Window *window{nullptr};
+        if (XFindContext(s_appData.display, event->xany.window, s_appData.xcontext, reinterpret_cast<XPointer*>(&window)) != 0)
+            return;
             
-            Window *window{nullptr};
-            if (XFindContext(s_display, event.xany.window, s_xcontext, reinterpret_cast<XPointer*>(&window)) != 0)
-                continue;
-                
-            switch (event.type)
-            {
+        switch (event->type)
+        {
             case DestroyNotify:
             {
-                // XDestroyWindowEvent *dEvent = reinterpret_cast<XDestroyWindowEvent*>(&event);
                 Event evt{Event::Category::Window, Event::Type::WindowClose};
                 window->handleEvents(); // Handle all events before sending close event.
                 window->sendEvent(&evt);
-                close = true; // TODO: Should not really be here.
+                m_run = false;
                 break;
             }
             case ClientMessage:
             {
                 if (auto uWindow = dynamic_cast<MainWindow_unix*>(window->getBackend()))
                 {
-                    XClientMessageEvent *cEvent = reinterpret_cast<XClientMessageEvent*>(&event);
-                    if (static_cast<Atom>(cEvent->data.l[0]) == uWindow->deleteAtom())
-                    {
-                        XDestroyWindow(s_display, cEvent->window);
-                    }
+                    XClientMessageEvent *cEvent = reinterpret_cast<XClientMessageEvent*>(event);
+                    if (cEvent && static_cast<Atom>(cEvent->data.l[0]) == uWindow->deleteAtom())
+                        XDestroyWindow(s_appData.display, cEvent->window);
                 }
                 break;
             }
             case ButtonPress:
             {
-                switch (event.xbutton.button)
+                switch (event->xbutton.button)
                 {
                     case Button1:
                     {
-                        ButtonEvent bEvt{Event::Type::MouseButtonPressed, Mouse::Button::Left, {event.xbutton.x, event.xbutton.y}};
+                        ButtonEvent bEvt{Event::Type::MouseButtonPressed, Mouse::Button::Left, {event->xbutton.x, event->xbutton.y}};
                         window->sendEvent(&bEvt);
                         break;
                     }
@@ -174,53 +198,35 @@ namespace pTK
             }
             case ButtonRelease:
             {
-                if (event.xbutton.button == Button1)
+                if (event->xbutton.button == Button1)
                 {
-                    ButtonEvent bEvt{Event::Type::MouseButtonReleased, Mouse::Button::Left, {event.xbutton.x, event.xbutton.y}};
+                    ButtonEvent bEvt{Event::Type::MouseButtonReleased, Mouse::Button::Left, {event->xbutton.x, event->xbutton.y}};
                     window->sendEvent(&bEvt);
                 }
                 break;
             }
             case MotionNotify:
             {
-                MotionEvent mEvt{{static_cast<Point::value_type>(event.xbutton.x), 
-                                    static_cast<Point::value_type>(event.xbutton.y)}};
+                MotionEvent mEvt{{static_cast<Point::value_type>(event->xbutton.x), 
+                                    static_cast<Point::value_type>(event->xbutton.y)}};
                 window->sendEvent(&mEvt);
                 break;
             }
             case KeyPress:
             {
-                KeyEvent kEvt{KeyEvent::Pressed, translateKeyCode(XLookupKeysym(&event.xkey, 0))};
+                KeyEvent kEvt{KeyEvent::Pressed, translateKeyCode(XLookupKeysym(&event->xkey, 0))};
                 window->sendEvent(&kEvt);
                 break;
             }
             case KeyRelease:
             {
-                KeyEvent kEvt{KeyEvent::Released, translateKeyCode(XLookupKeysym(&event.xkey, 0))};
+                KeyEvent kEvt{KeyEvent::Released, translateKeyCode(XLookupKeysym(&event->xkey, 0))};
                 window->sendEvent(&kEvt);
                 break;
             }
             default:
                 break;
-            }
         }
-
-        if (close)
-            m_run = false;
-
-        XFlush(s_display);
-    }
-
-    void Application_unix::waitEvents()
-    {
-        // TODO
-        pollEvents();
-    }
-
-    void Application_unix::waitEventsTimeout(uint ms)
-    {
-        // TODO
-        pollEvents();
     }
 
     void Application_unix::onWindowAdd(int32 key)
@@ -230,7 +236,7 @@ namespace pTK
         if (mainwindow)
         {
             PTK_INFO("Added MainWindow_unix to Application_unix");
-            s_windowMap.insert({mainwindow->xWindow(), {pwindow, mainwindow}});
+            s_appData.windowMap.insert({mainwindow->xWindow(), {pwindow, mainwindow}});
         }    
     }
 
@@ -240,11 +246,11 @@ namespace pTK
         MainWindow_unix *mainwindow{dynamic_cast<MainWindow_unix*>(pwindow->getBackend())};
         if (mainwindow)
         {
-            auto it{s_windowMap.find(mainwindow->xWindow())};
-            if (it != s_windowMap.end())
+            auto it{s_appData.windowMap.find(mainwindow->xWindow())};
+            if (it != s_appData.windowMap.end())
             {
                 PTK_INFO("Removed MainWindow_unix from Application_unix");
-                s_windowMap.erase(it);
+                s_appData.windowMap.erase(it);
             }
         }
     }
