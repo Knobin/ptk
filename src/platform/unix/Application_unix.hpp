@@ -71,9 +71,6 @@ namespace pTK
     private:
         bool init();
         void handleEvent(XEvent *event);
-
-    private:
-        bool m_run;
     };
 }
 

@@ -63,6 +63,13 @@ namespace pTK
             @return       true if removed, otherwise false
         */
         bool removeWindow(int32 key);
+
+        /** Function for removing a window from the app.
+
+            @param window   pointer to window    
+            @return         true if removed, otherwise false
+        */
+        bool removeWindow(Window *window);
         
         /** Function for retrieving the size of the internal table.
          

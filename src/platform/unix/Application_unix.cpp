@@ -72,7 +72,7 @@ namespace pTK
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     Application_unix::Application_unix()
-        : ApplicationBase(), m_run{true}
+        : ApplicationBase()
     {
         if (!init())
             throw PlatformError("Failed to initialize unix application");
@@ -86,13 +86,11 @@ namespace pTK
 
     int Application_unix::messageLoop()
     {
-        Window *window{windows().begin()->second};
-        window->handleEvents();
-
-        while (m_run) 
+        while (windowCount() > 0) 
         {
             waitEvents();
-            window->handleEvents();
+            for (const auto& pair : windows())
+                pair.second->handleEvents();
         }
 
         return 0;
@@ -100,9 +98,15 @@ namespace pTK
 
     void Application_unix::close()
     {
-        for (const std::pair<const int32, Window*>& pair : windows())
-            pair.second->close();
-        m_run = false;
+        auto cont = windows();
+        for (auto it = cont.cbegin(); it != cont.cend();)
+        {
+            Event evt{Event::Category::Window, Event::Type::WindowClose};
+            it->second->handleEvents(); // Handle all events before sending close event.
+            it->second->sendEvent(&evt);
+            it->second->handleEvents();
+            cont.erase(it++);
+        }
     }
 
     void Application_unix::pollEvents()
@@ -216,12 +220,16 @@ namespace pTK
             
         switch (event->type)
         {
+            case Expose:
+            {
+                PaintEvent evt{Point{0,0}, window->getSize()};
+                window->sendEvent(&evt);
+                break;
+            }
             case DestroyNotify:
             {
-                Event evt{Event::Category::Window, Event::Type::WindowClose};
                 window->handleEvents(); // Handle all events before sending close event.
-                window->sendEvent(&evt);
-                m_run = false; // pTK only supports 1 window for now.
+                removeWindow(window); // Remove window from Application.
                 break;
             }
             case ClientMessage:
@@ -230,7 +238,11 @@ namespace pTK
                 {
                     XClientMessageEvent *cEvent = reinterpret_cast<XClientMessageEvent*>(event);
                     if (cEvent && static_cast<Atom>(cEvent->data.l[0]) == uWindow->deleteAtom())
-                        XDestroyWindow(s_appData.display, cEvent->window);
+                    {
+                        Event evt{Event::Category::Window, Event::Type::WindowClose};
+                        window->handleEvents(); // Handle all events before sending close event.
+                        window->sendEvent(&evt);
+                    }
                 }
                 break;
             }

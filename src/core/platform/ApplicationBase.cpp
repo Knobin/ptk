@@ -44,6 +44,22 @@ namespace pTK
         return false;
     }
 
+    bool ApplicationBase::removeWindow(Window *window)
+    {
+        auto it{std::find_if(m_mainWindows.begin(), m_mainWindows.end(), [window](const auto& pair) {
+            return pair.second == window;
+        })};
+
+        if (it != m_mainWindows.end())
+        {
+            onWindowRemove(it->first);
+            m_mainWindows.erase(it);
+            return true;
+        }
+
+        return false;
+    }
+
     const std::map<int32, Window*>& ApplicationBase::windows() const
     {
         return m_mainWindows;

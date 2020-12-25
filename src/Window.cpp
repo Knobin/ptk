@@ -52,7 +52,7 @@ namespace pTK
             }
         }
 
-        if (m_draw)
+        if (m_draw && !m_close)
         {
             forceDrawAll();
             m_draw = false;

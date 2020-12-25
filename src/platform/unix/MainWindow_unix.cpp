@@ -63,7 +63,6 @@ namespace pTK
         RasterPolicy_unix policy{display, m_window, m_info};
         m_context = std::make_unique<RasterContext<RasterPolicy_unix>>(size, policy);
 
-
         m_lastPos = getWinPos();
         PTK_INFO("Initialized MainWindow_unix");
     }
