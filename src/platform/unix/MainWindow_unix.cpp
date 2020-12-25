@@ -100,10 +100,9 @@ namespace pTK
             Display *display{App::Display()};
             XMoveWindow(display, m_window, pos.x, pos.y);
             XFlush(display);
-            return true;
         }
 
-        return false;
+        return true;
     }
 
     ContextBase *MainWindow_unix::getContext() const 

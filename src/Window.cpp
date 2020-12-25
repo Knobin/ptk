@@ -80,6 +80,9 @@ namespace pTK
     {
         Drawable::show();
         m_winBackend->show();
+
+        PaintEvent evt{Point{0, 0}, getSize()};
+        sendEvent(&evt);
     }
 
     void Window::hide()

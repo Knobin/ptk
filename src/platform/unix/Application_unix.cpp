@@ -129,8 +129,37 @@ namespace pTK
 
     void Application_unix::waitEventsTimeout(uint ms)
     {
-        // TODO
-        pollEvents();
+        ::Display *display{s_appData.display};
+        XEvent event = {};
+        bool evtFound{false};
+
+        timeval timeout{};
+        timeout.tv_sec = ms / 1000;
+        timeout.tv_usec = (ms * 1000) - (timeout.tv_sec * 1000000);
+
+        if (XPending(display) == 0)
+        {
+            int fd{ConnectionNumber(display)};
+            fd_set readset;
+            FD_ZERO(&readset);
+            FD_SET(fd, &readset);
+            if (select(fd + 1, &readset, nullptr, nullptr, &timeout) > 0)
+            {
+                XNextEvent(display, &event);
+                evtFound = true;
+            }
+        }
+        else
+        {
+            XNextEvent(display, &event);
+            evtFound = true;
+        }
+        
+        if (evtFound)
+        {
+            handleEvent(&event);
+            pollEvents();
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
