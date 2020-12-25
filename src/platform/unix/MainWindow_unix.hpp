@@ -107,18 +107,6 @@ namespace pTK
         */
         bool setLimits(const Size&, const Size&) override;
 
-        /** Function for initiating the drawing.
-
-            This function will be called before any drawing is supposed to be done.
-        */
-        void beginPaint() override;
-
-        /** Function for ending the drawing.
-
-            This function will be called after the drawing is completed.
-        */
-        void endPaint() override;
-
         /** Function for setting the title of the window.
 
             @param name     title to show
@@ -192,6 +180,9 @@ namespace pTK
         ::Window xWindow() const;
         Atom deleteAtom() const;
 
+        Size& lastSize();
+        Point& lastPos();
+
     private:
         std::pair<unsigned long, unsigned char*> getWindowProperty(Atom property, Atom type) const;
 
@@ -201,12 +192,12 @@ namespace pTK
         sk_sp<SkSurface> m_surface;
         // GC m_gc;
 
-        Display *m_display;
+        Size m_lastSize;
+        Point m_lastPos{};
+
         ::Window m_window;
         Atom m_atomWmDeleteWindow;
         XVisualInfo m_info;
-
-        Size m_size;
     };
 }
 

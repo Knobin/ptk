@@ -38,6 +38,7 @@ namespace pTK
         */
         virtual ~Application_unix();
 
+        // TODO: Add documentation.
         int messageLoop() override;
 
         /** Function for closing the application should close.
@@ -45,16 +46,27 @@ namespace pTK
         */
         void close() override;
 
-        static Display *getDisplay();
-        static XContext getXContext();
-
+        // TODO: Add documentation.
         void pollEvents() override;
+
+        // TODO: Add documentation.
         void waitEvents() override;
+
+        // TODO: Add documentation.
         void waitEventsTimeout(uint ms) override;
 
-    private:
-        void onWindowAdd(int32) override;
-        void onWindowRemove(int32) override;
+    public:
+        // TODO: Add documentation.
+        static Display *Display();
+        
+        // TODO: Add documentation.
+        static XContext Context();
+
+        // TODO: Add documentation.
+        static ::Window Root();
+
+        // TODO: Add documentation.
+        static int Screen();
 
     private:
         bool init();

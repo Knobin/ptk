@@ -17,79 +17,93 @@
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
 
+using App = pTK::Application_unix;
+
 namespace pTK
 {
     MainWindow_unix::MainWindow_unix(Window *window, const std::string& name, const Size& size, BackendType backend)
-        : MainWindowBase(window, backend), m_display{Application_unix::getDisplay()}
+        : MainWindowBase(window, backend), m_lastSize{size}
     {
-        m_size = size;
-        ::Window root = DefaultRootWindow(m_display);
-        int defaultScreen = DefaultScreen(m_display);
+        ::Window root{App::Root()};
+        Display *display{App::Display()};
         int screenBitDepth{24};
 
-        if (!XMatchVisualInfo(m_display, defaultScreen, screenBitDepth, TrueColor, &m_info))
+        if (!XMatchVisualInfo(display, App::Screen(), screenBitDepth, TrueColor, &m_info))
             throw WindowError("No matching visual info");
 
         const unsigned long eventMask = ExposureMask | StructureNotifyMask |
                                         KeyPressMask | KeyReleaseMask |
-                                        PointerMotionMask | ButtonPressMask | ButtonReleaseMask;
+                                        PointerMotionMask | ButtonPressMask | ButtonReleaseMask |
+                                        FocusChangeMask;
 
         XSetWindowAttributes attr{};
         attr.event_mask = eventMask;
-        attr.colormap = XCreateColormap(m_display, root, m_info.visual, AllocNone);
+        attr.colormap = XCreateColormap(display, root, m_info.visual, AllocNone);
         const unsigned long attrMask = CWEventMask | CWColormap;
         
         const unsigned int width{static_cast<unsigned int>(size.width)};
         const unsigned int height{static_cast<unsigned int>(size.height)};
-        m_window = XCreateWindow(m_display, root, 0, 0, width, height, 0, 24, InputOutput, m_info.visual, attrMask, &attr);
+        m_window = XCreateWindow(display, root, 0, 0, width, height, 0, 24, InputOutput, m_info.visual, attrMask, &attr);
 
         if (!m_window)
             throw WindowError("Failed to create Window");
 
         setTitle(name);
 
-        XMapWindow(m_display, m_window);
-        XSaveContext(m_display, m_window, Application_unix::getXContext(), reinterpret_cast<XPointer>(window));
-        XFlush(m_display);
+        XMapWindow(display, m_window);
+        XSaveContext(display, m_window, App::Context(), reinterpret_cast<XPointer>(window));
+        XFlush(display);
 
-        m_atomWmDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
-        if (!XSetWMProtocols(m_display, m_window, &m_atomWmDeleteWindow, 1))
+        m_atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", False);
+        if (!XSetWMProtocols(display, m_window, &m_atomWmDeleteWindow, 1))
         {
             PTK_WARN("Could not register WM_DELETE_WINDOW property");
         }
 
-        RasterPolicy_unix policy{m_display, m_window, m_info};
+        RasterPolicy_unix policy{display, m_window, m_info};
         m_context = std::make_unique<RasterContext<RasterPolicy_unix>>(size, policy);
+
+
+        m_lastPos = getWinPos();
+        PTK_INFO("Initialized MainWindow_unix");
     }
 
     bool MainWindow_unix::close() 
     {
-        XDestroyWindow(m_display, m_window);
+        XDestroyWindow(App::Display(), m_window);
         return true;
     }
 
     bool MainWindow_unix::show() 
     {
-        XMapWindow(m_display, m_window);
+        XMapWindow(App::Display(), m_window);
         return true;
     }
 
     bool MainWindow_unix::hide() 
     {
-        XUnmapWindow(m_display, m_window);
+        XUnmapWindow(App::Display(), m_window);
         return true;
     }
 
     bool MainWindow_unix::isHidden() const 
     {
-        // TODO
-        return false;
+        XWindowAttributes xwa;
+        XGetWindowAttributes(App::Display(), m_window, &xwa);
+        return !(xwa.map_state == IsViewable);
     }
 
     bool MainWindow_unix::setPosHint(const Point& pos) 
     {
-        // TODO
-        return true;
+        if (pos != m_lastPos) 
+        {
+            Display *display{App::Display()};
+            XMoveWindow(display, m_window, pos.x, pos.y);
+            XFlush(display);
+            return true;
+        }
+
+        return false;
     }
 
     ContextBase *MainWindow_unix::getContext() const 
@@ -110,47 +124,70 @@ namespace pTK
 
     Vec2f MainWindow_unix::getDPIScale() const 
     {
+        // TODO
         return {1.0f, 1.0f};
     }
 
     bool MainWindow_unix::resize(const Size& size) 
     {
-        // TODO
+        bool status{false};
+
+        if (size != m_context->getSize()) 
+        {
+            m_context->resize(size);
+            status = true;
+        }
+
+        if (size != m_lastSize)
+        {
+            const unsigned int width{static_cast<unsigned int>(size.width)};
+            const unsigned int height{static_cast<unsigned int>(size.height)};
+
+            XResizeWindow(App::Display(), m_window, width, height);
+            status = true;
+        }
+        
+        return status;
+    }
+
+    bool MainWindow_unix::setLimits(const Size& min, const Size& max) 
+    {
+        XSizeHints *hints{XAllocSizeHints()};
+        PTK_ASSERT(hints, "Unable to allocate memory for XSizeHints");
+
+        hints->flags |= PMinSize | PMaxSize | PWinGravity;
+        hints->win_gravity = StaticGravity;
+
+        hints->min_width = min.width;
+        hints->min_height = min.height;
+        hints->max_width = max.width;
+        hints->max_height = max.height;
+
+        XSetWMNormalHints(App::Display(), m_window, hints);
+        XFree(hints);
+
+        XFlush(App::Display());
         return true;
-    }
-
-    bool MainWindow_unix::setLimits(const Size&, const Size&) 
-    {
-        // TODO
-        return true;
-    }
-
-    void MainWindow_unix::beginPaint() 
-    {
-
-    }
-
-    void MainWindow_unix::endPaint() 
-    {
-
     }
 
     bool MainWindow_unix::setTitle(const std::string& name) 
     {
-        const Atom utf8_string = XInternAtom(m_display, "UTF8_STRING", False);
-        const Atom net_wm_name = XInternAtom(m_display, "_NET_WM_NAME", False);
-        const Atom net_wm_icon_name = XInternAtom(m_display, "_NET_WM_ICON_NAME", False);
+        Display *display{App::Display()};
+        const Atom utf8_string = XInternAtom(display, "UTF8_STRING", False);
+        const Atom net_wm_name = XInternAtom(display, "_NET_WM_NAME", False);
+        const Atom net_wm_icon_name = XInternAtom(display, "_NET_WM_ICON_NAME", False);
         
-        XChangeProperty(m_display, m_window, net_wm_name, utf8_string, 8, PropModeReplace, reinterpret_cast<const unsigned char*>(name.c_str()), static_cast<int>(name.size()));
-        XChangeProperty(m_display, m_window, net_wm_icon_name, utf8_string, 8, PropModeReplace, reinterpret_cast<const unsigned char*>(name.c_str()),  static_cast<int>(name.size()));
+        XChangeProperty(display, m_window, net_wm_name, utf8_string, 8, PropModeReplace, reinterpret_cast<const unsigned char*>(name.c_str()), static_cast<int>(name.size()));
+        XChangeProperty(display, m_window, net_wm_icon_name, utf8_string, 8, PropModeReplace, reinterpret_cast<const unsigned char*>(name.c_str()),  static_cast<int>(name.size()));
  
-        XFlush(m_display);
+        XFlush(display);
         return true;
     }
 
     bool MainWindow_unix::setIcon(int32 width, int32 height, byte* pixels)  
     {
-        const Atom net_wm_icon = XInternAtom(m_display, "_NET_WM_ICON", False);
+        Display *display{App::Display()};
+        const Atom net_wm_icon = XInternAtom(display, "_NET_WM_ICON", False);
         const std::size_t longCount{static_cast<std::size_t>(2 + (width * height))};
         std::unique_ptr<long[]> longData{std::make_unique<long[]>(longCount)};
 
@@ -169,48 +206,55 @@ namespace pTK
             longData[i] = (static_cast<long>(a) << 24) | (static_cast<long>(r) << 16) | (static_cast<long>(g) << 8) | static_cast<long>(b);
         }
 
-        XChangeProperty(m_display, m_window, net_wm_icon, XA_CARDINAL, 32, PropModeReplace, reinterpret_cast<unsigned char*>(longData.get()), static_cast<int>(longCount));
-        //XChangeProperty(m_display, m_window, net_wm_icon, cardinal, 32, PropModeReplace, (unsigned char*)longData.get(), longCount);
-        XFlush(m_display);
+        XChangeProperty(display, m_window, net_wm_icon, XA_CARDINAL, 32, PropModeReplace, reinterpret_cast<unsigned char*>(longData.get()), static_cast<int>(longCount));
+        //XChangeProperty(display, m_window, net_wm_icon, cardinal, 32, PropModeReplace, (unsigned char*)longData.get(), longCount);
+        XFlush(display);
         return true;
     }
 
     void MainWindow_unix::notifyEvent() 
     {
-        const Atom nullAtom{XInternAtom(m_display, "NULL", False)};
+        Display *display{App::Display()};
+        const Atom nullAtom{XInternAtom(display, "NULL", False)};
 
         XEvent event{ClientMessage};
         event.xclient.window = m_window;
         event.xclient.format = 32;
         event.xclient.message_type = nullAtom;
 
-        XSendEvent(m_display, m_window, False, 0, &event);
-        XFlush(m_display);
+        XSendEvent(display, m_window, False, 0, &event);
+        XFlush(display);
     }
 
     Point MainWindow_unix::getWinPos() const 
     {
-        // TODO
-        return {};
+        int x{-1}, y{-1};
+        ::Window child;
+
+        XTranslateCoordinates(App::Display(), m_window, App::Root(), 0, 0, &x, &y, &child);
+        return Point{static_cast<Point::value_type>(x), static_cast<Point::value_type>(y)};
     }
 
     Size MainWindow_unix::getWinSize() const 
     {
-        // TODO
-        return {};
+        XWindowAttributes xwa;
+        XGetWindowAttributes(App::Display(), m_window, &xwa);
+
+        return Size{static_cast<Size::value_type>(xwa.width), static_cast<Size::value_type>(xwa.height)};
     }
 
     bool MainWindow_unix::minimize() 
     {
-        XIconifyWindow(m_display, m_window, m_info.screen);
-        XFlush(m_display);
+        Display *display{App::Display()};
+        XIconifyWindow(display, m_window, m_info.screen);
+        XFlush(display);
         return true;
     }
 
     bool MainWindow_unix::isMinimized() const 
     {
         uint32 state{WithdrawnState};
-        Atom wm_state{XInternAtom(m_display, "WM_STATE", False)};
+        Atom wm_state{XInternAtom(App::Display(), "WM_STATE", False)};
         auto property = getWindowProperty(wm_state, wm_state);
         if (property.second)
         {
@@ -226,15 +270,19 @@ namespace pTK
 
     bool MainWindow_unix::restore() 
     {
-        XMapWindow(m_display, m_window);
-        XFlush(m_display);
+        Display *display{App::Display()};
+        XMapWindow(display, m_window);
+        XFlush(display);
         return true;
     }
 
     bool MainWindow_unix::isFocused() const 
     {
-        // TODO
-        return true;
+        ::Window focusedWindow;
+        int focusState;
+
+        XGetInputFocus(App::Display(), &focusedWindow, &focusState);
+        return m_window == focusedWindow;
     }
 
     bool MainWindow_unix::setScaleHint(const Vec2f& scale) 
@@ -249,7 +297,7 @@ namespace pTK
         int realFormat;
         unsigned long left;
         std::pair<unsigned long, unsigned char*> data{};
-        XGetWindowProperty(m_display, m_window, property, 0L, 2L, False, type, &realType, &realFormat, &data.first, &left, &data.second);
+        XGetWindowProperty(App::Display(), m_window, property, 0L, 2L, False, type, &realType, &realFormat, &data.first, &left, &data.second);
         return data;
     }
 
@@ -261,5 +309,15 @@ namespace pTK
     Atom MainWindow_unix::deleteAtom() const
     {
         return m_atomWmDeleteWindow;
+    }
+
+    Size& MainWindow_unix::lastSize()
+    {
+        return m_lastSize;
+    }
+
+    Point& MainWindow_unix::lastPos()
+    {
+        return m_lastPos;
     }
 }

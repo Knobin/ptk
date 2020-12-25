@@ -27,10 +27,15 @@ namespace pTK
 
     bool RasterPolicy_unix::resize(const Size& nSize)
     {
-        delete [] static_cast<uint32_t*>(pixels);
         if (m_image)
+        {
+            // XDestroyImage frees both the image structure and the data pointer.
+            m_image->data = nullptr;
             XDestroyImage(m_image);
-
+            m_image = nullptr;
+            delete [] static_cast<uint32_t*>(pixels);
+        }
+        
         const std::size_t width{static_cast<std::size_t>(nSize.width)};
         const std::size_t height{static_cast<std::size_t>(nSize.height)};
 

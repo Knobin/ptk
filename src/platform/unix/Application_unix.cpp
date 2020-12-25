@@ -60,44 +60,33 @@ namespace pTK
     struct AppUnixData
     {
         const std::map<unsigned long, KeyCode> keyMap{initKeyCodes()};
-        std::map<::Window, std::pair<Window*, MainWindow_unix*>> windowMap{};
         Display *display{nullptr};
         XContext xcontext{-1};
+        int screen{-1};
+        ::Window root;
+        bool initialized{false};
     };
 
     static AppUnixData s_appData{};
-    
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     Application_unix::Application_unix()
-        : ApplicationBase(),
-            m_run{true}
+        : ApplicationBase(), m_run{true}
     {
         if (!init())
             throw PlatformError("Failed to initialize unix application");
     }
 
-    bool Application_unix::init()
-    {
-        XInitThreads();
-
-        s_appData.display = XOpenDisplay(nullptr);
-        s_appData.xcontext = XUniqueContext();
-
-        return true;
-    }
-
     Application_unix::~Application_unix()
     {
         XCloseDisplay(s_appData.display);
+        PTK_INFO("Destroyed Application_unix");
     }
 
     int Application_unix::messageLoop()
     {
-        Window *window{windows().at(1)};
-        PaintEvent evt{Point{0, 0}, window->getSize()};
-        window->sendEvent(&evt);
-        window->show();
+        Window *window{windows().begin()->second};
         window->handleEvents();
 
         while (m_run) 
@@ -105,24 +94,15 @@ namespace pTK
             waitEvents();
             window->handleEvents();
         }
-        // TODO
+
         return 0;
     }
 
     void Application_unix::close()
     {
-        // TODO
+        for (const std::pair<const int32, Window*>& pair : windows())
+            pair.second->close();
         m_run = false;
-    }
-
-    Display *Application_unix::getDisplay()
-    {
-        return s_appData.display;
-    }
-    
-    XContext Application_unix::getXContext()
-    {
-        return s_appData.xcontext;
     }
 
     void Application_unix::pollEvents()
@@ -153,6 +133,50 @@ namespace pTK
         pollEvents();
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    Display *Application_unix::Display()
+    {
+        return s_appData.display;
+    }
+    
+    XContext Application_unix::Context()
+    {
+        return s_appData.xcontext;
+    }
+
+    ::Window Application_unix::Root()
+    {
+        return s_appData.root;
+    }
+
+    int Application_unix::Screen()
+    {
+        return s_appData.screen;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    bool Application_unix::init()
+    {
+        if (s_appData.initialized) 
+        {
+            PTK_ERROR("App already initialized");
+            return false;
+        }
+
+        XInitThreads();
+
+        s_appData.display = XOpenDisplay(nullptr);
+        s_appData.xcontext = XUniqueContext();
+        s_appData.screen = DefaultScreen(s_appData.display);
+        s_appData.root = RootWindow(s_appData.display, s_appData.screen);
+
+        s_appData.initialized = true;
+        PTK_INFO("Initialized Application_unix");
+        return true;
+    }
+
     void Application_unix::handleEvent(XEvent *event)
     {
         PTK_ASSERT(event, "Undefined XEvent!");
@@ -168,7 +192,7 @@ namespace pTK
                 Event evt{Event::Category::Window, Event::Type::WindowClose};
                 window->handleEvents(); // Handle all events before sending close event.
                 window->sendEvent(&evt);
-                m_run = false;
+                m_run = false; // pTK only supports 1 window for now.
                 break;
             }
             case ClientMessage:
@@ -234,34 +258,56 @@ namespace pTK
                 window->sendEvent(&kEvt);
                 break;
             }
+            case FocusIn:
+            {
+                if (!((event->xfocus.mode == NotifyGrab) || ((event->xfocus.mode == NotifyUngrab))))
+                {
+                    Event evt{Event::Category::Window, Event::Type::WindowFocus};
+                    window->sendEvent(&evt);
+                }
+                break;
+            }
+            case FocusOut:
+            {
+                if (!((event->xfocus.mode == NotifyGrab) || ((event->xfocus.mode == NotifyUngrab))))
+                {
+                    Event evt{Event::Category::Window, Event::Type::WindowLostFocus};
+                    window->sendEvent(&evt);
+                }
+                break;
+            }
+            case ConfigureNotify:
+            {
+                MainWindow_unix *backend{static_cast<MainWindow_unix*>(window->getBackend())};
+
+                // Size change
+                Size& wSize{backend->lastSize()};
+                if (event->xconfigure.width != wSize.width || event->xconfigure.height != wSize.height)
+                {
+                    wSize.width = static_cast<Size::value_type>(event->xconfigure.width);
+                    wSize.height = static_cast<Size::value_type>(event->xconfigure.height);
+
+                    ResizeEvent evt{wSize};
+                    window->sendEvent(&evt);
+                    window->forceDrawAll();
+
+                }
+
+                // Position change
+                Point& wPos{backend->lastPos()};
+                if (event->xconfigure.x != wPos.x || event->xconfigure.y != wPos.y)
+                {
+                    wPos.x = static_cast<Point::value_type>(event->xconfigure.x);
+                    wPos.y = static_cast<Point::value_type>(event->xconfigure.y);
+
+                    MoveEvent evt{wPos};
+                    window->sendEvent(&evt);
+                }
+
+                break;
+            }
             default:
                 break;
-        }
-    }
-
-    void Application_unix::onWindowAdd(int32 key)
-    {
-        Window *pwindow{find(key)};
-        MainWindow_unix *mainwindow{dynamic_cast<MainWindow_unix*>(pwindow->getBackend())};
-        if (mainwindow)
-        {
-            PTK_INFO("Added MainWindow_unix to Application_unix");
-            s_appData.windowMap.insert({mainwindow->xWindow(), {pwindow, mainwindow}});
-        }    
-    }
-
-    void Application_unix::onWindowRemove(int32 key)
-    {
-        Window *pwindow{find(key)};
-        MainWindow_unix *mainwindow{dynamic_cast<MainWindow_unix*>(pwindow->getBackend())};
-        if (mainwindow)
-        {
-            auto it{s_appData.windowMap.find(mainwindow->xWindow())};
-            if (it != s_appData.windowMap.end())
-            {
-                PTK_INFO("Removed MainWindow_unix from Application_unix");
-                s_appData.windowMap.erase(it);
-            }
         }
     }
 }

@@ -73,7 +73,7 @@ namespace pTK
         Display *m_display;
         ::Window m_window;
         XVisualInfo m_info;
-        XImage* m_image;
+        XImage *m_image;
         GC m_gc;
         Size wSize;
     };
