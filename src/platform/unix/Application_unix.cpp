@@ -222,8 +222,7 @@ namespace pTK
         {
             case Expose:
             {
-                PaintEvent evt{Point{0,0}, window->getSize()};
-                window->sendEvent(&evt);
+                window->postEvent<PaintEvent>(Point{0, 0}, window->getSize());
                 break;
             }
             case DestroyNotify:

@@ -25,6 +25,7 @@ namespace pTK
 
     void Window::onChildDraw(size_type)
     {
+        // onChildDraw is not a thread safe function...
         postEvent<PaintEvent>(Point{0, 0}, getSize());
     }
 
@@ -81,8 +82,7 @@ namespace pTK
         Drawable::show();
         m_winBackend->show();
 
-        PaintEvent evt{Point{0, 0}, getSize()};
-        sendEvent(&evt);
+        postEvent<PaintEvent>(Point{0, 0}, getSize());
     }
 
     void Window::hide()

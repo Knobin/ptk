@@ -60,7 +60,7 @@ namespace pTK
             PTK_WARN("Could not register WM_DELETE_WINDOW property");
         }
 
-        RasterPolicy_unix policy{display, m_window, m_info};
+        RasterPolicy_unix policy{&m_window, m_info};
         m_context = std::make_unique<RasterContext<RasterPolicy_unix>>(size, policy);
 
         m_lastPos = getWinPos();
@@ -70,6 +70,7 @@ namespace pTK
     bool MainWindow_unix::close() 
     {
         XDestroyWindow(App::Display(), m_window);
+        m_window = None;
         return true;
     }
 
@@ -212,16 +213,21 @@ namespace pTK
 
     void MainWindow_unix::notifyEvent() 
     {
-        Display *display{App::Display()};
-        const Atom nullAtom{XInternAtom(display, "NULL", False)};
+        // notifyEvent is not thread safe, so m_window can already be destroyed.
+        if (m_window != None) 
+        {
+            Display *display{App::Display()};
+            const Atom nullAtom{XInternAtom(display, "NULL", False)};
 
-        XEvent event{ClientMessage};
-        event.xclient.window = m_window;
-        event.xclient.format = 32;
-        event.xclient.message_type = nullAtom;
+            XEvent event{ClientMessage};
+            event.xclient.window = m_window;
+            event.xclient.format = 32;
+            event.xclient.message_type = nullAtom;
 
-        XSendEvent(display, m_window, False, 0, &event);
-        XFlush(display);
+            
+            XSendEvent(display, m_window, False, 0, &event);
+            XFlush(display);
+        }
     }
 
     Point MainWindow_unix::getWinPos() const 

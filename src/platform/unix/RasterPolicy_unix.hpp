@@ -45,7 +45,7 @@ namespace pTK
             @param hwnd   HWND
             @return       default initialized RasterPolicy_unix
         */
-        RasterPolicy_unix(Display *display, ::Window window, XVisualInfo info);
+        RasterPolicy_unix(::Window *window, XVisualInfo info);
 
         /** Deconstructor for RasterPolicy_unix.
 
@@ -70,8 +70,7 @@ namespace pTK
         const SkColorType colorType{kBGRA_8888_SkColorType};
 
     private:
-        Display *m_display;
-        ::Window m_window;
+        ::Window *m_window;
         XVisualInfo m_info;
         XImage *m_image;
         GC m_gc;

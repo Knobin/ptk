@@ -8,16 +8,19 @@
 // Local Headers
 #include "RasterPolicy_unix.hpp"
 #include "ptk/Log.hpp"
+#include "Application_unix.hpp"
 
 // Skia Headers
 #include "include/core/SkSurface.h"
 
+using App = pTK::Application_unix;
+
 namespace pTK
 {
-    RasterPolicy_unix::RasterPolicy_unix(Display *display, ::Window window, XVisualInfo info)
-        : m_display{display}, m_window{window}, m_info{info}, m_image{nullptr}
+    RasterPolicy_unix::RasterPolicy_unix(::Window *window, XVisualInfo info)
+        : m_window{window}, m_info{info}, m_image{nullptr}
     {
-        m_gc = XCreateGC(m_display, m_window, 0, nullptr);
+        m_gc = XCreateGC(App::Display(), *m_window, 0, nullptr);
     }
 
     RasterPolicy_unix::~RasterPolicy_unix()
@@ -47,7 +50,7 @@ namespace pTK
         size = sizeof(uint32_t) * width * height;
         
         wSize = nSize;
-        m_image = XCreateImage(m_display, m_info.visual, 24, ZPixmap, 0, static_cast<char*>(pixels), 
+        m_image = XCreateImage(App::Display(), m_info.visual, 24, ZPixmap, 0, static_cast<char*>(pixels), 
                                 static_cast<unsigned int>(nSize.width), static_cast<unsigned int>(nSize.height), 32, 0);
         
         return true;
@@ -55,7 +58,7 @@ namespace pTK
 
     void RasterPolicy_unix::swapBuffers() const
     {
-        XPutImage(m_display, m_window, m_gc, m_image, 0, 0, 0, 0, 
+        XPutImage(App::Display(), *m_window, m_gc, m_image, 0, 0, 0, 0, 
                 static_cast<unsigned int>(wSize.width), static_cast<unsigned int>(wSize.height));
     }
 }
