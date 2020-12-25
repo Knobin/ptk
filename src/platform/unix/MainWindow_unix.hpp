@@ -194,6 +194,7 @@ namespace pTK
 
         Size m_lastSize;
         Point m_lastPos{};
+        Vec2f m_scale{1.0f, 1.0f};
 
         ::Window m_window;
         Atom m_atomWmDeleteWindow;

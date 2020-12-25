@@ -16,11 +16,45 @@
 // X11 Headers
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
+#include <X11/Xresource.h>
 
 using App = pTK::Application_unix;
 
 namespace pTK
 {
+    static float SystemDPI()
+    {
+        char *rString{XResourceManagerString(App::Display())};
+        XrmInitialize();
+        XrmDatabase db{XrmGetStringDatabase(rString)};
+
+        if (rString) 
+        {
+            char *type;
+            XrmValue val;
+            if (XrmGetResource(db, "Xft.dpi", "String", &type, &val) == True)
+            {
+                if (val.addr)
+                {
+                    const float dpi{static_cast<float>(std::atof(val.addr))};
+                    return (dpi != 0.0f ? dpi : 96.0f);
+                }
+            }
+        }
+
+        return 96.0f;
+    }
+
+    static Size ScaleSize(const Size& size, const Vec2f& scale)
+    {
+        const float width{static_cast<float>(size.width)};
+        const float height{static_cast<float>(size.height)};
+        return {static_cast<Size::value_type>(width * scale.x),
+                static_cast<Size::value_type>(height * scale.y)};
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
     MainWindow_unix::MainWindow_unix(Window *window, const std::string& name, const Size& size, BackendType backend)
         : MainWindowBase(window, backend), m_lastSize{size}
     {
@@ -61,7 +95,11 @@ namespace pTK
         }
 
         RasterPolicy_unix policy{&m_window, m_info};
-        m_context = std::make_unique<RasterContext<RasterPolicy_unix>>(size, policy);
+        const float scale{SystemDPI()};
+        PTK_INFO("System DPI is {}", scale);
+        m_scale = Vec2f{scale / 96.0f, scale / 96.0f};
+        const Size scaledSize{ScaleSize(size, m_scale)};
+        m_context = std::make_unique<RasterContext<RasterPolicy_unix>>(scaledSize, policy);
 
         m_lastPos = getWinPos();
         PTK_INFO("Initialized MainWindow_unix");
@@ -123,8 +161,7 @@ namespace pTK
 
     Vec2f MainWindow_unix::getDPIScale() const 
     {
-        // TODO
-        return {1.0f, 1.0f};
+        return m_scale;
     }
 
     bool MainWindow_unix::resize(const Size& size) 
@@ -133,7 +170,8 @@ namespace pTK
 
         if (size != m_context->getSize()) 
         {
-            m_context->resize(size);
+            const Size scaledSize{ScaleSize(size, m_scale)};
+            m_context->resize(scaledSize);
             status = true;
         }
 
@@ -291,7 +329,12 @@ namespace pTK
 
     bool MainWindow_unix::setScaleHint(const Vec2f& scale) 
     {
-        // TODO
+        if (m_scale != scale)
+        {
+            m_scale = scale;
+            resize(parent()->getSize());
+        }
+
         return true;
     }
 
