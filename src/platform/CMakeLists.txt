@@ -28,29 +28,34 @@ set(PLATFORM_FILES platform/Platform.hpp)
 if (PTK_PLATFORM STREQUAL "Unix")
     set(PLATFORM_FILES ${PLATFORM_FILES}
         ${PLATFORM_FILES_UNIX})
-    if (ENABLE_OPENGL)
-        set(PLATFORM_FILES ${PLATFORM_FILES}
+    set(PLATFORM_OPENGL_FILES ${PLATFORM_OPENGL_FILES}
             ${PLATFORM_FILES_UNIX_OPENGL})
-    endif (ENABLE_OPENGL)
+    message(STATUS "Using X11 window")
 elseif (PTK_PLATFORM STREQUAL "Windows")
     set(PLATFORM_FILES ${PLATFORM_FILES}
         ${PLATFORM_FILES_WIN})
-    if (ENABLE_OPENGL)
-        set(PLATFORM_FILES ${PLATFORM_FILES}
+    set(PLATFORM_OPENGL_FILES ${PLATFORM_OPENGL_FILES}
             ${PLATFORM_FILES_WIN_OPENGL})
-    endif (ENABLE_OPENGL)
-    message(STATUS "Using Windows backend")
+    message(STATUS "Using Windows API window")
 elseif (PTK_PLATFORM STREQUAL "macOS")
     set(PLATFORM_FILES ${PLATFORM_FILES}
         ${PLATFORM_FILES_MAC})
-    if (ENABLE_METAL)
-        set(PLATFORM_FILES ${PLATFORM_FILES}
+    set(PLATFORM_METAL_FILES ${PLATFORM_METAL_FILES}
             ${PLATFORM_FILES_MAC_METAL})
-    endif (ENABLE_METAL)
-    message(STATUS "Using macOS backend")
+    message(STATUS "Using Cocoa window")
 else()
     message(FATAL_ERROR "Unsupported platform")
 endif()
+
+if (ENABLE_OPENGL)
+    set(PLATFORM_FILES ${PLATFORM_FILES}
+            ${PLATFORM_OPENGL_FILES})
+endif (ENABLE_OPENGL)
+
+if (ENABLE_METAL)
+    set(PLATFORM_FILES ${PLATFORM_FILES}
+            ${PLATFORM_METAL_FILES})
+endif (ENABLE_METAL)
 
 set(PLATFORM_FILES ${PLATFORM_FILES} PARENT_SCOPE)
 
