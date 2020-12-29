@@ -10,13 +10,10 @@
 
 // Local Headers
 #include "ptk/core/platform/MainWindowBase.hpp"
+#include "x11.hpp"
 
 // C++ Headers
 #include <map>
-
-// X11 Heades
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
 
 namespace pTK
 {
@@ -42,7 +39,7 @@ namespace pTK
         /** Deconstructor for MainWindow_unix.
 
         */
-        virtual ~MainWindow_unix() = default;
+        virtual ~MainWindow_unix();
 
         /** Function for closing the window.
 

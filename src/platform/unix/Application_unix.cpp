@@ -14,11 +14,6 @@
 // C++ Headers
 #include <map>
 
-// X11 Headers
-#include <X11/Xlib.h>
-#include <X11/Xresource.h>
-#include <X11/Xutil.h>
-
 namespace pTK
 {   
     // 

@@ -60,7 +60,6 @@ elseif (WIN32)
 	set(SKIA_FILENAME "skia.lib")
     if (ENABLE_OPENGL)
         set(PTK_DEPENDENCIES "opengl32")
-        add_definitions(-DSK_GL)
     endif (ENABLE_OPENGL)
 elseif(APPLE)
     add_definitions(-DPTK_PLATFORM_APPLE)
@@ -81,9 +80,9 @@ message(STATUS "pTK dependencies: ${PTK_DEPENDENCIES}")
 if (ENABLE_METAL AND APPLE)
     add_definitions(-DPTK_METAL)
 endif (ENABLE_METAL AND APPLE)
-if (ENABLE_OPENGL AND WIN32)
+if (ENABLE_OPENGL AND NOT APPLE)
     add_definitions(-DPTK_OPENGL)
-endif (ENABLE_OPENGL AND WIN32)
+endif (ENABLE_OPENGL AND NOT APPLE)
 
 # Skia properties
 set(SKIA_PATH "${CMAKE_SOURCE_DIR}/third_party/skia")
@@ -102,6 +101,7 @@ set_target_properties(skia PROPERTIES
 # HW Acceleration Packages
 if (ENABLE_OPENGL)
     find_package(OpenGL REQUIRED)
+    add_definitions(-DSK_GL)
 endif (ENABLE_OPENGL)
 
 # Threads

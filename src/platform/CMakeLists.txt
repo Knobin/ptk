@@ -21,12 +21,17 @@ set(PLATFORM_FILES_WIN_OPENGL platform/win/GLContext_win.cpp)
 set(PLATFORM_FILES_UNIX platform/unix/Application_unix.cpp
     platform/unix/MainWindow_unix.cpp
     platform/unix/RasterPolicy_unix.cpp)
+set(PLATFORM_FILES_UNIX_OPENGL platform/unix/GLContext_unix.cpp)
 
 # Set platform files
 set(PLATFORM_FILES platform/Platform.hpp)
 if (PTK_PLATFORM STREQUAL "Unix")
     set(PLATFORM_FILES ${PLATFORM_FILES}
         ${PLATFORM_FILES_UNIX})
+    if (ENABLE_OPENGL)
+        set(PLATFORM_FILES ${PLATFORM_FILES}
+            ${PLATFORM_FILES_UNIX_OPENGL})
+    endif (ENABLE_OPENGL)
 elseif (PTK_PLATFORM STREQUAL "Windows")
     set(PLATFORM_FILES ${PLATFORM_FILES}
         ${PLATFORM_FILES_WIN})

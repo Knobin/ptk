@@ -10,13 +10,10 @@
 
 // Local Headers
 #include "ptk/util/Size.hpp"
+#include "x11.hpp"
 
 // Skia Headers
 #include <include/core/SkImageInfo.h>
-
-// X11 Headers
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
 
 namespace pTK
 {

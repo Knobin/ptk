@@ -13,10 +13,9 @@
 #include "../common/RasterContext.hpp"
 #include "RasterPolicy_unix.hpp"
 
-// X11 Headers
-#include <X11/Xutil.h>
-#include <X11/Xatom.h>
-#include <X11/Xresource.h>
+#ifdef PTK_OPENGL
+    #include "GLContext_unix.hpp"
+#endif // PTK_OPENGL
 
 using App = pTK::Application_unix;
 
@@ -51,6 +50,35 @@ namespace pTK
         const float height{static_cast<float>(size.height)};
         return {static_cast<Size::value_type>(width * scale.x),
                 static_cast<Size::value_type>(height * scale.y)};
+    }
+
+    static std::unique_ptr<ContextBase> CreateContext([[maybe_unused]] BackendType backend, ::Window *window, const Size& size, [[maybe_unused]] XVisualInfo info)
+    {
+        std::unique_ptr<ContextBase> context{nullptr};
+#ifdef PTK_OPENGL
+        if (backend == BackendType::HARDWARE)
+        {
+            try {
+                context = std::make_unique<GLContext_unix>(window, size);
+            } catch (ContextError& err)
+            {
+                PTK_ERROR("Failed to create GLContext_unix with msg: {}", err.what());
+            }
+            
+            if (context)
+                return context;
+
+            PTK_ERROR("Failed to create GLContext_unix");
+        }
+#endif // PTK_OPENGL
+
+        RasterPolicy_unix policy{window, info};
+        context = std::make_unique<RasterContext<RasterPolicy_unix>>(size, policy);
+
+        if (!context)
+            throw ContextError("Failed to create RasterContext with RasterPolicy_unix");
+
+        return context;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,21 +122,26 @@ namespace pTK
             PTK_WARN("Could not register WM_DELETE_WINDOW property");
         }
 
-        RasterPolicy_unix policy{&m_window, m_info};
         const float scale{SystemDPI()};
         PTK_INFO("System DPI is {}", scale);
         m_scale = Vec2f{scale / 96.0f, scale / 96.0f};
         const Size scaledSize{ScaleSize(size, m_scale)};
-        m_context = std::make_unique<RasterContext<RasterPolicy_unix>>(scaledSize, policy);
 
+        m_context = CreateContext(backend, &m_window, scaledSize, m_info);
+        
         m_lastPos = getWinPos();
         PTK_INFO("Initialized MainWindow_unix");
+    }
+
+    MainWindow_unix::~MainWindow_unix()
+    {
+        PTK_INFO("Destroyed MainWindow_unix");
     }
 
     bool MainWindow_unix::close() 
     {
         XDestroyWindow(App::Display(), m_window);
-        m_window = None;
+        m_window = x11::None;
         return true;
     }
 
@@ -150,12 +183,6 @@ namespace pTK
 
     void MainWindow_unix::swapBuffers() 
     {
-        /* sk_sp<SkImage> skimage = m_surface->makeImageSnapshot();
-        sk_sp<SkData> filedata = skimage->encodeToData(SkEncodedImageFormat::kPNG, 80);
-        std::ofstream file;
-        file.open("data.png", std::ios::app | std::ios::binary);
-        file.write(reinterpret_cast<const char*>(filedata->data()), filedata->size()); */
-
         m_context->swapBuffers();
     }
 
@@ -252,7 +279,7 @@ namespace pTK
     void MainWindow_unix::notifyEvent() 
     {
         // notifyEvent is not thread safe, so m_window can already be destroyed.
-        if (m_window != None) 
+        if (m_window != x11::None) 
         {
             Display *display{App::Display()};
             const Atom nullAtom{XInternAtom(display, "NULL", False)};
