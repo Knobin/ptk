@@ -18,7 +18,7 @@ option(ENABLE_METAL "Enable Metal backend" ON)
 
 # Available HW on platforms.
 set(PTK_OPENGL_PLATFORMS "Windows" "Unix")
-set(PTK_METAL_PLATFORMS "macOS")
+set(PTK_METAL_PLATFORMS "Apple")
 
 # Compiler
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -62,7 +62,7 @@ elseif (WIN32)
 	set(SKIA_FILENAME "skia.lib")
 elseif(APPLE)
     add_definitions(-DPTK_PLATFORM_APPLE)
-    set(PTK_PLATFORM "macOS")
+    set(PTK_PLATFORM "Apple")
     set(PTK_DEPENDENCIES "-framework CoreFoundation -framework CoreGraphics -framework CoreText -framework CoreServices -framework AppKit -framework QuartzCore")
     set(PTK_METAL_DEPENDENCIES "-framework Metal")
 	set(SKIA_FILENAME "libskia.a")
