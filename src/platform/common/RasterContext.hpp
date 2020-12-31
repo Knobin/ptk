@@ -30,16 +30,20 @@ namespace pTK
 
             @return    default initialized RasterContext
         */
-        RasterContext(const Size& size, Policy policy)
+        RasterContext(const Size& size, const Policy& policy)
             : ContextBase(size), m_policy{policy}
         {
+            PTK_INFO("Initialized RasterContext");
             resize(size);
         }
 
         /** RasterContext destructor.
 
         */
-        virtual ~RasterContext() = default;
+        virtual ~RasterContext()
+        {
+            PTK_INFO("Destroyed RasterContext");
+        }
 
         /** Function for resizing the context.
 
@@ -61,7 +65,7 @@ namespace pTK
             if (!m_surface)
                 throw ContextError("Failed to create Raster Context");
 
-            PTK_INFO("Created Rastercontext: {}x{} {}", size.width, size.height, m_policy.size);
+            PTK_INFO("Sized RasterContext to {}x{}", size.width, size.height);
             setSize(size);
         }
 

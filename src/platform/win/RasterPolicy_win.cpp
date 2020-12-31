@@ -7,18 +7,20 @@
 
 // Local Headers
 #include "RasterPolicy_win.hpp"
+#include "ptk/Log.hpp"
 
 namespace pTK
 {
     RasterPolicy_win::RasterPolicy_win(HWND hwnd)
         : m_hwnd{hwnd}
     {
-
+        PTK_INFO("Initialized RasterPolicy_win");
     }
 
     RasterPolicy_win::~RasterPolicy_win()
     {
         std::free(bmpInfo);
+        PTK_INFO("Destroyed RasterPolicy_win");
     }
 
     bool RasterPolicy_win::resize(const Size& nSize)
@@ -46,6 +48,7 @@ namespace pTK
         size = sizeof(uint32_t) * width * height;
 
         wSize = nSize;
+        PTK_INFO("Sized RasterPolicy_win to {}x{}", width, height);
         return true;
     }
 

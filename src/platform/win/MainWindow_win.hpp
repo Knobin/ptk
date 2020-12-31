@@ -44,7 +44,7 @@ namespace pTK
         /** Deconstructor for MainWindow_win.
 
         */
-        ~MainWindow_win() override = default;
+        virtual ~MainWindow_win();
 
         /** Function for closing the window.
 

@@ -35,13 +35,6 @@ namespace pTK
         */
         virtual ~Application_win();
 
-        int messageLoop() override;
-
-        /** Function for closing the application should close.
-
-        */
-        void close() override;
-
         /** Function for polling all the window events.
 
         */

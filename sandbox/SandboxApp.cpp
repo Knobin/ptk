@@ -275,6 +275,7 @@ int main(int argc, char *argv[]) {
     window.add(hbox);
 
     window.setMaxSize({1280, 720});
+    window.show();
 
     std::atomic<bool> run{true};
     std::thread t1{[&](){

@@ -8,7 +8,7 @@
 // Local Headers
 #include "ptk/Window.hpp"
 #include "platform/Platform.hpp"
-#include "ptk/events/WindowEvent.hpp"
+#include "ptk/Application.hpp"
 
 namespace pTK
 {
@@ -21,6 +21,16 @@ namespace pTK
         Drawable::hide();
 
         m_winBackend = std::make_unique<PTK_MAINWINDOW_TYPE>(this, name, size, backend);
+        PTK_INFO("Initialized Window");
+    }
+
+    Window::~Window()
+    {
+        // Remove the Window from the Application if it exists, in case if it is still there.
+        if (auto app = Application::Get())
+            app->removeWindow(this);
+
+        PTK_INFO("Destroyed Window");
     }
 
     void Window::onChildDraw(size_type)

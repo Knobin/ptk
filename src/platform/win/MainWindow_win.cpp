@@ -10,6 +10,7 @@
 #include "Application_win.hpp"
 #include "../common/RasterContext.hpp"
 #include "RasterPolicy_win.hpp"
+#include "ptk/Application.hpp"
 
 // Include OpenGL backend if HW Acceleration is enabled.
 #ifdef PTK_OPENGL
@@ -34,8 +35,7 @@ namespace pTK
 #endif // PTK_OPENGL
 
         // Software backend is always available.
-        RasterPolicy_win policy{hwnd};
-        return std::make_unique<RasterContext<RasterPolicy_win>>(size, policy);
+        return std::make_unique<RasterContext<RasterPolicy_win>>(size, RasterPolicy_win{hwnd});
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -127,15 +127,14 @@ namespace pTK
         const float dpiX{static_cast<float>(::GetDeviceCaps(screen, LOGPIXELSX))};
         const float dpiY{static_cast<float>(::GetDeviceCaps(screen, LOGPIXELSY))};
 #ifdef PTK_DEBUG
-    if (dpiX != dpiY)
-    {
-        PTK_WARN("DPI for x and y is not the same!");
-    }
+        if (dpiX != dpiY)
+        {
+            PTK_WARN("DPI for x and y is not the same!");
+        }
 #endif
         ::ReleaseDC(nullptr, screen);
-        PTK_INFO("Windows Window DPI {}x{}", dpiX, dpiY);
-        Vec2f scale{dpiX / 96.0f, dpiY / 96.0f};
-        PTK_INFO("Windows Window Scaling {0:0.2f}x{1:0.2f}", scale.x, scale.y);
+        PTK_INFO("System DPI {}x{}", dpiX, dpiY);
+        const Vec2f scale{dpiX / 96.0f, dpiY / 96.0f};
 
         const Size wSize{scaleSize(size, scale)};
         constexpr DWORD style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX};
@@ -145,7 +144,6 @@ namespace pTK
                                      nullptr, nullptr, ::GetModuleHandleW(nullptr), nullptr);
         if (!m_hwnd)
             throw WindowError("Failed to create window!");
-        PTK_INFO("Created WinWindow: {}x{}", wSize.width, wSize.height);
 
         m_context = createWin32Context(backend, m_hwnd, wSize);
         m_data = std::make_unique<WinBackendData>(WinBackendData{window, scale, wSize, {}, style, false, 0, false});
@@ -153,6 +151,13 @@ namespace pTK
 
         ::ShowWindow(m_hwnd, SW_SHOW);
         ::UpdateWindow(m_hwnd);
+
+        PTK_INFO("Initialized MainWindow_win: {}x{}", wSize.width, wSize.height);
+    }
+
+    MainWindow_win::~MainWindow_win()
+    {
+        PTK_INFO("Destroyed MainWindow_win");
     }
 
     bool MainWindow_win::setPosHint(const Point& pos)
@@ -475,19 +480,24 @@ namespace pTK
     {
         WinBackendData* data{
             reinterpret_cast<WinBackendData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA))};
-        Window* window{(data) ? data->window : nullptr};
+        if (!data)
+            return ::DefWindowProcW(hwnd, msg, wParam, lParam);
+        Window* window{data->window};
+
         switch (msg)
         {
             case WM_CREATE:
                 break;
             case WM_CLOSE:
-                ::DestroyWindow(hwnd);
-                break;
-            case WM_DESTROY:
             {
                 Event evt{Event::Category::Window, Event::Type::WindowClose};
                 window->handleEvents(); // Handle all events before sending close event.
-                window->sendEvent(&evt);
+                window->sendEvent(&evt); // Calls the ::DestroyWindow function.
+                break;
+            }
+            case WM_DESTROY:
+            {
+                Application::Get()->removeWindow(window);
                 ::PostQuitMessage(0);
                 break;
             }
@@ -507,6 +517,7 @@ namespace pTK
             {
                 if (window->visible())
                     window->forceDrawAll();
+
                 break;
             }
             case WM_KEYDOWN:
@@ -523,13 +534,10 @@ namespace pTK
             }
             case WM_MOUSEMOVE:
             {
-                if (window)
-                {
-                    const Point pos{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
-                    MotionEvent evt{{static_cast<Point::value_type>(pos.x * (1 / data->scale.x)),
-                                     static_cast<Point::value_type>(pos.y * (1 / data->scale.y))}};
-                    window->sendEvent(&evt);
-                }
+                const Point pos{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+                MotionEvent evt{{static_cast<Point::value_type>(pos.x * (1 / data->scale.x)),
+                                 static_cast<Point::value_type>(pos.y * (1 / data->scale.y))}};
+                window->sendEvent(&evt);
                 break;
             }
             case WM_LBUTTONDOWN:
@@ -557,8 +565,7 @@ namespace pTK
             }
             case WM_GETMINMAXINFO:
             {
-                if (window)
-                    handleWindowLimits(data, lParam);
+                handleWindowLimits(data, lParam);
                 break;
             }
             case WM_DPICHANGED:
@@ -568,35 +575,33 @@ namespace pTK
             }
             case WM_WINDOWPOSCHANGED:
             {
-                if (window)
+                WINDOWPOS* winData{reinterpret_cast<WINDOWPOS*>(lParam)};
+                MainWindowBase* backend{window->getBackend()};
+
+                // Window was moved.
+                if (!(winData->flags & SWP_NOMOVE))
                 {
-                    WINDOWPOS* winData{reinterpret_cast<WINDOWPOS*>(lParam)};
-                    MainWindowBase* backend{window->getBackend()};
-
-                    // Window was moved.
-                    if (!(winData->flags & SWP_NOMOVE))
+                    if (winData->x != data->pos.x || winData->y != data->pos.y)
                     {
-                        if (winData->x != data->pos.x || winData->y != data->pos.y)
-                        {
-                            MoveEvent evt{{winData->x, winData->y}};
-                            window->sendEvent(&evt);
-                        }
+                        MoveEvent evt{{winData->x, winData->y}};
+                        window->sendEvent(&evt);
                     }
-
-                    // Window was resized.
-                    if (!(winData->flags & SWP_NOSIZE))
-                        handleWindowResize(data, backend, hwnd);
-
-                    // Window was shown.
-                    if (!(winData->flags & SWP_SHOWWINDOW) && backend)
-                        if (!backend->isMinimized() && data->minimized)
-                            handleWindowMinimize(data, false);
-
-                    // Window was hidden.
-                    if (!(winData->flags & SWP_HIDEWINDOW) && backend)
-                        if (backend->isMinimized() && !data->minimized)
-                            handleWindowMinimize(data, true);
                 }
+
+                // Window was resized.
+                if (!(winData->flags & SWP_NOSIZE))
+                    handleWindowResize(data, backend, hwnd);
+
+                // Window was shown.
+                if (!(winData->flags & SWP_SHOWWINDOW) && backend)
+                    if (!backend->isMinimized() && data->minimized)
+                        handleWindowMinimize(data, false);
+
+                // Window was hidden.
+                if (!(winData->flags & SWP_HIDEWINDOW) && backend)
+                    if (backend->isMinimized() && !data->minimized)
+                        handleWindowMinimize(data, true);
+
                 break;
             }
             case WM_ENTERSIZEMOVE:
@@ -612,9 +617,7 @@ namespace pTK
             case WM_TIMER:
             {
                 if (wParam == 1)
-                {
                     window->handleEvents();
-                }
                 break;
             }
             default:

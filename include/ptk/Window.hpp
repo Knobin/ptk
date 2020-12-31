@@ -48,7 +48,7 @@ namespace pTK
         /** Deconstructor for Window.
 
         */
-        virtual ~Window() = default;
+        virtual ~Window();
 
         /** Function for retrieving the DPI Scale of the window.
 

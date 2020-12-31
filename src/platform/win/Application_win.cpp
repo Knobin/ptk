@@ -37,39 +37,14 @@ namespace pTK
         if (!registerClass())
             throw PlatformError("Failed to register class!");
 
-        PTK_INFO("Windows platform initialized");
+        PTK_INFO("Initialized Application_win");
     }
 
     Application_win::~Application_win()
     {
         ::UnregisterClassW(L"PTK", GetModuleHandleW(nullptr));
 
-        PTK_INFO("Application_win destroyed");
-    }
-
-    int Application_win::messageLoop()
-    {
-        // Multiple windows is currently unsupported.
-        // It is guaranteed to be at least one window here.
-        Window *window{windows().at(1)};
-        PaintEvent evt{Point{0, 0}, window->getSize()};
-        window->sendEvent(&evt);
-        window->show();
-
-        while (!window->shouldClose())
-        {
-            window->handleEvents();
-            waitEvents();
-        }
-
-        window->hide();
-
-        return 0;
-    }
-
-    void Application_win::close()
-    {
-        // TODO: close app.
+        PTK_INFO("Destroyed Application_win");
     }
 
     void Application_win::pollEvents()

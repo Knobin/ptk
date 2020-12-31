@@ -60,6 +60,7 @@ namespace pTK
             m_info.fFormat = GL_RGBA8;
             m_colorType = kRGBA_8888_SkColorType;
 
+            PTK_INFO("Initialized GLContext_win");
             resize(size);
         }
 #ifdef PTK_DEBUG
@@ -92,7 +93,7 @@ namespace pTK
         m_surface.reset(surface);
 
         //clear(Color{0xFFFFFFFF});
-        PTK_INFO("Constructed GLContext_win: {}x{}", size.width, size.height);
+        PTK_INFO("Sized GLContext_win to {}x{}", size.width, size.height);
         setSize(size);
     }
 
