@@ -45,6 +45,8 @@ namespace pTK
             m_metalLayer = nil;
             [m_queue release];
             [m_device release];
+            
+            PTK_INFO("Destroyed MetalContext_mac");
         } // autoreleasepool
     }
 
@@ -91,7 +93,7 @@ namespace pTK
             Size fSize{static_cast<Size::value_type>(rect.size.width),
                 static_cast<Size::value_type>(rect.size.height)};
             
-            PTK_INFO("macOS Metal context initialized {}x{}", size.width, size.height);
+            PTK_INFO("Initialized MetalContext_mac");
         } // autoreleasepool
     }
     
@@ -104,6 +106,7 @@ namespace pTK
             m_metalLayer.drawableSize = rect.size;
             m_metalLayer.frame = m_mainView.frame;
             setSize(size);
+            PTK_INFO("Sized MetalContext_mac to {}x{}", size.width, size.height);
         } // autoreleasepool
     }
 

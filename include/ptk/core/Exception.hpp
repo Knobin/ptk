@@ -19,6 +19,12 @@ namespace pTK
         using runtime_error::runtime_error;
     };
 
+    class ApplicationError : public Exception
+    {
+    public:
+        using Exception::Exception;
+    };
+
     class PlatformError : public Exception
     {
     public:

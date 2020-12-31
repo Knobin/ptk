@@ -60,6 +60,19 @@ namespace pTK
         return false;
     }
 
+    void ApplicationBase::removeAllWindows()
+    {
+        for (auto it = m_mainWindows.cbegin(); it != m_mainWindows.cend();)
+        {
+            Window *window{it->second};
+            Event evt{Event::Category::Window, Event::Type::WindowClose};
+            window->handleEvents(); // Handle all events before sending close event.
+            window->sendEvent(&evt);
+            window->handleEvents();
+            m_mainWindows.erase(it++);
+        }
+    }
+
     const std::map<int32, Window*>& ApplicationBase::windows() const
     {
         return m_mainWindows;

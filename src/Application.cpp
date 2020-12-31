@@ -8,12 +8,15 @@
 // Local Headers
 #include "ptk/Application.hpp"
 #include "platform/Platform.hpp"
+#include "ptk/core/Exception.hpp"
 
 // C++ Headers
 #include <thread>
 
 namespace pTK
 {
+    static Application *s_app{nullptr};
+
     Application::Application()
         : Singleton()
     {
@@ -29,22 +32,21 @@ namespace pTK
 
     bool Application::init()
     {
+        if (s_app)
+            throw ApplicationError("Application already initialized");
+        s_app = this;
+        
         PTK_INIT_LOGGING();
         m_appBase = std::make_unique<PTK_APPLICATION_TYPE>();
         
+        PTK_INFO("Initialized Application");
         return true;
     }
 
     Application::~Application()
     {
-        const std::map<int32, Window*>& map{m_appBase->windows()};
-        std::size_t size{map.size()};
-        for (std::size_t i{0}; i < size; ++i) 
-        {
-            auto it = map.cbegin();
-            if (it != map.cend())
-                m_appBase->removeWindow(it->first);
-        }
+        m_appBase->removeAllWindows();
+        PTK_INFO("Destroyed Application");
     }
 
     int Application::exec(Window *window)
@@ -62,16 +64,7 @@ namespace pTK
 
     bool Application::removeWindow(Window *window)
     {
-        int32 key{-1};
-        for (const std::pair<const int32, Window*>& pair : m_appBase->windows())
-            if (pair.second == window)
-                key = pair.first;
-        
-        if (key > -1)
-            return m_appBase->removeWindow(key);
-        
-        return false;
-        
+        return m_appBase->removeWindow(window);
     }
 
     bool Application::removeWindow(int32 key)
@@ -81,16 +74,35 @@ namespace pTK
 
     int Application::run()
     {
+        // Currently not supporting running the app without a window.
         if (m_appBase->windowCount() == 0)
         {
             PTK_FATAL("No Window added to Application");
-            return 0;
+            return -1;
         }
         
         // Maybe do some setup things here?
         
+        // Standard message loop for now.
+        while (m_appBase->windowCount() > 0)
+        {
+            m_appBase->waitEvents();
+            for (const auto& pair : m_appBase->windows())
+                pair.second->handleEvents();
+        }
         
-        return m_appBase->messageLoop();
+        return 0;
+    }
+
+    void Application::close()
+    {
+        m_appBase->removeAllWindows();
+    }
+
+    Application *Application::Get()
+    {
+        PTK_ASSERT(s_app, "Application is not initialized");
+        return s_app;
     }
 
 }

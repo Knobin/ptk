@@ -40,14 +40,6 @@ namespace pTK
         */
         virtual ~ApplicationBase() = default;
 
-        /** Function for closing the application.
-        
-            This will close all the windows added to the
-            application and terminate. Only use this when
-            it is time to end the app.
-        */
-        virtual void close() = 0;
-
         /** Function for adding a window to the app.
 
             Note: returns -1 if an error occured.
@@ -71,6 +63,8 @@ namespace pTK
         */
         bool removeWindow(Window *window);
         
+        void removeAllWindows();
+        
         /** Function for retrieving the size of the internal table.
          
             @return     table size
@@ -89,11 +83,6 @@ namespace pTK
             @return     pointer to the window, may be nullptr
         */
         [[nodiscard]] Window *find(int32 key) const;
-        
-        /** Message loop for the application.
-         
-        */
-        virtual int messageLoop() = 0;
 
         /** Function for polling all the window events.
         

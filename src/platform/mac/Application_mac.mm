@@ -61,10 +61,7 @@
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *) __unused sender {
-    PTK_INFO("APP Should Terminate");
-    for (const std::pair<int32, pTK::Window*>& pair : app->windows())
-        pair.second->close();
-
+    app->removeAllWindows();
     _run = FALSE;
     return NSTerminateCancel;
 }
@@ -108,7 +105,7 @@ namespace pTK
                 [NSApp run];
         }
 
-        PTK_INFO("macOS Application initialized");
+        PTK_INFO("Initialized Application_mac");
     }
 
     Application_mac::~Application_mac()
@@ -120,34 +117,7 @@ namespace pTK
             [menuBar release];
         }
 
-        PTK_INFO("macOS Application destroyed");
-    }
-
-    void Application_mac::close()
-    {
-        // TODO: close app.
-    }
-
-    int Application_mac::messageLoop()
-    {
-        // Multiple windows is currently unsupported.
-        // It is guaranteed to be at least one window here.
-        Window *window{windows().at(1)};
-        PaintEvent evt{Point{0, 0}, window->getSize()};
-        window->sendEvent(&evt);
-        window->show();
-        
-        while (!window->shouldClose())
-        {
-            @autoreleasepool {
-                window->handleEvents();
-                waitEvents();
-            }
-        }
-        
-        window->hide();
-        
-        return 0;
+        PTK_INFO("Destroyed Application_mac");
     }
 
     void Application_mac::pollEvents()

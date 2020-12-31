@@ -76,6 +76,11 @@ namespace pTK
          
         */
         int run();
+        
+        void close();
+        
+    public:
+        static Application *Get();
 
     private:
         bool init();

@@ -11,6 +11,7 @@
 #include "ptk/core/Exception.hpp"
 #include "ptk/events/KeyCodes.hpp"
 #include "ptk/events/WindowEvent.hpp"
+#include "ptk/Application.hpp"
 
 #include "../common/RasterContext.hpp"
 #include "Application_mac.hpp"
@@ -324,7 +325,7 @@ namespace pTK
             [m_data->window close];
             m_data->window = nil;
         }
-        PTK_INFO("macOS Window destroyed");
+        PTK_INFO("Destroyed MainWindow_mac");
     }
 
     void MainWindow_mac::init(const std::string& name, const Size& size)
@@ -363,7 +364,7 @@ namespace pTK
             const NSRect pRect = [m_data->window.contentView convertRectToBacking:fRect];
             m_data->scale = {static_cast<Vec2f::value_type>(pRect.size.width / fRect.size.width),
                              static_cast<Vec2f::value_type>(pRect.size.height / fRect.size.height)};
-            PTK_INFO("Window Scale {0:0.2f}x{1:0.2f}", static_cast<double>(m_data->scale.x), static_cast<double>(m_data->scale.y));
+            PTK_INFO("System DPI scale is {0:0.2f}x{1:0.2f}", static_cast<double>(m_data->scale.x), static_cast<double>(m_data->scale.y));
 
             setTitle(name);
             m_data->pos = getWinPos();
@@ -371,7 +372,7 @@ namespace pTK
             m_context = createMacContext(getBackendType(), m_data);
 
         }
-        PTK_INFO("macOS Window Initialized");
+        PTK_INFO("Initialized MainWindow_mac");
     }
 
     bool MainWindow_mac::setPosHint(const Point& pos)
@@ -455,6 +456,7 @@ namespace pTK
         @autoreleasepool {
             [m_data->window close];
             m_data->window = nil;
+            Application::Get()->removeWindow(parent());
             return true;
         }
     }
