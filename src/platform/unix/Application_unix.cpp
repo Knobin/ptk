@@ -79,31 +79,6 @@ namespace pTK
         PTK_INFO("Destroyed Application_unix");
     }
 
-    int Application_unix::messageLoop()
-    {
-        while (windowCount() > 0) 
-        {
-            waitEvents();
-            for (const auto& pair : windows())
-                pair.second->handleEvents();
-        }
-
-        return 0;
-    }
-
-    void Application_unix::close()
-    {
-        auto cont = windows();
-        for (auto it = cont.cbegin(); it != cont.cend();)
-        {
-            Event evt{Event::Category::Window, Event::Type::WindowClose};
-            it->second->handleEvents(); // Handle all events before sending close event.
-            it->second->sendEvent(&evt);
-            it->second->handleEvents();
-            cont.erase(it++);
-        }
-    }
-
     void Application_unix::pollEvents()
     {
         XPending(s_appData.display);

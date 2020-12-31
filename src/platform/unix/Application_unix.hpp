@@ -36,14 +36,6 @@ namespace pTK
         virtual ~Application_unix();
 
         // TODO: Add documentation.
-        int messageLoop() override;
-
-        /** Function for closing the application should close.
-
-        */
-        void close() override;
-
-        // TODO: Add documentation.
         void pollEvents() override;
 
         // TODO: Add documentation.
