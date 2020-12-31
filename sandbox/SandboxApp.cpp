@@ -88,7 +88,10 @@ void setWindowCallbacks(pTK::Window& window)
 
 int main(int argc, char *argv[]) {
     pTK::Application app{argc, argv};
-    pTK::Window window{"pTK Sandbox Window", {960, 540}, pTK::BackendType::HARDWARE};
+    
+    pTK::WindowInfo info{};
+    info.visibility = pTK::WindowInfo::Visibility::Windowed;
+    pTK::Window window{"pTK Sandbox Window", {960, 540}, info};
     window.setBackground(pTK::Color(0x232323FF));
     setWindowCallbacks(window);
 
@@ -275,7 +278,7 @@ int main(int argc, char *argv[]) {
     window.add(hbox);
 
     window.setMaxSize({1280, 720});
-    window.show();
+   // window.show();
 
     std::atomic<bool> run{true};
     std::thread t1{[&](){
@@ -295,7 +298,7 @@ int main(int argc, char *argv[]) {
                 c2 = randomColor();
                 step = 1;
             }
-            r1->setColor(interpolateColor(c1, c2, stepFactor * step));
+            // r1->setColor(interpolateColor(c1, c2, stepFactor * step));
             std::this_thread::sleep_for(std::chrono::milliseconds (1000 / fps));
             ++step;
         }

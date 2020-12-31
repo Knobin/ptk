@@ -35,7 +35,7 @@ namespace pTK
             @param backend  type of backend
             @return         default initialized MainWindow_win
         */
-        MainWindow_mac(Window *window, const std::string& name, const Size& size, BackendType backend);
+        MainWindow_mac(Window *window, const std::string& name, const Size& size, WindowInfo info);
 
         /** Deconstructor for MainWindow_win.
 
@@ -194,7 +194,7 @@ namespace pTK
         struct WinData;
         
     private:
-        void init(const std::string& name, const Size& size);
+        void init(const std::string& name, const Size& size, WindowInfo info);
         
     private:
         std::unique_ptr<ContextBase> m_context;

@@ -15,6 +15,7 @@
 #include "ptk/core/Event.hpp"
 #include "ptk/util/Vec2.hpp"
 #include "ptk/core/EventQueue.hpp"
+#include "ptk/core/WindowInfo.hpp"
 
 // C++ Headers
 #include <memory>
@@ -43,7 +44,7 @@ namespace pTK
 
             @return    default initialized Window
         */
-        Window(const std::string& name, const Size& size, BackendType backend = BackendType::HARDWARE);
+        Window(const std::string& name, const Size& size, WindowInfo info = {});
 
         /** Deconstructor for Window.
 
@@ -202,15 +203,8 @@ namespace pTK
 
         // getPosition should not be used outside this class.
         using VBox::getPosition;
-
+        
     private:
-        EventQueue<std::deque> m_eventQueue{};
-        std::unique_ptr<MainWindowBase> m_winBackend{nullptr};
-        std::thread::id m_threadID;
-        bool m_draw{false};
-        bool m_close{false};
-        bool m_minimized{false};
-
         // Window specific callbacks.
         std::function<bool()> m_onClose{nullptr};
         std::function<bool(const Point& pos)> m_onMove{nullptr};
@@ -219,6 +213,16 @@ namespace pTK
         std::function<bool()> m_onLostFocus{nullptr};
         std::function<bool()> m_onMinimize{nullptr};
         std::function<bool()> m_onRestore{nullptr};
+        
+    private:
+        EventQueue<std::deque> m_eventQueue{};
+        std::unique_ptr<MainWindowBase> m_winBackend{nullptr};
+        std::thread::id m_threadID;
+        bool m_draw{false};
+        bool m_close{false};
+        bool m_minimized{false};
+        WindowInfo m_info;
+        
     };
 
     template<typename T, typename... Args>

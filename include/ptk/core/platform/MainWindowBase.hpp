@@ -14,20 +14,11 @@
 #include "ptk/core/platform/ContextBase.hpp"
 #include "ptk/Core.hpp"
 #include "ptk/core/Event.hpp"
+#include "ptk/core/WindowInfo.hpp"
 
 namespace pTK
 {
     class Window;
-
-    /** Backend enum class implementation
-
-        Specifies which backend that should be used.
-    */
-    enum class BackendType : byte
-    {
-        SOFTWARE = 1,
-        HARDWARE
-    };
 
     /** MainWindowBase class implementation
 
@@ -43,8 +34,8 @@ namespace pTK
             @param backend  type of backend
             @return         default initialized MainWindowBase
         */
-        MainWindowBase(Window *window, BackendType backend)
-            : m_parent{window}, m_backend{backend}
+        MainWindowBase(Window *window)
+            : m_parent{window}
         {
 
         }
@@ -159,15 +150,6 @@ namespace pTK
         */
         virtual void notifyEvent() {};
 
-        /** Function for retrieving the backend type of the Window.
-
-            @return     backend type
-        */
-        [[nodiscard]] BackendType getBackendType() const
-        {
-            return m_backend;
-        }
-
         /** Function for retrieving the window position.
 
             @return     Window Position
@@ -220,7 +202,6 @@ namespace pTK
 
     private:
         Window *m_parent;
-        BackendType m_backend;
     };
 }
 

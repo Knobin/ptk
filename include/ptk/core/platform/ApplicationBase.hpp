@@ -82,7 +82,7 @@ namespace pTK
             @param key  ptk window id
             @return     pointer to the window, may be nullptr
         */
-        [[nodiscard]] Window *find(int32 key) const;
+        [[nodiscard]] Window *findByKey(int32 key) const;
 
         /** Function for polling all the window events.
         

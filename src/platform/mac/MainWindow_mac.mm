@@ -291,7 +291,7 @@ namespace pTK
 
 namespace pTK
 {
-    static std::unique_ptr<ContextBase> createMacContext(BackendType type, const std::unique_ptr<MainWindow_mac::WinData>& data)
+    static std::unique_ptr<ContextBase> createMacContext(WindowInfo::BackendType type, const std::unique_ptr<MainWindow_mac::WinData>& data)
     {
 #ifdef PTK_DEBUG
       if (data->scale.x != data->scale.y)
@@ -300,7 +300,7 @@ namespace pTK
         const Size scaledSize{static_cast<Size::value_type>(data->size.width * data->scale.x),
                             static_cast<Size::value_type>(data->size.height * data->scale.y)};
 #ifdef PTK_METAL
-        if (type == BackendType::HARDWARE)
+        if (type == WindowInfo::BackendType::HARDWARE)
             return std::make_unique<MetalContext_mac>(static_cast<void*>([data->window contentView]), scaledSize, data->scale);
 #endif
 
@@ -312,10 +312,10 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    MainWindow_mac::MainWindow_mac(Window *window, const std::string& name, const Size& size, BackendType backend)
-        : MainWindowBase(window, backend)
+    MainWindow_mac::MainWindow_mac(Window *window, const std::string& name, const Size& size, WindowInfo info)
+        : MainWindowBase(window)
     {
-        init(name, size);
+        init(name, size, info);
     }
 
     MainWindow_mac::~MainWindow_mac()
@@ -328,7 +328,7 @@ namespace pTK
         PTK_INFO("Destroyed MainWindow_mac");
     }
 
-    void MainWindow_mac::init(const std::string& name, const Size& size)
+    void MainWindow_mac::init(const std::string& name, const Size& size, WindowInfo info)
     {
         try {
             m_data = std::make_unique<MainWindow_mac::WinData>();
@@ -369,7 +369,18 @@ namespace pTK
             setTitle(name);
             m_data->pos = getWinPos();
 
-            m_context = createMacContext(getBackendType(), m_data);
+            m_context = createMacContext(info.backend, m_data);
+            
+            switch (info.visibility) {
+                case WindowInfo::Visibility::Windowed:
+                    show();
+                    break;
+                case WindowInfo::Visibility::Hidden: // Window is started hidden.
+                    break;
+                    
+                default:
+                    break;
+            }
 
         }
         PTK_INFO("Initialized MainWindow_mac");

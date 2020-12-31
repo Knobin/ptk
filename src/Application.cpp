@@ -45,7 +45,21 @@ namespace pTK
 
     Application::~Application()
     {
+        // Close all attached Windows.
+        auto cont = m_appBase->windows();
+        for (auto it = cont.cbegin(); it != cont.cend(); ++it)
+        {
+            Window *window{it->second};
+            Event evt{Event::Category::Window, Event::Type::WindowClose};
+            window->handleEvents(); // Handle all events before sending the close event.
+            window->sendEvent(&evt);
+        }
+        
+        // The close event might cause the Window to remove itself from the Application
+        // through the Application::Get function.
+        // Otherwise, remove them here.
         m_appBase->removeAllWindows();
+        
         PTK_INFO("Destroyed Application");
     }
 
