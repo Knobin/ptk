@@ -30,7 +30,7 @@
 
 namespace pTK
 {
-    static std::map<byte, KeyCode> initKeyCodes() noexcept
+    static std::map<byte, KeyCode> InitKeyCodes() noexcept
     {
         std::map<byte, KeyCode> map{};
         map[0x31] = Key::Space; map[0x35] = Key::Escape;
@@ -50,9 +50,9 @@ namespace pTK
         return map;
     }
 
-    static const std::map<byte, KeyCode> s_keyMap{initKeyCodes()};
+    static const std::map<byte, KeyCode> s_keyMap{InitKeyCodes()};
 
-    static Key translateKeyCode(byte code)
+    static Key TranslateKeyCodeToKey(byte code)
     {
         std::map<byte, KeyCode>::const_iterator it{s_keyMap.find(code)};
         if (it != s_keyMap.cend())
@@ -236,7 +236,7 @@ namespace pTK
 - (void)keyDown:(NSEvent *)event
 {
     const int code = event.keyCode;
-    pTK::KeyEvent evt{pTK::Event::Type::KeyPressed, pTK::translateKeyCode(static_cast<byte>(code))};
+    pTK::KeyEvent evt{pTK::Event::Type::KeyPressed, pTK::TranslateKeyCodeToKey(static_cast<byte>(code))};
     window->parent()->sendEvent(&evt);
     
     [self interpretKeyEvents:@[event]];
@@ -245,7 +245,7 @@ namespace pTK
 - (void)keyUp:(NSEvent *)event
 {
     const int code = event.keyCode;
-    pTK::KeyEvent evt{pTK::Event::Type::KeyReleased, pTK::translateKeyCode(static_cast<byte>(code))};
+    pTK::KeyEvent evt{pTK::Event::Type::KeyReleased, pTK::TranslateKeyCodeToKey(static_cast<byte>(code))};
     window->parent()->sendEvent(&evt);
 }
 
@@ -291,7 +291,7 @@ namespace pTK
 
 namespace pTK
 {
-    static std::unique_ptr<ContextBase> createMacContext(WindowInfo::BackendType type, const std::unique_ptr<MainWindow_mac::WinData>& data)
+    static std::unique_ptr<ContextBase> createMacContext(WindowInfo::Backend type, const std::unique_ptr<MainWindow_mac::WinData>& data)
     {
 #ifdef PTK_DEBUG
       if (data->scale.x != data->scale.y)
@@ -300,7 +300,7 @@ namespace pTK
         const Size scaledSize{static_cast<Size::value_type>(data->size.width * data->scale.x),
                             static_cast<Size::value_type>(data->size.height * data->scale.y)};
 #ifdef PTK_METAL
-        if (type == WindowInfo::BackendType::HARDWARE)
+        if (type == WindowInfo::Backend::Hardware)
             return std::make_unique<MetalContext_mac>(static_cast<void*>([data->window contentView]), scaledSize, data->scale);
 #endif
 
