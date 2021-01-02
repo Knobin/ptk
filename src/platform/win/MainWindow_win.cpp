@@ -26,11 +26,11 @@
 
 namespace pTK
 {
-    static std::unique_ptr<ContextBase> CreateContextForWin32([[maybe_unused]] WindowInfo::BackendType type, HWND hwnd,
+    static std::unique_ptr<ContextBase> CreateContextForWin32([[maybe_unused]] WindowInfo::Backend type, HWND hwnd,
                                                            const Size& size)
     {
 #ifdef PTK_OPENGL
-        if (type == WindowInfo::BackendType::HARDWARE)
+        if (type == WindowInfo::Backend::Hardware)
             return std::make_unique<GLContext_win>(hwnd, size);
 #endif // PTK_OPENGL
 

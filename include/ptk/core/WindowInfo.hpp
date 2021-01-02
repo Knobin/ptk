@@ -16,10 +16,14 @@ namespace pTK
 
             Specifies which backend that should be used.
         */
-        enum class BackendType : byte
+        enum class Backend : byte
         {
-            SOFTWARE = 1,
-            HARDWARE
+            Software = 1,
+            Hardware
+
+            // TODO: Implement the following OpenGL and Metal to specify which backend.
+            // They should also be a "subset" of the Hardware enum.
+            // If the user specifies "Hardware" it will select the "best" available backend.
         };
 
         enum class Visibility : byte
@@ -30,7 +34,7 @@ namespace pTK
             // TODO: Implement the following Minimized, Maximized and FullScreen.
         };
         
-        BackendType backend{BackendType::HARDWARE};
+        Backend backend{Backend::Hardware};
         Point position{-1, -1};
         Visibility visibility{Visibility::Windowed};
     };
