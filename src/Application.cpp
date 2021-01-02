@@ -94,7 +94,15 @@ namespace pTK
             PTK_FATAL("No Window added to Application");
             return -1;
         }
-        
+
+        // Paint all visible windows and handle already pushed events.
+        for (const auto&[key, window] : m_appBase->windows())
+        {
+            if (window->visible())
+                window->postEvent<PaintEvent>(Point{0,0}, window->getSize());
+            window->handleEvents();
+        }
+
         // Maybe do some setup things here?
         
         // Standard message loop for now.

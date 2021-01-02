@@ -26,11 +26,11 @@
 
 namespace pTK
 {
-    static std::unique_ptr<ContextBase> createWin32Context([[maybe_unused]] BackendType type, HWND hwnd,
+    static std::unique_ptr<ContextBase> CreateContextForWin32([[maybe_unused]] WindowInfo::BackendType type, HWND hwnd,
                                                            const Size& size)
     {
 #ifdef PTK_OPENGL
-        if (type == BackendType::HARDWARE)
+        if (type == WindowInfo::BackendType::HARDWARE)
             return std::make_unique<GLContext_win>(hwnd, size);
 #endif // PTK_OPENGL
 
@@ -40,7 +40,7 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    static std::map<byte, KeyCode> initKeyCodes() noexcept
+    static std::map<byte, KeyCode> InitKeyCodes() noexcept
     {
         std::map<byte, KeyCode> map{};
         map[VK_SPACE] = Key::Space; map[VK_ESCAPE] = Key::Escape;
@@ -61,9 +61,9 @@ namespace pTK
         return map;
     }
 
-    static const std::map<byte, KeyCode> s_keyMap{initKeyCodes()};
+    static const std::map<byte, KeyCode> s_keyMap{InitKeyCodes()};
 
-    static Key translateKeyCode(byte code)
+    static Key TranslateKeyCodeToKey(byte code)
     {
         std::map<byte, KeyCode>::const_iterator it{s_keyMap.find(code)};
         if (it != s_keyMap.cend())
@@ -74,7 +74,7 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    static Size calcAdjustedReverseWindowSize(const Size& from, DWORD style, float dpi)
+    static Size CalcAdjustedReverseWindowSize(const Size& from, DWORD style, float dpi)
     {
         RECT adjustedSize{};
         ::SetRectEmpty(&adjustedSize);
@@ -84,7 +84,7 @@ namespace pTK
                 from.height - (adjustedSize.bottom - adjustedSize.top)};
     }
 
-    static Size calcAdjustedWindowSize(const Size& from, DWORD style, float dpi)
+    static Size CalcAdjustedWindowSize(const Size& from, DWORD style, float dpi)
     {
         RECT adjustedSize{};
         adjustedSize.top = 0;
@@ -119,8 +119,8 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////
     
-    MainWindow_win::MainWindow_win(Window *window, const std::string& name, const Size& size, BackendType backend)
-        : MainWindowBase(window, backend)
+    MainWindow_win::MainWindow_win(Window *window, const std::string& name, const Size& size, const WindowInfo& flags)
+        : MainWindowBase(window)
     {
         // High DPI
         HDC screen{GetDC(nullptr)};
@@ -138,19 +138,35 @@ namespace pTK
 
         const Size wSize{scaleSize(size, scale)};
         constexpr DWORD style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX};
-        const Size adjSize{calcAdjustedWindowSize(wSize, style, dpiX)};
+        const Size adjSize{CalcAdjustedWindowSize(wSize, style, dpiX)};
         m_hwnd = ::CreateWindowExW(0, L"PTK", Application_win::stringToUTF16(name).c_str(), style,
                                      CW_USEDEFAULT, CW_USEDEFAULT, adjSize.width, adjSize.height,
                                      nullptr, nullptr, ::GetModuleHandleW(nullptr), nullptr);
         if (!m_hwnd)
             throw WindowError("Failed to create window!");
 
-        m_context = createWin32Context(backend, m_hwnd, wSize);
+        m_context = CreateContextForWin32(flags.backend, m_hwnd, wSize);
         m_data = std::make_unique<WinBackendData>(WinBackendData{window, scale, wSize, {}, style, false, 0, false});
         SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)m_data.get());
 
-        ::ShowWindow(m_hwnd, SW_SHOW);
-        ::UpdateWindow(m_hwnd);
+        switch (flags.visibility)
+        {
+            case WindowInfo::Visibility::Windowed:
+            {
+                ::ShowWindow(m_hwnd, SW_SHOW);
+                ::UpdateWindow(m_hwnd);
+                break;
+            }
+            case WindowInfo::Visibility::Hidden:
+            {
+                ::ShowWindow(m_hwnd, SW_HIDE);
+                break;
+            }
+            default:
+                break;
+        }
+
+
 
         PTK_INFO("Initialized MainWindow_win: {}x{}", wSize.width, wSize.height);
     }
@@ -291,7 +307,7 @@ namespace pTK
 
         if (!m_data->ignoreSize)
         {
-            const Size adjSize{calcAdjustedWindowSize(scaledSize, m_data->style, m_data->scale.x * 96.0f)};
+            const Size adjSize{CalcAdjustedWindowSize(scaledSize, m_data->style, m_data->scale.x * 96.0f)};
             ::SetWindowPos(m_hwnd, 0, 0, 0, adjSize.width, adjSize.height, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
         }
 
@@ -426,14 +442,14 @@ namespace pTK
         LPMINMAXINFO lpMMI{reinterpret_cast<LPMINMAXINFO>(lParam)};
         const Size minSize{window->getMinSize()};
         MainWindow_win* backend{static_cast<MainWindow_win*>(window->getBackend())};
-        const Size adjMinSize{calcAdjustedWindowSize(scaleSize(minSize, data->scale),
+        const Size adjMinSize{CalcAdjustedWindowSize(scaleSize(minSize, data->scale),
                                                      backend->getWindowStyle(), data->scale.x * 96.0f)};
         lpMMI->ptMinTrackSize.x = adjMinSize.width;
         lpMMI->ptMinTrackSize.y = adjMinSize.height;
         const Size maxSize{window->getMaxSize()};
         if (maxSize != Size::Max)
         {
-            const Size adjMaxSize{calcAdjustedWindowSize(
+            const Size adjMaxSize{CalcAdjustedWindowSize(
                 scaleSize(maxSize, data->scale), data->style, data->scale.x * 96.0f)};
             lpMMI->ptMaxTrackSize.x = adjMaxSize.width;
             lpMMI->ptMaxTrackSize.y = adjMaxSize.height;
@@ -522,13 +538,13 @@ namespace pTK
             }
             case WM_KEYDOWN:
             {
-                KeyEvent evt{KeyEvent::Pressed, translateKeyCode(static_cast<byte>(wParam))};
+                KeyEvent evt{KeyEvent::Pressed, TranslateKeyCodeToKey(static_cast<byte>(wParam))};
                 window->sendEvent(&evt);
                 break;
             }
             case WM_KEYUP:
             {
-                KeyEvent evt{KeyEvent::Released, translateKeyCode(static_cast<byte>(wParam))};
+                KeyEvent evt{KeyEvent::Released, TranslateKeyCodeToKey(static_cast<byte>(wParam))};
                 window->sendEvent(&evt);
                 break;
             }
@@ -553,7 +569,7 @@ namespace pTK
                 RECT* rect = reinterpret_cast<RECT*>(lParam);
                 const Size size = {static_cast<Size::value_type>(rect->right - rect->left),
                                    static_cast<Size::value_type>(rect->bottom - rect->top)};
-                ResizeEvent evt{scaleSize(calcAdjustedReverseWindowSize(size, data->style, data->scale.x * 96.0f),
+                ResizeEvent evt{scaleSize(CalcAdjustedReverseWindowSize(size, data->style, data->scale.x * 96.0f),
                                           Vec2f{1.0f / data->scale.x, 1.0f / data->scale.y})};
                 if (evt.size != data->size)
                 {
