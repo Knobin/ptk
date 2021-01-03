@@ -44,7 +44,7 @@ namespace pTK
 
             @return    default initialized Window
         */
-        Window(const std::string& name, const Size& size, WindowInfo info = {});
+        Window(const std::string& name, const Size& size, const WindowInfo& flags = {});
 
         /** Deconstructor for Window.
 

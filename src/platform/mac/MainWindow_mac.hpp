@@ -29,13 +29,13 @@ namespace pTK
     public:
         /** Constructs MainWindow_win with default values.
 
-            @param window   parent Window class
+            @param window   pointer to parent Window
             @param name     name of the window
             @param size     size of the window
-            @param backend  type of backend
-            @return         default initialized MainWindow_win
+            @param flags    setup flags for the window
+            @return         default initialized MainWindow_mac
         */
-        MainWindow_mac(Window *window, const std::string& name, const Size& size, WindowInfo info);
+        MainWindow_mac(Window *window, const std::string& name, const Size& size, const WindowInfo& flags);
 
         /** Deconstructor for MainWindow_win.
 
@@ -194,7 +194,7 @@ namespace pTK
         struct WinData;
         
     private:
-        void init(const std::string& name, const Size& size, WindowInfo info);
+        void init(const std::string& name, const Size& size, const WindowInfo& flags);
         
     private:
         std::unique_ptr<ContextBase> m_context;

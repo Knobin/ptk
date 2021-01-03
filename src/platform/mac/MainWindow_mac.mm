@@ -312,10 +312,10 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    MainWindow_mac::MainWindow_mac(Window *window, const std::string& name, const Size& size, WindowInfo info)
+    MainWindow_mac::MainWindow_mac(Window *window, const std::string& name, const Size& size, const WindowInfo& flags)
         : MainWindowBase(window)
     {
-        init(name, size, info);
+        init(name, size, flags);
     }
 
     MainWindow_mac::~MainWindow_mac()
@@ -328,21 +328,19 @@ namespace pTK
         PTK_INFO("Destroyed MainWindow_mac");
     }
 
-    void MainWindow_mac::init(const std::string& name, const Size& size, WindowInfo info)
+    void MainWindow_mac::init(const std::string& name, const Size& size, const WindowInfo& flags)
     {
-        try {
-            m_data = std::make_unique<MainWindow_mac::WinData>();
-        } catch (const std::bad_alloc&) {
-            throw WindowError("Failed to allocate memory for MainWindow_mac");
-        }
-
-        m_data->size = size;
-        m_data->pos = {};
-
         @autoreleasepool {
+            m_data = std::make_unique<MainWindow_mac::WinData>();
+            PTK_ASSERT(m_data, "Could not allocate memory for data structure in MainWindow_mac");
+            
             WindowDelegate *winDelegate = [[WindowDelegate alloc] initWithWindow:this:m_data.get()];
-
-            NSRect rect = NSMakeRect(100, 100, size.width, size.height);
+            
+            // Default is currently MainDisplay (where 0,0 is), could cause some headaches later on.
+            // Same with setPosHint, don't have a secondary monitor to test on right now.
+            const CGFloat y = CGDisplayBounds(CGMainDisplayID()).size.height - (flags.position.y + size.height - 1) - 1;
+            const NSRect rect = NSMakeRect(flags.position.x, y, size.width, size.height);
+            
             NSUInteger style = (NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable);
             m_data->window = [[NSWindow alloc] initWithContentRect:rect styleMask:style backing:NSBackingStoreBuffered defer:NO];
 
@@ -366,21 +364,20 @@ namespace pTK
                              static_cast<Vec2f::value_type>(pRect.size.height / fRect.size.height)};
             PTK_INFO("System DPI scale is {0:0.2f}x{1:0.2f}", static_cast<double>(m_data->scale.x), static_cast<double>(m_data->scale.y));
 
-            setTitle(name);
-            m_data->pos = getWinPos();
-
-            m_context = createMacContext(info.backend, m_data);
+            m_context = createMacContext(flags.backend, m_data);
             
-            switch (info.visibility) {
+            switch (flags.visibility)
+            {
                 case WindowInfo::Visibility::Windowed:
                     show();
                     break;
                 case WindowInfo::Visibility::Hidden: // Window is started hidden.
                     break;
-                    
-                default:
-                    break;
             }
+            
+            setTitle(name);
+            m_data->pos = getWinPos();
+            m_data->size = size;
 
         }
         PTK_INFO("Initialized MainWindow_mac");

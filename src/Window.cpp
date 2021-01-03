@@ -12,15 +12,15 @@
 
 namespace pTK
 {
-    Window::Window(const std::string& name, const Size& size, WindowInfo info)
-        : VBox(), Singleton(), m_threadID{std::this_thread::get_id()}, m_info{info}
+    Window::Window(const std::string& name, const Size& size, const WindowInfo& flags)
+        : VBox(), Singleton(), m_threadID{std::this_thread::get_id()}, m_info{flags}
     {
         // Set Widget properties.
         Sizable::setSize(size);
         setName(name);
         Drawable::hide();
 
-        m_winBackend = std::make_unique<PTK_MAINWINDOW_TYPE>(this, name, size, info);
+        m_winBackend = std::make_unique<PTK_MAINWINDOW_TYPE>(this, name, size, flags);
         PTK_INFO("Initialized Window");
     }
 

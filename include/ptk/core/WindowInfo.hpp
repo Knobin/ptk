@@ -8,8 +8,20 @@
 #ifndef PTK_CORE_WINDOWINFO_HPP
 #define PTK_CORE_WINDOWINFO_HPP
 
+// Local Headers
+#include "ptk/core/Types.hpp"
+
 namespace pTK
 {
+    /** WindowInfo struct implementation
+
+        Flags that can be passed to the window constructor.
+        
+        Current flags are:
+            -   Backend:    Specifies which backend to use.
+            -   Position:   Open window at position.
+            -   Visibility: Specifies the visibility of the window on creation.
+    */
     struct WindowInfo
     {
         /** Backend enum class implementation
@@ -35,7 +47,7 @@ namespace pTK
         };
         
         Backend backend{Backend::Hardware};
-        Point position{-1, -1};
+        Point position{100, 100};
         Visibility visibility{Visibility::Windowed};
     };
 }
