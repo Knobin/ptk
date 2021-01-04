@@ -139,8 +139,9 @@ namespace pTK
         const Size wSize{scaleSize(size, scale)};
         constexpr DWORD style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX};
         const Size adjSize{CalcAdjustedWindowSize(wSize, style, dpiX)};
+        // Old position was set to CW_USEDEFAULT (replaced with flags.position).
         m_hwnd = ::CreateWindowExW(0, L"PTK", Application_win::stringToUTF16(name).c_str(), style,
-                                     CW_USEDEFAULT, CW_USEDEFAULT, adjSize.width, adjSize.height,
+                                    flags.position.x, flags.position.y, adjSize.width, adjSize.height,
                                      nullptr, nullptr, ::GetModuleHandleW(nullptr), nullptr);
         if (!m_hwnd)
             throw WindowError("Failed to create window!");
@@ -168,7 +169,7 @@ namespace pTK
 
 
 
-        PTK_INFO("Initialized MainWindow_win: {}x{}", wSize.width, wSize.height);
+        PTK_INFO("Initialized MainWindow_win {}x{} at {}x{}", wSize.width, wSize.height, flags.position.x, flags.position.y);
     }
 
     MainWindow_win::~MainWindow_win()
