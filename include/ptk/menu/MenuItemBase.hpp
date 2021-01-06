@@ -2,7 +2,7 @@
 //  menu/MenuItemBase.hpp
 //  pTK
 //
-//  Created by Robin Gustafsson on 2020-02-07.
+//  Created by Robin Gustafsson on 2021-01-06.
 //
 
 #ifndef PTK_MENU_MENUITEMBASE_HPP
@@ -21,6 +21,7 @@ namespace pTK
     public:
         MenuItemBase() = default;
         explicit MenuItemBase(const std::string& name) : m_name{name} {}
+        virtual ~MenuItemBase() = default;
 
         void rename(const std::string& name) { m_name = name; }
         [[nodiscard]] const std::string& name() const { return m_name; }

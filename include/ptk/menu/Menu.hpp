@@ -2,7 +2,7 @@
 //  menu/Menu.hpp
 //  pTK
 //
-//  Created by Robin Gustafsson on 2020-02-07.
+//  Created by Robin Gustafsson on 2021-01-06.
 //
 
 #ifndef PTK_MENU_MENU_HPP
@@ -48,6 +48,8 @@ namespace pTK
         {
 
         }
+
+        virtual ~Menu() = default;
 
         [[nodiscard]] std::string_view typeName() const override { return "Menu"; }
 

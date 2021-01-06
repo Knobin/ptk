@@ -11,6 +11,7 @@
 #include "../common/RasterContext.hpp"
 #include "RasterPolicy_win.hpp"
 #include "ptk/Application.hpp"
+#include "ptk/menu/MenuItem.hpp"
 
 // Include OpenGL backend if HW Acceleration is enabled.
 #ifdef PTK_OPENGL
@@ -23,6 +24,8 @@
 
 // C++ Headers
 #include <cmath>
+#include <memory>
+#include <tuple>
 
 namespace pTK
 {
@@ -103,27 +106,9 @@ namespace pTK
         return newSize;
     }
 
-    static void CreateMenuStructure(HMENU parent, pTK::Menu *menu)
-    {
-        HMENU currentMenu = CreateMenu();
-        AppendMenu(parent, MF_POPUP, reinterpret_cast<UINT_PTR>(currentMenu), menu->name().c_str());
-
-        for (auto menuItemIt{menu->cbegin()}; menuItemIt != menu->cend(); ++menuItemIt)
-        {
-            // Can either be Menu or MenuItem.
-            MenuItemBase *menuItemPtr = (*menuItemIt).get();
-            if (menuItemPtr->typeName() == "Menu")
-                CreateMenuStructure(currentMenu, reinterpret_cast<pTK::Menu*>(menuItemPtr));
-            else if (menuItemPtr->typeName() == "MenuItem")
-                AppendMenu(currentMenu, MF_STRING, 1, (*menuItemIt)->name().c_str());
-#ifdef PTK_DEBUG
-            else
-                PTK_WARN("Unknown Menu class: {}", menuItemPtr->typeName());
-#endif // PTK_DEBUG
-        }
-    }
-
     ///////////////////////////////////////////////////////////////////////////////
+
+    using MenuMap = std::map<uint, std::tuple<Ref<MenuItemBase>, uint, bool, HMENU>>;
 
     struct WinBackendData
     {
@@ -136,7 +121,64 @@ namespace pTK
         uint wait;
         bool ignoreSize;
         bool menu;
+        MenuMap menuItems;
     };
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+    static uint InsertMenuItemToMap(MenuMap& menus, const Ref<MenuItemBase>& menuItem, uint parentId, bool isMenu, HMENU hmenu)
+    {
+        uint uniqueId{1};
+        for (const auto& it : menus)
+        {
+            if (it.first == uniqueId)
+                ++uniqueId;
+        }
+
+        menus.insert({uniqueId, {menuItem, parentId, isMenu, hmenu}});
+        return uniqueId;
+    }
+
+    static Ref<MenuItemBase> FindMenuItemById(const MenuMap& menuItems, uint id)
+    {
+        MenuMap::const_iterator it{menuItems.find(id)};
+        if (it != menuItems.cend())
+            return std::get<0>(it->second);
+
+        return nullptr;
+    }
+
+    static void CreateMenuStructure(HMENU parent, MenuMap& menus, const pTK::Ref<pTK::Menu>& menu, uint parentId)
+    {
+        HMENU currentMenu = CreateMenu();
+        AppendMenu(parent, MF_POPUP, reinterpret_cast<UINT_PTR>(currentMenu), menu->name().c_str());
+        uint currentMenuId = InsertMenuItemToMap(menus, menu, parentId, true, currentMenu);
+
+        for (auto menuItemIt{menu->cbegin()}; menuItemIt != menu->cend(); ++menuItemIt)
+        {
+            // Can either be Menu or MenuItem.
+            const Ref<MenuItemBase>& menuItemPtr = *menuItemIt;
+            if (menuItemPtr->typeName() == "Menu")
+            {
+                Ref<Menu> rMenu = std::dynamic_pointer_cast<Menu>(menuItemPtr);
+                if (rMenu)
+                    CreateMenuStructure(currentMenu, menus, rMenu, currentMenuId);
+#ifdef PTK_DEBUG
+                else
+                    PTK_WARN("Could not cast MenuItemBase to Menu");
+#endif // PTK_DEBUG
+            }
+            else if (menuItemPtr->typeName() == "MenuItem")
+            {
+                uint id = InsertMenuItemToMap(menus, menuItemPtr, currentMenuId, false, nullptr);
+                AppendMenu(currentMenu, MF_STRING, id, (*menuItemIt)->name().c_str());
+            }
+#ifdef PTK_DEBUG
+            else
+                PTK_WARN("Unknown Menu class: {}", menuItemPtr->typeName());
+#endif // PTK_DEBUG
+        }
+    }
 
     ///////////////////////////////////////////////////////////////////////////////
     
@@ -193,9 +235,10 @@ namespace pTK
         {
             // TODO: Research menu destruction, currently many none are being destroyed (possible memory leak?).
             HMENU menuBar = CreateMenu();
+            uint menuBarId = InsertMenuItemToMap(m_data->menuItems, nullptr, 0, true, menuBar);
 
             for (auto menuIt{flags.menus.cbegin()}; menuIt != flags.menus.cend(); ++menuIt)
-                CreateMenuStructure(menuBar, (*menuIt).get());
+                CreateMenuStructure(menuBar, m_data->menuItems, (*menuIt), menuBarId);
 
             SetMenu(m_hwnd, menuBar);
         }
@@ -666,6 +709,22 @@ namespace pTK
             {
                 if (wParam == 1)
                     window->handleEvents();
+                break;
+            }
+            case WM_COMMAND:
+            {
+                uint wmId{LOWORD(wParam)};
+                Ref<MenuItemBase> item{FindMenuItemById(data->menuItems, wmId)};
+
+                if (item)
+                {
+                    if (auto *mItem = dynamic_cast<MenuItem*>(item.get()))
+                        mItem->handleClick();
+                }
+                else
+                {
+                    return ::DefWindowProcW(hwnd, msg, wParam, lParam);
+                }
                 break;
             }
             default:
