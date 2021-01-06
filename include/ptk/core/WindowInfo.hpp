@@ -10,6 +10,7 @@
 
 // Local Headers
 #include "ptk/core/Types.hpp"
+#include "ptk/menu/MenuCollection.hpp"
 
 namespace pTK
 {
@@ -49,6 +50,7 @@ namespace pTK
         Backend backend{Backend::Hardware};
         Point position{100, 100};
         Visibility visibility{Visibility::Windowed};
+        MenuCollection menus{};
     };
 }
 

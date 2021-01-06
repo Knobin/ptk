@@ -25,6 +25,8 @@ namespace pTK
         void rename(const std::string& name) { m_name = name; }
         [[nodiscard]] const std::string& name() const { return m_name; }
 
+        [[nodiscard]] virtual std::string_view typeName() const = 0;
+
     private:
         std::string m_name;
     };

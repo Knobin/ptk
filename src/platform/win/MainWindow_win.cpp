@@ -74,24 +74,24 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    static Size CalcAdjustedReverseWindowSize(const Size& from, DWORD style, float dpi)
+    static Size CalcAdjustedReverseWindowSize(const Size& from, DWORD style, bool menu, float dpi)
     {
         RECT adjustedSize{};
         ::SetRectEmpty(&adjustedSize);
-        ::AdjustWindowRectExForDpi(&adjustedSize, style, FALSE, 0, static_cast<UINT>(dpi));
+        ::AdjustWindowRectExForDpi(&adjustedSize, style, menu, 0, static_cast<UINT>(dpi));
 
         return {from.width - (adjustedSize.right - adjustedSize.left),
                 from.height - (adjustedSize.bottom - adjustedSize.top)};
     }
 
-    static Size CalcAdjustedWindowSize(const Size& from, DWORD style, float dpi)
+    static Size CalcAdjustedWindowSize(const Size& from, DWORD style, bool menu, float dpi)
     {
         RECT adjustedSize{};
         adjustedSize.top = 0;
         adjustedSize.bottom = from.height;
         adjustedSize.left = 0;
         adjustedSize.right = from.width;
-        ::AdjustWindowRectExForDpi (&adjustedSize, style, FALSE, 0, static_cast<UINT>(dpi));
+        ::AdjustWindowRectExForDpi (&adjustedSize, style, menu, 0, static_cast<UINT>(dpi));
         return {adjustedSize.right - adjustedSize.left, adjustedSize.bottom - adjustedSize.top};
     }
 
@@ -101,6 +101,26 @@ namespace pTK
         newSize.width = static_cast<Size::value_type>(std::ceil(size.width * scale.x));
         newSize.height = static_cast<Size::value_type>(std::ceil(size.height * scale.y));
         return newSize;
+    }
+
+    static void CreateMenuStructure(HMENU parent, pTK::Menu *menu)
+    {
+        HMENU currentMenu = CreateMenu();
+        AppendMenu(parent, MF_POPUP, reinterpret_cast<UINT_PTR>(currentMenu), menu->name().c_str());
+
+        for (auto menuItemIt{menu->cbegin()}; menuItemIt != menu->cend(); ++menuItemIt)
+        {
+            // Can either be Menu or MenuItem.
+            MenuItemBase *menuItemPtr = (*menuItemIt).get();
+            if (menuItemPtr->typeName() == "Menu")
+                CreateMenuStructure(currentMenu, reinterpret_cast<pTK::Menu*>(menuItemPtr));
+            else if (menuItemPtr->typeName() == "MenuItem")
+                AppendMenu(currentMenu, MF_STRING, 1, (*menuItemIt)->name().c_str());
+#ifdef PTK_DEBUG
+            else
+                PTK_WARN("Unknown Menu class: {}", menuItemPtr->typeName());
+#endif // PTK_DEBUG
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -115,6 +135,7 @@ namespace pTK
         bool minimized;
         uint wait;
         bool ignoreSize;
+        bool menu;
     };
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -138,7 +159,7 @@ namespace pTK
 
         const Size wSize{scaleSize(size, scale)};
         constexpr DWORD style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX};
-        const Size adjSize{CalcAdjustedWindowSize(wSize, style, dpiX)};
+        const Size adjSize{CalcAdjustedWindowSize(wSize, style, !flags.menus.empty(), dpiX)};
         // Old position was set to CW_USEDEFAULT (replaced with flags.position).
         m_hwnd = ::CreateWindowExW(0, L"PTK", Application_win::stringToUTF16(name).c_str(), style,
                                     flags.position.x, flags.position.y, adjSize.width, adjSize.height,
@@ -167,7 +188,17 @@ namespace pTK
                 break;
         }
 
+        m_data->menu = !flags.menus.empty();
+        if (!flags.menus.empty())
+        {
+            // TODO: Research menu destruction, currently many none are being destroyed (possible memory leak?).
+            HMENU menuBar = CreateMenu();
 
+            for (auto menuIt{flags.menus.cbegin()}; menuIt != flags.menus.cend(); ++menuIt)
+                CreateMenuStructure(menuBar, (*menuIt).get());
+
+            SetMenu(m_hwnd, menuBar);
+        }
 
         PTK_INFO("Initialized MainWindow_win {}x{} at {}x{}", wSize.width, wSize.height, flags.position.x, flags.position.y);
     }
@@ -308,7 +339,7 @@ namespace pTK
 
         if (!m_data->ignoreSize)
         {
-            const Size adjSize{CalcAdjustedWindowSize(scaledSize, m_data->style, m_data->scale.x * 96.0f)};
+            const Size adjSize{CalcAdjustedWindowSize(scaledSize, m_data->style, m_data->menu, m_data->scale.x * 96.0f)};
             ::SetWindowPos(m_hwnd, 0, 0, 0, adjSize.width, adjSize.height, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
         }
 
@@ -444,14 +475,14 @@ namespace pTK
         const Size minSize{window->getMinSize()};
         MainWindow_win* backend{static_cast<MainWindow_win*>(window->getBackend())};
         const Size adjMinSize{CalcAdjustedWindowSize(scaleSize(minSize, data->scale),
-                                                     backend->getWindowStyle(), data->scale.x * 96.0f)};
+                                                     backend->getWindowStyle(), data->menu, data->scale.x * 96.0f)};
         lpMMI->ptMinTrackSize.x = adjMinSize.width;
         lpMMI->ptMinTrackSize.y = adjMinSize.height;
         const Size maxSize{window->getMaxSize()};
         if (maxSize != Size::Max)
         {
             const Size adjMaxSize{CalcAdjustedWindowSize(
-                scaleSize(maxSize, data->scale), data->style, data->scale.x * 96.0f)};
+                scaleSize(maxSize, data->scale), data->style, data->menu, data->scale.x * 96.0f)};
             lpMMI->ptMaxTrackSize.x = adjMaxSize.width;
             lpMMI->ptMaxTrackSize.y = adjMaxSize.height;
         }
@@ -570,7 +601,7 @@ namespace pTK
                 RECT* rect = reinterpret_cast<RECT*>(lParam);
                 const Size size = {static_cast<Size::value_type>(rect->right - rect->left),
                                    static_cast<Size::value_type>(rect->bottom - rect->top)};
-                ResizeEvent evt{scaleSize(CalcAdjustedReverseWindowSize(size, data->style, data->scale.x * 96.0f),
+                ResizeEvent evt{scaleSize(CalcAdjustedReverseWindowSize(size, data->style, data->menu, data->scale.x * 96.0f),
                                           Vec2f{1.0f / data->scale.x, 1.0f / data->scale.y})};
                 if (evt.size != data->size)
                 {

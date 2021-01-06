@@ -34,6 +34,8 @@ namespace pTK
                 m_callback();
         }
 
+        [[nodiscard]] std::string_view typeName() const override { return "MenuItem"; }
+
     private:
         std::function<void()> m_callback;
     };
