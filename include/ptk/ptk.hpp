@@ -33,6 +33,12 @@
 #include "ptk/events/MouseEvent.hpp"
 #include "ptk/events/WindowEvent.hpp"
 
+// --- Menu --------------------------
+#include "ptk/menu/Menu.hpp"
+#include "ptk/menu/MenuCollection.hpp"
+#include "ptk/menu/MenuItem.hpp"
+#include "ptk/menu/MenuItemBase.hpp"
+
 // --- Util --------------------------
 #include "ptk/util/Alignment.hpp"
 #include "ptk/util/Color.hpp"
