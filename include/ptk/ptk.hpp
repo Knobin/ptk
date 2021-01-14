@@ -14,7 +14,6 @@
 #include "ptk/Window.hpp"
 
 // --- Core --------------------------
-#include "ptk/core/Container.hpp"
 #include "ptk/core/Drawable.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/core/EventCallbacks.hpp"
@@ -35,13 +34,14 @@
 
 // --- Menu --------------------------
 #include "ptk/menu/Menu.hpp"
-#include "ptk/menu/MenuCollection.hpp"
+#include "ptk/menu/MenuBar.hpp"
 #include "ptk/menu/MenuItem.hpp"
 #include "ptk/menu/MenuItemBase.hpp"
 
 // --- Util --------------------------
 #include "ptk/util/Alignment.hpp"
 #include "ptk/util/Color.hpp"
+#include "ptk/util/IterableContainer.hpp"
 #include "ptk/util/NonCopyable.hpp"
 #include "ptk/util/NonMovable.hpp"
 #include "ptk/util/Point.hpp"

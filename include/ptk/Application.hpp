@@ -78,6 +78,10 @@ namespace pTK
         int run();
         
         void close();
+
+        // Should be a "Menubar" instead of MenuCollection when that is implemented.
+        void setMenuBar(const Ref<MenuBar>& menubar);
+        [[nodiscard]] Ref<MenuBar> menuBar() const;
         
     public:
         static Application *Get();

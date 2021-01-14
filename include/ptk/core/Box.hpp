@@ -9,10 +9,11 @@
 #define PTK_CORE_BOX_HPP
 
 // Local Headers
-#include "ptk/core/Container.hpp"
+#include "ptk/util/IterableContainer.hpp"
 #include "ptk/core/Widget.hpp"
 
 // C++ Headers
+#include <vector>
 #include <utility>
 
 namespace pTK
@@ -27,32 +28,19 @@ namespace pTK
             - virtual void setSize(const Size& newSize);
             - virtual void drawContent(SkCanvas *canvas);
     */
-    class Box : public Container<Ref<Widget>>, public Widget
+    class Box : public IterableContainer<std::vector, Ref<Widget>>, public Widget
     {
     public:
         /** Constructs Box with default values.
 
             @return    default initialized Box
         */
-        Box();
+        Box() = default;
 
         /** Deconstructor for Box.
 
         */
         virtual ~Box();
-
-        /** Function for adding a Widget
-
-            @param widget  Widget to add
-            @return        Status (true if added)
-        */
-        bool add(const Ref<Widget>& widget) override;
-
-        /** Function for removing a Widget.
-
-            @param widget  Widget to remove
-        */
-        void remove(const Ref<Widget>& widget) override;
 
         /** Function for setting the position of the VBox and its children.
 
@@ -151,11 +139,17 @@ namespace pTK
         void drawBackground(SkCanvas *canvas) const;
 
     private:
+        // TODO: Documentation.
+        virtual void onAddNotify(const Ref<Widget>& UNUSED(widget)) {}
+
+        // TODO: Documentation.
+        virtual void onRemoveNotify(const Ref<Widget>& UNUSED(widget)) {}
+
         /** Callback to use when a Widget has been successfully added.
 
             @param widget   child that has been added
         */
-        virtual void onAdd(const Ref<Widget>& UNUSED(widget)) {}
+        void onAdd(const Ref<Widget>& widget) override;
 
         /** Callback to use when a Widget has been removed.
 
@@ -164,7 +158,7 @@ namespace pTK
 
             @param widget   child that has been removed
         */
-        virtual void onRemove(const Ref<Widget>& UNUSED(widget)) {}
+        void onRemove(const Ref<Widget>& widget) override;
 
         /** Callback to use when a child has called the parent update function.
 
@@ -180,10 +174,10 @@ namespace pTK
 
     private:
         // Variables
-        Color m_background;
-        Widget* m_lastClickedWidget;
-        Widget* m_currentHoverWidget;
-        bool m_busy;
+        Color m_background{0xf5f5f5ff};
+        Widget* m_lastClickedWidget{nullptr};
+        Widget* m_currentHoverWidget{nullptr};
+        bool m_busy{false};
     };
 } // namespace pTK
 

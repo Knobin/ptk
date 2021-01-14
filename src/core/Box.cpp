@@ -10,40 +10,24 @@
 
 namespace pTK
 {
-    Box::Box()
-        : Container(), Widget(), m_background{0xf5f5f5ff}, m_lastClickedWidget{nullptr},
-          m_currentHoverWidget{nullptr}, m_busy{false}
-    {
-    }
-
     Box::~Box()
     {
         for (auto& item : *this)
             item->setParent(nullptr);
     }
 
-    bool Box::add(const Ref<Widget>& widget)
+    void Box::onAdd(const Ref<Widget>& widget)
     {
-        if (std::find(cbegin(), cend(), widget) == cend())
-        {
-            widget->setParent(this);
-            Container<Ref<Widget>>::add(widget);
-            onAdd(widget);
-            draw();
-            return true;
-        }
-        return false;
+        widget->setParent(this);
+        onAddNotify(widget);
+        draw();
     }
 
-    void Box::remove(const Ref<Widget>& widget)
+    void Box::onRemove(const Ref<Widget>& widget)
     {
-        if (std::find(cbegin(), cend(), widget) != cend())
-        {
-            widget->setParent(nullptr);
-            Container<Ref<Widget>>::remove(widget);
-            onRemove(widget);
-            draw();
-        }
+        widget->setParent(nullptr);
+        onRemoveNotify(widget);
+        draw();
     }
 
     void Box::setPosHint(const Point& pos)

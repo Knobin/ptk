@@ -16,6 +16,7 @@
 namespace pTK
 {
     static Application *s_app{nullptr};
+    static Ref<MenuBar> s_globalMenu{nullptr}; // Should be a "Menubar" pointer later.
 
     Application::Application()
         : Singleton()
@@ -119,6 +120,16 @@ namespace pTK
     void Application::close()
     {
         m_appBase->removeAllWindows();
+    }
+
+    void Application::setMenuBar(const Ref<MenuBar>& menubar)
+    {
+        s_globalMenu = menubar;
+    }
+
+    Ref<MenuBar> Application::menuBar() const
+    {
+        return s_globalMenu;
     }
 
     Application *Application::Get()

@@ -28,9 +28,9 @@ namespace pTK
          
             @return    default initialized HBox
         */
-        HBox();
+        HBox() = default;
 
-        /** Deconstructor for HBox.
+        /** De-constructor for HBox.
 
         */
         virtual ~HBox() = default;
@@ -39,8 +39,8 @@ namespace pTK
         void refitContent(const Size& size);
 
     private:
-        void onAdd(const Ref<Widget>&) override;
-        void onRemove(const Ref<Widget>&) override;
+        void onAddNotify(const Ref<Widget>&) override;
+        void onRemoveNotify(const Ref<Widget>&) override;
         void onChildUpdate(size_type) override;
         void onSizeChange(const Size& size) override;
         

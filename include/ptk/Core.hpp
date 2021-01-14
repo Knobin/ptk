@@ -43,7 +43,7 @@ namespace pTK
     using Ref = std::shared_ptr<T>;
     
     template<typename T, typename... Args>
-    inline auto create(Args&&... args) -> decltype(std::make_shared<T>(std::forward<Args>(args)...))
+    inline auto Create(Args&&... args) -> decltype(std::make_shared<T>(std::forward<Args>(args)...))
     {
         return std::make_shared<T>(std::forward<Args>(args)...);
     }

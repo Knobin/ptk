@@ -98,7 +98,7 @@ namespace pTK
         return {adjustedSize.right - adjustedSize.left, adjustedSize.bottom - adjustedSize.top};
     }
 
-    static Size scaleSize(const Size& size, const Vec2f& scale) noexcept
+    static Size ScaleSize(const Size& size, const Vec2f& scale) noexcept
     {
         Size newSize{};
         newSize.width = static_cast<Size::value_type>(std::ceil(size.width * scale.x));
@@ -120,7 +120,7 @@ namespace pTK
         bool minimized;
         uint wait;
         bool ignoreSize;
-        bool menu;
+        bool hasMenu;
         MenuMap menuItems;
     };
 
@@ -185,7 +185,21 @@ namespace pTK
     MainWindow_win::MainWindow_win(Window *window, const std::string& name, const Size& size, const WindowInfo& flags)
         : MainWindowBase(window)
     {
-        // High DPI
+        // Default window data.
+        m_data = std::make_unique<WinBackendData>(WinBackendData{window});
+        m_data->minimized = false;
+        m_data->wait = 0;
+        m_data->ignoreSize = false;
+        m_data->pos = flags.position;
+
+        // Menubar. This has to be revised when MenuBar is implemented.
+        // Only native menu is supported for now.
+        Ref<MenuBar> menu{(!flags.ignoreGlobalMenu) ? Application::Get()->menuBar() : nullptr};
+        if (!menu)
+            menu = flags.menus;
+        m_data->hasMenu = (static_cast<bool>(menu) && !menu->empty());
+
+        // High DPI.
         HDC screen{GetDC(nullptr)};
         const float dpiX{static_cast<float>(::GetDeviceCaps(screen, LOGPIXELSX))};
         const float dpiY{static_cast<float>(::GetDeviceCaps(screen, LOGPIXELSY))};
@@ -197,20 +211,19 @@ namespace pTK
 #endif
         ::ReleaseDC(nullptr, screen);
         PTK_INFO("System DPI {}x{}", dpiX, dpiY);
-        const Vec2f scale{dpiX / 96.0f, dpiY / 96.0f};
 
-        const Size wSize{scaleSize(size, scale)};
-        constexpr DWORD style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX};
-        const Size adjSize{CalcAdjustedWindowSize(wSize, style, !flags.menus.empty(), dpiX)};
+        m_data->scale = {dpiX / 96.0f, dpiY / 96.0f};
+        m_data->size = ScaleSize(size, m_data->scale);
+        m_data->style = WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+        const Size adjSize{CalcAdjustedWindowSize(m_data->size, m_data->style, m_data->hasMenu, dpiX)};
         // Old position was set to CW_USEDEFAULT (replaced with flags.position).
-        m_hwnd = ::CreateWindowExW(0, L"PTK", Application_win::stringToUTF16(name).c_str(), style,
+        m_hwnd = ::CreateWindowExW(0, L"PTK", Application_win::stringToUTF16(name).c_str(), m_data->style,
                                     flags.position.x, flags.position.y, adjSize.width, adjSize.height,
                                      nullptr, nullptr, ::GetModuleHandleW(nullptr), nullptr);
         if (!m_hwnd)
             throw WindowError("Failed to create window!");
 
-        m_context = CreateContextForWin32(flags.backend, m_hwnd, wSize);
-        m_data = std::make_unique<WinBackendData>(WinBackendData{window, scale, wSize, {}, style, false, 0, false});
+        m_context = CreateContextForWin32(flags.backend, m_hwnd, m_data->size);
         SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)m_data.get());
 
         switch (flags.visibility)
@@ -230,20 +243,19 @@ namespace pTK
                 break;
         }
 
-        m_data->menu = !flags.menus.empty();
-        if (!flags.menus.empty())
+        if (m_data->hasMenu)
         {
             // TODO: Research menu destruction, currently many none are being destroyed (possible memory leak?).
             HMENU menuBar = CreateMenu();
             uint menuBarId = InsertMenuItemToMap(m_data->menuItems, nullptr, 0, true, menuBar);
 
-            for (auto menuIt{flags.menus.cbegin()}; menuIt != flags.menus.cend(); ++menuIt)
+            for (auto menuIt{menu->cbegin()}; menuIt != menu->cend(); ++menuIt)
                 CreateMenuStructure(menuBar, m_data->menuItems, (*menuIt), menuBarId);
 
             SetMenu(m_hwnd, menuBar);
         }
 
-        PTK_INFO("Initialized MainWindow_win {}x{} at {}x{}", wSize.width, wSize.height, flags.position.x, flags.position.y);
+        PTK_INFO("Initialized MainWindow_win {}x{} at {}x{}", m_data->size.width, m_data->size.height, flags.position.x, flags.position.y);
     }
 
     MainWindow_win::~MainWindow_win()
@@ -374,7 +386,7 @@ namespace pTK
     bool MainWindow_win::resize(const Size& size)
     {
         // Apply the DPI scaling.
-        const Size scaledSize{scaleSize(size, m_data->scale)};
+        const Size scaledSize{ScaleSize(size, m_data->scale)};
 
         // Apply the new size to the context and window.
         if (scaledSize != m_context->getSize())
@@ -382,7 +394,7 @@ namespace pTK
 
         if (!m_data->ignoreSize)
         {
-            const Size adjSize{CalcAdjustedWindowSize(scaledSize, m_data->style, m_data->menu, m_data->scale.x * 96.0f)};
+            const Size adjSize{CalcAdjustedWindowSize(scaledSize, m_data->style, m_data->hasMenu, m_data->scale.x * 96.0f)};
             ::SetWindowPos(m_hwnd, 0, 0, 0, adjSize.width, adjSize.height, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
         }
 
@@ -517,15 +529,15 @@ namespace pTK
         LPMINMAXINFO lpMMI{reinterpret_cast<LPMINMAXINFO>(lParam)};
         const Size minSize{window->getMinSize()};
         MainWindow_win* backend{static_cast<MainWindow_win*>(window->getBackend())};
-        const Size adjMinSize{CalcAdjustedWindowSize(scaleSize(minSize, data->scale),
-                                                     backend->getWindowStyle(), data->menu, data->scale.x * 96.0f)};
+        const Size adjMinSize{CalcAdjustedWindowSize(ScaleSize(minSize, data->scale),
+                                                     backend->getWindowStyle(), data->hasMenu, data->scale.x * 96.0f)};
         lpMMI->ptMinTrackSize.x = adjMinSize.width;
         lpMMI->ptMinTrackSize.y = adjMinSize.height;
         const Size maxSize{window->getMaxSize()};
         if (maxSize != Size::Max)
         {
             const Size adjMaxSize{CalcAdjustedWindowSize(
-                scaleSize(maxSize, data->scale), data->style, data->menu, data->scale.x * 96.0f)};
+                ScaleSize(maxSize, data->scale), data->style, data->hasMenu, data->scale.x * 96.0f)};
             lpMMI->ptMaxTrackSize.x = adjMaxSize.width;
             lpMMI->ptMaxTrackSize.y = adjMaxSize.height;
         }
@@ -556,7 +568,7 @@ namespace pTK
                 {
                     const Size size{static_cast<Size::value_type>(rc.right),
                                     static_cast<Size::value_type>(rc.bottom)};
-                    ResizeEvent evt{scaleSize(size,
+                    ResizeEvent evt{ScaleSize(size,
                                               Vec2f{1.0f / data->scale.x,
                                                     1.0f / data->scale.y})};
                     data->ignoreSize = true;
@@ -644,7 +656,7 @@ namespace pTK
                 RECT* rect = reinterpret_cast<RECT*>(lParam);
                 const Size size = {static_cast<Size::value_type>(rect->right - rect->left),
                                    static_cast<Size::value_type>(rect->bottom - rect->top)};
-                ResizeEvent evt{scaleSize(CalcAdjustedReverseWindowSize(size, data->style, data->menu, data->scale.x * 96.0f),
+                ResizeEvent evt{ScaleSize(CalcAdjustedReverseWindowSize(size, data->style, data->hasMenu, data->scale.x * 96.0f),
                                           Vec2f{1.0f / data->scale.x, 1.0f / data->scale.y})};
                 if (evt.size != data->size)
                 {
@@ -719,7 +731,7 @@ namespace pTK
                 if (item)
                 {
                     if (auto *mItem = dynamic_cast<MenuItem*>(item.get()))
-                        mItem->handleClick();
+                        mItem->handleClick(window);
                 }
                 else
                 {

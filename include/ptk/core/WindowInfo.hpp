@@ -10,7 +10,7 @@
 
 // Local Headers
 #include "ptk/core/Types.hpp"
-#include "ptk/menu/MenuCollection.hpp"
+#include "ptk/menu/MenuBar.hpp"
 
 namespace pTK
 {
@@ -19,9 +19,11 @@ namespace pTK
         Flags that can be passed to the window constructor.
         
         Current flags are:
-            -   Backend:    Specifies which backend to use.
-            -   Position:   Open window at position.
-            -   Visibility: Specifies the visibility of the window on creation.
+            -   backend:            Specifies which backend to use.
+            -   position:           Open window at position.
+            -   visibility:         Specifies the visibility of the window on creation.
+            -   menus:              Ref to Menu Bar.
+            -   ignoreGlobalMenu:   Ignore Application::menuBar() (if set).
     */
     struct WindowInfo
     {
@@ -50,7 +52,8 @@ namespace pTK
         Backend backend{Backend::Hardware};
         Point position{100, 100};
         Visibility visibility{Visibility::Windowed};
-        MenuCollection menus{};
+        Ref<MenuBar> menus{nullptr};
+        bool ignoreGlobalMenu{false};
     };
 }
 

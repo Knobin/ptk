@@ -11,7 +11,7 @@
 namespace pTK
 {
     Text::Text()
-        : m_text{""}, m_font{create<Font>()}
+        : m_text{""}, m_font{Create<Font>()}
     {
 
     }

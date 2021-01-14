@@ -16,18 +16,26 @@
 
 namespace pTK
 {
+    class Window;
+
     class MenuItem : public MenuItemBase
     {
     public:
         MenuItem() = default;
 
-        MenuItem(const std::string& name, const std::string& shortcut = "")
-            : MenuItemBase(name), m_shortcut{shortcut}, m_callback{nullptr}
+        explicit MenuItem(const std::string& name, const std::function<void(Window*, MenuItem*)>& func = nullptr)
+            : MenuItemBase(name), m_callback{func}
         {
 
         }
 
-        MenuItem(const std::string& name, const std::string& shortcut, const std::function<void()>& func = nullptr)
+         MenuItem(const std::string& name, const std::string& shortcut)
+            : MenuItemBase(name), m_shortcut{shortcut}
+        {
+
+        }
+
+        MenuItem(const std::string& name, const std::string& shortcut, const std::function<void(Window*, MenuItem*)>& func = nullptr)
             : MenuItemBase(name), m_shortcut{shortcut}, m_callback{func}
         {
 
@@ -35,19 +43,21 @@ namespace pTK
 
         virtual ~MenuItem() = default;
 
-        void onClick(const std::function<void()>& func) { m_callback = func; }
+        void onClick(const std::function<void(Window*, MenuItem*)>& func) { m_callback = func; }
 
-        void handleClick()
+        void handleClick(Window *window)
         {
             if (m_callback)
-                m_callback();
+                m_callback(window, this);
         }
 
         [[nodiscard]] std::string_view typeName() const override { return "MenuItem"; }
 
+        [[nodiscard]] std::string shortcut() const { return m_shortcut; }
+
     private:
-        std::string m_shortcut;
-        std::function<void()> m_callback;
+        std::string m_shortcut{};
+        std::function<void(Window*, MenuItem*)> m_callback{nullptr};
     };
 }
 

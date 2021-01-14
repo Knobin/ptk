@@ -86,16 +86,41 @@ void setWindowCallbacks(pTK::Window& window)
     });
 }
 
+void MenuItemCallback(pTK::Window*, pTK::MenuItem* menuItem)
+{
+    std::cout << menuItem->name() << " clicked!" << std::endl;
+}
+
+pTK::Ref<pTK::MenuBar> CreateMenuBar()
+{
+    pTK::Ref<pTK::MenuItem> menuItem1 = pTK::Create<pTK::MenuItem>("item 1", MenuItemCallback);
+    pTK::Ref<pTK::MenuItem> menuItem2 = pTK::Create<pTK::MenuItem>("item 2", MenuItemCallback);
+    pTK::Ref<pTK::MenuItem> menuItem3 = pTK::Create<pTK::MenuItem>("item 3", MenuItemCallback);
+
+    pTK::Ref<pTK::MenuItem> subMenuItem1 = pTK::Create<pTK::MenuItem>("sub item 1", MenuItemCallback);
+    pTK::Ref<pTK::MenuItem> subMenuItem2 = pTK::Create<pTK::MenuItem>("sub item 2", MenuItemCallback);
+    pTK::Ref<pTK::MenuItem> subMenuItem3 = pTK::Create<pTK::MenuItem>("sub item 3", MenuItemCallback);
+
+    pTK::Ref<pTK::Menu> submenu = pTK::Create<pTK::Menu>(pTK::Menu{"submenu", {subMenuItem1, subMenuItem2, subMenuItem3}});
+    pTK::Ref<pTK::Menu> menu1 = pTK::Create<pTK::Menu>(pTK::Menu{"Menu1", {menuItem1, menuItem2, menuItem3, submenu}});
+
+    return pTK::Create<pTK::MenuBar>(pTK::MenuBar{menu1});
+}
+
 int main(int argc, char *argv[]) {
     pTK::Application app{argc, argv};
     
-    pTK::WindowInfo info{};
-    info.visibility = pTK::WindowInfo::Visibility::Windowed;
-    pTK::Window window{"pTK Sandbox Window", {960, 540}, info};
+    pTK::WindowInfo flags{};
+    flags.visibility = pTK::WindowInfo::Visibility::Windowed;
+    flags.backend = pTK::WindowInfo::Backend::Software;
+    flags.position = {250, 250};
+    flags.menus = CreateMenuBar();
+
+    pTK::Window window{"pTK Sandbox Window", {960, 540}, flags};
     window.setBackground(pTK::Color(0x232323FF));
     setWindowCallbacks(window);
 
-    // Set ESC key to close the window.
+    // Set ESC key to close the window (and other debug stuff).
     window.onKey([&](pTK::Event::Type type, pTK::KeyCode key) {
         if ((type == pTK::KeyEvent::Released) && (key == pTK::Key::Escape))
             window.close();
@@ -115,18 +140,18 @@ int main(int argc, char *argv[]) {
     });
 
     // HBox.
-    pTK::Ref<pTK::HBox> hbox = pTK::create<pTK::HBox>();
+    pTK::Ref<pTK::HBox> hbox = pTK::Create<pTK::HBox>();
     hbox->setSize({static_cast<int>(SCR_WIDTH), static_cast<int>(SCR_HEIGHT)});
     std::cout << hbox->getSize().width << "x" << hbox->getSize().height << std::endl;
 
     // VBox as sidebar.
-    pTK::Ref<pTK::VBox> sidebar = pTK::create<pTK::VBox>();
+    pTK::Ref<pTK::VBox> sidebar = pTK::Create<pTK::VBox>();
     sidebar->setSize({static_cast<int>(SCR_WIDTH*0.225f), pTK::Size::Limits::Max});
     sidebar->setAlign(pTK::Align::Left);
     sidebar->setBackground(pTK::Color(colSidebar));
 
     // Sidebar title.
-    pTK::Ref<pTK::Label> sTitle = pTK::create<pTK::Label>();
+    pTK::Ref<pTK::Label> sTitle = pTK::Create<pTK::Label>();
     sTitle->setText("SandboxApp");
     //sTitle->setFontFamily("Arial");
     sTitle->setFontSize(FLARGE);
@@ -135,7 +160,7 @@ int main(int argc, char *argv[]) {
     sTitle->setPadding({18, 18, 18, 18});
 
     // First button in sidebar.
-    pTK::Ref<pTK::Button> b1 = pTK::create<pTK::Button>(sbBtnStyle);
+    pTK::Ref<pTK::Button> b1 = pTK::Create<pTK::Button>(sbBtnStyle);
     b1->setText("Button 1");
     b1->setFontSize(FSIDEBAR);
     b1->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
@@ -146,7 +171,7 @@ int main(int argc, char *argv[]) {
     });
 
     // Second button in sidebar.
-    pTK::Ref<pTK::Button> b2 = pTK::create<pTK::Button>(sbBtnStyle);
+    pTK::Ref<pTK::Button> b2 = pTK::Create<pTK::Button>(sbBtnStyle);
     b2->setText("Button 2");
     b2->setFontSize(FSIDEBAR);
     b2->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
@@ -157,7 +182,7 @@ int main(int argc, char *argv[]) {
     });
 
     // Third button in sidebar.
-    pTK::Ref<pTK::Button> b3 = pTK::create<pTK::Button>(sbBtnStyle);
+    pTK::Ref<pTK::Button> b3 = pTK::Create<pTK::Button>(sbBtnStyle);
     b3->setText("Button 3");
     b3->setFontSize(FSIDEBAR);
     b3->setMaxSize({pTK::Size::Limits::Max, SCR_HEIGHT/10});
@@ -168,7 +193,7 @@ int main(int argc, char *argv[]) {
     });
 
     // Bottom button in sidebar.
-    pTK::Ref<pTK::Button> quit = pTK::create<pTK::Button>(pTK::Button::Style::Danger);
+    pTK::Ref<pTK::Button> quit = pTK::Create<pTK::Button>(pTK::Button::Style::Danger);
     quit->setText("Close");
     quit->setFontSize(FSIDEBAR);
     quit->setCornerRadius(0.0f);
@@ -180,19 +205,19 @@ int main(int argc, char *argv[]) {
     });
 
     // VBox as right side content. (TODO: should be a scrollable area).
-    pTK::Ref<pTK::VBox> content = pTK::create<pTK::VBox>();
+    pTK::Ref<pTK::VBox> content = pTK::Create<pTK::VBox>();
     content->setAlign(pTK::Align::Left);
     content->setBackground(pTK::Color(colContent));
 
     // Title of right side content.
-    pTK::Ref<pTK::Label> cTitle = pTK::create<pTK::Label>();
+    pTK::Ref<pTK::Label> cTitle = pTK::Create<pTK::Label>();
     cTitle->setText("Content");
     cTitle->setFontSize(FLARGE);
     cTitle->setPadding({18, 9, 18, 18});
     cTitle->setColor(pTK::Color(colText));
     //cTitle->setAlign(pTK::Align::Left | pTK::Align::Top);
 
-    pTK::Ref<pTK::Rectangle> r1 = pTK::create<pTK::Rectangle>();
+    pTK::Ref<pTK::Rectangle> r1 = pTK::Create<pTK::Rectangle>();
     pTK::Color rColor{randomColor()};
     rColor.a = 255;
     r1->setColor(rColor);
@@ -200,7 +225,7 @@ int main(int argc, char *argv[]) {
     r1->setCornerRadius(5.0f);
     r1->setPadding({10, 10, 18, 18});
 
-    pTK::Ref<pTK::Rectangle> r2 = pTK::create<pTK::Rectangle>(*r1.get());
+    pTK::Ref<pTK::Rectangle> r2 = pTK::Create<pTK::Rectangle>(*r1.get());
     rColor = randomColor();
     rColor.a = 255;
     r2->setColor(rColor);
@@ -210,20 +235,20 @@ int main(int argc, char *argv[]) {
       return true;
     });
 
-    pTK::Ref<pTK::HBox> h1 = pTK::create<pTK::HBox>();
+    pTK::Ref<pTK::HBox> h1 = pTK::Create<pTK::HBox>();
     h1->setAlign(pTK::Align::Left);
     h1->setName("HBOX");
     h1->setBackground(content->getBackground());
 
     // This should be a pTK::TextArea (when that is implemented).
-    pTK::Ref<pTK::Label> cText = pTK::create<pTK::Label>();
+    pTK::Ref<pTK::Label> cText = pTK::Create<pTK::Label>();
     cText->setText("This should be a multiline text!");
     cText->setFontSize(16);
     cText->setPadding({9, 18, 18, 18});
     cText->setColor(pTK::Color(colText));
     //cText->setAlign(pTK::Align::Left | pTK::Align::Bottom);
 
-    pTK::Ref<pTK::Checkbox> checkbox = pTK::create<pTK::Checkbox>();
+    pTK::Ref<pTK::Checkbox> checkbox = pTK::Create<pTK::Checkbox>();
     checkbox->setConstSize({ 25, 25 });
     checkbox->setCornerRadius(3); // 10% of size
     checkbox->setOutlineThickness(1.5f); // 5% of size
@@ -232,7 +257,7 @@ int main(int argc, char *argv[]) {
     checkbox->setAlign(pTK::Align::Bottom | pTK::Align::HCenter);
     checkbox->setPadding({ 18, 9, 18, 18 });
 
-    pTK::Ref<pTK::Label> cStatus = pTK::create<pTK::Label>();
+    pTK::Ref<pTK::Label> cStatus = pTK::Create<pTK::Label>();
     cStatus->setText("Checkbox Status: false");
     cStatus->setFontSize(25);
     cStatus->setPadding({ 18, 9, 18, 18 });
@@ -278,15 +303,15 @@ int main(int argc, char *argv[]) {
     window.add(hbox);
 
     window.setMaxSize({1280, 720});
-   // window.show();
+    // window.show();
 
     std::atomic<bool> run{true};
     std::thread t1{[&](){
         pTK::Color c1{randomColor()};
         pTK::Color c2{randomColor()};
 
-        std::size_t steps{250};
-        double stepFactor{1.0 / (steps - 1.0)};
+        constexpr std::size_t steps{250};
+        constexpr double stepFactor{1.0 / (steps - 1.0)};
         size_t step{0};
         constexpr size_t fps{72};
 

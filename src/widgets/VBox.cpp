@@ -14,13 +14,7 @@
 
 namespace pTK
 {
-    VBox::VBox()
-        : Box()
-    {
-
-    }
-
-    void VBox::onAdd(const Ref<Widget>&)
+    void VBox::onAddNotify(const Ref<Widget>&)
     {
         const Size minLayoutSize{calcMinSize()};
         setMinSize(minLayoutSize);
@@ -36,7 +30,7 @@ namespace pTK
             expandOnAdd(minLayoutSize);
         }else
         {
-            /** Childs will fit in the current size.
+            /** Children will fit in the current size.
 
              Only need to resize and position children.
             */
@@ -44,7 +38,7 @@ namespace pTK
         }
     }
 
-    void VBox::onRemove(const Ref<Widget>&)
+    void VBox::onRemoveNotify(const Ref<Widget>&)
     {
         refitContent(getSize());
     }
