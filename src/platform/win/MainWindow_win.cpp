@@ -26,6 +26,7 @@
 #include <cmath>
 #include <memory>
 #include <tuple>
+#include <optional>
 
 namespace pTK
 {
@@ -43,9 +44,9 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    static std::map<byte, KeyCode> InitKeyCodes() noexcept
+    static std::map<int32, KeyCode> InitKeyCodes() noexcept
     {
-        std::map<byte, KeyCode> map{};
+        std::map<int32, KeyCode> map{};
         map[VK_SPACE] = Key::Space; map[VK_ESCAPE] = Key::Escape;
         map[0x30] = Key::D0; map[0x31] = Key::D1; map[0x32] = Key::D2; map[0x33] = Key::D3;
         map[0x34] = Key::D4; map[0x35] = Key::D5; map[0x36] = Key::D6; map[0x37] = Key::D7;
@@ -61,14 +62,18 @@ namespace pTK
         map[0x51] = Key::Q; map[0x52] = Key::R; map[0x53] = Key::S; map[0x54] = Key::T;
         map[0x55] = Key::U; map[0x56] = Key::V; map[0x57] = Key::W; map[0x58] = Key::X;
         map[0x59] = Key::Y; map[0x5A] = Key::Z;
+
+        map[VK_LSHIFT] = Key::LeftShift; map[VK_LCONTROL] = Key::LeftControl; map[VK_LMENU] = Key::LeftAlt;
+        map[VK_RSHIFT] = Key::RightShift; map[VK_RCONTROL] = Key::RightControl; map[VK_RMENU] = Key::RightAlt;
+
         return map;
     }
 
-    static const std::map<byte, KeyCode> s_keyMap{InitKeyCodes()};
+    static const std::map<int32, KeyCode> s_keyMap{InitKeyCodes()};
 
-    static Key TranslateKeyCodeToKey(byte code)
+    static Key TranslateKeyCodeToKey(int32 code)
     {
-        std::map<byte, KeyCode>::const_iterator it{s_keyMap.find(code)};
+        std::map<int32, KeyCode>::const_iterator it{s_keyMap.find(code)};
         if (it != s_keyMap.cend())
             return it->second;
 
@@ -122,6 +127,7 @@ namespace pTK
         bool ignoreSize;
         bool hasMenu;
         MenuMap menuItems;
+        HACCEL accelTable{nullptr};
     };
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -148,9 +154,65 @@ namespace pTK
         return nullptr;
     }
 
-    static void CreateMenuStructure(HMENU parent, MenuMap& menus, const pTK::Ref<pTK::Menu>& menu, uint parentId)
+    static std::optional<std::pair<ACCEL, std::string>> GetShortcutACCEL(const std::vector<KeyCode>& codes)
     {
-        HMENU currentMenu = CreateMenu();
+        byte virt{FVIRTKEY};
+        std::string shortcutStr{};
+        WORD key{0};
+
+        // static const std::map<int32, KeyCode> s_keyMap{InitKeyCodes()};
+        for (const KeyCode& code : codes)
+        {
+            auto it = std::find_if(s_keyMap.cbegin(), s_keyMap.cend(), [&](const auto& pair) {
+                return pair.second == code;
+            });
+            if (it != s_keyMap.cend())
+            {
+                constexpr std::array<Key, 2> altKeys{Key::LeftAlt, Key::RightAlt};
+                constexpr std::array<Key, 2> ctrlKeys{Key::LeftControl, Key::RightControl};
+                constexpr std::array<Key, 2> shiftKeys{Key::LeftShift, Key::RightShift};
+
+                constexpr std::tuple<std::array<Key, 2>, int32, std::string_view> alt(altKeys, FALT, "Alt");
+                constexpr std::tuple<std::array<Key, 2>, int32, std::string_view> ctrl(ctrlKeys, FCONTROL, "Ctrl");
+                constexpr std::tuple<std::array<Key, 2>, int32, std::string_view> shift(shiftKeys, FSHIFT, "Shift");
+
+                const std::array<std::tuple<std::array<Key, 2>, int32, std::string_view>, 3> virts{alt, ctrl, shift};
+                const auto foundVirt = std::find_if(virts.cbegin(), virts.cend(),
+                                                    [&](const auto& tupleObj) {
+                    const auto& arr = std::get<0>(tupleObj);
+                    auto found = std::find(std::begin(arr), std::end(arr), it->second);
+                    return found != std::end(arr);
+                });
+
+                if (foundVirt != virts.cend())
+                {
+                    // Multiple virts are supported.
+                    virt |= static_cast<byte>(std::get<1>(*foundVirt));
+                    shortcutStr += (!shortcutStr.empty() ? "+" : "\t") + std::string{std::get<2>(*foundVirt)};
+                }
+                else
+                {
+                    // This is a keycode.
+                    key = static_cast<WORD>(it->first);
+                }
+            }
+        }
+
+        if (key != 0)
+        {
+            ACCEL accel{};
+            accel.key = key;
+            if (virt != 0)
+                accel.fVirt = virt;
+            return std::pair{accel, shortcutStr + "+" + static_cast<char>(key)};
+        }
+
+        return std::nullopt;
+    }
+
+    static void CreateMenuStructure(HMENU parent, MenuMap& menus, const pTK::Ref<pTK::Menu>& menu, uint parentId, std::vector<ACCEL>& keys)
+    {
+        HMENU currentMenu = ::CreateMenu();
         AppendMenu(parent, MF_POPUP, reinterpret_cast<UINT_PTR>(currentMenu), menu->name().c_str());
         uint currentMenuId = InsertMenuItemToMap(menus, menu, parentId, true, currentMenu);
 
@@ -162,7 +224,7 @@ namespace pTK
             {
                 Ref<Menu> rMenu = std::dynamic_pointer_cast<Menu>(menuItemPtr);
                 if (rMenu)
-                    CreateMenuStructure(currentMenu, menus, rMenu, currentMenuId);
+                    CreateMenuStructure(currentMenu, menus, rMenu, currentMenuId, keys);
 #ifdef PTK_DEBUG
                 else
                     PTK_WARN("Could not cast MenuItemBase to Menu");
@@ -170,8 +232,27 @@ namespace pTK
             }
             else if (menuItemPtr->typeName() == "MenuItem")
             {
-                uint id = InsertMenuItemToMap(menus, menuItemPtr, currentMenuId, false, nullptr);
-                AppendMenu(currentMenu, MF_STRING, id, (*menuItemIt)->name().c_str());
+                if (auto ptr = dynamic_cast<MenuItem*>(menuItemPtr.get()))
+                {
+                    uint id = InsertMenuItemToMap(menus, menuItemPtr, currentMenuId, false, nullptr);
+                    std::string menuStr{ptr->name()};
+
+                    if (!ptr->shortcutKeys().empty())
+                    {
+                        if (auto accelData = GetShortcutACCEL(ptr->shortcutKeys()))
+                        {
+                            accelData->first.cmd = static_cast<WORD>(id);
+                            keys.push_back(accelData->first);
+                            menuStr += accelData->second;
+                        }
+                    }
+
+                    ::AppendMenuA(currentMenu, MF_STRING, id, menuStr.c_str());
+                }
+#ifdef PTK_DEBUG
+                else
+                    PTK_WARN("Could not cast MenuItemBase to MenuItem");
+#endif // PTK_DEBUG
             }
 #ifdef PTK_DEBUG
             else
@@ -245,14 +326,17 @@ namespace pTK
 
         if (m_data->hasMenu)
         {
-            // TODO: Research menu destruction, currently many none are being destroyed (possible memory leak?).
-            HMENU menuBar = CreateMenu();
-            uint menuBarId = InsertMenuItemToMap(m_data->menuItems, nullptr, 0, true, menuBar);
+            HMENU menuBar = ::CreateMenu();
+            uint menuBarId = InsertMenuItemToMap(m_data->menuItems, nullptr, 1, true, menuBar);
+            std::vector<ACCEL> accelShortcuts{};
 
             for (auto menuIt{menu->cbegin()}; menuIt != menu->cend(); ++menuIt)
-                CreateMenuStructure(menuBar, m_data->menuItems, (*menuIt), menuBarId);
+                CreateMenuStructure(menuBar, m_data->menuItems, (*menuIt), menuBarId, accelShortcuts);
 
-            SetMenu(m_hwnd, menuBar);
+            ::SetMenu(m_hwnd, menuBar);
+
+            m_data->accelTable = ::CreateAcceleratorTableW(accelShortcuts.data(), static_cast<int>(accelShortcuts.size()));
+            PTK_ASSERT(m_data->accelTable, "Failed to create Accelerator Table!");
         }
 
         PTK_INFO("Initialized MainWindow_win {}x{} at {}x{}", m_data->size.width, m_data->size.height, flags.position.x, flags.position.y);
@@ -260,6 +344,19 @@ namespace pTK
 
     MainWindow_win::~MainWindow_win()
     {
+        for (auto it = m_data->menuItems.rbegin(); it != m_data->menuItems.rend(); ++it)
+        {
+            bool isMenu = std::get<2>(it->second);
+            if (isMenu)
+            {
+                HMENU hmenu = std::get<3>(it->second);
+                ::DestroyMenu(hmenu);
+            }
+        }
+
+        ::DestroyAcceleratorTable(m_data->accelTable);
+        m_data->accelTable = nullptr;
+
         PTK_INFO("Destroyed MainWindow_win");
     }
 
@@ -492,7 +589,17 @@ namespace pTK
         return false;
     }
 
-    static void handleMouseClick(WinBackendData* data, Event::Type type, Mouse::Button btn,
+    HWND MainWindow_win::handle() const
+    {
+        return m_hwnd;
+    }
+
+    HACCEL MainWindow_win::accelTable() const
+    {
+        return m_data->accelTable;
+    }
+
+    static void HandleMouseClick(WinBackendData* data, Event::Type type, Mouse::Button btn,
                                  LPARAM lParam)
     {
         if (data->window)
@@ -506,7 +613,7 @@ namespace pTK
         }
     }
 
-    static void handleDPIChange(WinBackendData* data, WPARAM wParam, LPARAM lParam)
+    static void HandleDPIChange(WinBackendData* data, WPARAM wParam, LPARAM lParam)
     {
         // Change Window position.
         RECT* rect = reinterpret_cast<RECT*>(lParam);
@@ -523,7 +630,7 @@ namespace pTK
         data->window->sendEvent(&sEvt);
     }
 
-    static void handleWindowLimits(WinBackendData* data, LPARAM lParam)
+    static void HandleWindowLimits(WinBackendData* data, LPARAM lParam)
     {
         Window *window{data->window};
         LPMINMAXINFO lpMMI{reinterpret_cast<LPMINMAXINFO>(lParam)};
@@ -548,7 +655,7 @@ namespace pTK
         }
     }
 
-    static void handleWindowMinimize(WinBackendData* data, bool minimize)
+    static void HandleWindowMinimize(WinBackendData* data, bool minimize)
     {
         data->minimized = minimize;
         Event::Type type{(minimize) ? Event::Type::WindowMinimize : Event::Type::WindowRestore};
@@ -556,7 +663,7 @@ namespace pTK
         data->window->sendEvent(&evt);
     }
 
-    static void handleWindowResize(WinBackendData* data, MainWindowBase *backend, HWND hwnd)
+    static void HandleWindowResize(WinBackendData* data, MainWindowBase *backend, HWND hwnd)
     {
         Window *window{data->window};
         RECT rc{0};
@@ -579,7 +686,44 @@ namespace pTK
         }
     }
 
-    LRESULT MainWindow_win::wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    static WPARAM MapLeftRightKeys(WPARAM wParam, LPARAM lParam)
+    {
+        WPARAM key = wParam;
+        uint scancode = (lParam & 0x00ff0000) >> 16;
+        int extended  = (lParam & 0x01000000) != 0;
+
+        switch (wParam)
+        {
+            case VK_SHIFT:
+                key = MapVirtualKey(scancode, MAPVK_VSC_TO_VK_EX);
+                break;
+            case VK_CONTROL:
+                key = extended ? VK_RCONTROL : VK_LCONTROL;
+                break;
+            case VK_MENU:
+                key = extended ? VK_RMENU : VK_LMENU;
+                break;
+            default:
+                break;
+        }
+
+        return key;
+    }
+
+    static void HandleKeyEvent(Window *window, const Event::Type& type, WPARAM wParam, LPARAM lParam)
+    {
+        KeyCode key{TranslateKeyCodeToKey(static_cast<int32>(wParam))};
+        if (key == Key::Unknown)
+        {
+            WPARAM lrKey{MapLeftRightKeys(wParam, lParam)};
+            key = TranslateKeyCodeToKey(static_cast<int32>(lrKey));
+        }
+
+        KeyEvent evt{type, key};
+        window->sendEvent(&evt);
+    }
+
+    LRESULT MainWindow_win::WndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         WinBackendData* data{
             reinterpret_cast<WinBackendData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA))};
@@ -623,16 +767,16 @@ namespace pTK
 
                 break;
             }
+            case WM_SYSKEYDOWN:
             case WM_KEYDOWN:
             {
-                KeyEvent evt{KeyEvent::Pressed, TranslateKeyCodeToKey(static_cast<byte>(wParam))};
-                window->sendEvent(&evt);
+                HandleKeyEvent(window, KeyEvent::Pressed, wParam, lParam);
                 break;
             }
+            case WM_SYSKEYUP:
             case WM_KEYUP:
             {
-                KeyEvent evt{KeyEvent::Released, TranslateKeyCodeToKey(static_cast<byte>(wParam))};
-                window->sendEvent(&evt);
+                HandleKeyEvent(window, KeyEvent::Released, wParam, lParam);
                 break;
             }
             case WM_MOUSEMOVE:
@@ -644,11 +788,11 @@ namespace pTK
                 break;
             }
             case WM_LBUTTONDOWN:
-                handleMouseClick(data, Event::Type::MouseButtonPressed, Mouse::Button::Left,
+                HandleMouseClick(data, Event::Type::MouseButtonPressed, Mouse::Button::Left,
                                  lParam);
                 break;
             case WM_LBUTTONUP:
-                handleMouseClick(data, Event::Type::MouseButtonReleased, Mouse::Button::Left,
+                HandleMouseClick(data, Event::Type::MouseButtonReleased, Mouse::Button::Left,
                                  lParam);
                 break;
             case WM_SIZING:
@@ -668,12 +812,12 @@ namespace pTK
             }
             case WM_GETMINMAXINFO:
             {
-                handleWindowLimits(data, lParam);
+                HandleWindowLimits(data, lParam);
                 break;
             }
             case WM_DPICHANGED:
             {
-                handleDPIChange(data, wParam, lParam);
+                HandleDPIChange(data, wParam, lParam);
                 break;
             }
             case WM_WINDOWPOSCHANGED:
@@ -693,17 +837,17 @@ namespace pTK
 
                 // Window was resized.
                 if (!(winData->flags & SWP_NOSIZE))
-                    handleWindowResize(data, backend, hwnd);
+                    HandleWindowResize(data, backend, hwnd);
 
                 // Window was shown.
                 if (!(winData->flags & SWP_SHOWWINDOW) && backend)
                     if (!backend->isMinimized() && data->minimized)
-                        handleWindowMinimize(data, false);
+                        HandleWindowMinimize(data, false);
 
                 // Window was hidden.
                 if (!(winData->flags & SWP_HIDEWINDOW) && backend)
                     if (backend->isMinimized() && !data->minimized)
-                        handleWindowMinimize(data, true);
+                        HandleWindowMinimize(data, true);
 
                 break;
             }
@@ -731,7 +875,7 @@ namespace pTK
                 if (item)
                 {
                     if (auto *mItem = dynamic_cast<MenuItem*>(item.get()))
-                        mItem->handleClick(window);
+                        mItem->handleEvent(window);
                 }
                 else
                 {

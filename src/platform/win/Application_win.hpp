@@ -57,6 +57,20 @@ namespace pTK
             @return     UTF16 string
         */
         static std::wstring stringToUTF16(const std::string& str);
+
+        /** Callback that will be called when a window is added to the
+            application.
+
+            @param key  ptk window id
+        */
+        void onWindowAdd(const std::pair<int32, Window*> item) override;
+
+        /** Callback that will be called when a window is removed from the
+            application.
+
+            @param key  ptk window id
+        */
+        void onWindowRemove(const std::pair<int32, Window*> item) override;
     };
 }
 

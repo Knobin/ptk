@@ -10,6 +10,7 @@
 
 // Local Headers
 #include "ptk/menu/MenuItemBase.hpp"
+#include "ptk/events/KeyCodes.hpp"
 
 // C++ Headers
 #include <functional>
@@ -29,23 +30,23 @@ namespace pTK
 
         }
 
-         MenuItem(const std::string& name, const std::string& shortcut)
-            : MenuItemBase(name), m_shortcut{shortcut}
+         MenuItem(const std::string& name, const std::initializer_list<KeyCode>& shortcut)
+            : MenuItemBase(name), m_shortcutKeys{shortcut}
         {
 
         }
 
-        MenuItem(const std::string& name, const std::string& shortcut, const std::function<void(Window*, MenuItem*)>& func = nullptr)
-            : MenuItemBase(name), m_shortcut{shortcut}, m_callback{func}
+        MenuItem(const std::string& name, const std::initializer_list<KeyCode>& shortcut, const std::function<void(Window*, MenuItem*)>& func = nullptr)
+            : MenuItemBase(name), m_shortcutKeys{shortcut}, m_callback{func}
         {
 
         }
 
         virtual ~MenuItem() = default;
 
-        void onClick(const std::function<void(Window*, MenuItem*)>& func) { m_callback = func; }
+        void onEvent(const std::function<void(Window*, MenuItem*)>& func) { m_callback = func; }
 
-        void handleClick(Window *window)
+        void handleEvent(Window *window)
         {
             if (m_callback)
                 m_callback(window, this);
@@ -53,10 +54,10 @@ namespace pTK
 
         [[nodiscard]] std::string_view typeName() const override { return "MenuItem"; }
 
-        [[nodiscard]] std::string shortcut() const { return m_shortcut; }
+        [[nodiscard]] const std::vector<KeyCode>& shortcutKeys() const { return m_shortcutKeys; }
 
     private:
-        std::string m_shortcut{};
+        std::vector<KeyCode> m_shortcutKeys;
         std::function<void(Window*, MenuItem*)> m_callback{nullptr};
     };
 }

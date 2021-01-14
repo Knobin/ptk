@@ -15,7 +15,7 @@
 
 namespace pTK
 {
-    typedef enum class KeyCode : byte
+    typedef enum class KeyCode : int32
     {
         Unknown = 0,
         Escape  = 27,
@@ -59,7 +59,17 @@ namespace pTK
         W       = 87,
         X       = 88,
         Y       = 89,
-        Z       = 90
+        Z       = 90,
+
+        LeftShift    = 340,
+        LeftControl  = 341,
+        LeftAlt      = 342,
+        LeftSuper    = 343,
+
+        RightShift   = 344,
+        RightControl = 345,
+        RightAlt     = 346,
+        RightSuper   = 347,
 
     } Key;
 }

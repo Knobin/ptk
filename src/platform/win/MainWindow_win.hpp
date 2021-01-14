@@ -197,7 +197,11 @@ namespace pTK
         */
         bool setScaleHint(const Vec2f& scale) override;
 
-        static LRESULT CALLBACK wndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+        static LRESULT CALLBACK WndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+        [[nodiscard]] HWND handle() const;
+
+        [[nodiscard]] HACCEL accelTable() const;
 
     private:
         HWND m_hwnd;

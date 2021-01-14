@@ -8,7 +8,6 @@ set(CORE_FILES core/Box.cpp
         core/Sizable.cpp
         core/Text.cpp
         core/Widget.cpp
-        core/platform/ApplicationBase.cpp
         core/platform/ContextBase.cpp)
 
 set(UTIL_FILES util/Alignment.cpp

@@ -93,7 +93,7 @@ void MenuItemCallback(pTK::Window*, pTK::MenuItem* menuItem)
 
 pTK::Ref<pTK::MenuBar> CreateMenuBar()
 {
-    pTK::Ref<pTK::MenuItem> menuItem1 = pTK::Create<pTK::MenuItem>("item 1", MenuItemCallback);
+    pTK::Ref<pTK::MenuItem> menuItem1 = pTK::Create<pTK::MenuItem>(pTK::MenuItem{"With shortcut...", {pTK::Key::LeftControl, pTK::Key::O}, MenuItemCallback});
     pTK::Ref<pTK::MenuItem> menuItem2 = pTK::Create<pTK::MenuItem>("item 2", MenuItemCallback);
     pTK::Ref<pTK::MenuItem> menuItem3 = pTK::Create<pTK::MenuItem>("item 3", MenuItemCallback);
 
@@ -135,6 +135,8 @@ int main(int argc, char *argv[]) {
             std::this_thread::sleep_for(1s);
             window.restore();
         }
+
+        std::cout << "Key event " << static_cast<int32>(key) << std::endl;
 
         return true;
     });

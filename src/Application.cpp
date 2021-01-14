@@ -124,7 +124,7 @@ namespace pTK
     int Application::run()
     {
         // Currently not supporting running the app without a window.
-        if (size() == 0)
+        if (empty())
         {
             PTK_FATAL("No Window added to Application");
             return -1;
@@ -141,8 +141,7 @@ namespace pTK
         // Maybe do some setup things here?
         
         // Standard message loop for now.
-        PTK_INFO("APPLICATION WINDOW COUNT {}", size());
-        while (size() > 0)
+        while (!empty())
         {
             m_appBase->waitEvents();
             for (const auto& pair : *this)
