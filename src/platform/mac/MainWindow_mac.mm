@@ -333,6 +333,7 @@ namespace pTK
         @autoreleasepool {
             m_data = std::make_unique<MainWindow_mac::WinData>();
             PTK_ASSERT(m_data, "Could not allocate memory for data structure in MainWindow_mac");
+            m_data->size = size;
             
             WindowDelegate *winDelegate = [[WindowDelegate alloc] initWithWindow:this:m_data.get()];
             
@@ -377,8 +378,6 @@ namespace pTK
             
             setTitle(name);
             m_data->pos = getWinPos();
-            m_data->size = size;
-
         }
         PTK_INFO("Initialized MainWindow_mac");
     }

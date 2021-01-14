@@ -18,12 +18,12 @@
 
 namespace pTK
 {
-class MenuBar : public IterableContainer<std::vector, Ref<Menu>>
+class MenuBar : public IterableSequence<Ref<Menu>>
     {
     public:
         MenuBar() = default;
         MenuBar(const std::initializer_list<Ref<Menu>>& menus)
-            : IterableContainer<std::vector, Ref<Menu>>(menus)
+            : IterableSequence<Ref<Menu>>(menus)
         {
 
         }

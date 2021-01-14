@@ -28,7 +28,7 @@ namespace pTK
             - virtual void setSize(const Size& newSize);
             - virtual void drawContent(SkCanvas *canvas);
     */
-    class Box : public IterableContainer<std::vector, Ref<Widget>>, public Widget
+    class Box : public IterableSequence<Ref<Widget>>, public Widget
     {
     public:
         /** Constructs Box with default values.
@@ -41,6 +41,12 @@ namespace pTK
 
         */
         virtual ~Box();
+        
+        // TODO: Documentation.
+        void add(const Ref<Widget>& widget);
+        
+        // TODO: Documentation.
+        void remove(const Ref<Widget>& widget);
 
         /** Function for setting the position of the VBox and its children.
 
@@ -139,17 +145,11 @@ namespace pTK
         void drawBackground(SkCanvas *canvas) const;
 
     private:
-        // TODO: Documentation.
-        virtual void onAddNotify(const Ref<Widget>& UNUSED(widget)) {}
-
-        // TODO: Documentation.
-        virtual void onRemoveNotify(const Ref<Widget>& UNUSED(widget)) {}
-
         /** Callback to use when a Widget has been successfully added.
 
             @param widget   child that has been added
         */
-        void onAdd(const Ref<Widget>& widget) override;
+        virtual void onAdd(const Ref<Widget>& UNUSED(widget)) {}
 
         /** Callback to use when a Widget has been removed.
 
@@ -158,7 +158,7 @@ namespace pTK
 
             @param widget   child that has been removed
         */
-        void onRemove(const Ref<Widget>& widget) override;
+        virtual void onRemove(const Ref<Widget>& UNUSED(widget)) {}
 
         /** Callback to use when a child has called the parent update function.
 

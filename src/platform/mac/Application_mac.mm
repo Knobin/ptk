@@ -7,6 +7,7 @@
 
 // Local Headers
 #include "Application_mac.hpp"
+#include "ptk/Application.hpp"
 #include "MainWindow_mac.hpp"
 #include "ptk/Window.hpp"
 #include "ptk/core/Exception.hpp"
@@ -62,7 +63,7 @@
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *) __unused sender {
     PTK_INFO("APP SHOULD TERMINATE");
-    app->removeAllWindows();
+    pTK::Application::Get()->removeAllWindows();
     _run = FALSE;
     return NSTerminateCancel;
 }
@@ -94,6 +95,11 @@ namespace pTK
             subMenu=[[NSMenu alloc] initWithTitle:@"Apple"];
             [menuBar setSubmenu:subMenu forItem:item];
             [item release];
+            
+            item=[[NSMenuItem alloc] initWithTitle:@"Test" action:@selector(terminate:) keyEquivalent:@""];
+            [subMenu addItem:item];
+            [item release];
+            
             item=[[NSMenuItem alloc] initWithTitle:@"Quit" action:@selector(terminate:) keyEquivalent:@"q"];
             [subMenu addItem:item];
             [item release];

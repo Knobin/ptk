@@ -39,8 +39,8 @@ namespace pTK
         void refitContent(const Size& size);
 
     private:
-        void onAddNotify(const Ref<Widget>&) override;
-        void onRemoveNotify(const Ref<Widget>&) override;
+        void onAdd(const Ref<Widget>&) override;
+        void onRemove(const Ref<Widget>&) override;
         void onChildUpdate(size_type) override;
         void onSizeChange(const Size& size) override;
         

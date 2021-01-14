@@ -13,6 +13,11 @@
 #include "ptk/util/Singleton.hpp"
 #include "ptk/Window.hpp"
 #include "ptk/core/Types.hpp"
+#include "ptk/util/IterableContainer.hpp"
+
+// C++ Headers
+#include <vector>
+#include <utility>
 
 namespace pTK
 {
@@ -22,7 +27,7 @@ namespace pTK
         application.
 
     */
-    class Application : public Singleton
+    class Application : public IterableAssociative<int32, Window*>, public Singleton
     {
     public:
         /** Constructs Application with default values.
@@ -71,6 +76,10 @@ namespace pTK
             @return         true if removed
         */
         bool removeWindow(int32 key);
+        
+        void removeAllWindows();
+        
+        Window *findByKey(int32 key) const;
         
         /** Function for executing the application.
          

@@ -18,17 +18,17 @@
 
 namespace pTK
 {
-    class Menu : public MenuItemBase, public IterableContainer<std::vector, Ref<MenuItemBase>>
+    class Menu : public MenuItemBase, public IterableSequence<Ref<MenuItemBase>>
     {
     public:
         explicit Menu(const std::string& name = "")
-            : MenuItemBase(name), IterableContainer<std::vector, Ref<MenuItemBase>>()
+            : MenuItemBase(name), IterableSequence<Ref<MenuItemBase>>()
         {
 
         }
 
         Menu(const std::string& name, const std::initializer_list<Ref<MenuItemBase>>& items)
-            : MenuItemBase(name), IterableContainer<std::vector, Ref<MenuItemBase>>(items)
+            : MenuItemBase(name), IterableSequence<Ref<MenuItemBase>>(items)
         {
 
         }

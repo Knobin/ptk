@@ -10,7 +10,7 @@
 
 namespace pTK
 {
-    void HBox::onAddNotify(const Ref<Widget>&)
+    void HBox::onAdd(const Ref<Widget>&)
     {
         Size vbSize{getSize()};
         Size minLayoutSize{calcMinSize()};
@@ -33,7 +33,7 @@ namespace pTK
         }
     }
     
-    void HBox::onRemoveNotify(const Ref<Widget>&)
+    void HBox::onRemove(const Ref<Widget>&)
     {
         refitContent(getSize());
     }

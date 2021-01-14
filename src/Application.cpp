@@ -19,13 +19,13 @@ namespace pTK
     static Ref<MenuBar> s_globalMenu{nullptr}; // Should be a "Menubar" pointer later.
 
     Application::Application()
-        : Singleton()
+        : IterableAssociative<int32, Window*>(), Singleton()
     {
         init();
     }
 
     Application::Application(int, char* [])
-        : Singleton()
+        : IterableAssociative<int32, Window*>(), Singleton()
     {
         init();
         // TODO: Check arguments.
@@ -47,8 +47,7 @@ namespace pTK
     Application::~Application()
     {
         // Close all attached Windows.
-        auto cont = m_appBase->windows();
-        for (auto it = cont.cbegin(); it != cont.cend(); ++it)
+        for (auto it = cbegin(); it != cend(); ++it)
         {
             Window *window{it->second};
             Event evt{Event::Category::Window, Event::Type::WindowClose};
@@ -59,7 +58,7 @@ namespace pTK
         // The close event might cause the Window to remove itself from the Application
         // through the Application::Get function.
         // Otherwise, remove them here.
-        m_appBase->removeAllWindows();
+        removeAllWindows();
         
         PTK_INFO("Destroyed Application");
     }
@@ -74,30 +73,65 @@ namespace pTK
 
     int32 Application::addWindow(Window *window)
     {
-        return m_appBase->addWindow(window);
+        int32 id{1};
+        for (const std::pair<const int32, Window*>& pair : *this)
+        {
+            if (pair.first == id)
+            {
+                ++id;
+            }
+        }
+
+        try {
+            container().insert({id, window});
+            m_appBase->onWindowAdd({id, window});
+        } catch (const std::exception&) {
+            return -1;
+        }
+
+        return id;
     }
 
     bool Application::removeWindow(Window *window)
     {
-        return m_appBase->removeWindow(window);
+        auto it{std::find_if(begin(), end(), [window](const auto& pair) {
+            return pair.second == window;
+        })};
+
+        if (it != end())
+        {
+            m_appBase->onWindowRemove(*it);
+            container().erase(it);
+            return true;
+        }
+
+        return false;
     }
 
     bool Application::removeWindow(int32 key)
     {
-        return m_appBase->removeWindow(key);
+        auto it{container().find(key)};
+        if (it != container().end())
+        {
+            m_appBase->onWindowRemove(*it);
+            container().erase(it);
+            return true;
+        }
+
+        return false;
     }
 
     int Application::run()
     {
         // Currently not supporting running the app without a window.
-        if (m_appBase->windowCount() == 0)
+        if (size() == 0)
         {
             PTK_FATAL("No Window added to Application");
             return -1;
         }
 
         // Paint all visible windows and handle already pushed events.
-        for (const auto&[key, window] : m_appBase->windows())
+        for (const auto&[key, window] : *this)
         {
             if (window->visible())
                 window->postEvent<PaintEvent>(Point{0,0}, window->getSize());
@@ -107,10 +141,11 @@ namespace pTK
         // Maybe do some setup things here?
         
         // Standard message loop for now.
-        while (m_appBase->windowCount() > 0)
+        PTK_INFO("APPLICATION WINDOW COUNT {}", size());
+        while (size() > 0)
         {
             m_appBase->waitEvents();
-            for (const auto& pair : m_appBase->windows())
+            for (const auto& pair : *this)
                 pair.second->handleEvents();
         }
         
@@ -119,7 +154,7 @@ namespace pTK
 
     void Application::close()
     {
-        m_appBase->removeAllWindows();
+        removeAllWindows();
     }
 
     void Application::setMenuBar(const Ref<MenuBar>& menubar)
@@ -138,4 +173,15 @@ namespace pTK
         return s_app;
     }
 
+    void Application::removeAllWindows()
+    {
+        for (auto it = cbegin(); it != cend();)
+            container().erase(it++);
+    }
+
+    Window *Application::findByKey(int32 key) const
+    {
+        auto it = container().find(key);
+        return (it != container().end()) ? it->second : nullptr;
+    }
 }

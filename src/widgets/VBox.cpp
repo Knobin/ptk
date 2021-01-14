@@ -14,7 +14,7 @@
 
 namespace pTK
 {
-    void VBox::onAddNotify(const Ref<Widget>&)
+    void VBox::onAdd(const Ref<Widget>&)
     {
         const Size minLayoutSize{calcMinSize()};
         setMinSize(minLayoutSize);
@@ -38,7 +38,7 @@ namespace pTK
         }
     }
 
-    void VBox::onRemoveNotify(const Ref<Widget>&)
+    void VBox::onRemove(const Ref<Widget>&)
     {
         refitContent(getSize());
     }

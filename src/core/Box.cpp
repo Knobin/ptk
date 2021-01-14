@@ -16,18 +16,27 @@ namespace pTK
             item->setParent(nullptr);
     }
 
-    void Box::onAdd(const Ref<Widget>& widget)
+    void Box::add(const Ref<Widget>& widget)
     {
-        widget->setParent(this);
-        onAddNotify(widget);
-        draw();
+        if (std::find(cbegin(), cend(), widget) == cend())
+        {
+            container().push_back(widget);
+            widget->setParent(this);
+            onAdd(widget);
+            draw();
+        }
     }
 
-    void Box::onRemove(const Ref<Widget>& widget)
+    void Box::remove(const Ref<Widget>& widget)
     {
-        widget->setParent(nullptr);
-        onRemoveNotify(widget);
-        draw();
+        auto it = std::find(cbegin(), cend(), widget);
+        if (it != cend())
+        {
+            widget->setParent(nullptr);
+            onRemove(widget);
+            container().erase(it);
+            draw();
+        }
     }
 
     void Box::setPosHint(const Point& pos)
