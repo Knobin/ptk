@@ -91,14 +91,28 @@ void MenuItemCallback(pTK::Window*, pTK::MenuItem* menuItem)
     std::cout << menuItem->name() << " clicked!" << std::endl;
 }
 
+void CheckboxMenuItemCallback(pTK::Window*, pTK::MenuItem* menuItem)
+{
+    std::cout << menuItem->name() << " clicked, status is now " << pTK::MenuItem::StatusStr(menuItem->status()) << std::endl;
+}
+
+void ChangeMenuItemCallback(pTK::Window*, pTK::MenuItem* menuItem)
+{
+    menuItem->setStatus(pTK::MenuItem::Status::Disabled);
+}
+
 pTK::Ref<pTK::MenuBar> CreateMenuBar()
 {
-    pTK::Ref<pTK::MenuItem> menuItem1 = pTK::Create<pTK::MenuItem>(pTK::MenuItem{"With shortcut...", {pTK::Key::LeftControl, pTK::Key::O}, MenuItemCallback});
-    pTK::Ref<pTK::MenuItem> menuItem2 = pTK::Create<pTK::MenuItem>("item 2", MenuItemCallback);
-    pTK::Ref<pTK::MenuItem> menuItem3 = pTK::Create<pTK::MenuItem>("item 3", MenuItemCallback);
+    auto Shortcut = {pTK::Key::LeftControl, pTK::Key::LeftShift, pTK::Key::O};
+    pTK::Ref<pTK::MenuItem> menuItem1 = pTK::Create<pTK::MenuItem>(pTK::MenuItem{"With shortcut...", Shortcut, MenuItemCallback});
+
+    pTK::Ref<pTK::MenuItem> menuItem2 = pTK::Create<pTK::MenuItem>("Change status", ChangeMenuItemCallback);
+    menuItem2->setStatus(pTK::MenuItem::Status::Disabled);
+
+    pTK::Ref<pTK::MenuItem> menuItem3 = pTK::Create<pTK::MenuItem>("Checkbox item", pTK::MenuItem::Type::Checkbox, CheckboxMenuItemCallback);
 
     pTK::Ref<pTK::MenuItem> subMenuItem1 = pTK::Create<pTK::MenuItem>("sub item 1", MenuItemCallback);
-    pTK::Ref<pTK::MenuItem> subMenuItem2 = pTK::Create<pTK::MenuItem>("sub item 2", MenuItemCallback);
+    pTK::Ref<pTK::MenuItem> subMenuItem2 = pTK::Create<pTK::MenuItem>(pTK::MenuItem{"sub item 2", {pTK::Key::LeftAlt, pTK::Key::S}, MenuItemCallback});
     pTK::Ref<pTK::MenuItem> subMenuItem3 = pTK::Create<pTK::MenuItem>("sub item 3", MenuItemCallback);
 
     pTK::Ref<pTK::Menu> submenu = pTK::Create<pTK::Menu>(pTK::Menu{"submenu", {subMenuItem1, subMenuItem2, subMenuItem3}});

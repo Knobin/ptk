@@ -72,6 +72,17 @@ namespace pTK
         RightSuper   = 347,
 
     } Key;
+
+    constexpr bool IsKeyCodeAlpha(const KeyCode& code) noexcept
+    {
+        const auto value = static_cast<int32>(code);
+        return ((value >= 65) && (value <= 90));
+    }
+
+    constexpr char KeyCodeToAlpha(const KeyCode& code) noexcept
+    {
+        return static_cast<char>(static_cast<int32>(code));
+    }
 }
 
 

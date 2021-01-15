@@ -23,6 +23,7 @@
 #include <Dwmapi.h>
 
 // C++ Headers
+#include <algorithm>
 #include <cmath>
 #include <memory>
 #include <tuple>
@@ -154,6 +155,42 @@ namespace pTK
         return nullptr;
     }
 
+    static std::string TranslateKeyCodeToShortcutStr(const KeyCode& code)
+    {
+        std::string str{};
+
+        // Find KeyCode in global map.
+        auto it = std::find_if(s_keyMap.cbegin(), s_keyMap.cend(), [&](const auto& pair) {
+            return pair.second == code;
+        });
+
+        if (it != s_keyMap.cend())
+        {
+            constexpr std::array<Key, 2> altKeys{Key::LeftAlt, Key::RightAlt};
+            constexpr std::array<Key, 2> ctrlKeys{Key::LeftControl, Key::RightControl};
+            constexpr std::array<Key, 2> shiftKeys{Key::LeftShift, Key::RightShift};
+
+            constexpr std::pair<std::string_view, std::array<Key, 2>> alt("Alt", altKeys);
+            constexpr std::pair<std::string_view, std::array<Key, 2>> ctrl("Ctrl", ctrlKeys);
+            constexpr std::pair<std::string_view, std::array<Key, 2>> shift("Shift", shiftKeys);
+
+            constexpr std::array<std::pair<std::string_view, std::array<Key, 2>>, 3> shortcutKeys{alt, ctrl, shift};
+            const auto foundKey = std::find_if(shortcutKeys.cbegin(), shortcutKeys.cend(), [&](const auto& pair) {
+                const auto& arr = pair.second;
+                auto found = std::find(std::begin(arr), std::end(arr), it->second);
+                return found != std::end(arr);
+            });
+
+            if (foundKey != shortcutKeys.cend())
+                str = foundKey->first;
+            else
+                if (IsKeyCodeAlpha(it->second))
+                    str = KeyCodeToAlpha(it->second);
+        }
+
+        return str;
+    }
+
     static std::optional<std::pair<ACCEL, std::string>> GetShortcutACCEL(const std::vector<KeyCode>& codes)
     {
         byte virt{FVIRTKEY};
@@ -168,32 +205,30 @@ namespace pTK
             });
             if (it != s_keyMap.cend())
             {
-                constexpr std::array<Key, 2> altKeys{Key::LeftAlt, Key::RightAlt};
-                constexpr std::array<Key, 2> ctrlKeys{Key::LeftControl, Key::RightControl};
-                constexpr std::array<Key, 2> shiftKeys{Key::LeftShift, Key::RightShift};
-
-                constexpr std::tuple<std::array<Key, 2>, int32, std::string_view> alt(altKeys, FALT, "Alt");
-                constexpr std::tuple<std::array<Key, 2>, int32, std::string_view> ctrl(ctrlKeys, FCONTROL, "Ctrl");
-                constexpr std::tuple<std::array<Key, 2>, int32, std::string_view> shift(shiftKeys, FSHIFT, "Shift");
-
-                const std::array<std::tuple<std::array<Key, 2>, int32, std::string_view>, 3> virts{alt, ctrl, shift};
-                const auto foundVirt = std::find_if(virts.cbegin(), virts.cend(),
-                                                    [&](const auto& tupleObj) {
-                    const auto& arr = std::get<0>(tupleObj);
-                    auto found = std::find(std::begin(arr), std::end(arr), it->second);
-                    return found != std::end(arr);
-                });
-
-                if (foundVirt != virts.cend())
+                std::string str{TranslateKeyCodeToShortcutStr(it->second)};
+                if (!str.empty())
                 {
-                    // Multiple virts are supported.
-                    virt |= static_cast<byte>(std::get<1>(*foundVirt));
-                    shortcutStr += (!shortcutStr.empty() ? "+" : "\t") + std::string{std::get<2>(*foundVirt)};
-                }
-                else
-                {
-                    // This is a keycode.
-                    key = static_cast<WORD>(it->first);
+                    constexpr std::pair<std::string_view, int32> alt("Alt", FALT);
+                    constexpr std::pair<std::string_view, int32> ctrl("Ctrl", FCONTROL);
+                    constexpr std::pair<std::string_view, int32> shift("Shift", FSHIFT);
+
+                    constexpr std::array<std::pair<std::string_view, int32>, 3> virts{alt, ctrl, shift};
+                    const auto foundVirt = std::find_if(virts.cbegin(), virts.cend(),[&](const auto& pair) {
+                        return pair.first == str;
+                    });
+
+                    if (foundVirt != virts.cend())
+                    {
+                        // Multiple virts are supported.
+                        virt |= static_cast<byte>(foundVirt->second);
+                        virt |= static_cast<byte>(std::get<1>(*foundVirt));
+                        shortcutStr += (!shortcutStr.empty() ? "+" : "") + std::string{foundVirt->first};
+                    }
+                    else
+                    {
+                        // This is a keycode.
+                        key = static_cast<WORD>(it->first);
+                    }
                 }
             }
         }
@@ -204,11 +239,102 @@ namespace pTK
             accel.key = key;
             if (virt != 0)
                 accel.fVirt = virt;
-            return std::pair{accel, shortcutStr + "+" + static_cast<char>(key)};
+            return std::pair{accel, shortcutStr + (!shortcutStr.empty() ? "+" : "") + static_cast<char>(key)};
         }
 
         return std::nullopt;
     }
+
+    static constexpr UINT MenuItemStatusToFlag(const MenuItem::Status& status) noexcept
+    {
+        UINT flag = 0;
+        switch (status)
+        {
+            case MenuItem::Status::Enabled:
+                flag |= MF_ENABLED;
+                break;
+            case MenuItem::Status::Disabled:
+                flag |= MF_DISABLED | MF_GRAYED;
+                break;
+            case MenuItem::Status::Checked:
+                flag |= MF_CHECKED;
+                break;
+            case MenuItem::Status::Unchecked:
+                flag |= MF_UNCHECKED;
+                break;
+        }
+        return flag;
+    }
+
+    static std::string TranslateKeyCodesToShortcutStr(const std::vector<KeyCode>& codes)
+    {
+        std::string str{};
+        std::string key{};
+
+        for (auto it{codes.cbegin()}; it != codes.cend(); ++it)
+        {
+            const std::string keyStr = TranslateKeyCodeToShortcutStr(*it);
+            if (IsKeyCodeAlpha(*it))
+                key = keyStr;
+            else
+                str += (!str.empty() ? "+" : "") + keyStr;
+        }
+
+        return str + (!str.empty() ? "+" : "") + key;
+    }
+
+    class MenuItemHandler_win : public MenuItemHandler
+    {
+    public:
+        MenuItemHandler_win() = delete;
+        MenuItemHandler_win(HMENU parent, uint id) : m_parent{parent}, m_id{id} {}
+        virtual ~MenuItemHandler_win() = default;
+
+        void update(MenuItem* item) override
+        {
+            MenuItemHandlerGuard guard{this};
+            UINT statusFlag = MenuItemStatusToFlag(item->status());
+            const std::string str = item->name() + "\t" + TranslateKeyCodesToShortcutStr(item->shortcutKeys());
+            ModifyMenu(m_parent, m_id, MF_BYCOMMAND | MF_STRING | statusFlag, m_id, str.c_str());
+            PTK_WARN("ModifyMenu");
+        }
+
+    private:
+        HMENU m_parent{nullptr};
+        uint m_id{0};
+    };
+
+    class CheckboxMenuItemHandler_win : public MenuItemHandler
+    {
+    public:
+        CheckboxMenuItemHandler_win() = delete;
+        CheckboxMenuItemHandler_win(HMENU parent, uint id, bool checked) : m_parent{parent}, m_id{id}, m_checked{checked} {}
+        virtual ~CheckboxMenuItemHandler_win() = default;
+
+        void update(MenuItem* item) override
+        {
+            MenuItemHandlerGuard guard{this};
+            UINT checked = (item->status() == MenuItem::Status::Checked) ? MF_CHECKED : MF_UNCHECKED;
+            UINT statusFlag = MenuItemStatusToFlag(item->status());
+            //CheckMenuItem(m_parent, m_id, MF_BYCOMMAND | checked | statusFlag);
+            const std::string str = item->name() + "\t" + TranslateKeyCodesToShortcutStr(item->shortcutKeys());
+            ModifyMenu(m_parent, m_id, MF_BYCOMMAND | MF_STRING | checked | statusFlag, m_id, str.c_str());
+        }
+
+        void handleEvent(Window*, MenuItem* item) override
+        {
+            MenuItemHandlerGuard guard{this};
+            m_checked = !m_checked;
+            MenuItem::Status status =  (m_checked) ? MenuItem::Status::Checked : MenuItem::Status::Unchecked;
+            item->setStatus(status);
+            update(item);
+        }
+
+    private:
+        HMENU m_parent{nullptr};
+        uint m_id{0};
+        bool m_checked{false};
+    };
 
     static void CreateMenuStructure(HMENU parent, MenuMap& menus, const pTK::Ref<pTK::Menu>& menu, uint parentId, std::vector<ACCEL>& keys)
     {
@@ -243,11 +369,31 @@ namespace pTK
                         {
                             accelData->first.cmd = static_cast<WORD>(id);
                             keys.push_back(accelData->first);
-                            menuStr += accelData->second;
+                            menuStr += "\t" + accelData->second;
                         }
                     }
 
-                    ::AppendMenuA(currentMenu, MF_STRING, id, menuStr.c_str());
+                    UINT statusFlag = MenuItemStatusToFlag(ptr->status());
+                    switch (ptr->type())
+                    {
+                        case MenuItem::Type::Text:
+                        {
+                            using Handler = MenuItemHandler_win;
+                            Ref<Handler> handler = Create<Handler>(currentMenu, id);
+                            ptr->setHandler(handler);
+                            AppendMenu(currentMenu, MF_STRING | statusFlag, id, menuStr.c_str());
+                            break;
+                        }
+                        case MenuItem::Type::Checkbox:
+                        {
+                            AppendMenu(currentMenu, MF_STRING | statusFlag, id, menuStr.c_str());
+                            using CbHander = CheckboxMenuItemHandler_win;
+                            bool checked = (ptr->status() == MenuItem::Status::Checked);
+                            Ref<CbHander> handler = Create<CbHander>(currentMenu, id, checked);
+                            ptr->setHandler(handler);
+                            break;
+                        }
+                    }
                 }
 #ifdef PTK_DEBUG
                 else
@@ -686,7 +832,7 @@ namespace pTK
         }
     }
 
-    static WPARAM MapLeftRightKeys(WPARAM wParam, LPARAM lParam)
+    static constexpr WPARAM MapLeftRightKeys(WPARAM wParam, LPARAM lParam) noexcept
     {
         WPARAM key = wParam;
         uint scancode = (lParam & 0x00ff0000) >> 16;
