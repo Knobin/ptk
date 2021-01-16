@@ -11,7 +11,7 @@
 #include "../common/RasterContext.hpp"
 #include "RasterPolicy_win.hpp"
 #include "MenuBarUtil_win.hpp"
-#include "KeyMapvm_win.hpp"
+#include "KeyMap_win.hpp"
 
 // pTK Headers
 #include "ptk/Application.hpp"
