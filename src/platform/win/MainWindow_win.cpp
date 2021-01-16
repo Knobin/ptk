@@ -12,6 +12,7 @@
 #include "RasterPolicy_win.hpp"
 #include "ptk/Application.hpp"
 #include "KeyMap_win.hpp"
+#include "MenuBarUtil_win.hpp"
 
 // Include OpenGL backend if HW Acceleration is enabled.
 #ifdef PTK_OPENGL
@@ -26,7 +27,6 @@
 #include <cmath>
 #include <memory>
 #include <tuple>
-#include <optional>
 #include <mutex>
 
 namespace pTK
@@ -76,8 +76,6 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    using MenuMap = std::map<uint, std::tuple<Ref<MenuItemBase>, uint, bool, HMENU>>;
-
     struct WinBackendData
     {
         Window *window;
@@ -89,278 +87,9 @@ namespace pTK
         uint wait;
         bool ignoreSize;
         bool hasMenu;
-        MenuMap menuItems;
+        MenuBarUtil_win::MenuMap menuItems;
         HACCEL accelTable{nullptr};
     };
-
-    ///////////////////////////////////////////////////////////////////////////////
-
-    static uint InsertMenuItemToMap(MenuMap& menus, const Ref<MenuItemBase>& menuItem, uint parentId, bool isMenu, HMENU hmenu)
-    {
-        uint uniqueId{1};
-        for (const auto& it : menus)
-        {
-            if (it.first == uniqueId)
-                ++uniqueId;
-        }
-
-        menus.insert({uniqueId, {menuItem, parentId, isMenu, hmenu}});
-        return uniqueId;
-    }
-
-    static Ref<MenuItemBase> FindMenuItemById(const MenuMap& menuItems, uint id)
-    {
-        MenuMap::const_iterator it{menuItems.find(id)};
-        if (it != menuItems.cend())
-            return std::get<0>(it->second);
-
-        return nullptr;
-    }
-
-    static std::string TranslateKeyCodeToShortcutStr(const KeyCode& key)
-    {
-        std::string str{};
-
-        // Find KeyCode in global map.
-        if (KeyMap_win::KeyExistsInMap(key))
-        {
-            constexpr std::array<Key, 2> altKeys{Key::LeftAlt, Key::RightAlt};
-            constexpr std::array<Key, 2> ctrlKeys{Key::LeftControl, Key::RightControl};
-            constexpr std::array<Key, 2> shiftKeys{Key::LeftShift, Key::RightShift};
-
-            constexpr std::pair<std::string_view, std::array<Key, 2>> alt("Alt", altKeys);
-            constexpr std::pair<std::string_view, std::array<Key, 2>> ctrl("Ctrl", ctrlKeys);
-            constexpr std::pair<std::string_view, std::array<Key, 2>> shift("Shift", shiftKeys);
-
-            constexpr std::array<std::pair<std::string_view, std::array<Key, 2>>, 3> shortcutKeys{alt, ctrl, shift};
-            const auto foundKey = std::find_if(shortcutKeys.cbegin(), shortcutKeys.cend(), [&](const auto& pair) {
-                const auto& arr = pair.second;
-                auto found = std::find(std::begin(arr), std::end(arr), key);
-                return found != std::end(arr);
-            });
-
-            if (foundKey != shortcutKeys.cend())
-                str = foundKey->first;
-            else
-                if (IsKeyCodeAlpha(key))
-                    str = KeyCodeToAlpha(key);
-        }
-
-        return str;
-    }
-
-    static std::optional<std::pair<ACCEL, std::string>> GetShortcutACCEL(const std::vector<KeyCode>& codes)
-    {
-        byte virt{FVIRTKEY};
-        std::string shortcutStr{};
-        WORD lastKey{0};
-
-        // static const std::map<int32, KeyCode> s_keyMap{InitKeyCodes()};
-        for (const KeyCode& key : codes)
-        {
-            if (KeyMap_win::KeyExistsInMap(key))
-            {
-                std::string str{TranslateKeyCodeToShortcutStr(key)};
-                if (!str.empty())
-                {
-                    constexpr std::pair<std::string_view, int32> alt("Alt", FALT);
-                    constexpr std::pair<std::string_view, int32> ctrl("Ctrl", FCONTROL);
-                    constexpr std::pair<std::string_view, int32> shift("Shift", FSHIFT);
-
-                    constexpr std::array<std::pair<std::string_view, int32>, 3> virts{alt, ctrl, shift};
-                    const auto foundVirt = std::find_if(virts.cbegin(), virts.cend(),[&](const auto& pair) {
-                        return pair.first == str;
-                    });
-
-                    if (foundVirt != virts.cend())
-                    {
-                        // Multiple virts are supported.
-                        virt |= static_cast<byte>(foundVirt->second);
-                        virt |= static_cast<byte>(std::get<1>(*foundVirt));
-                        shortcutStr += (!shortcutStr.empty() ? "+" : "") + std::string{foundVirt->first};
-                    }
-                    else
-                    {
-                        // This is a keycode.
-                        lastKey = static_cast<WORD>(KeyMap_win::TranslateKeyToKeyCode(key));
-                    }
-                }
-            }
-        }
-
-        if (lastKey != 0)
-        {
-            ACCEL accel{};
-            accel.key = lastKey;
-            if (virt != 0)
-                accel.fVirt = virt;
-            return std::pair{accel, shortcutStr + (!shortcutStr.empty() ? "+" : "") + static_cast<char>(lastKey)};
-        }
-
-        return std::nullopt;
-    }
-
-    static constexpr UINT MenuItemStatusToFlag(const MenuItem::Status& status) noexcept
-    {
-        UINT flag = 0;
-        switch (status)
-        {
-            case MenuItem::Status::Enabled:
-                flag |= MF_ENABLED;
-                break;
-            case MenuItem::Status::Disabled:
-                flag |= MF_DISABLED | MF_GRAYED;
-                break;
-            case MenuItem::Status::Checked:
-                flag |= MF_CHECKED;
-                break;
-            case MenuItem::Status::Unchecked:
-                flag |= MF_UNCHECKED;
-                break;
-        }
-        return flag;
-    }
-
-    static std::string TranslateKeyCodesToShortcutStr(const std::vector<KeyCode>& codes)
-    {
-        std::string str{};
-        std::string key{};
-
-        for (auto it{codes.cbegin()}; it != codes.cend(); ++it)
-        {
-            const std::string keyStr = TranslateKeyCodeToShortcutStr(*it);
-            if (IsKeyCodeAlpha(*it))
-                key = keyStr;
-            else
-                str += (!str.empty() ? "+" : "") + keyStr;
-        }
-
-        return str + (!str.empty() ? "+" : "") + key;
-    }
-
-    class MenuItemHandler_win : public MenuItemHandler
-    {
-    public:
-        MenuItemHandler_win() = delete;
-        MenuItemHandler_win(HMENU parent, uint id) : m_parent{parent}, m_id{id} {}
-        virtual ~MenuItemHandler_win() = default;
-
-        void update(MenuItem* item) override
-        {
-            MenuItemHandlerGuard guard{this};
-            UINT statusFlag = MenuItemStatusToFlag(item->status());
-            const std::string str = item->name() + "\t" + TranslateKeyCodesToShortcutStr(item->shortcutKeys());
-            ModifyMenu(m_parent, m_id, MF_BYCOMMAND | MF_STRING | statusFlag, m_id, str.c_str());
-            PTK_WARN("ModifyMenu");
-        }
-
-    private:
-        HMENU m_parent{nullptr};
-        uint m_id{0};
-    };
-
-    class CheckboxMenuItemHandler_win : public MenuItemHandler
-    {
-    public:
-        CheckboxMenuItemHandler_win() = delete;
-        CheckboxMenuItemHandler_win(HMENU parent, uint id, bool checked) : m_parent{parent}, m_id{id}, m_checked{checked} {}
-        virtual ~CheckboxMenuItemHandler_win() = default;
-
-        void update(MenuItem* item) override
-        {
-            MenuItemHandlerGuard guard{this};
-            UINT checked = (item->status() == MenuItem::Status::Checked) ? MF_CHECKED : MF_UNCHECKED;
-            UINT statusFlag = MenuItemStatusToFlag(item->status());
-            //CheckMenuItem(m_parent, m_id, MF_BYCOMMAND | checked | statusFlag);
-            const std::string str = item->name() + "\t" + TranslateKeyCodesToShortcutStr(item->shortcutKeys());
-            ModifyMenu(m_parent, m_id, MF_BYCOMMAND | MF_STRING | checked | statusFlag, m_id, str.c_str());
-        }
-
-        void handleEvent(Window*, MenuItem* item) override
-        {
-            MenuItemHandlerGuard guard{this};
-            m_checked = !m_checked;
-            MenuItem::Status status =  (m_checked) ? MenuItem::Status::Checked : MenuItem::Status::Unchecked;
-            item->setStatus(status);
-            update(item);
-        }
-
-    private:
-        HMENU m_parent{nullptr};
-        uint m_id{0};
-        bool m_checked{false};
-    };
-
-    static void CreateMenuStructure(HMENU parent, MenuMap& menus, const pTK::Ref<pTK::Menu>& menu, uint parentId, std::vector<ACCEL>& keys)
-    {
-        HMENU currentMenu = ::CreateMenu();
-        AppendMenu(parent, MF_POPUP, reinterpret_cast<UINT_PTR>(currentMenu), menu->name().c_str());
-        uint currentMenuId = InsertMenuItemToMap(menus, menu, parentId, true, currentMenu);
-
-        for (auto menuItemIt{menu->cbegin()}; menuItemIt != menu->cend(); ++menuItemIt)
-        {
-            // Can either be Menu or MenuItem.
-            const Ref<MenuItemBase>& menuItemPtr = *menuItemIt;
-            if (menuItemPtr->typeName() == "Menu")
-            {
-                Ref<Menu> rMenu = std::dynamic_pointer_cast<Menu>(menuItemPtr);
-                if (rMenu)
-                    CreateMenuStructure(currentMenu, menus, rMenu, currentMenuId, keys);
-#ifdef PTK_DEBUG
-                else
-                    PTK_WARN("Could not cast MenuItemBase to Menu");
-#endif // PTK_DEBUG
-            }
-            else if (menuItemPtr->typeName() == "MenuItem")
-            {
-                if (auto ptr = dynamic_cast<MenuItem*>(menuItemPtr.get()))
-                {
-                    uint id = InsertMenuItemToMap(menus, menuItemPtr, currentMenuId, false, nullptr);
-                    std::string menuStr{ptr->name()};
-
-                    if (!ptr->shortcutKeys().empty())
-                    {
-                        if (auto accelData = GetShortcutACCEL(ptr->shortcutKeys()))
-                        {
-                            accelData->first.cmd = static_cast<WORD>(id);
-                            keys.push_back(accelData->first);
-                            menuStr += "\t" + accelData->second;
-                        }
-                    }
-
-                    UINT statusFlag = MenuItemStatusToFlag(ptr->status());
-                    switch (ptr->type())
-                    {
-                        case MenuItem::Type::Text:
-                        {
-                            using Handler = MenuItemHandler_win;
-                            Ref<Handler> handler = Create<Handler>(currentMenu, id);
-                            ptr->setHandler(handler);
-                            AppendMenu(currentMenu, MF_STRING | statusFlag, id, menuStr.c_str());
-                            break;
-                        }
-                        case MenuItem::Type::Checkbox:
-                        {
-                            AppendMenu(currentMenu, MF_STRING | statusFlag, id, menuStr.c_str());
-                            using CbHander = CheckboxMenuItemHandler_win;
-                            bool checked = (ptr->status() == MenuItem::Status::Checked);
-                            Ref<CbHander> handler = Create<CbHander>(currentMenu, id, checked);
-                            ptr->setHandler(handler);
-                            break;
-                        }
-                    }
-                }
-#ifdef PTK_DEBUG
-                else
-                    PTK_WARN("Could not cast MenuItemBase to MenuItem");
-#endif // PTK_DEBUG
-            }
-#ifdef PTK_DEBUG
-            else
-                PTK_WARN("Unknown Menu class: {}", menuItemPtr->typeName());
-#endif // PTK_DEBUG
-        }
-    }
 
     ///////////////////////////////////////////////////////////////////////////////
     
@@ -428,11 +157,11 @@ namespace pTK
         if (m_data->hasMenu)
         {
             HMENU menuBar = ::CreateMenu();
-            uint menuBarId = InsertMenuItemToMap(m_data->menuItems, nullptr, 1, true, menuBar);
+            uint menuBarId = MenuBarUtil_win::InsertMenuItemToMap(m_data->menuItems, nullptr, 1, true, menuBar);
             std::vector<ACCEL> accelShortcuts{};
 
             for (auto menuIt{menu->cbegin()}; menuIt != menu->cend(); ++menuIt)
-                CreateMenuStructure(menuBar, m_data->menuItems, (*menuIt), menuBarId, accelShortcuts);
+                MenuBarUtil_win::CreateMenuStructure(menuBar, m_data->menuItems, (*menuIt), menuBarId, accelShortcuts);
 
             ::SetMenu(m_hwnd, menuBar);
 
@@ -971,7 +700,7 @@ namespace pTK
             case WM_COMMAND:
             {
                 uint wmId{LOWORD(wParam)};
-                Ref<MenuItemBase> item{FindMenuItemById(data->menuItems, wmId)};
+                Ref<MenuItemBase> item{MenuBarUtil_win::FindMenuItemById(data->menuItems, wmId)};
 
                 if (item)
                 {
