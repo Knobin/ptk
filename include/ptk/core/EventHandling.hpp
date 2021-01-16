@@ -8,7 +8,7 @@
 #ifndef PTK_CORE_EVENTHANDLING_HPP
 #define PTK_CORE_EVENTHANDLING_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/EventCallbacks.hpp"
 #include "ptk/core/EventFunctions.hpp"
 #include "ptk/events/KeyCodes.hpp"

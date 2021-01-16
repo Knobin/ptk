@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2019-06-19.
 //
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/Shape.hpp"
 
 namespace pTK

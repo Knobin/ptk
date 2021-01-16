@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2019-07-14.
 //
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/Font.hpp"
 #include "ptk/Log.hpp"
 

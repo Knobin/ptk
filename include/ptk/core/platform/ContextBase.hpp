@@ -8,7 +8,7 @@
 #ifndef PTK_CORE_PLATFORM_CONTEXTBASE_HPP
 #define PTK_CORE_PLATFORM_CONTEXTBASE_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/Core.hpp"
 #include "ptk/util/Singleton.hpp"
 #include "ptk/util/Size.hpp"

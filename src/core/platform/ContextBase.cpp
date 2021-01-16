@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2020-02-09.
 //
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/platform/ContextBase.hpp"
 
 namespace pTK

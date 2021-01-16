@@ -7,6 +7,8 @@
 
 // Local Headers
 #include "RasterPolicy_win.hpp"
+
+// pTK Headers
 #include "ptk/Log.hpp"
 
 namespace pTK

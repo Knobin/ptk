@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2019-11-27.
 //
 
-// Local Headers
+// pTK Headers
 #include "ptk/widgets/HBox.hpp"
 
 namespace pTK

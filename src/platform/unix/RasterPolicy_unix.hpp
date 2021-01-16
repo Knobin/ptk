@@ -9,8 +9,10 @@
 #define PTK_PlATFORM_UNIX_RASTERPOLICY_HPP
 
 // Local Headers
-#include "ptk/util/Size.hpp"
 #include "x11.hpp"
+
+// pTK Headers
+#include "ptk/util/Size.hpp"
 
 // Skia Headers
 #include <include/core/SkImageInfo.h>

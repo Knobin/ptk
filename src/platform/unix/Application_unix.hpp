@@ -9,8 +9,10 @@
 #define PTK_PLATFORM_UNIX_APPLICATION_HPP
 
 // Local Headers
-#include "ptk/core/platform/ApplicationBase.hpp"
 #include "x11.hpp"
+
+// pTK Headers
+#include "ptk/core/platform/ApplicationBase.hpp"
 
 namespace pTK
 {

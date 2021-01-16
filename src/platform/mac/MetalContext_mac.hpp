@@ -8,7 +8,7 @@
 #ifndef PTK_PlATFORM_MAC_METALCONTEXT_HPP
 #define PTK_PlATFORM_MAC_METALCONTEXT_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/platform/ContextBase.hpp"
 
 // Skia Headers

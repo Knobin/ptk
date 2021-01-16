@@ -8,7 +8,7 @@
 #ifndef PTK_CORE_SHAPE_HPP
 #define PTK_CORE_SHAPE_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/Widget.hpp"
 #include "ptk/util/Color.hpp"
 

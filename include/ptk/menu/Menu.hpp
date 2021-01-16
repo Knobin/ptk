@@ -8,7 +8,7 @@
 #ifndef PTK_MENU_MENU_HPP
 #define PTK_MENU_MENU_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/menu/MenuItemBase.hpp"
 #include "ptk/Core.hpp"
 #include "ptk/util/IterableContainer.hpp"

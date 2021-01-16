@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2019-09-11.
 //
 
-// Local Headers
+// pTK Headers
 #include "ptk/widgets/Checkbox.hpp"
 
 // Skia Headers

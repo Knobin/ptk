@@ -10,9 +10,11 @@
 #include "Application_win.hpp"
 #include "../common/RasterContext.hpp"
 #include "RasterPolicy_win.hpp"
-#include "ptk/Application.hpp"
-#include "KeyMap_win.hpp"
 #include "MenuBarUtil_win.hpp"
+#include "KeyMapvm_win.hpp"
+
+// pTK Headers
+#include "ptk/Application.hpp"
 
 // Include OpenGL backend if HW Acceleration is enabled.
 #ifdef PTK_OPENGL

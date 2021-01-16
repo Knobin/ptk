@@ -8,7 +8,7 @@
 #ifndef PTK_MENU_MENUITEM_HPP
 #define PTK_MENU_MENUITEM_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/menu/MenuItemBase.hpp"
 #include "ptk/events/KeyCodes.hpp"
 #include "ptk/core/Types.hpp"

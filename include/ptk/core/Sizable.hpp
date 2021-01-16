@@ -8,7 +8,7 @@
 #ifndef PTK_CORE_SIZABLE_HPP
 #define PTK_CORE_SIZABLE_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/util/Size.hpp"
 #include "ptk/core/Types.hpp"
 

@@ -8,7 +8,7 @@
 #ifndef PTK_PlATFORM_WIN_RASTERPOLICY_HPP
 #define PTK_PlATFORM_WIN_RASTERPOLICY_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/util/Size.hpp"
 
 // Skia Headers

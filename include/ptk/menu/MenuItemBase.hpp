@@ -8,7 +8,7 @@
 #ifndef PTK_MENU_MENUITEMBASE_HPP
 #define PTK_MENU_MENUITEMBASE_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/Types.hpp"
 
 // C++ Headers

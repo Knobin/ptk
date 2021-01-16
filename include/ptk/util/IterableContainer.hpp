@@ -8,7 +8,7 @@
 #ifndef PTK_UTIL_ITERABLECONTAINER_HPP
 #define PTK_UTIL_ITERABLECONTAINER_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/Core.hpp"
 
 // C++ Headers

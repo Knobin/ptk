@@ -8,7 +8,7 @@
 #ifndef PTK_WIDGETS_BUTTON_HPP
 #define PTK_WIDGETS_BUTTON_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/widgets/Label.hpp"
 #include "ptk/widgets/Rectangle.hpp"
 

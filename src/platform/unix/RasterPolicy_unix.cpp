@@ -7,8 +7,10 @@
 
 // Local Headers
 #include "RasterPolicy_unix.hpp"
-#include "ptk/Log.hpp"
 #include "Application_unix.hpp"
+
+// pTK Headers
+#include "ptk/Log.hpp"
 
 // Skia Headers
 #include "include/core/SkSurface.h"

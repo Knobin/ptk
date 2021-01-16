@@ -8,7 +8,7 @@
 #ifndef PTK_APPLICATION_HPP
 #define PTK_APPLICATION_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/platform/ApplicationBase.hpp"
 #include "ptk/util/Singleton.hpp"
 #include "ptk/Window.hpp"

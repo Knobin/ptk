@@ -8,7 +8,7 @@
 #ifndef PTK_WINDOW_HPP
 #define PTK_WINDOW_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/platform/MainWindowBase.hpp"
 #include "ptk/util/Singleton.hpp"
 #include "ptk/widgets/VBox.hpp"

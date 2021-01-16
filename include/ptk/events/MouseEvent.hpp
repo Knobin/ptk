@@ -8,7 +8,7 @@
 #ifndef PTK_EVENTS_MOUSEEVENT_HPP
 #define PTK_EVENTS_MOUSEEVENT_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/Event.hpp"
 #include "ptk/util/Point.hpp"
 #include "ptk/util/Vec2.hpp"

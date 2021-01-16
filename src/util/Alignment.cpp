@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2019-07-29s.
 //
 
-// Local Headers
+// pTK Headers
 #include "ptk/util/Alignment.hpp"
 
 namespace pTK

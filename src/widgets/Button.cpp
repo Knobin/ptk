@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2019-07-15.
 //
 
-// Local Headers
+// pTK Headers
 #include "ptk/widgets/Button.hpp"
 #include "ptk/Core.hpp"
 

@@ -8,7 +8,7 @@
 #ifndef PTK_CORE_WINDOWINFO_HPP
 #define PTK_CORE_WINDOWINFO_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/Types.hpp"
 #include "ptk/menu/MenuBar.hpp"
 

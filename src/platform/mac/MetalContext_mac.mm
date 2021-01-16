@@ -7,6 +7,8 @@
 
 // Local Headers
 #include "MetalContext_mac.hpp"
+
+// pTK Headers
 #include "ptk/core/Exception.hpp"
 
 // macOS Headers

@@ -9,8 +9,10 @@
 #define PTK_PLATFORM_UNIX_MAINWINDOW_HPP
 
 // Local Headers
-#include "ptk/core/platform/MainWindowBase.hpp"
 #include "x11.hpp"
+
+// pTK Headers
+#include "ptk/core/platform/MainWindowBase.hpp"
 
 // C++ Headers
 #include <map>

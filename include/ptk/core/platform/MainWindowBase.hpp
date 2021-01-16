@@ -8,7 +8,7 @@
 #ifndef PTK_CORE_PLATFORM_MAINWINDOWBASE_HPP
 #define PTK_CORE_PLATFORM_MAINWINDOWBASE_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/util/Point.hpp"
 #include "ptk/util/Size.hpp"
 #include "ptk/core/platform/ContextBase.hpp"

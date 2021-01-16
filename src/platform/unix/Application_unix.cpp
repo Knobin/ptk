@@ -8,6 +8,8 @@
 // Local Headers
 #include "Application_unix.hpp"
 #include "MainWindow_unix.hpp"
+
+// pTK Headers
 #include "ptk/core/Exception.hpp"
 #include "ptk/core/Event.hpp"
 

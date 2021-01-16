@@ -8,7 +8,7 @@
 #ifndef PTK_EVENTS_WINDOWEVENT_HPP
 #define PTK_EVENTS_WINDOWEVENT_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/Event.hpp"
 #include "ptk/util/Size.hpp"
 #include "ptk/util/Point.hpp"

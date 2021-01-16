@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2019-10-09.
 //
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/Text.hpp"
 
 namespace pTK

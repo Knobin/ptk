@@ -8,7 +8,7 @@
 #ifndef PTK_PLATFORM_WIN_PLATFORM_HPP
 #define PTK_PLATFORM_WIN_PLATFORM_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/platform/ApplicationBase.hpp"
 
 // C++ Headers

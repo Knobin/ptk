@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2019-07-11.
 //
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/Sizable.hpp"
 
 namespace pTK

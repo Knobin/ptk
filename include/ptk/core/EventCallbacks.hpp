@@ -8,7 +8,7 @@
 #ifndef PTK_CORE_EVENTCALLBACKS_HPP
 #define PTK_CORE_EVENTCALLBACKS_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/events/KeyEvent.hpp"
 #include "ptk/events/MouseEvent.hpp"
 #include "ptk/util/Vec2.hpp"

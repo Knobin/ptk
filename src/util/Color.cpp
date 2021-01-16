@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2019-06-17.
 //
 
-// Local Headers
+// pTK Headers
 #include "ptk/util/Color.hpp"
 
 // C++ Headers

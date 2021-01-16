@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2019-11-25.
 //
 
-// Local Headers
+// pTK Headers
 #include "ptk/widgets/Image.hpp"
 
 namespace pTK

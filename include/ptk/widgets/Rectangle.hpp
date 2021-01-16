@@ -8,7 +8,7 @@
 #ifndef PTK_WIDGETS_RECTANGLE_HPP
 #define PTK_WIDGETS_RECTANGLE_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/Shape.hpp"
 
 namespace pTK

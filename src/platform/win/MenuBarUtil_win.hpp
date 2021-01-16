@@ -8,7 +8,7 @@
 #ifndef PTK_PlATFORM_WIN_MENUBARUTIL_HPP
 #define PTK_PlATFORM_WIN_MENUBARUTIL_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/events/KeyCodes.hpp"
 #include "ptk/menu/MenuItem.hpp"
 #include "ptk/menu/Menu.hpp"

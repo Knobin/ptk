@@ -8,7 +8,7 @@
 #ifndef PTK_KEYCODES_HPP
 #define PTK_KEYCODES_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/Core.hpp"
 #include "ptk/core/Types.hpp"
 

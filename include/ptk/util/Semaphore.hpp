@@ -8,7 +8,7 @@
 #ifndef PTK_UTIL_SEMAPHORE_HPP
 #define PTK_UTIL_SEMAPHORE_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/util/Singleton.hpp"
 
 // C++ Headers

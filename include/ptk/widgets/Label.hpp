@@ -8,7 +8,7 @@
 #ifndef PTK_WIDGETS_LABEL_HPP
 #define PTK_WIDGETS_LABEL_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/Text.hpp"
 #include "ptk/core/Shape.hpp"
 

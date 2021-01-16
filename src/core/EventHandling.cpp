@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2019-06-13.
 //
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/EventHandling.hpp"
 
 namespace pTK

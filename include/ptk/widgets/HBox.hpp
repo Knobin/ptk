@@ -8,7 +8,7 @@
 #ifndef PTK_WIDGETS_HBOX_HPP
 #define PTK_WIDGETS_HBOX_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/Box.hpp"
 
 // C++ Headers

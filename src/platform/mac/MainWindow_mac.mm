@@ -7,15 +7,16 @@
 
 // Local Headers
 #include "MainWindow_mac.hpp"
+#include "../common/RasterContext.hpp"
+#include "Application_mac.hpp"
+#include "RasterPolicy_mac.hpp"
+
+// pTK Headers
 #include "ptk/Window.hpp"
 #include "ptk/core/Exception.hpp"
 #include "ptk/events/KeyCodes.hpp"
 #include "ptk/events/WindowEvent.hpp"
 #include "ptk/Application.hpp"
-
-#include "../common/RasterContext.hpp"
-#include "Application_mac.hpp"
-#include "RasterPolicy_mac.hpp"
 
 // Include Metal backend.
 #ifdef PTK_METAL

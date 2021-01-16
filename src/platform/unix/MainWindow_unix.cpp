@@ -7,11 +7,13 @@
 
 // Local Headers
 #include "MainWindow_unix.hpp"
-#include "ptk/Window.hpp"
 #include "Application_unix.hpp"
-#include "ptk/core/Exception.hpp"
 #include "../common/RasterContext.hpp"
 #include "RasterPolicy_unix.hpp"
+
+// pTK Headers
+#include "ptk/Window.hpp"
+#include "ptk/core/Exception.hpp"
 
 #ifdef PTK_OPENGL
     #include "GLContext_unix.hpp"

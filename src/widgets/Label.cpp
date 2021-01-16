@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2019-06-30.
 //
 
-// Local Headers
+// pTK Headers
 #include "ptk/widgets/Label.hpp"
 
 // Skia Headers

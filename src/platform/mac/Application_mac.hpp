@@ -8,7 +8,7 @@
 #ifndef PTK_PLATFORM_MAC_APPLICATION_HPP
 #define PTK_PLATFORM_MAC_APPLICATION_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/platform/ApplicationBase.hpp"
 
 namespace pTK

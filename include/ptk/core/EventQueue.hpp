@@ -8,7 +8,7 @@
 #ifndef PTK_CORE_EVENTQUEUE_HPP
 #define PTK_CORE_EVENTQUEUE_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/util/Singleton.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/events/WindowEvent.hpp"

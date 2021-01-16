@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2019-11-18.
 //
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/Box.hpp"
 
 namespace pTK

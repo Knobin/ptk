@@ -8,7 +8,7 @@
 #ifndef PTK_UTIL_SIZE_HPP
 #define PTK_UTIL_SIZE_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/Types.hpp"
 
 // C++ Headers

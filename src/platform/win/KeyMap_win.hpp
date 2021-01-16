@@ -8,7 +8,7 @@
 #ifndef PTK_PlATFORM_WIN_KEYMAP_HPP
 #define PTK_PlATFORM_WIN_KEYMAP_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/events/KeyCodes.hpp"
 
 // C++ Headers

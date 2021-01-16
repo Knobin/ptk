@@ -8,7 +8,7 @@
 #ifndef PTK_CORE_WIDGET_HPP
 #define PTK_CORE_WIDGET_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/Drawable.hpp"
 #include "ptk/core/EventHandling.hpp"
 #include "ptk/core/Sizable.hpp"

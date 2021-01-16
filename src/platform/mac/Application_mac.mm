@@ -7,8 +7,10 @@
 
 // Local Headers
 #include "Application_mac.hpp"
-#include "ptk/Application.hpp"
 #include "MainWindow_mac.hpp"
+
+// pTK Headers
+#include "ptk/Application.hpp"
 #include "ptk/Window.hpp"
 #include "ptk/core/Exception.hpp"
 #include "ptk/Log.hpp"

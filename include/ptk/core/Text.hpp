@@ -8,7 +8,7 @@
 #ifndef PTK_CORE_TEXT_HPP
 #define PTK_CORE_TEXT_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/Core.hpp"
 #include "ptk/core/Font.hpp"
 

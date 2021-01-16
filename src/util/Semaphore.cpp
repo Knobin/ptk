@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2019-07-09.
 //
 
-// Local Headers
+// pTK Headers
 #include "ptk/util/Semaphore.hpp"
 
 namespace pTK

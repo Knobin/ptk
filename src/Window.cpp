@@ -6,8 +6,10 @@
 //
 
 // Local Headers
-#include "ptk/Window.hpp"
 #include "platform/Platform.hpp"
+
+// pTK Headers
+#include "ptk/Window.hpp"
 #include "ptk/Application.hpp"
 
 namespace pTK

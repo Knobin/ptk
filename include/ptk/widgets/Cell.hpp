@@ -8,7 +8,7 @@
 #ifndef PTK_CORE_CELL_HPP
 #define PTK_CORE_CELL_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/widgets/Rectangle.hpp"
 
 // C++ Headers

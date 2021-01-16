@@ -8,7 +8,7 @@
 #ifndef PTK_PlATFORM_MAC_MAINWINDOW_HPP
 #define PTK_PlATFORM_MAC_MAINWINDOW_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/platform/MainWindowBase.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/events/MouseEvent.hpp"

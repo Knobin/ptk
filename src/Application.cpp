@@ -6,8 +6,10 @@
 //
 
 // Local Headers
-#include "ptk/Application.hpp"
 #include "platform/Platform.hpp"
+
+// pTK Headers
+#include "ptk/Application.hpp"
 #include "ptk/core/Exception.hpp"
 
 // C++ Headers

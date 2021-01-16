@@ -8,7 +8,7 @@
 #ifndef PTK_WIDGETS_CHECKBOX_HPP
 #define PTK_WIDGETS_CHECKBOX_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/widgets/Rectangle.hpp"
 
 namespace pTK

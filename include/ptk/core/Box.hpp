@@ -8,7 +8,7 @@
 #ifndef PTK_CORE_BOX_HPP
 #define PTK_CORE_BOX_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/util/IterableContainer.hpp"
 #include "ptk/core/Widget.hpp"
 

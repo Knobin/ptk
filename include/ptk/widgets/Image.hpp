@@ -8,7 +8,7 @@
 #ifndef PTK_WIDGETS_IMAGE_HPP
 #define PTK_WIDGETS_IMAGE_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/Widget.hpp"
 #include "ptk/util/Vec2.hpp"
 

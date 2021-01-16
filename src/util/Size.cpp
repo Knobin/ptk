@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2019-06-24.
 //
 
-// Local Headers
+// pTK Headers
 #include "ptk/util/Size.hpp"
 
 namespace pTK

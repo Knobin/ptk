@@ -8,7 +8,7 @@
 #ifndef PTK_PlATFORM_COMMON_RASTERCONTEXT_HPP
 #define PTK_PlATFORM_COMMON_RASTERCONTEXT_HPP
 
-// Local Headers
+// pTK Headers
 #include "ptk/core/platform/ContextBase.hpp"
 #include "ptk/core/Exception.hpp"
 
