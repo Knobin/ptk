@@ -43,8 +43,11 @@ namespace pTK
     {
     public:
         MenuItemHandlerGuard() = delete;
-        MenuItemHandlerGuard(MenuItemHandler *handler)
-                : m_handler{handler}
+        MenuItemHandlerGuard(const MenuItemHandlerGuard&) = delete;
+        MenuItemHandlerGuard& operator = (const MenuItemHandlerGuard&) = delete;
+
+        explicit MenuItemHandlerGuard(MenuItemHandler *handler)
+            : m_handler{handler}
         {
             m_handler->lock();
         }
@@ -53,6 +56,7 @@ namespace pTK
         {
             m_handler->unlock();
         }
+
     private:
         MenuItemHandler *m_handler{nullptr};
     };

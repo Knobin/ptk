@@ -13,6 +13,7 @@ set(PLATFORM_FILES_MAC_METAL platform/mac/MetalContext_mac.hpp
 
 # Windows files
 set(PLATFORM_FILES_WIN platform/win/Application_win.cpp
+    platform/win/KeyMap_win.cpp
     platform/win/MainWindow_win.cpp
     platform/win/RasterPolicy_win.cpp)
 set(PLATFORM_FILES_WIN_OPENGL platform/win/GLContext_win.cpp)

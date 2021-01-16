@@ -10,6 +10,7 @@
 
 // Local Headers
 #include "ptk/Core.hpp"
+#include "ptk/core/Types.hpp"
 
 // TODO: Add more keycodes.
 

@@ -11,7 +11,7 @@
 #include "../common/RasterContext.hpp"
 #include "RasterPolicy_win.hpp"
 #include "ptk/Application.hpp"
-#include "ptk/menu/MenuItem.hpp"
+#include "KeyMap_win.hpp"
 
 // Include OpenGL backend if HW Acceleration is enabled.
 #ifdef PTK_OPENGL
@@ -23,11 +23,11 @@
 #include <Dwmapi.h>
 
 // C++ Headers
-#include <algorithm>
 #include <cmath>
 #include <memory>
 #include <tuple>
 #include <optional>
+#include <mutex>
 
 namespace pTK
 {
@@ -41,44 +41,6 @@ namespace pTK
 
         // Software backend is always available.
         return std::make_unique<RasterContext<RasterPolicy_win>>(size, RasterPolicy_win{hwnd});
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////
-
-    static std::map<int32, KeyCode> InitKeyCodes() noexcept
-    {
-        std::map<int32, KeyCode> map{};
-        map[VK_SPACE] = Key::Space; map[VK_ESCAPE] = Key::Escape;
-        map[0x30] = Key::D0; map[0x31] = Key::D1; map[0x32] = Key::D2; map[0x33] = Key::D3;
-        map[0x34] = Key::D4; map[0x35] = Key::D5; map[0x36] = Key::D6; map[0x37] = Key::D7;
-        map[0x38] = Key::D8; map[0x39] = Key::D9;
-        map[VK_NUMPAD0] = Key::D0; map[VK_NUMPAD1] = Key::D1; map[VK_NUMPAD2] = Key::D2;
-        map[VK_NUMPAD3] = Key::D3; map[VK_NUMPAD4] = Key::D4; map[VK_NUMPAD5] = Key::D5;
-        map[VK_NUMPAD6] = Key::D6; map[VK_NUMPAD7] = Key::D7; map[VK_NUMPAD8] = Key::D8;
-        map[VK_NUMPAD9] = Key::D9;
-        map[0x41] = Key::A; map[0x42] = Key::B; map[0x43] = Key::C; map[0x44] = Key::D;
-        map[0x45] = Key::E; map[0x46] = Key::F; map[0x47] = Key::G; map[0x48] = Key::H;
-        map[0x49] = Key::I; map[0x4A] = Key::J; map[0x4B] = Key::K; map[0x4C] = Key::L;
-        map[0x4D] = Key::M; map[0x4E] = Key::N; map[0x4F] = Key::O; map[0x50] = Key::P;
-        map[0x51] = Key::Q; map[0x52] = Key::R; map[0x53] = Key::S; map[0x54] = Key::T;
-        map[0x55] = Key::U; map[0x56] = Key::V; map[0x57] = Key::W; map[0x58] = Key::X;
-        map[0x59] = Key::Y; map[0x5A] = Key::Z;
-
-        map[VK_LSHIFT] = Key::LeftShift; map[VK_LCONTROL] = Key::LeftControl; map[VK_LMENU] = Key::LeftAlt;
-        map[VK_RSHIFT] = Key::RightShift; map[VK_RCONTROL] = Key::RightControl; map[VK_RMENU] = Key::RightAlt;
-
-        return map;
-    }
-
-    static const std::map<int32, KeyCode> s_keyMap{InitKeyCodes()};
-
-    static Key TranslateKeyCodeToKey(int32 code)
-    {
-        std::map<int32, KeyCode>::const_iterator it{s_keyMap.find(code)};
-        if (it != s_keyMap.cend())
-            return it->second;
-
-        return Key::Unknown;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -155,16 +117,12 @@ namespace pTK
         return nullptr;
     }
 
-    static std::string TranslateKeyCodeToShortcutStr(const KeyCode& code)
+    static std::string TranslateKeyCodeToShortcutStr(const KeyCode& key)
     {
         std::string str{};
 
         // Find KeyCode in global map.
-        auto it = std::find_if(s_keyMap.cbegin(), s_keyMap.cend(), [&](const auto& pair) {
-            return pair.second == code;
-        });
-
-        if (it != s_keyMap.cend())
+        if (KeyMap_win::KeyExistsInMap(key))
         {
             constexpr std::array<Key, 2> altKeys{Key::LeftAlt, Key::RightAlt};
             constexpr std::array<Key, 2> ctrlKeys{Key::LeftControl, Key::RightControl};
@@ -177,15 +135,15 @@ namespace pTK
             constexpr std::array<std::pair<std::string_view, std::array<Key, 2>>, 3> shortcutKeys{alt, ctrl, shift};
             const auto foundKey = std::find_if(shortcutKeys.cbegin(), shortcutKeys.cend(), [&](const auto& pair) {
                 const auto& arr = pair.second;
-                auto found = std::find(std::begin(arr), std::end(arr), it->second);
+                auto found = std::find(std::begin(arr), std::end(arr), key);
                 return found != std::end(arr);
             });
 
             if (foundKey != shortcutKeys.cend())
                 str = foundKey->first;
             else
-                if (IsKeyCodeAlpha(it->second))
-                    str = KeyCodeToAlpha(it->second);
+                if (IsKeyCodeAlpha(key))
+                    str = KeyCodeToAlpha(key);
         }
 
         return str;
@@ -195,17 +153,14 @@ namespace pTK
     {
         byte virt{FVIRTKEY};
         std::string shortcutStr{};
-        WORD key{0};
+        WORD lastKey{0};
 
         // static const std::map<int32, KeyCode> s_keyMap{InitKeyCodes()};
-        for (const KeyCode& code : codes)
+        for (const KeyCode& key : codes)
         {
-            auto it = std::find_if(s_keyMap.cbegin(), s_keyMap.cend(), [&](const auto& pair) {
-                return pair.second == code;
-            });
-            if (it != s_keyMap.cend())
+            if (KeyMap_win::KeyExistsInMap(key))
             {
-                std::string str{TranslateKeyCodeToShortcutStr(it->second)};
+                std::string str{TranslateKeyCodeToShortcutStr(key)};
                 if (!str.empty())
                 {
                     constexpr std::pair<std::string_view, int32> alt("Alt", FALT);
@@ -227,19 +182,19 @@ namespace pTK
                     else
                     {
                         // This is a keycode.
-                        key = static_cast<WORD>(it->first);
+                        lastKey = static_cast<WORD>(KeyMap_win::TranslateKeyToKeyCode(key));
                     }
                 }
             }
         }
 
-        if (key != 0)
+        if (lastKey != 0)
         {
             ACCEL accel{};
-            accel.key = key;
+            accel.key = lastKey;
             if (virt != 0)
                 accel.fVirt = virt;
-            return std::pair{accel, shortcutStr + (!shortcutStr.empty() ? "+" : "") + static_cast<char>(key)};
+            return std::pair{accel, shortcutStr + (!shortcutStr.empty() ? "+" : "") + static_cast<char>(lastKey)};
         }
 
         return std::nullopt;
@@ -858,11 +813,11 @@ namespace pTK
 
     static void HandleKeyEvent(Window *window, const Event::Type& type, WPARAM wParam, LPARAM lParam)
     {
-        KeyCode key{TranslateKeyCodeToKey(static_cast<int32>(wParam))};
+        KeyCode key{KeyMap_win::TranslateKeyCodeToKey(static_cast<int32>(wParam))};
         if (key == Key::Unknown)
         {
             WPARAM lrKey{MapLeftRightKeys(wParam, lParam)};
-            key = TranslateKeyCodeToKey(static_cast<int32>(lrKey));
+            key = KeyMap_win::TranslateKeyCodeToKey(static_cast<int32>(lrKey));
         }
 
         KeyEvent evt{type, key};
