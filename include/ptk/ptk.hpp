@@ -29,6 +29,7 @@
 // --- Events ------------------------
 #include "ptk/events/KeyCodes.hpp"
 #include "ptk/events/KeyEvent.hpp"
+#include "ptk/events/KeyMap.hpp"
 #include "ptk/events/MouseEvent.hpp"
 #include "ptk/events/WindowEvent.hpp"
 

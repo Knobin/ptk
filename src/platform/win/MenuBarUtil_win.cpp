@@ -7,7 +7,9 @@
 
 // Local Headers
 #include "MenuBarUtil_win.hpp"
-#include "KeyMap_win.hpp"
+
+// pTK Headers
+#include "ptk/events/KeyMap.hpp"
 
 namespace pTK::MenuBarUtil_win
 {
@@ -104,12 +106,12 @@ namespace pTK::MenuBarUtil_win
         return nullptr;
     }
 
-    std::string TranslateKeyCodeToShortcutStr(const KeyCode& key)
+    std::string TranslateKeyCodeToShortcutStr(const Key& key)
     {
         std::string str{};
 
         // Find KeyCode in global map.
-        if (KeyMap_win::KeyExistsInMap(key))
+        if (KeyMap::KeyExists(key))
         {
             constexpr std::array<Key, 2> altKeys{Key::LeftAlt, Key::RightAlt};
             constexpr std::array<Key, 2> ctrlKeys{Key::LeftControl, Key::RightControl};
@@ -145,7 +147,7 @@ namespace pTK::MenuBarUtil_win
         // static const std::map<int32, KeyCode> s_keyMap{InitKeyCodes()};
         for (const KeyCode& key : codes)
         {
-            if (KeyMap_win::KeyExistsInMap(key))
+            if (KeyMap::KeyExists(key))
             {
                 std::string str{TranslateKeyCodeToShortcutStr(key)};
                 if (!str.empty())
@@ -169,7 +171,7 @@ namespace pTK::MenuBarUtil_win
                     else
                     {
                         // This is a keycode.
-                        lastKey = static_cast<WORD>(KeyMap_win::TranslateKeyToKeyCode(key));
+                        lastKey = static_cast<WORD>(KeyMap::KeyToKeyCode(key));
                     }
                 }
             }

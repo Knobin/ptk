@@ -11,10 +11,10 @@
 #include "../common/RasterContext.hpp"
 #include "RasterPolicy_win.hpp"
 #include "MenuBarUtil_win.hpp"
-#include "KeyMap_win.hpp"
 
 // pTK Headers
 #include "ptk/Application.hpp"
+#include "ptk/events/KeyMap.hpp"
 
 // Include OpenGL backend if HW Acceleration is enabled.
 #ifdef PTK_OPENGL
@@ -544,11 +544,11 @@ namespace pTK
 
     static void HandleKeyEvent(Window *window, const Event::Type& type, WPARAM wParam, LPARAM lParam)
     {
-        KeyCode key{KeyMap_win::TranslateKeyCodeToKey(static_cast<int32>(wParam))};
+        KeyCode key{KeyMap::KeyCodeToKey(static_cast<int32>(wParam))};
         if (key == Key::Unknown)
         {
             WPARAM lrKey{MapLeftRightKeys(wParam, lParam)};
-            key = KeyMap_win::TranslateKeyCodeToKey(static_cast<int32>(lrKey));
+            key = KeyMap::KeyCodeToKey(static_cast<int32>(lrKey));
         }
 
         KeyEvent evt{type, key};

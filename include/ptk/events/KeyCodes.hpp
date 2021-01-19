@@ -84,6 +84,17 @@ namespace pTK
     {
         return static_cast<char>(static_cast<int32>(code));
     }
+
+    constexpr bool IsKeyCodeDigit(const KeyCode& code) noexcept
+    {
+        const auto value = static_cast<int32>(code);
+        return ((value >= 48) && (value <= 57));
+    }
+
+    constexpr byte KeyCodeToDigit(const KeyCode& code) noexcept
+    {
+        return static_cast<byte>(static_cast<int32>(code));
+    }
 }
 
 

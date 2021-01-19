@@ -2,15 +2,15 @@
 //  platform/win/KeyMap_win.cpp
 //  pTK
 //
-//  Created by Robin Gustafsson on 2021-01-16.
+//  Created by Robin Gustafsson on 2021-01-18.
 //
 
 // Local Headers
 #include "KeyMap_win.hpp"
 
-namespace pTK::KeyMap_win
+namespace pTK
 {
-    static std::map<int32, KeyCode> InitKeyCodes() noexcept
+    std::map<int32, KeyCode> KeyCodeMapInit_win()
     {
         std::map<int32, KeyCode> map{};
         map[VK_SPACE] = Key::Space; map[VK_ESCAPE] = Key::Escape;
@@ -34,42 +34,4 @@ namespace pTK::KeyMap_win
 
         return map;
     }
-
-    static const std::map<int32, KeyCode> s_keyMap{InitKeyCodes()};
-
-    const std::map<int32, KeyCode>& Map()
-    {
-        return s_keyMap;
-    }
-
-    bool KeyExistsInMap(Key key)
-    {
-        auto it = std::find_if(s_keyMap.cbegin(), s_keyMap.cend(), [&](const auto& pair){
-            return pair.second == key;
-        });
-
-        return it != s_keyMap.cend();
-    }
-
-    Key TranslateKeyCodeToKey(int32 code)
-    {
-        std::map<int32, KeyCode>::const_iterator it{s_keyMap.find(code)};
-        if (it != s_keyMap.cend())
-            return it->second;
-
-        return Key::Unknown;
-    }
-
-    int32 TranslateKeyToKeyCode(Key key)
-    {
-        auto it = std::find_if(s_keyMap.cbegin(), s_keyMap.cend(), [&](const auto& pair){
-            return pair.second == key;
-        });
-
-        if (it != s_keyMap.cend())
-            return it->first;
-
-        return static_cast<int32>(Key::Unknown);
-    }
-
 } // namespace pTK

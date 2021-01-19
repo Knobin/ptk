@@ -10,6 +10,8 @@ set(CORE_FILES core/Box.cpp
         core/Widget.cpp
         core/platform/ContextBase.cpp)
 
+set(EVENT_FILES events/KeyMap.cpp)
+
 set(UTIL_FILES util/Alignment.cpp
         util/Color.cpp
         util/Point.cpp
@@ -40,6 +42,7 @@ source_group(TREE "${CMAKE_SOURCE_DIR}/include/ptk" PREFIX "Header Files" FILES 
 set(SOURCE_FILES Application.cpp Window.cpp
         ${CORE_FILES}
         ${PLATFORM_FILES}
+        ${EVENT_FILES}
         ${UTIL_FILES}
         ${WIDGET_FILES}
         ${LOG_FILES})

@@ -2,7 +2,7 @@
 //  platform/win/KeyMap_win.hpp
 //  pTK
 //
-//  Created by Robin Gustafsson on 2021-01-16.
+//  Created by Robin Gustafsson on 2021-01-18.
 //
 
 #ifndef PTK_PlATFORM_WIN_KEYMAP_HPP
@@ -14,12 +14,9 @@
 // C++ Headers
 #include <map>
 
-namespace pTK::KeyMap_win
+namespace pTK
 {
-    const std::map<int32, KeyCode>& Map();
-    bool KeyExistsInMap(Key key);
-    Key TranslateKeyCodeToKey(int32 code);
-    int32 TranslateKeyToKeyCode(Key key);
+    std::map<int32, KeyCode> KeyCodeMapInit_win();
 
 } // namespace pTK
 
