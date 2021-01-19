@@ -52,6 +52,8 @@ namespace pTK
             @param ms   max time to wait for an event
         */
         virtual void waitEventsTimeout(uint ms) = 0;
+        
+        virtual void onClose() {}
 
         /** Callback that will be called when a window is added to the
             application.

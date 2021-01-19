@@ -28,6 +28,8 @@
     #include "mac/MainWindow_mac.hpp"
     using PTK_MAINWINDOW_TYPE = pTK::MainWindow_mac;
     #define PTK_PLATFORM_STR "Apple"
+    #include "mac/KeyMap_mac.hpp"
+    #define PTK_KEYMAP_INIT_FUNC pTK::KeyCodeMapInit_mac
 #else
     #error "Unsupported platform!"
 #endif

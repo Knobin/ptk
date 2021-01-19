@@ -64,8 +64,7 @@
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *) __unused sender {
-    PTK_INFO("APP SHOULD TERMINATE");
-    pTK::Application::Get()->removeAllWindows();
+    pTK::Application::Get()->close();
     _run = FALSE;
     return NSTerminateCancel;
 }

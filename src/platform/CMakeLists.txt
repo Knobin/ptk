@@ -6,6 +6,8 @@ set(PLATFORM_FILES_MAC platform/mac/Application_mac.hpp
     platform/mac/Application_mac.mm
     platform/mac/MainWindow_mac.hpp
     platform/mac/MainWindow_mac.mm
+    platform/mac/KeyMap_mac.hpp
+    platform/mac/KeyMap_mac.cpp
     platform/mac/RasterPolicy_mac.hpp
     platform/mac/RasterPolicy_mac.mm)
 set(PLATFORM_FILES_MAC_METAL platform/mac/MetalContext_mac.hpp
