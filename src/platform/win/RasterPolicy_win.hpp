@@ -10,9 +10,12 @@
 
 // pTK Headers
 #include "ptk/util/Size.hpp"
+#include "ptk/Core.hpp"
 
 // Skia Headers
+PTK_DISABLE_WARN_BEGIN()
 #include <include/core/SkImageInfo.h>
+PTK_DISABLE_WARN_END()
 
 // Windows Headers
 #include <windows.h>

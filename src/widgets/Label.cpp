@@ -9,8 +9,10 @@
 #include "ptk/widgets/Label.hpp"
 
 // Skia Headers
+PTK_DISABLE_WARN_BEGIN()
 #include "include/core/SkFont.h"
 #include "include/core/SkTypeface.h"
+PTK_DISABLE_WARN_END()
 
 // C++ Headers
 #include <cmath>

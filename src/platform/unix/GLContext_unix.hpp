@@ -19,7 +19,9 @@
 #include <GL/glx.h>
 
 // Skia Headers
+PTK_DISABLE_WARN_BEGIN()
 #include "include/gpu/GrContext.h"
+PTK_DISABLE_WARN_END()
 
 namespace pTK
 {

@@ -9,32 +9,11 @@
 #define PTK_CORE_HPP
 
 // pTK Headers
+#include "ptk/core/Defines.hpp"
 #include "ptk/Log.hpp"
 
 // C++ Headers
 #include <memory>
-
-#ifdef PTK_DEBUG
-    #define PTK_ENABLE_ASSERT
-#endif
-
-// Unused parameter.
-#ifdef PTK_COMPILER_GCC
-    #define UNUSED(x) x __attribute__((unused))
-#elif PTK_COMPILER_CLANG
-    #define UNUSED(x) x __attribute__((unused))
-#elif PTK_COMPILER_MSVC
-    #define UNUSED(x) __pragma(warning(suppress:4100)) x
-#else
-    #define UNUSED(x)
-#endif
-
-// Enable Asserts
-#ifdef PTK_ENABLE_ASSERT
-    #define PTK_ASSERT(x, ...)   if(!(x)) { PTK_ERROR("Assertion Failed: {0}", __VA_ARGS__); abort(); }
-#else
-    #define PTK_ASSERT(...)
-#endif
 
 namespace pTK
 {

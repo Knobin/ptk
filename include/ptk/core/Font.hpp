@@ -16,8 +16,10 @@
 #include <string>
 
 // Skia Headers
+__pragma(warning(push, 0))
 #include "include/core/SkFont.h"
 #include "include/core/SkTypeface.h"
+__pragma(warning(pop))
 
 namespace pTK
 {

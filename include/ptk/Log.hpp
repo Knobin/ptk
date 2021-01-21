@@ -11,15 +11,13 @@
 // Enable Logging
 #ifdef PTK_DEBUG
 
+    // pTK Headers
+    #include "ptk/core/Defines.hpp"
+
     // spdlog Headers
-    #ifdef PTK_COMPILER_CLANG
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdouble-promotion"
-    #endif
+    PTK_DISABLE_WARN_BEGIN()
     #include "spdlog/spdlog.h"
-    #ifdef PTK_COMPILER_CLANG
-        #pragma clang diagnostic pop
-    #endif
+    PTK_DISABLE_WARN_END()
 
     // C++ Headers
     #include <memory>

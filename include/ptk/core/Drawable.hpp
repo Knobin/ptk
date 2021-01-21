@@ -8,8 +8,13 @@
 #ifndef PTK_CORE_DRAWABLE_HPP
 #define PTK_CORE_DRAWABLE_HPP
 
+// pTK Headers
+#include "ptk/Core.hpp"
+
 // Skia Headers
+PTK_DISABLE_WARN_BEGIN()
 #include "ptk/core/platform/ContextBase.hpp"
+PTK_DISABLE_WARN_END()
 
 namespace pTK
 {

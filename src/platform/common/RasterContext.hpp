@@ -13,7 +13,9 @@
 #include "ptk/core/Exception.hpp"
 
 // Skia Headers
+PTK_DISABLE_WARN_BEGIN()
 #include "src/core/SkAutoMalloc.h"
+PTK_DISABLE_WARN_END()
 
 namespace pTK
 {

@@ -20,24 +20,10 @@
 #include <memory>
 
 // Skia Headers
-#ifdef PTK_COMPILER_GCC
-#pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wpedantic"
-#elif PTK_COMPILER_CLANG
-#pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wgnu-anonymous-struct"
-#elif PTK_COMPILER_MSVC
-    #pragma warning( push, 0 )
-#endif
+PTK_DISABLE_WARN_BEGIN()
 #include "include/core/SkCanvas.h"
 #include "include/core/SkSurface.h"
-#ifdef PTK_COMPILER_GCC
-    #pragma GCC diagnostic pop
-#elif PTK_COMPILER_CLANG
-    #pragma clang diagnostic pop
-#elif PTK_COMPILER_MSVC
-    #pragma warning( pop )
-#endif
+PTK_DISABLE_WARN_END()
 
 namespace pTK
 {

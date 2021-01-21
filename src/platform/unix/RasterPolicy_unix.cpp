@@ -13,7 +13,9 @@
 #include "ptk/Log.hpp"
 
 // Skia Headers
+PTK_DISABLE_WARN_BEGIN()
 #include "include/core/SkSurface.h"
+PTK_DISABLE_WARN_END()
 
 using App = pTK::Application_unix;
 

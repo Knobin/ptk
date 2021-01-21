@@ -11,7 +11,7 @@
 namespace pTK
 {
     std::shared_ptr<spdlog::logger> Log::s_logger;
-    
+
     void Log::init()
     {
         spdlog::set_pattern("%^[%Y-%m-%d %T] %n: %v%$");

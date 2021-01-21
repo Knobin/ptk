@@ -21,26 +21,12 @@
 #include <GL/glx.h>
 
 // Skia Headers
-#ifdef PTK_COMPILER_GCC
-#pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wpedantic"
-#elif PTK_COMPILER_CLANG
-#pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wgnu-anonymous-struct"
-#elif PTK_COMPILER_MSVC
-#pragma warning( push, 0 )
-#endif
+PTK_DISABLE_WARN_BEGIN()
 #include "include/gpu/GrBackendSurface.h"
 #include "include/gpu/gl/GrGLInterface.h"
 #include "include/gpu/GrContext.h"
 #include "src/gpu/gl/GrGLUtil.h"
-#ifdef PTK_COMPILER_GCC
-#pragma GCC diagnostic pop
-#elif PTK_COMPILER_CLANG
-#pragma clang diagnostic pop
-#elif PTK_COMPILER_MSVC
-#pragma warning( pop )
-#endif
+PTK_DISABLE_WARN_END()
 
 using App = pTK::Application_unix;
 typedef GLXContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXContext, Bool, const int*);

@@ -9,8 +9,10 @@
 #include "ptk/widgets/Checkbox.hpp"
 
 // Skia Headers
+PTK_DISABLE_WARN_BEGIN()
 #include "include/core/SkRRect.h"
 #include "include/core/SkPath.h"
+PTK_DISABLE_WARN_END()
 
 // TODO: Fix m_click or just delete it.
 

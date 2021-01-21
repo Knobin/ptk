@@ -12,7 +12,9 @@
 #include "ptk/core/platform/ContextBase.hpp"
 
 // Skia Headers
+PTK_DISABLE_WARN_BEGIN()
 #include "include/gpu/GrContext.h"
+PTK_DISABLE_WARN_END()
 
 #import <Metal/Metal.h>
 #import <QuartzCore/CAMetalLayer.h>

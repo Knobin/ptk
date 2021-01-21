@@ -18,9 +18,11 @@
 #import <QuartzCore/CAConstraintLayoutManager.h>
 
 // Skia Headers
+PTK_DISABLE_WARN_BEGIN()
 #include "include/gpu/GrBackendSurface.h"
 #include "include/gpu/mtl/GrMtlTypes.h"
 #include "include/gpu/GrContextOptions.h"
+PTK_DISABLE_WARN_END()
 
 namespace pTK
 {
