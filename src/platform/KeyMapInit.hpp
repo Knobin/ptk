@@ -11,9 +11,9 @@
 // Local Headers
 #include "Platform.hpp"
 
-namespace pTK::KeyMap
+namespace pTK
 {
-    std::map<int32, KeyCode> MapInit()
+    std::map<int32, KeyCode> KeyMapInit()
     {
         return PTK_KEYMAP_INIT_FUNC();
     }

@@ -15,7 +15,7 @@
 namespace pTK
 {
     Window::Window(const std::string& name, const Size& size, const WindowInfo& flags)
-        : VBox(), Singleton(), m_threadID{std::this_thread::get_id()}, m_info{flags}
+        : VBox(), SingleObject(), m_threadID{std::this_thread::get_id()}, m_info{flags}
     {
         // Set Widget properties.
         Sizable::setSize(size);

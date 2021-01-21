@@ -10,7 +10,7 @@
 
 // pTK Headers
 #include "ptk/core/platform/MainWindowBase.hpp"
-#include "ptk/util/Singleton.hpp"
+#include "ptk/util/SingleObject.hpp"
 #include "ptk/widgets/VBox.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/util/Vec2.hpp"
@@ -37,7 +37,7 @@ namespace pTK
         Currently, it will default to a hardware based backend if no one is specified.
         If that backend is not available, it will fall back to a software based backend.
     */
-    class Window : public VBox, public Singleton
+    class Window : public VBox, public SingleObject
     {
     public:
         /** Constructs Window with default values.

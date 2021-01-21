@@ -10,7 +10,7 @@
 
 // pTK Headers
 #include "ptk/Core.hpp"
-#include "ptk/util/Singleton.hpp"
+#include "ptk/util/SingleObject.hpp"
 #include "ptk/Window.hpp"
 
 // C++ Headers
@@ -23,7 +23,7 @@ namespace pTK
         This is the implementation for the Application backend.
         An implementation of this class must exist for the target platform.
     */
-    class ApplicationBase : public Singleton
+    class ApplicationBase : public SingleObject
     {
     public:
         /** Constructs ApplicationBase with default values.

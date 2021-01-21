@@ -10,7 +10,7 @@
 
 // pTK Headers
 #include "ptk/core/platform/ApplicationBase.hpp"
-#include "ptk/util/Singleton.hpp"
+#include "ptk/util/SingleObject.hpp"
 #include "ptk/Window.hpp"
 #include "ptk/core/Types.hpp"
 #include "ptk/util/IterableContainer.hpp"
@@ -27,7 +27,7 @@ namespace pTK
         application.
 
     */
-    class Application : public IterableAssociative<int32, Window*>, public Singleton
+    class Application : public IterableAssociative<int32, Window*>, public SingleObject
     {
     public:
         /** Constructs Application with default values.
@@ -94,6 +94,7 @@ namespace pTK
         
     public:
         static Application *Get();
+
 
     private:
         bool init();

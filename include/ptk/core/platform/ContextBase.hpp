@@ -10,7 +10,7 @@
 
 // pTK Headers
 #include "ptk/Core.hpp"
-#include "ptk/util/Singleton.hpp"
+#include "ptk/util/SingleObject.hpp"
 #include "ptk/util/Size.hpp"
 #include "ptk/util/Color.hpp"
 #include "ptk/util/Vec2.hpp"
@@ -32,7 +32,7 @@ namespace pTK
         This class handles the drawing.
         Kind of an API class that implements some common functions.
     */
-    class ContextBase : public Singleton
+    class ContextBase : public SingleObject
     {
     public:
         /** Constructs ContextBase with default values.

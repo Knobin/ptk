@@ -11,7 +11,7 @@
 namespace pTK
 {
     ContextBase::ContextBase(const Size& size)
-        : Singleton(),
+        : SingleObject(),
             m_size{size}
     {
 

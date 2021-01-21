@@ -21,13 +21,13 @@ namespace pTK
     static Ref<MenuBar> s_globalMenu{nullptr}; // Should be a "Menubar" pointer later.
 
     Application::Application()
-        : IterableAssociative<int32, Window*>(), Singleton()
+        : IterableAssociative<int32, Window*>(), SingleObject()
     {
         init();
     }
 
     Application::Application(int, char* [])
-        : IterableAssociative<int32, Window*>(), Singleton()
+        : IterableAssociative<int32, Window*>(), SingleObject()
     {
         init();
         // TODO: Check arguments.

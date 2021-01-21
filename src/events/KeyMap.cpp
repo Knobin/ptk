@@ -8,46 +8,63 @@
 // Local Headers
 #include "../platform/KeyMapInit.hpp"
 
+// pTK Headers
+#include "ptk/events/KeyMap.hpp"
+
 // C++ Headers
 #include <map>
 
-namespace pTK::KeyMap
+namespace pTK
 {
-    static const std::map<int32, Key> s_keyMap{MapInit()};
+    KeyMap KeyMap::s_Instance{};
 
-    const std::map<int32, Key>& Map()
+    KeyMap::KeyMap()
+        : SingleObject(), m_keyMap{KeyMapInit()}
     {
-        return s_keyMap;
+
     }
 
-    bool KeyExists(Key key)
+    KeyMap& KeyMap::Get()
     {
-        auto it = std::find_if(s_keyMap.cbegin(), s_keyMap.cend(), [&](const auto& pair){
+        return s_Instance;
+    }
+
+    const std::map<int32, Key>& KeyMap::Map()
+    {
+        return Get().m_keyMap;
+    }
+
+    bool KeyMap::KeyExists(Key key)
+    {
+        const std::map<int32, Key>& keyMap{Get().m_keyMap};
+        auto it = std::find_if(keyMap.cbegin(), keyMap.cend(), [&](const auto& pair){
             return pair.second == key;
         });
 
-        return it != s_keyMap.cend();
+        return it != keyMap.cend();
     }
 
-    Key KeyCodeToKey(int32 code)
+    Key KeyMap::KeyCodeToKey(int32 code)
     {
-        std::map<int32, KeyCode>::const_iterator it{s_keyMap.find(code)};
-        if (it != s_keyMap.cend())
+        const std::map<int32, Key>& keyMap{Get().m_keyMap};
+        std::map<int32, KeyCode>::const_iterator it{keyMap.find(code)};
+        if (it != keyMap.cend())
             return it->second;
 
         return Key::Unknown;
     }
 
-    int32 KeyToKeyCode(Key key)
+    int32 KeyMap::KeyToKeyCode(Key key)
     {
-        auto it = std::find_if(s_keyMap.cbegin(), s_keyMap.cend(), [&](const auto& pair){
+        const std::map<int32, Key>& keyMap{Get().m_keyMap};
+        auto it = std::find_if(keyMap.cbegin(), keyMap.cend(), [&](const auto& pair){
             return pair.second == key;
         });
 
-        if (it != s_keyMap.cend())
+        if (it != keyMap.cend())
             return it->first;
 
         return static_cast<int32>(Key::Unknown);
     }
 
-} // namespace pTK::KeyMap
+} // namespace pTK

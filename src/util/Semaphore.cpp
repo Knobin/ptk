@@ -11,7 +11,7 @@
 namespace pTK
 {
     Semaphore::Semaphore(unsigned int count)
-        : Singleton(), m_mutex{}, m_conditionVariable{}, m_count{count}
+        : SingleObject(), m_mutex{}, m_conditionVariable{}, m_count{count}
     {
     }
     

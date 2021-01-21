@@ -10,17 +10,30 @@
 
 // pTK Headers
 #include "ptk/events/KeyCodes.hpp"
+#include "ptk/util/SingleObject.hpp"
 
 // C++ Headers
 #include <map>
 
-namespace pTK::KeyMap
+namespace pTK
 {
-    const std::map<int32, Key>& Map();
-    bool KeyExists(Key key);
-    Key KeyCodeToKey(int32 keycode);
-    int32 KeyToKeyCode(Key key);
+    class KeyMap : public SingleObject
+    {
+    public:
+        static KeyMap& Get();
+        static const std::map<int32, Key>& Map();
+        static bool KeyExists(Key key);
+        static Key KeyCodeToKey(int32 keycode);
+        static int32 KeyToKeyCode(Key key);
 
-} // namespace pTK::KeyMap
+    private:
+        KeyMap();
+        virtual ~KeyMap() = default;
+
+        static KeyMap s_Instance;
+        const std::map<int32, Key> m_keyMap;
+    };
+
+} // namespace pTK
 
 #endif // PTK_EVENTS_KEYMAP_HPP

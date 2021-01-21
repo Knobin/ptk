@@ -9,7 +9,7 @@
 #define PTK_UTIL_SEMAPHORE_HPP
 
 // pTK Headers
-#include "ptk/util/Singleton.hpp"
+#include "ptk/util/SingleObject.hpp"
 
 // C++ Headers
 #include <mutex>
@@ -22,7 +22,7 @@ namespace pTK
      
         A basic class for synchronizing threads.
     */
-    class Semaphore : public Singleton
+    class Semaphore : public SingleObject
     {
     public:
         /** Deleted Constructor for Semaphore.

@@ -9,7 +9,7 @@
 #define PTK_CORE_EVENTQUEUE_HPP
 
 // pTK Headers
-#include "ptk/util/Singleton.hpp"
+#include "ptk/util/SingleObject.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/events/WindowEvent.hpp"
 
@@ -29,7 +29,7 @@ namespace pTK
     */
     template<template <typename, typename> class Container = std::deque,
              template <typename> class alloc = std::allocator>
-    class EventQueue : public Singleton
+    class EventQueue : public SingleObject
     {
     public:
         using container_type = Container<std::unique_ptr<Event>, alloc<std::unique_ptr<Event>>>;
