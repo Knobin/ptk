@@ -95,6 +95,12 @@ namespace pTK
     {
         return static_cast<byte>(static_cast<int32>(code));
     }
+
+    constexpr bool IsKeyCodeModifier(const KeyCode& code) noexcept
+    {
+        const auto value = static_cast<int32>(code);
+        return ((value >= 340) && (value <= 347));
+    }
 }
 
 
