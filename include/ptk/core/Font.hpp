@@ -9,6 +9,7 @@
 #define PTK_CORE_FONT_HPP
 
 // pTK Headers
+#include "ptk/core/Defines.hpp"
 #include "ptk/core/Types.hpp"
 #include "ptk/util/Size.hpp"
 
@@ -16,10 +17,10 @@
 #include <string>
 
 // Skia Headers
-__pragma(warning(push, 0))
+PTK_DISABLE_WARN_BEGIN()
 #include "include/core/SkFont.h"
 #include "include/core/SkTypeface.h"
-__pragma(warning(pop))
+PTK_DISABLE_WARN_END()
 
 namespace pTK
 {

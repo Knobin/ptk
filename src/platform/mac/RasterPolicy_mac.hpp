@@ -9,6 +9,7 @@
 #define PTK_PlATFORM_MAC_RASTERPOLICY_HPP
 
 // pTK Headers
+#include "ptk/core/Defines.hpp"
 #include "ptk/util/Size.hpp"
 
 // Skia Headers

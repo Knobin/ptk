@@ -34,8 +34,11 @@
 #ifndef PTK_DISABLE_WARN_BEGIN
     #ifdef PTK_COMPILER_GCC
         // TODO
+        #define PTK_DISABLE_WARN_BEGIN()
     #elif PTK_COMPILER_CLANG
-        // TODO
+        #define PTK_DISABLE_WARN_BEGIN() \
+            _Pragma("clang diagnostic push") \
+            _Pragma("clang diagnostic ignored \"-Weverything\"")
     #elif PTK_COMPILER_MSVC
         #define PTK_DISABLE_WARN_BEGIN() __pragma(warning(push, 0))
     #else
@@ -46,9 +49,10 @@
 // Ignore all warnings (End)
 #ifndef PTK_DISABLE_WARN_END
     #ifdef PTK_COMPILER_GCC
-    // TODO
+        // TODO
+        #define PTK_DISABLE_WARN_END()
     #elif PTK_COMPILER_CLANG
-    // TODO
+        #define PTK_DISABLE_WARN_END() _Pragma("clang diagnostic pop");
     #elif PTK_COMPILER_MSVC
         #define PTK_DISABLE_WARN_END() __pragma(warning(pop))
     #else
