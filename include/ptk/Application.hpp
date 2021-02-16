@@ -34,15 +34,23 @@ namespace pTK
 
             @return        default initialized Application
         */
-        Application();
+        Application() = delete;
+        
+        /** Constructs Application with default values.
+
+            @param name    application name
+            @return        default initialized Application
+        */
+        Application(const std::string& name);
 
         /** Constructs Event with default values.
 
+            @param name    application name
             @param argc    argument count
             @param argv    arguments
             @return        default initialized Transformable
         */
-        Application(int argc, char *argv[]);
+        Application(const std::string& name, int argc, char *argv[]);
 
         /** Deconstructor for Application
 
@@ -87,17 +95,13 @@ namespace pTK
         int run();
         
         void close();
-
-        // Should be a "Menubar" instead of MenuCollection when that is implemented.
-        void setMenuBar(const Ref<MenuBar>& menubar);
-        [[nodiscard]] Ref<MenuBar> menuBar() const;
         
     public:
         static Application *Get();
 
 
     private:
-        bool init();
+        bool init(const std::string& name);
 
     private:
         std::unique_ptr<ApplicationBase> m_appBase;

@@ -17,7 +17,7 @@ namespace pTK
     /** WindowInfo struct implementation
 
         Flags that can be passed to the window constructor.
-        
+
         Current flags are:
             -   backend:            Specifies which backend to use.
             -   position:           Open window at position.
@@ -48,12 +48,11 @@ namespace pTK
             // For now only visible and hidden states are available.
             // TODO: Implement the following Minimized, Maximized and FullScreen.
         };
-        
+
         Backend backend{Backend::Hardware};
         Point position{100, 100};
         Visibility visibility{Visibility::Windowed};
         Ref<MenuBar> menus{nullptr};
-        bool ignoreGlobalMenu{false};
     };
 }
 

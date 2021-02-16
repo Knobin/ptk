@@ -34,10 +34,16 @@
 #include "ptk/events/WindowEvent.hpp"
 
 // --- Menu --------------------------
+#include "ptk/menu/CheckboxMenuItem.hpp"
 #include "ptk/menu/Menu.hpp"
 #include "ptk/menu/MenuBar.hpp"
 #include "ptk/menu/MenuItem.hpp"
 #include "ptk/menu/MenuItemBase.hpp"
+#include "ptk/menu/MenuItemEvent.hpp"
+#include "ptk/menu/MenuItemSeparator.hpp"
+#include "ptk/menu/MenuItemType.hpp"
+#include "ptk/menu/NamedMenuItem.hpp"
+#include "ptk/menu/Shortcut.hpp"
 
 // --- Util --------------------------
 #include "ptk/util/Alignment.hpp"

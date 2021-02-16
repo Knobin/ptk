@@ -10,6 +10,7 @@
 
 // pTK Headers
 #include "ptk/core/platform/ApplicationBase.hpp"
+#include "ptk/menu/MenuBar.hpp"
 
 namespace pTK
 {
@@ -27,28 +28,30 @@ namespace pTK
 
             @return        default initialized Application_mac
         */
-        Application_mac();
+        Application_mac(const std::string& name);
 
         /** Deconstructor for Application_mac
 
         */
         virtual ~Application_mac();
-        
+
         /** Function for polling all the window events.
-        
+
         */
         void pollEvents() override;
-        
+
         /** Function for waiting for an event.
-        
+
         */
         void waitEvents() override;
-        
+
         /** Function for waiting for an event with a timout.
-            
+
             @param ms   max time to wait for an event
         */
         void waitEventsTimeout(uint ms) override;
+
+        static void SetMenuBar(const Ref<MenuBar>& menuBar);
     };
 }
 

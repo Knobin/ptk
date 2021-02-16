@@ -86,49 +86,52 @@ void setWindowCallbacks(pTK::Window& window)
     });
 }
 
-void MenuItemCallback(pTK::Window*, pTK::MenuItem* menuItem)
+
+void StatusTestFunc(pTK::MenuItemStatus from, pTK::MenuItemStatus to)
 {
-    std::cout << menuItem->name() << " clicked!" << std::endl;
-}
-
-void CheckboxMenuItemCallback(pTK::Window*, pTK::MenuItem* menuItem)
-{
-    std::cout << menuItem->name() << " clicked, status is now " << pTK::MenuItem::StatusStr(menuItem->status()) << std::endl;
-}
-
-void ChangeMenuItemCallback(pTK::Window*, pTK::MenuItem* menuItem)
-{
-    menuItem->setStatus(pTK::MenuItem::Status::Disabled);
-}
-
-pTK::Ref<pTK::MenuBar> CreateMenuBar()
-{
-    auto Shortcut = {pTK::Key::LeftControl, pTK::Key::LeftShift, pTK::Key::O};
-    pTK::Ref<pTK::MenuItem> menuItem1 = pTK::Create<pTK::MenuItem>(pTK::MenuItem{"With shortcut...", Shortcut, MenuItemCallback});
-
-    pTK::Ref<pTK::MenuItem> menuItem2 = pTK::Create<pTK::MenuItem>("Change status", ChangeMenuItemCallback);
-    menuItem2->setStatus(pTK::MenuItem::Status::Disabled);
-
-    pTK::Ref<pTK::MenuItem> menuItem3 = pTK::Create<pTK::MenuItem>("Checkbox item", pTK::MenuItem::Type::Checkbox, CheckboxMenuItemCallback);
-
-    pTK::Ref<pTK::MenuItem> subMenuItem1 = pTK::Create<pTK::MenuItem>("sub item 1", MenuItemCallback);
-    pTK::Ref<pTK::MenuItem> subMenuItem2 = pTK::Create<pTK::MenuItem>(pTK::MenuItem{"sub item 2", {pTK::Key::LeftAlt, pTK::Key::S}, MenuItemCallback});
-    pTK::Ref<pTK::MenuItem> subMenuItem3 = pTK::Create<pTK::MenuItem>("sub item 3", MenuItemCallback);
-
-    pTK::Ref<pTK::Menu> submenu = pTK::Create<pTK::Menu>(pTK::Menu{"submenu", {subMenuItem1, subMenuItem2, subMenuItem3}});
-    pTK::Ref<pTK::Menu> menu1 = pTK::Create<pTK::Menu>(pTK::Menu{"Menu1", {menuItem1, menuItem2, menuItem3, submenu}});
-
-    return pTK::Create<pTK::MenuBar>(pTK::MenuBar{menu1});
+    PTK_WARN("status func! from: {}, to: {}", MenuItemStatusToStr(from),  MenuItemStatusToStr(to));
 }
 
 int main(int argc, char *argv[]) {
-    pTK::Application app{argc, argv};
-    
+
+    pTK::Application app{"SandboxApp", argc, argv};
+
+    pTK::Shortcut shortcut{{pTK::KeyCode::Command}, pTK::KeyCode::S};
+
+
+    pTK::Ref<pTK::MenuBar> menuBar = pTK::Create<pTK::MenuBar>();
+    pTK::Ref<pTK::NamedMenuItem> menuItem1 = pTK::Create<pTK::NamedMenuItem>("TEST ITEM 1", shortcut);
+    menuItem1->onClick("test click", [](){
+                                         PTK_WARN("CLICK menuItem1");
+    });
+    pTK::Ref<pTK::NamedMenuItem> menuItem3 = pTK::Create<pTK::NamedMenuItem>("TEST ITEM 3");
+    menuItem3->onClick("test click", [](){
+                                         PTK_WARN("CLICK menuItem3");
+    });
+    pTK::Ref<pTK::CheckboxMenuItem> checkItem = pTK::Create<pTK::CheckboxMenuItem>("Checkbox item");
+    checkItem->onClick("test click", [](){
+                                         PTK_WARN("Checkbox item");
+    });
+    checkItem->onToggle("test toggle", [](pTK::MenuItemStatus status){
+                                           PTK_WARN("Checkbox item toggle to: {}", MenuItemStatusToStr(status));
+                                       });
+
+    pTK::Ref<pTK::NamedMenuItem> menuItem2 = pTK::Create<pTK::NamedMenuItem>("TEST ITEM 2");
+    menuItem2->onClick("test click", [](){
+                                         PTK_WARN("CLICK menuItem2");
+    });
+    pTK::Ref<pTK::MenuItemSeparator> separator = pTK::Create<pTK::MenuItemSeparator>();
+
+    pTK::Ref<pTK::Menu> submenu = pTK::Create<pTK::Menu>(pTK::Menu{"TEST SUBMENU", {menuItem2}});
+    pTK::Ref<pTK::Menu> menu = pTK::Create<pTK::Menu>(pTK::Menu{"TEST MENU", {menuItem1, separator, menuItem3, separator, checkItem, separator, submenu}});
+    menuBar->addMenu(menu);
+
     pTK::WindowInfo flags{};
     flags.visibility = pTK::WindowInfo::Visibility::Windowed;
     flags.backend = pTK::WindowInfo::Backend::Software;
     flags.position = {250, 250};
-    flags.menus = CreateMenuBar();
+    flags.menus = menuBar;
+    // flags.menus = CreateMenuBar();
 
     pTK::Window window{"pTK Sandbox Window", {960, 540}, flags};
     window.setBackground(pTK::Color(0x232323FF));
@@ -339,7 +342,7 @@ int main(int argc, char *argv[]) {
                 c2 = randomColor();
                 step = 1;
             }
-            // r1->setColor(interpolateColor(c1, c2, stepFactor * step));
+            r1->setColor(interpolateColor(c1, c2, stepFactor * step));
             std::this_thread::sleep_for(std::chrono::milliseconds (1000 / fps));
             ++step;
         }

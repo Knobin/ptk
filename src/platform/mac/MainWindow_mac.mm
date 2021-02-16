@@ -207,7 +207,7 @@ namespace pTK
     const int code = event.keyCode;
     pTK::KeyEvent evt{pTK::Event::Type::KeyPressed, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(code))};
     window->parent()->sendEvent(&evt);
-    
+
     [self interpretKeyEvents:@[event]];
 }
 
@@ -303,14 +303,14 @@ namespace pTK
             m_data = std::make_unique<MainWindow_mac::WinData>();
             PTK_ASSERT(m_data, "Could not allocate memory for data structure in MainWindow_mac");
             m_data->size = size;
-            
+
             WindowDelegate *winDelegate = [[WindowDelegate alloc] initWithWindow:this:m_data.get()];
-            
+
             // Default is currently MainDisplay (where 0,0 is), could cause some headaches later on.
             // Same with setPosHint, don't have a secondary monitor to test on right now.
             const CGFloat y = CGDisplayBounds(CGMainDisplayID()).size.height - (flags.position.y + size.height - 1) - 1;
             const NSRect rect = NSMakeRect(flags.position.x, y, size.width, size.height);
-            
+
             NSUInteger style = (NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable);
             m_data->window = [[NSWindow alloc] initWithContentRect:rect styleMask:style backing:NSBackingStoreBuffered defer:NO];
 
@@ -335,7 +335,7 @@ namespace pTK
             PTK_INFO("System DPI scale is {0:0.2f}x{1:0.2f}", static_cast<double>(m_data->scale.x), static_cast<double>(m_data->scale.y));
 
             m_context = createMacContext(flags.backend, m_data);
-            
+
             switch (flags.visibility)
             {
                 case WindowInfo::Visibility::Windowed:
@@ -344,9 +344,10 @@ namespace pTK
                 case WindowInfo::Visibility::Hidden: // Window is started hidden.
                     break;
             }
-            
+
             setTitle(name);
             m_data->pos = getWinPos();
+            Application_mac::SetMenuBar(flags.menus);
         }
         PTK_INFO("Initialized MainWindow_mac");
     }

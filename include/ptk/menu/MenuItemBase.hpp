@@ -9,27 +9,35 @@
 #define PTK_MENU_MENUITEMBASE_HPP
 
 // pTK Headers
-#include "ptk/core/Types.hpp"
+#include "ptk/menu/MenuItemType.hpp"
 
 // C++ Headers
-#include <string>
+#include <type_traits>
 
 namespace pTK
 {
-    class MenuItemBase
+    template<typename... Args>
+    class MenuItemBase : public Args...
     {
     public:
-        MenuItemBase() = default;
-        explicit MenuItemBase(const std::string& name) : m_name{name} {}
+        MenuItemBase()
+            : Args()...
+        {}
         virtual ~MenuItemBase() = default;
 
-        void rename(const std::string& name) { m_name = name; }
-        [[nodiscard]] const std::string& name() const { return m_name; }
-
-        [[nodiscard]] virtual std::string_view typeName() const = 0;
+        template<typename Event, typename... FuncArgs>
+        void handleEvent(FuncArgs&&... args) {
+            static_assert(std::disjunction_v<std::is_same<Event, Args>...>, "Must be an Event that is inherited.");
+            (static_cast<void>(CallEventFunc<Event, Args>(std::forward<FuncArgs>(args)...)), ...);
+        }
 
     private:
-        std::string m_name;
+        template<typename T, typename U, typename... FuncArgs>
+            void CallEventFunc(FuncArgs&&... args) {
+            if constexpr (std::is_same_v<T, U> && std::disjunction_v<std::is_same<T, Args>...>) {
+                T::onEvent(std::forward<FuncArgs>(args)...);
+            }
+        }
     };
 }
 

@@ -9,7 +9,7 @@
 #define PTK_MENU_MENU_HPP
 
 // pTK Headers
-#include "ptk/menu/MenuItemBase.hpp"
+#include "ptk/menu/MenuItem.hpp"
 #include "ptk/Core.hpp"
 #include "ptk/util/IterableContainer.hpp"
 
@@ -18,24 +18,28 @@
 
 namespace pTK
 {
-    class Menu : public MenuItemBase, public IterableSequence<Ref<MenuItemBase>>
+
+    class Menu : public MenuItem, public IterableSequence<Ref<MenuItem>>
     {
     public:
-        explicit Menu(const std::string& name = "")
-            : MenuItemBase(name), IterableSequence<Ref<MenuItemBase>>()
-        {
-
-        }
-
-        Menu(const std::string& name, const std::initializer_list<Ref<MenuItemBase>>& items)
-            : MenuItemBase(name), IterableSequence<Ref<MenuItemBase>>(items)
+        Menu(const std::string& name, const std::initializer_list<Ref<MenuItem>>& items = {})
+            : MenuItem(MenuItemType::Menu, MenuItemStatus::Enabled), IterableSequence<Ref<MenuItem>>(items),
+              m_name{name}
         {
 
         }
 
         virtual ~Menu() = default;
 
-        [[nodiscard]] std::string_view typeName() const override { return "Menu"; }
+        [[nodiscard]] const std::string& name() const { return m_name; }
+        void rename(const std::string& name)
+        {
+            m_name = name;
+            handleEvent<MenuItemEvent::Update>();
+        }
+
+    private:
+        std::string m_name{};
     };
 }
 

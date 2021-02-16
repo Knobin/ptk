@@ -203,7 +203,7 @@ namespace pTK
 
         // getPosition should not be used outside this class.
         using VBox::getPosition;
-        
+
     private:
         // Window specific callbacks.
         std::function<bool()> m_onClose{nullptr};
@@ -213,7 +213,7 @@ namespace pTK
         std::function<bool()> m_onLostFocus{nullptr};
         std::function<bool()> m_onMinimize{nullptr};
         std::function<bool()> m_onRestore{nullptr};
-        
+
     private:
         EventQueue<std::deque> m_eventQueue{};
         std::unique_ptr<MainWindowBase> m_winBackend{nullptr};
@@ -222,18 +222,20 @@ namespace pTK
         bool m_close{false};
         bool m_minimized{false};
         WindowInfo m_info;
-        
+
     };
 
     template<typename T, typename... Args>
     void Window::postEvent(Args&& ...args)
     {
         m_eventQueue.lock();
-        m_eventQueue.push<T>(std::forward<Args>(args)...);
-       if (std::this_thread::get_id() != m_threadID)
-       {
-           m_winBackend->notifyEvent();
-       }
+        if (m_eventQueue.push<T>(std::forward<Args>(args)...))
+        {
+            if (std::this_thread::get_id() != m_threadID)
+            {
+                m_winBackend->notifyEvent();
+            }
+        }
         m_eventQueue.unlock();
     }
 

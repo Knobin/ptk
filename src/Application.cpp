@@ -1,3 +1,4 @@
+
 //
 //  Application.cpp
 //  pTK
@@ -18,30 +19,29 @@
 namespace pTK
 {
     static Application *s_app{nullptr};
-    static Ref<MenuBar> s_globalMenu{nullptr}; // Should be a "Menubar" pointer later.
 
-    Application::Application()
+    Application::Application(const std::string& name)
         : IterableAssociative<int32, Window*>(), SingleObject()
     {
-        init();
+        init(name);
     }
 
-    Application::Application(int, char* [])
+    Application::Application(const std::string& name, int, char* [])
         : IterableAssociative<int32, Window*>(), SingleObject()
     {
-        init();
+        init(name);
         // TODO: Check arguments.
     }
 
-    bool Application::init()
+    bool Application::init(const std::string& name)
     {
         if (s_app)
             throw ApplicationError("Application already initialized");
         s_app = this;
-        
+
         PTK_INIT_LOGGING();
-        m_appBase = std::make_unique<PTK_APPLICATION_TYPE>();
-        
+        m_appBase = std::make_unique<PTK_APPLICATION_TYPE>(name);
+
         PTK_INFO("Initialized Application");
         return true;
     }
@@ -56,19 +56,19 @@ namespace pTK
             window->handleEvents(); // Handle all events before sending the close event.
             window->sendEvent(&evt);
         }
-        
+
         // The close event might cause the Window to remove itself from the Application
         // through the Application::Get function.
         // Otherwise, remove them here.
         removeAllWindows();
-        
+
         PTK_INFO("Destroyed Application");
     }
 
     int Application::exec(Window *window)
     {
         PTK_ASSERT(window, "Undefined window");
-        
+
         addWindow(window);
         return run();
     }
@@ -141,7 +141,7 @@ namespace pTK
         }
 
         // Maybe do some setup things here?
-        
+
         // Standard message loop for now.
         while (!empty())
         {
@@ -149,23 +149,13 @@ namespace pTK
             for (const auto& pair : *this)
                 pair.second->handleEvents();
         }
-        
+
         return 0;
     }
 
     void Application::close()
     {
         removeAllWindows();
-    }
-
-    void Application::setMenuBar(const Ref<MenuBar>& menubar)
-    {
-        s_globalMenu = menubar;
-    }
-
-    Ref<MenuBar> Application::menuBar() const
-    {
-        return s_globalMenu;
     }
 
     Application *Application::Get()

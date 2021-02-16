@@ -18,7 +18,7 @@
 
 namespace pTK
 {
-class MenuBar : public IterableSequence<Ref<Menu>>
+    class MenuBar : public IterableSequence<Ref<Menu>>
     {
     public:
         MenuBar() = default;
@@ -28,6 +28,11 @@ class MenuBar : public IterableSequence<Ref<Menu>>
 
         }
         virtual ~MenuBar() = default;
+
+        void addMenu(const Ref<Menu>& menu)
+        {
+            container().push_back(menu);
+        }
     };
 }
 

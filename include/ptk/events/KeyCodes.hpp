@@ -65,41 +65,46 @@ namespace pTK
         LeftShift    = 340,
         LeftControl  = 341,
         LeftAlt      = 342,
-        LeftSuper    = 343,
+        LeftCommand  = 343,
 
         RightShift   = 344,
         RightControl = 345,
         RightAlt     = 346,
-        RightSuper   = 347,
+        RightCommand = 347,
+
+        Shift   = 348,
+        Control = 349,
+        Alt     = 350,
+        Command = 351
 
     } Key;
 
-    constexpr bool IsKeyCodeAlpha(const KeyCode& code) noexcept
+    constexpr bool IsKeyCodeAlpha(const KeyCode code) noexcept
     {
         const auto value = static_cast<int32>(code);
         return ((value >= 65) && (value <= 90));
     }
 
-    constexpr char KeyCodeToAlpha(const KeyCode& code) noexcept
+    constexpr char KeyCodeToAlpha(const KeyCode code) noexcept
     {
         return static_cast<char>(static_cast<int32>(code));
     }
 
-    constexpr bool IsKeyCodeDigit(const KeyCode& code) noexcept
+    constexpr bool IsKeyCodeDigit(const KeyCode code) noexcept
     {
         const auto value = static_cast<int32>(code);
         return ((value >= 48) && (value <= 57));
     }
 
-    constexpr byte KeyCodeToDigit(const KeyCode& code) noexcept
+    constexpr byte KeyCodeToDigit(const KeyCode code) noexcept
     {
         return static_cast<byte>(static_cast<int32>(code));
     }
 
-    constexpr bool IsKeyCodeModifier(const KeyCode& code) noexcept
+    constexpr bool IsKeyCodeModifier(const KeyCode code) noexcept
     {
         const auto value = static_cast<int32>(code);
-        return ((value >= 340) && (value <= 347));
+        return ((value >= 340) && (value <= 351));
     }
 }
 
