@@ -187,7 +187,7 @@ namespace pTK::MenuBarUtil_win
             }
         }
 
-        if (shortcut.key() != pTK::KeyCode::Unknown && IsKeyCodeAlpha(shortcut.key()))
+        if ((!shortcutStr.empty()) && (shortcut.key() != pTK::KeyCode::Unknown && IsKeyCodeAlpha(shortcut.key())))
         {
             ACCEL accel{};
             accel.key = static_cast<WORD>(KeyMap::KeyToKeyCode(shortcut.key()));

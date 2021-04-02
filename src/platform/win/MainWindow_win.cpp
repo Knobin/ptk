@@ -165,7 +165,6 @@ namespace pTK
             ::SetMenu(m_hwnd, menuBar);
 
             m_data->accelTable = ::CreateAcceleratorTableW(accelShortcuts.data(), static_cast<int>(accelShortcuts.size()));
-            PTK_ASSERT(m_data->accelTable, "Failed to create Accelerator Table!");
         }
 
         PTK_INFO("Initialized MainWindow_win {}x{} at {}x{}", m_data->size.width, m_data->size.height, flags.position.x, flags.position.y);

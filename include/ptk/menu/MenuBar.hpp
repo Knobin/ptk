@@ -33,6 +33,13 @@ namespace pTK
         {
             container().push_back(menu);
         }
+
+        void removeMenu(const Ref<Menu>& menu)
+        {
+            for (auto it = cbegin(); it != cend(); ++it)
+                if (menu == (*it))
+                    container().erase(it);
+        }
     };
 }
 

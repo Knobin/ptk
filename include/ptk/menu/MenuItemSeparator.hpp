@@ -22,6 +22,11 @@ namespace pTK
         virtual ~MenuItemSeparator() = default;
     };
 
+    Ref<MenuItemSeparator> CreateSeparator()
+    {
+        return Create<MenuItemSeparator>();
+    }
+
 } // pTK
 
 #endif // PTK_MENU_MENUITEMSEPARATOR_HPP

@@ -75,7 +75,7 @@ namespace pTK
 
     constexpr bool IsMenuItemStatusTypeCheckbox(MenuItemStatus status)
     {
-        return (static_cast<bool>(status == MenuItemStatus::Checked) || static_cast<bool>(MenuItemStatus::Unchecked));
+        return ((status == MenuItemStatus::Checked) || (status == MenuItemStatus::Unchecked));
     }
 }
 

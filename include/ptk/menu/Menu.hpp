@@ -25,10 +25,7 @@ namespace pTK
         Menu(const std::string& name, const std::initializer_list<Ref<MenuItem>>& items = {})
             : MenuItem(MenuItemType::Menu, MenuItemStatus::Enabled), IterableSequence<Ref<MenuItem>>(items),
               m_name{name}
-        {
-
-        }
-
+        {}
         virtual ~Menu() = default;
 
         [[nodiscard]] const std::string& name() const { return m_name; }
@@ -36,6 +33,18 @@ namespace pTK
         {
             m_name = name;
             handleEvent<MenuItemEvent::Update>();
+        }
+
+        void addItem(const Ref<MenuItem>& item)
+        {
+            container().push_back(item);
+        }
+
+        void removeItem(const Ref<MenuItem>& item)
+        {
+            for (auto it = cbegin(); it != cend(); ++it)
+                if (item == (*it))
+                    container().erase(it);
         }
 
     private:

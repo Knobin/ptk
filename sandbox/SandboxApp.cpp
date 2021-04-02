@@ -86,52 +86,69 @@ void setWindowCallbacks(pTK::Window& window)
     });
 }
 
-
-void StatusTestFunc(pTK::MenuItemStatus from, pTK::MenuItemStatus to)
+pTK::Ref<pTK::MenuBar> CreateMenuBar()
 {
-    PTK_WARN("status func! from: {}, to: {}", MenuItemStatusToStr(from),  MenuItemStatusToStr(to));
+    // Menu bar.
+    pTK::Ref<pTK::MenuBar> menuBar = pTK::Create<pTK::MenuBar>();
+
+    // First menu in menu bar.
+    pTK::Ref<pTK::Menu> menu = pTK::Create<pTK::Menu>("TEST MENU");
+    menuBar->addMenu(menu);
+
+    // NamedMenuItem with shortcut in menu.
+    pTK::Shortcut shortcut{{pTK::KeyCode::LeftControl}, pTK::KeyCode::S};
+    pTK::Ref<pTK::NamedMenuItem> menuItem1 = pTK::Create<pTK::NamedMenuItem>("TEST ITEM 1", shortcut);
+    menu->addItem(menuItem1);
+    menuItem1->onClick("test click", [](){
+        PTK_WARN("CLICK menuItem1");
+    });
+
+    // Separator in menu.
+    menu->addItem(pTK::CreateSeparator());
+
+    // NamedMenuItem in menu.
+    pTK::Ref<pTK::NamedMenuItem> menuItem3 = pTK::Create<pTK::NamedMenuItem>("TEST ITEM 3");
+    menu->addItem(menuItem3);
+    menuItem3->onClick("test click", [](){
+        PTK_WARN("CLICK menuItem3");
+    });
+
+    // Separator in menu.
+    menu->addItem(pTK::CreateSeparator());
+
+    // CheckboxMenuItem in menu.
+    pTK::Ref<pTK::CheckboxMenuItem> checkItem = pTK::Create<pTK::CheckboxMenuItem>("Checkbox item");
+    menu->addItem(checkItem);
+    checkItem->onClick("test click", [](){
+        PTK_WARN("Checkbox item");
+    });
+    checkItem->onToggle("test toggle", [](pTK::MenuItemStatus status){
+        PTK_WARN("Checkbox item toggle to: {}", MenuItemStatusToStr(status));
+    });
+
+    // Submenu for menu.
+    pTK::Ref<pTK::Menu> submenu = pTK::Create<pTK::Menu>("TEST SUBMENU");
+    menu->addItem(submenu);
+
+    // NamedMenuItem in submenu.
+    pTK::Ref<pTK::NamedMenuItem> menuItem2 = pTK::Create<pTK::NamedMenuItem>("TEST ITEM 2");
+    submenu->addItem(menuItem2);
+    menuItem2->onClick("test click", [](){
+        PTK_WARN("CLICK menuItem2");
+    });
+
+    return menuBar;
 }
 
 int main(int argc, char *argv[]) {
 
     pTK::Application app{"SandboxApp", argc, argv};
 
-    pTK::Shortcut shortcut{{pTK::KeyCode::Command}, pTK::KeyCode::S};
-
-
-    pTK::Ref<pTK::MenuBar> menuBar = pTK::Create<pTK::MenuBar>();
-    pTK::Ref<pTK::NamedMenuItem> menuItem1 = pTK::Create<pTK::NamedMenuItem>("TEST ITEM 1", shortcut);
-    menuItem1->onClick("test click", [](){
-                                         PTK_WARN("CLICK menuItem1");
-    });
-    pTK::Ref<pTK::NamedMenuItem> menuItem3 = pTK::Create<pTK::NamedMenuItem>("TEST ITEM 3");
-    menuItem3->onClick("test click", [](){
-                                         PTK_WARN("CLICK menuItem3");
-    });
-    pTK::Ref<pTK::CheckboxMenuItem> checkItem = pTK::Create<pTK::CheckboxMenuItem>("Checkbox item");
-    checkItem->onClick("test click", [](){
-                                         PTK_WARN("Checkbox item");
-    });
-    checkItem->onToggle("test toggle", [](pTK::MenuItemStatus status){
-                                           PTK_WARN("Checkbox item toggle to: {}", MenuItemStatusToStr(status));
-                                       });
-
-    pTK::Ref<pTK::NamedMenuItem> menuItem2 = pTK::Create<pTK::NamedMenuItem>("TEST ITEM 2");
-    menuItem2->onClick("test click", [](){
-                                         PTK_WARN("CLICK menuItem2");
-    });
-    pTK::Ref<pTK::MenuItemSeparator> separator = pTK::Create<pTK::MenuItemSeparator>();
-
-    pTK::Ref<pTK::Menu> submenu = pTK::Create<pTK::Menu>(pTK::Menu{"TEST SUBMENU", {menuItem2}});
-    pTK::Ref<pTK::Menu> menu = pTK::Create<pTK::Menu>(pTK::Menu{"TEST MENU", {menuItem1, separator, menuItem3, separator, checkItem, separator, submenu}});
-    menuBar->addMenu(menu);
-
     pTK::WindowInfo flags{};
     flags.visibility = pTK::WindowInfo::Visibility::Windowed;
     flags.backend = pTK::WindowInfo::Backend::Software;
     flags.position = {250, 250};
-    flags.menus = menuBar;
-    // flags.menus = CreateMenuBar();
+    flags.menus = CreateMenuBar();
 
     pTK::Window window{"pTK Sandbox Window", {960, 540}, flags};
     window.setBackground(pTK::Color(0x232323FF));
