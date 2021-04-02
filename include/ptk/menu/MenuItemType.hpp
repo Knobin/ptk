@@ -26,7 +26,13 @@ namespace pTK
          Unchecked,      // Should only be combined with Type::Checkbox.
      };
 
-    constexpr std::string_view MenuItemTypeToStr(const MenuItemType& type)
+    enum class MenuItemEvent : byte
+    {
+        Update = 0, // Something updated.
+        Status ,    // Status changed.
+    };
+
+    constexpr std::string_view MenuItemTypeToStr(MenuItemType type)
     {
         switch (type)
         {
@@ -41,7 +47,7 @@ namespace pTK
         }
     }
 
-    constexpr std::string_view MenuItemStatusToStr(const MenuItemStatus& status)
+    constexpr std::string_view MenuItemStatusToStr(MenuItemStatus status)
      {
          switch (status)
          {
@@ -55,6 +61,17 @@ namespace pTK
                  return "Unchecked";
          }
      }
+
+    constexpr std::string_view MenuItemEventToStr(MenuItemEvent evt)
+    {
+        switch (evt)
+        {
+            case MenuItemEvent::Update:
+                return "Update";
+            case MenuItemEvent::Status:
+                return "Status";
+        }
+    }
 
     constexpr bool IsMenuItemStatusTypeCheckbox(MenuItemStatus status)
     {

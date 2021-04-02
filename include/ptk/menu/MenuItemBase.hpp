@@ -13,31 +13,52 @@
 
 // C++ Headers
 #include <type_traits>
+#include <map>
 
 namespace pTK
 {
-    template<typename... Args>
-    class MenuItemBase : public Args...
+    class MenuItemBase
     {
     public:
-        MenuItemBase()
-            : Args()...
-        {}
+        MenuItemBase() = default;
         virtual ~MenuItemBase() = default;
 
-        template<typename Event, typename... FuncArgs>
+        template<MenuItemEvent Event, typename... FuncArgs>
         void handleEvent(FuncArgs&&... args) {
-            static_assert(std::disjunction_v<std::is_same<Event, Args>...>, "Must be an Event that is inherited.");
-            (static_cast<void>(CallEventFunc<Event, Args>(std::forward<FuncArgs>(args)...)), ...);
+            if constexpr (Event == MenuItemEvent::Update)
+            {
+                for (auto& it : m_updateCallbacks)
+                    it.second();
+            }
+            else if constexpr (Event == MenuItemEvent::Status)
+            {
+                for (auto& it : m_statusCallbacks)
+                    it.second(std::forward<FuncArgs>(args)...);
+            }
+        }
+
+        void onUpdate(const std::string& name, const std::function<void()>& func) {
+            m_updateCallbacks[name] = func;
+        }
+
+        void onStatus(const std::string& name, const std::function<void(MenuItemStatus, MenuItemStatus)>& func) {
+            m_statusCallbacks[name] = func;
+        }
+
+        virtual void removeCallback(const std::string& name)
+        {
+            auto updateIt = m_updateCallbacks.find(name);
+            if (updateIt != m_updateCallbacks.end())
+                m_updateCallbacks.erase(updateIt);
+
+            auto statusIt = m_statusCallbacks.find(name);
+            if (statusIt != m_statusCallbacks.end())
+                m_statusCallbacks.erase(statusIt);
         }
 
     private:
-        template<typename T, typename U, typename... FuncArgs>
-            void CallEventFunc(FuncArgs&&... args) {
-            if constexpr (std::is_same_v<T, U> && std::disjunction_v<std::is_same<T, Args>...>) {
-                T::onEvent(std::forward<FuncArgs>(args)...);
-            }
-        }
+        std::map<std::string, std::function<void()>> m_updateCallbacks{};
+        std::map<std::string, std::function<void(MenuItemStatus, MenuItemStatus)>> m_statusCallbacks{};
     };
 }
 

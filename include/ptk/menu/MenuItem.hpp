@@ -12,14 +12,13 @@
 #include "ptk/menu/MenuItemBase.hpp"
 #include "ptk/events/KeyCodes.hpp"
 #include "ptk/core/Types.hpp"
-#include "ptk/menu/MenuItemEvent.hpp"
 
 // C++ Headers
 #include <functional>
 
 namespace pTK
 {
-    class MenuItem : public MenuItemBase<MenuItemEvent::Status, MenuItemEvent::Update>
+    class MenuItem : public MenuItemBase
     {
     public:
         MenuItem() = delete;
@@ -39,12 +38,17 @@ namespace pTK
             updateWithEvent<MenuItemEvent::Status>(old, status);
         }
 
-        template<typename Event, typename... FuncArgs>
+        void update()
+        {
+            handleEvent<MenuItemEvent::Update>();
+        }
+
+        template<MenuItemEvent Event, typename... FuncArgs>
         void updateWithEvent(FuncArgs&&... args)
         {
-            static_assert(!std::is_same_v<MenuItemEvent::Update, Event>, "Event cannot be Update");
-            handleEvent<Event>(std::forward<FuncArgs>(args)...);
-            handleEvent<MenuItemEvent::Update>();
+            if constexpr (Event != MenuItemEvent::Update)
+                handleEvent<Event>(std::forward<FuncArgs>(args)...);
+            update();
         }
 
     private:
