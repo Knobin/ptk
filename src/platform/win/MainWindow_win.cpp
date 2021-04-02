@@ -15,6 +15,7 @@
 // pTK Headers
 #include "ptk/Application.hpp"
 #include "ptk/events/KeyMap.hpp"
+#include "ptk/menu/NamedMenuItem.hpp"
 
 // Include OpenGL backend if HW Acceleration is enabled.
 #ifdef PTK_OPENGL
@@ -105,12 +106,8 @@ namespace pTK
         m_data->ignoreSize = false;
         m_data->pos = flags.position;
 
-        // Menubar. This has to be revised when MenuBar is implemented.
-        // Only native menu is supported for now.
-        Ref<MenuBar> menu{(!flags.ignoreGlobalMenu) ? Application::Get()->menuBar() : nullptr};
-        if (!menu)
-            menu = flags.menus;
-        m_data->hasMenu = (static_cast<bool>(menu) && !menu->empty());
+        // Menubar.
+        m_data->hasMenu = (static_cast<bool>(flags.menus) && !flags.menus->empty());
 
         // High DPI.
         HDC screen{GetDC(nullptr)};
@@ -162,7 +159,7 @@ namespace pTK
             uint menuBarId = MenuBarUtil_win::InsertMenuItemToMap(m_data->menuItems, nullptr, 1, true, menuBar);
             std::vector<ACCEL> accelShortcuts{};
 
-            for (auto menuIt{menu->cbegin()}; menuIt != menu->cend(); ++menuIt)
+            for (auto menuIt{flags.menus->cbegin()}; menuIt != flags.menus->cend(); ++menuIt)
                 MenuBarUtil_win::CreateMenuStructure(menuBar, m_data->menuItems, (*menuIt), menuBarId, accelShortcuts);
 
             ::SetMenu(m_hwnd, menuBar);
@@ -702,12 +699,13 @@ namespace pTK
             case WM_COMMAND:
             {
                 uint wmId{LOWORD(wParam)};
-                Ref<MenuItemBase> item{MenuBarUtil_win::FindMenuItemById(data->menuItems, wmId)};
+                Ref<MenuItem> item{MenuBarUtil_win::FindMenuItemById(data->menuItems, wmId)};
 
                 if (item)
                 {
-                    if (auto *mItem = dynamic_cast<MenuItem*>(item.get()))
-                        mItem->handleEvent(window);
+                    NamedMenuItem *nItem = dynamic_cast<NamedMenuItem*>(item.get());
+                    if (nItem)
+                        nItem->notifyClick();
                 }
                 else
                 {

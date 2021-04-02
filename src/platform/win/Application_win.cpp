@@ -42,7 +42,7 @@ namespace pTK
     static std::vector<std::pair<int32, MainWindow_win*>>::iterator s_windowIter{};
     static bool s_erased{false};
 
-    Application_win::Application_win()
+    Application_win::Application_win(const std::string&)
         : ApplicationBase()
     {
         ::SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);

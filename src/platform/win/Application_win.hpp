@@ -28,7 +28,7 @@ namespace pTK
 
             @return        default initialized Application_win
         */
-        Application_win();
+        Application_win(const std::string& name);
 
         /** Deconstructor for Application_win
 
