@@ -8,6 +8,12 @@
 #ifndef PTK_MENU_MENUITEMTYPE_HPP
 #define PTK_MENU_MENUITEMTYPE_HPP
 
+// pTK Headers
+#include "ptk/core/Types.hpp"
+
+// C++ Headers
+#include <string_view>
+
 namespace pTK
 {
     enum class MenuItemType : byte
@@ -32,7 +38,7 @@ namespace pTK
         Status ,    // Status changed.
     };
 
-    constexpr std::string_view MenuItemTypeToStr(MenuItemType type)
+    constexpr std::string_view MenuItemTypeToStr(MenuItemType type) noexcept
     {
         switch (type)
         {
@@ -47,7 +53,7 @@ namespace pTK
         }
     }
 
-    constexpr std::string_view MenuItemStatusToStr(MenuItemStatus status)
+    constexpr std::string_view MenuItemStatusToStr(MenuItemStatus status) noexcept
      {
          switch (status)
          {
@@ -62,7 +68,7 @@ namespace pTK
          }
      }
 
-    constexpr std::string_view MenuItemEventToStr(MenuItemEvent evt)
+    constexpr std::string_view MenuItemEventToStr(MenuItemEvent evt) noexcept
     {
         switch (evt)
         {
@@ -73,7 +79,7 @@ namespace pTK
         }
     }
 
-    constexpr bool IsMenuItemStatusTypeCheckbox(MenuItemStatus status)
+    constexpr bool IsMenuItemStatusTypeCheckbox(MenuItemStatus status) noexcept
     {
         return ((status == MenuItemStatus::Checked) || (status == MenuItemStatus::Unchecked));
     }

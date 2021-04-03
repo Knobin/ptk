@@ -16,15 +16,39 @@
 
 namespace pTK
 {
+    /** Shortcut class implementation.
+
+        Keyboard shortcut.
+    */
     class Shortcut
     {
     public:
+        /** Constructs Shortcut with default values.
+
+            @return     default initialized Shortcut
+        */
         Shortcut() = default;
+
+        /** Constructs Shortcut with modifiers and key.
+
+            @param modifiers    sequence of modifier keys
+            @param key          final key, must be of alpha type
+            @return             initialized Shortcut
+        */
         Shortcut(const std::initializer_list<KeyCode>& modifiers, const KeyCode key)
             : m_modifiers{modifiers}, m_key{key}
         {}
 
+        /** Function for retrieving the modifiers.
+
+            @return     modifiers
+        */
         [[nodiscard]] const std::vector<KeyCode>& modifiers() const { return m_modifiers; }
+
+        /** Function for retrieving the key.
+
+            @return     key
+        */
         [[nodiscard]] KeyCode key() const { return m_key; }
 
     private:

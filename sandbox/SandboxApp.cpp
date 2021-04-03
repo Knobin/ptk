@@ -100,7 +100,7 @@ pTK::Ref<pTK::MenuBar> CreateMenuBar()
     pTK::Ref<pTK::NamedMenuItem> menuItem1 = pTK::Create<pTK::NamedMenuItem>("TEST ITEM 1", shortcut);
     menu->addItem(menuItem1);
     menuItem1->onClick("test click", [](){
-        PTK_WARN("CLICK menuItem1");
+        std::cout << "menuItem1 clicked!" << std::endl;
     });
 
     // Separator in menu.
@@ -110,7 +110,7 @@ pTK::Ref<pTK::MenuBar> CreateMenuBar()
     pTK::Ref<pTK::NamedMenuItem> menuItem3 = pTK::Create<pTK::NamedMenuItem>("TEST ITEM 3");
     menu->addItem(menuItem3);
     menuItem3->onClick("test click", [](){
-        PTK_WARN("CLICK menuItem3");
+        std::cout << "menuItem3 clicked!" << std::endl;
     });
 
     // Separator in menu.
@@ -120,10 +120,10 @@ pTK::Ref<pTK::MenuBar> CreateMenuBar()
     pTK::Ref<pTK::CheckboxMenuItem> checkItem = pTK::Create<pTK::CheckboxMenuItem>("Checkbox item");
     menu->addItem(checkItem);
     checkItem->onClick("test click", [](){
-        PTK_WARN("Checkbox item");
+        std::cout << "checkItem clicked!" << std::endl;
     });
     checkItem->onToggle("test toggle", [](pTK::MenuItemStatus status){
-        PTK_WARN("Checkbox item toggle to: {}", MenuItemStatusToStr(status));
+        std::cout << "checkItem toggled to: " << MenuItemStatusToStr(status) << std::endl;
     });
 
     // Submenu for menu.
@@ -134,7 +134,7 @@ pTK::Ref<pTK::MenuBar> CreateMenuBar()
     pTK::Ref<pTK::NamedMenuItem> menuItem2 = pTK::Create<pTK::NamedMenuItem>("TEST ITEM 2");
     submenu->addItem(menuItem2);
     menuItem2->onClick("test click", [](){
-        PTK_WARN("CLICK menuItem2");
+        std::cout << "menuItem2 clicked!" << std::endl;
     });
 
     return menuBar;
@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
 
     pTK::WindowInfo flags{};
     flags.visibility = pTK::WindowInfo::Visibility::Windowed;
-    flags.backend = pTK::WindowInfo::Backend::Software;
+    flags.backend = pTK::WindowInfo::Backend::Hardware;
     flags.position = {250, 250};
     flags.menus = CreateMenuBar();
 

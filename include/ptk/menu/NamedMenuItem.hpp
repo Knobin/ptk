@@ -14,46 +14,71 @@
 
 namespace pTK
 {
+    /** NamedMenuItem class implementation.
+
+        Regular menu item with text that can be clicked.
+    */
     class NamedMenuItem : public MenuItem
     {
     public:
-        NamedMenuItem() = delete;
-        explicit NamedMenuItem(const std::string& name, const Shortcut& shortcut = {})
-            : MenuItem(MenuItemType::Text, MenuItemStatus::Enabled),
-              m_shortcut{shortcut}, m_name{name}
-        {}
-        NamedMenuItem(const std::string& name, MenuItemType type, MenuItemStatus status, const Shortcut& shortcut = {})
-            : MenuItem(type, status), m_shortcut{shortcut}, m_name{name}
-        {}
+        /** Constructs NamedMenuItem with name and shortcut.
+
+            @param name         name of the menu item
+            @param shortcut     optional keyboard shortcut
+            @return             initialized NamedMenuItem
+        */
+        explicit NamedMenuItem(const std::string& name, const Shortcut& shortcut = {});
+
+        /** Constructs NamedMenuItem with name and shortcut.
+
+            @param name         name of the menu item
+            @param type         type of the menu item
+            @param status       status of the menu item
+            @param shortcut     optional keyboard shortcut
+            @return             initialized NamedMenuItem
+        */
+        NamedMenuItem(const std::string& name, MenuItemType type, MenuItemStatus status, const Shortcut& shortcut = {});
+
+        /** Destructor.
+
+        */
         virtual ~NamedMenuItem() = default;
 
-        [[nodiscard]] const Shortcut& shortcut() const { return m_shortcut; }
-        [[nodiscard]] const std::string& name() const { return m_name; }
+        /** Function for retrieving the shortcut of the menu item.
 
-        void notifyClick()
-        {
-            for (auto& it : m_clickCallbacks)
-                it.second();
-        }
+            @return shortcut
+        */
+        [[nodiscard]] const Shortcut& shortcut() const;
 
-        void rename(const std::string& name)
-        {
-            m_name = name;
-            handleEvent<MenuItemEvent::Update>();
-        }
+        /** Function for retrieving the name of the menu item.
 
-        void removeCallback(const std::string& name) override
-        {
-            auto updateIt = m_clickCallbacks.find(name);
-            if (updateIt != m_clickCallbacks.end())
-                m_clickCallbacks.erase(updateIt);
+            @return name
+        */
+        [[nodiscard]] const std::string& name() const;
 
-            MenuItem::removeCallback(name);
-        }
+        /** Function for notifying that the menu item has been clicked.
 
-        void onClick(const std::string& name, const std::function<void()>& func) {
-            m_clickCallbacks[name] = func;
-        }
+        */
+        void notifyClick();
+
+        /** Function for renaming the menu item.
+
+            @param name     new name of the menu item
+        */
+        void rename(const std::string& name);
+
+        /** Function for removing a callback by name.
+
+            @param name     name of the callback
+        */
+        void removeCallback(const std::string& name) override;
+
+        /** Function for adding a click callback.
+
+            @param name     name of the callback
+            @param func     callback function
+        */
+        void onClick(const std::string& name, const std::function<void()>& func);
 
     private:
         std::map<std::string, std::function<void()>> m_clickCallbacks;

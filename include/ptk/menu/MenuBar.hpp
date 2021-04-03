@@ -18,28 +18,42 @@
 
 namespace pTK
 {
+    /** MenuBar class implementation.
+
+        Collection of menus that forms a menu bar.
+    */
     class MenuBar : public IterableSequence<Ref<Menu>>
     {
     public:
-        MenuBar() = default;
-        MenuBar(const std::initializer_list<Ref<Menu>>& menus)
-            : IterableSequence<Ref<Menu>>(menus)
-        {
+        /** Constructs Menu with default values.
 
-        }
+            @return     default initialized Menu
+        */
+        MenuBar() = default;
+
+        /** Constructs Menu with menus.
+
+            @param menus    collection of menus to add
+            @return         initialized Menu
+        */
+        MenuBar(const std::initializer_list<Ref<Menu>>& menus);
+
+        /** Destructor.
+
+        */
         virtual ~MenuBar() = default;
 
-        void addMenu(const Ref<Menu>& menu)
-        {
-            container().push_back(menu);
-        }
+        /** Function for adding a menu.
 
-        void removeMenu(const Ref<Menu>& menu)
-        {
-            for (auto it = cbegin(); it != cend(); ++it)
-                if (menu == (*it))
-                    container().erase(it);
-        }
+            @param menu     menu to add
+        */
+        void addMenu(const Ref<Menu>& menu);
+
+        /** Function for removing a menu.
+
+            @param menu     menu to remove
+        */
+        void removeMenu(const Ref<Menu>& menu);
     };
 }
 

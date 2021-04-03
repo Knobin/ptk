@@ -13,15 +13,31 @@
 
 namespace pTK
 {
+    /** MenuItemSeparator class implementation.
+
+        Usually a line.
+    */
     class MenuItemSeparator : public MenuItem
     {
     public:
+        /** Constructs MenuItemSeparator with type and status.
+
+            @return         default initialized MenuItemSeparator
+        */
         MenuItemSeparator()
             : MenuItem(MenuItemType::Separator, MenuItemStatus::Enabled)
         {}
+
+        /** Destructor.
+
+        */
         virtual ~MenuItemSeparator() = default;
     };
 
+    /** Function for creating a MenuItemSeparator.
+
+        @return Ref of MenuItemSeparator
+    */
     Ref<MenuItemSeparator> CreateSeparator()
     {
         return Create<MenuItemSeparator>();

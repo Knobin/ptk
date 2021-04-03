@@ -18,37 +18,52 @@
 
 namespace pTK
 {
+    /** Menu class implementation.
 
+        Collection of menu items that forms a menu.
+    */
     class Menu : public MenuItem, public IterableSequence<Ref<MenuItem>>
     {
     public:
-        Menu(const std::string& name, const std::initializer_list<Ref<MenuItem>>& items = {})
-            : MenuItem(MenuItemType::Menu, MenuItemStatus::Enabled), IterableSequence<Ref<MenuItem>>(items),
-              m_name{name}
-        {}
+        /** Constructs Menu with name and items.
+
+            @param name         displayed text
+            @param items        optional list with menu items
+            @return             initialized Menu
+        */
+        explicit Menu(const std::string& name, const std::initializer_list<Ref<MenuItem>>& items = {});
+
+        /** Destructor.
+
+        */
         virtual ~Menu() = default;
 
-        [[nodiscard]] const std::string& name() const { return m_name; }
-        void rename(const std::string& name)
-        {
-            m_name = name;
-            handleEvent<MenuItemEvent::Update>();
-        }
+        /** Function for retrieving the name of the menu.
 
-        void addItem(const Ref<MenuItem>& item)
-        {
-            container().push_back(item);
-        }
+            @return name
+        */
+        [[nodiscard]] const std::string& name() const;
 
-        void removeItem(const Ref<MenuItem>& item)
-        {
-            for (auto it = cbegin(); it != cend(); ++it)
-                if (item == (*it))
-                    container().erase(it);
-        }
+        /** Function for renaming the menu.
+
+            @param name     new name of the menu
+        */
+        void rename(const std::string& name);
+
+        /** Function for adding a menu item.
+
+            @param item     menu item to add
+        */
+        void addItem(const Ref<MenuItem>& item);
+
+        /** Function for removing a menu item.
+
+            @param item     menu item to remove
+        */
+        void removeItem(const Ref<MenuItem>& item);
 
     private:
-        std::string m_name{};
+        std::string m_name;
     };
 }
 

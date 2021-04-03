@@ -13,70 +13,72 @@
 
 namespace pTK
 {
+    /** CheckboxMenuItem class implementation.
+
+        Defines a menu item with a checkbox next to it.
+    */
     class CheckboxMenuItem : public NamedMenuItem
     {
     public:
-        CheckboxMenuItem() = delete;
-        CheckboxMenuItem(const std::string& name, MenuItemStatus status = MenuItemStatus::Unchecked)
-            : NamedMenuItem(name, MenuItemType::Checkbox, status)
-        {
-            init();
-        }
-        CheckboxMenuItem(const std::string& name, MenuItemStatus status, const Shortcut& shortcut)
-            : NamedMenuItem(name, MenuItemType::Checkbox, status, shortcut)
-        {
-            init();
-        }
+        /** Constructs CheckboxMenuItem with name and status.
+
+            @param name     displayed text
+            @param status   optional status, default Unchecked
+            @return         initialized CheckboxMenuItem
+        */
+        explicit CheckboxMenuItem(const std::string& name, MenuItemStatus status = MenuItemStatus::Unchecked);
+
+        /** Constructs CheckboxMenuItem with name, status and shortcut.
+
+            @param name         displayed text
+            @param status       status
+            @param shortcut     keyboard shortcut
+            @return             initialized CheckboxMenuItem
+        */
+        CheckboxMenuItem(const std::string& name, MenuItemStatus status, const Shortcut& shortcut);
+
+        /** Destructor.
+
+        */
         virtual ~CheckboxMenuItem() = default;
 
-        [[nodiscard]] const std::map<std::string, std::function<void(MenuItemStatus)>>& toggleCallbacks() const
-        {
-            return m_toggleCallbacks;
-        }
+        /** Function for retrieving the toggle callbacks.
 
-        void onToggle(const std::string& name, const std::function<void(MenuItemStatus)>& func)
-        {
-            m_toggleCallbacks[name] = func;
-        }
+            @return toggle callbacks
+        */
+        [[nodiscard]] const std::map<std::string, std::function<void(MenuItemStatus)>>& toggleCallbacks() const;
 
-        [[nodiscard]] bool checked() const
-        {
-            return static_cast<bool>(status() == MenuItemStatus::Checked);
-        }
+        /** Function for adding a toggle callback.
 
-        void setChecked(bool checked)
-        {
-            if (checked && (status() == MenuItemStatus::Unchecked))
-                setStatus(MenuItemStatus::Checked);
-            else if (!checked && (status() == MenuItemStatus::Checked))
-                setStatus(MenuItemStatus::Unchecked);
-        }
+            @param name     name of the callback
+            @param func     callback function
+        */
+        void onToggle(const std::string& name, const std::function<void(MenuItemStatus)>& func);
 
-        void check()
-        {
-            setChecked(true);
-        }
+        /** Function for checking if the checkbox is checked.
 
-        void uncheck()
-        {
-            setChecked(false);
-        }
+            @return true if checked, otherwise false
+        */
+        [[nodiscard]] bool checked() const;
+
+        /** Function for setting the check status.
+
+            @param checked      true for checked, otherwise false
+        */
+        void setChecked(bool checked);
+
+        /** Function for setting the check status to true.
+
+        */
+        void check();
+
+        /** Function for setting the check status to false.
+
+        */
+        void uncheck();
 
     private:
-        void init()
-        {
-            onStatus("CMI::toggle::func", [this](MenuItemStatus from, MenuItemStatus to){
-                if ((IsMenuItemStatusTypeCheckbox(from)) && IsMenuItemStatusTypeCheckbox(to))
-                {
-                    for (const auto& it : this->toggleCallbacks())
-                        it.second(to);
-                }
-            });
-
-            onClick("CMI::toggle::func", [this](){
-                this->setChecked(!this->checked());
-            });
-        }
+        void init();
 
     private:
         std::map<std::string, std::function<void(MenuItemStatus)>> m_toggleCallbacks;

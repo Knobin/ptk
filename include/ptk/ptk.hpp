@@ -38,7 +38,6 @@
 #include "ptk/menu/Menu.hpp"
 #include "ptk/menu/MenuBar.hpp"
 #include "ptk/menu/MenuItem.hpp"
-#include "ptk/menu/MenuItemBase.hpp"
 #include "ptk/menu/MenuItemSeparator.hpp"
 #include "ptk/menu/MenuItemType.hpp"
 #include "ptk/menu/NamedMenuItem.hpp"

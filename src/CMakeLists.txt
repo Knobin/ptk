@@ -1,5 +1,7 @@
-
+#
 # Source files
+#
+
 set(CORE_FILES core/Box.cpp
         core/EventCallbacks.cpp
         core/EventHandling.cpp
@@ -11,6 +13,12 @@ set(CORE_FILES core/Box.cpp
         core/platform/ContextBase.cpp)
 
 set(EVENT_FILES events/KeyMap.cpp)
+
+set(MENU_FILES menu/CheckboxMenuItem.cpp
+        menu/Menu.cpp
+        menu/MenuBar.cpp
+        menu/MenuItem.cpp
+        menu/NamedMenuItem.cpp)
 
 set(UTIL_FILES util/Alignment.cpp
         util/Color.cpp
@@ -43,6 +51,7 @@ set(SOURCE_FILES Application.cpp Window.cpp
         ${CORE_FILES}
         ${PLATFORM_FILES}
         ${EVENT_FILES}
+        ${MENU_FILES}
         ${UTIL_FILES}
         ${WIDGET_FILES}
         ${LOG_FILES})
