@@ -42,22 +42,37 @@ namespace pTK
     static std::vector<std::pair<int32, MainWindow_win*>>::iterator s_windowIter{};
     static bool s_erased{false};
 
-    Application_win::Application_win(const std::string&)
-        : ApplicationBase()
+    // Application_win class static definitions.
+    Application_win Application_win::s_Instance{};
+    bool Application_win::s_Initialized{false};
+
+    void Application_win::Init(const std::string&)
     {
+        if (Application_win::s_Initialized)
+        {
+            PTK_WARN("Application_win already initialized");
+            return;
+        }
+
         ::SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
         if (!RegisterWndClass())
             throw PlatformError("Failed to register class!");
 
+        Application_win::s_Initialized = true;
         PTK_INFO("Initialized Application_win");
     }
 
-    Application_win::~Application_win()
+    void Application_win::Destroy()
     {
         ::UnregisterClassW(L"PTK", GetModuleHandleW(nullptr));
 
         PTK_INFO("Destroyed Application_win");
+    }
+
+    Application_win *Application_win::Instance()
+    {
+        return &s_Instance;
     }
 
     void Application_win::pollEvents()

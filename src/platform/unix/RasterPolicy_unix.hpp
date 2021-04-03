@@ -48,7 +48,7 @@ namespace pTK
         */
         RasterPolicy_unix(::Window *window, XVisualInfo info);
 
-        /** Deconstructor for RasterPolicy_unix.
+        /** Destructor for RasterPolicy_unix.
 
         */
         ~RasterPolicy_unix();

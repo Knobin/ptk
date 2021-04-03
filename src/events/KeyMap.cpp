@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "../platform/KeyMapInit.hpp"
+#include "../platform/PlatformInit.hpp"
 
 // pTK Headers
 #include "ptk/events/KeyMap.hpp"

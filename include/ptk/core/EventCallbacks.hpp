@@ -42,7 +42,7 @@ namespace pTK
         */
         EventCallbacks(EventCallbacks&& other);
 
-        /** Deconstructor for EventCallbacks.
+        /** Destructor for EventCallbacks.
 
         */
         virtual ~EventCallbacks() = default;

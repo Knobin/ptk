@@ -25,7 +25,7 @@ namespace pTK
         */
         EventFunctions() = default;
 
-        /** Deconstructor for EventFunctions.
+        /** Destructor for EventFunctions.
 
         */
         virtual ~EventFunctions() = default;

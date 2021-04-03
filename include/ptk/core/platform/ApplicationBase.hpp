@@ -32,7 +32,7 @@ namespace pTK
         */
         ApplicationBase() = default;
 
-        /** Deconstructor for ApplicationBase
+        /** Destructor for ApplicationBase
 
         */
         virtual ~ApplicationBase() = default;

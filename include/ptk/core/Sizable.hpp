@@ -33,7 +33,7 @@ namespace pTK
         */
         explicit Sizable(const Size& size);
 
-        /** Deconstructor for Sizable.
+        /** Destructor for Sizable.
 
         */
         virtual ~Sizable() = default;

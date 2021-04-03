@@ -299,7 +299,7 @@ namespace pTK
         */
         IterableAssociative() = default;
 
-        /** Deconstructor for IterableContainer.
+        /** Destructor for IterableContainer.
 
         */
         virtual ~IterableAssociative() = default;
@@ -374,7 +374,7 @@ namespace pTK
                 cont.push_back(item);
         }
 
-        /** Deconstructor for IterableContainer.
+        /** Destructor for IterableContainer.
 
         */
         virtual ~IterableSequence() = default;

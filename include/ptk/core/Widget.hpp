@@ -34,7 +34,7 @@ namespace pTK
         */
         Widget();
 
-        /** Deconstructor for Widget.
+        /** Destructor for Widget.
         
         */
         virtual ~Widget() = default;

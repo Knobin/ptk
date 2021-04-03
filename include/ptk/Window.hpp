@@ -46,7 +46,7 @@ namespace pTK
         */
         Window(const std::string& name, const Size& size, const WindowInfo& flags = {});
 
-        /** Deconstructor for Window.
+        /** Destructor for Window.
 
         */
         virtual ~Window();

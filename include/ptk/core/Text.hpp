@@ -33,7 +33,7 @@ namespace pTK
         */
         Text(const Ref<Font>& font);
 
-        /** Deconstructor for Text.
+        /** Destructor for Text.
 
         */
         virtual ~Text() = default;

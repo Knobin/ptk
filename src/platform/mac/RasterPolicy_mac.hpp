@@ -49,7 +49,7 @@ namespace pTK
         */
         RasterPolicy_mac(NSWindow *window);
         
-        /** Deconstructor for RasterPolicy_mac.
+        /** Destructor for RasterPolicy_mac.
 
         */
         ~RasterPolicy_mac();

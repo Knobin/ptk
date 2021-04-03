@@ -57,7 +57,7 @@ namespace pTK
         */
         Color(byte red, byte green, byte blue, byte alpha = 255);
 
-        /** Deconstructor for Color.
+        /** Destructor for Color.
 
         */
         virtual ~Color() = default;

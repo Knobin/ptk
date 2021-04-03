@@ -30,7 +30,7 @@ namespace pTK
         */
         Application_mac(const std::string& name);
 
-        /** Deconstructor for Application_mac
+        /** Destructor for Application_mac
 
         */
         virtual ~Application_mac();

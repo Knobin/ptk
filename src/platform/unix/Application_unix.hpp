@@ -32,7 +32,7 @@ namespace pTK
         */
         Application_unix();
 
-        /** Deconstructor for Application_unix
+        /** Destructor for Application_unix
 
         */
         virtual ~Application_unix();

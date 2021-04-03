@@ -41,7 +41,7 @@ namespace pTK
         */
         explicit ContextBase(const Size& size);
 
-        /** Deconstructor for ContextBase.
+        /** Destructor for ContextBase.
 
         */
         virtual ~ContextBase() = default;

@@ -37,7 +37,7 @@ namespace pTK
         */
         Box() = default;
 
-        /** Deconstructor for Box.
+        /** Destructor for Box.
 
         */
         virtual ~Box();

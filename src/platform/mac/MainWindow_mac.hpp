@@ -37,7 +37,7 @@ namespace pTK
         */
         MainWindow_mac(Window *window, const std::string& name, const Size& size, const WindowInfo& flags);
 
-        /** Deconstructor for MainWindow_win.
+        /** Destructor for MainWindow_win.
 
         */
         virtual ~MainWindow_mac();

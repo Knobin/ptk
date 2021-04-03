@@ -9,7 +9,6 @@
 #define PTK_APPLICATION_HPP
 
 // pTK Headers
-#include "ptk/core/platform/ApplicationBase.hpp"
 #include "ptk/util/SingleObject.hpp"
 #include "ptk/Window.hpp"
 #include "ptk/core/Types.hpp"
@@ -52,7 +51,7 @@ namespace pTK
         */
         Application(const std::string& name, int argc, char *argv[]);
 
-        /** Deconstructor for Application
+        /** Destructor for Application
 
         */
         virtual ~Application();
@@ -87,7 +86,7 @@ namespace pTK
         
         void removeAllWindows();
         
-        Window *findByKey(int32 key) const;
+        [[nodiscard]] Window *findByKey(int32 key) const;
         
         /** Function for executing the application.
          
@@ -98,13 +97,10 @@ namespace pTK
         
     public:
         static Application *Get();
-
+        static Application *s_Instance;
 
     private:
         bool init(const std::string& name);
-
-    private:
-        std::unique_ptr<ApplicationBase> m_appBase;
     };
 }
 

@@ -38,7 +38,7 @@ namespace pTK
         */
         MainWindow_unix(Window *window, const std::string& name, const Size& size, BackendType backend);
 
-        /** Deconstructor for MainWindow_unix.
+        /** Destructor for MainWindow_unix.
 
         */
         virtual ~MainWindow_unix();

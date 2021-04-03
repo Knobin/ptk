@@ -30,7 +30,7 @@ namespace pTK
         */
         VBox() = default;
 
-        /** Deconstructor for VBox.
+        /** Destructor for VBox.
 
         */
         virtual ~VBox() = default;

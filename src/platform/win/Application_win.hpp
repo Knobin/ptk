@@ -24,16 +24,10 @@ namespace pTK
     class Application_win : public ApplicationBase
     {
     public:
-        /** Constructs Application_win with default values.
+        static void Init(const std::string& name);
+        static void Destroy();
 
-            @return        default initialized Application_win
-        */
-        Application_win(const std::string& name);
-
-        /** Deconstructor for Application_win
-
-        */
-        virtual ~Application_win();
+        static Application_win *Instance();
 
         /** Function for polling all the window events.
 
@@ -71,6 +65,13 @@ namespace pTK
             @param key  ptk window id
         */
         void onWindowRemove(const std::pair<int32, Window*> item) override;
+
+    private:
+        Application_win() = default;
+        virtual ~Application_win() = default;
+
+        static Application_win s_Instance;
+        static bool s_Initialized;
     };
 }
 

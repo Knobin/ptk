@@ -64,7 +64,7 @@ namespace pTK
         */
         Alignment();
 
-        /** Deconstructor for Alignment.
+        /** Destructor for Alignment.
 
         */
         virtual ~Alignment() = default;

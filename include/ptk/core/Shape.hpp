@@ -23,7 +23,7 @@ namespace pTK
         */
         Shape();
 
-        /** Deconstructor for Shape.
+        /** Destructor for Shape.
 
         */
         virtual ~Shape() = default;

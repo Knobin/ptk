@@ -37,7 +37,7 @@ namespace pTK
         */
         Font();
 
-        /** Deconstructor for Font.
+        /** Destructor for Font.
 
         */
         virtual ~Font() = default;

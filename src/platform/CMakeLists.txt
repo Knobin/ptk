@@ -28,7 +28,9 @@ set(PLATFORM_FILES_UNIX platform/unix/Application_unix.cpp
 set(PLATFORM_FILES_UNIX_OPENGL platform/unix/GLContext_unix.cpp)
 
 # Set platform files
-set(PLATFORM_FILES platform/Platform.hpp)
+set(PLATFORM_FILES platform/Platform.hpp
+        platform/PlatformInit.hpp
+        platform/PlatformInit.cpp)
 if (PTK_PLATFORM STREQUAL "Unix")
     set(PLATFORM_FILES ${PLATFORM_FILES}
         ${PLATFORM_FILES_UNIX})

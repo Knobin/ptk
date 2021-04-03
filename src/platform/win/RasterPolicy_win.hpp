@@ -49,7 +49,7 @@ namespace pTK
         */
         explicit RasterPolicy_win(HWND hwnd);
 
-        /** Deconstructor for RasterPolicy_win.
+        /** Destructor for RasterPolicy_win.
 
         */
         ~RasterPolicy_win();

@@ -8,6 +8,7 @@
 
 // Local Headers
 #include "platform/Platform.hpp"
+#include "platform/PlatformInit.hpp"
 
 // pTK Headers
 #include "ptk/Application.hpp"
@@ -18,7 +19,8 @@
 
 namespace pTK
 {
-    static Application *s_app{nullptr};
+    // Application class static definitions.
+    Application *Application::s_Instance{nullptr};
 
     Application::Application(const std::string& name)
         : IterableAssociative<int32, Window*>(), SingleObject()
@@ -35,12 +37,12 @@ namespace pTK
 
     bool Application::init(const std::string& name)
     {
-        if (s_app)
+        if (s_Instance)
             throw ApplicationError("Application already initialized");
-        s_app = this;
+        s_Instance = this;
 
         PTK_INIT_LOGGING();
-        m_appBase = std::make_unique<PTK_APPLICATION_TYPE>(name);
+        AppInit(name);
 
         PTK_INFO("Initialized Application");
         return true;
@@ -49,9 +51,9 @@ namespace pTK
     Application::~Application()
     {
         // Close all attached Windows.
-        for (auto it = cbegin(); it != cend(); ++it)
+        for (const auto & it : *this)
         {
-            Window *window{it->second};
+            Window *window{it.second};
             Event evt{Event::Category::Window, Event::Type::WindowClose};
             window->handleEvents(); // Handle all events before sending the close event.
             window->sendEvent(&evt);
@@ -62,6 +64,7 @@ namespace pTK
         // Otherwise, remove them here.
         removeAllWindows();
 
+        AppDestroy();
         PTK_INFO("Destroyed Application");
     }
 
@@ -86,7 +89,7 @@ namespace pTK
 
         try {
             container().insert({id, window});
-            m_appBase->onWindowAdd({id, window});
+            AppInstance()->onWindowAdd({id, window});
         } catch (const std::exception&) {
             return -1;
         }
@@ -102,7 +105,7 @@ namespace pTK
 
         if (it != end())
         {
-            m_appBase->onWindowRemove(*it);
+            AppInstance()->onWindowRemove(*it);
             container().erase(it);
             return true;
         }
@@ -115,7 +118,7 @@ namespace pTK
         auto it{container().find(key)};
         if (it != container().end())
         {
-            m_appBase->onWindowRemove(*it);
+            AppInstance()->onWindowRemove(*it);
             container().erase(it);
             return true;
         }
@@ -145,7 +148,7 @@ namespace pTK
         // Standard message loop for now.
         while (!empty())
         {
-            m_appBase->waitEvents();
+            AppInstance()->waitEvents();
             for (const auto& pair : *this)
                 pair.second->handleEvents();
         }
@@ -160,8 +163,8 @@ namespace pTK
 
     Application *Application::Get()
     {
-        PTK_ASSERT(s_app, "Application is not initialized");
-        return s_app;
+        PTK_ASSERT(s_Instance, "Application is not initialized");
+        return s_Instance;
     }
 
     void Application::removeAllWindows()

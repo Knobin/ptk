@@ -35,7 +35,7 @@ namespace pTK
         {
         }
 
-        /** Deconstructor for Drawable.
+        /** Destructor for Drawable.
 
         */
         virtual ~Drawable() = default;

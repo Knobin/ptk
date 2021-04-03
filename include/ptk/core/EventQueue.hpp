@@ -45,7 +45,7 @@ namespace pTK
         */
         EventQueue() = default;
 
-        /** Deconstructor for EventQueue.
+        /** Destructor for EventQueue.
 
         */
         virtual ~EventQueue() = default;

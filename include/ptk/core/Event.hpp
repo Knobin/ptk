@@ -60,7 +60,7 @@ namespace pTK
         {
         }
 
-        /** Deconstructor for Event.
+        /** Destructor for Event.
 
         */
         virtual ~Event() = default;

@@ -30,7 +30,7 @@ namespace pTK
         */
         EventHandling();
 
-        /** Deconstructor for EventHandling.
+        /** Destructor for EventHandling.
 
         */
         virtual ~EventHandling() = default;

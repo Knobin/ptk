@@ -37,7 +37,7 @@ namespace pTK
         */
         Semaphore(unsigned int count);
 
-        /** Deconstructor for Semaphore.
+        /** Destructor for Semaphore.
 
         */
         virtual ~Semaphore() = default;

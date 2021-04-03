@@ -40,7 +40,7 @@ namespace pTK
 
         }
 
-        /** Deconstructor for MainWindowBase.
+        /** Destructor for MainWindowBase.
 
         */
         virtual ~MainWindowBase() = default;
