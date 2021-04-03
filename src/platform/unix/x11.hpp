@@ -15,6 +15,7 @@ extern "C" {
 #include <X11/Xutil.h>
 
 #undef None
+#undef Status
 }
 
 namespace x11 {

@@ -26,16 +26,10 @@ namespace pTK
     class Application_unix : public ApplicationBase
     {
     public:
-        /** Constructs Application_unix with default values.
+        static void Init(const std::string& name);
+        static void Destroy();
 
-            @return        default initialized Application_unix
-        */
-        Application_unix();
-
-        /** Destructor for Application_unix
-
-        */
-        virtual ~Application_unix();
+        static Application_unix *Instance();
 
         // TODO: Add documentation.
         void pollEvents() override;
@@ -60,8 +54,14 @@ namespace pTK
         static int Screen();
 
     private:
+        Application_unix() = default;
+        virtual ~Application_unix() = default;
+        
         bool init();
         void handleEvent(XEvent *event);
+    
+    private:
+        static Application_unix s_Instance;
     };
 }
 

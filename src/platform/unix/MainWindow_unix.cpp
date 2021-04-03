@@ -54,11 +54,11 @@ namespace pTK
                 static_cast<Size::value_type>(height * scale.y)};
     }
 
-    static std::unique_ptr<ContextBase> CreateContext([[maybe_unused]] BackendType backend, ::Window *window, const Size& size, [[maybe_unused]] XVisualInfo info)
+    static std::unique_ptr<ContextBase> CreateContext([[maybe_unused]] WindowInfo::Backend backend, ::Window *window, const Size& size, [[maybe_unused]] XVisualInfo info)
     {
         std::unique_ptr<ContextBase> context{nullptr};
 #ifdef PTK_OPENGL
-        if (backend == BackendType::HARDWARE)
+        if (backend == WindowInfo::Backend::Hardware)
         {
             try {
                 context = std::make_unique<GLContext_unix>(window, size);
@@ -85,8 +85,8 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    MainWindow_unix::MainWindow_unix(Window *window, const std::string& name, const Size& size, BackendType backend)
-        : MainWindowBase(window, backend), m_lastSize{size}
+    MainWindow_unix::MainWindow_unix(Window *window, const std::string& name, const Size& size, WindowInfo info)
+        : MainWindowBase(window), m_lastSize{size}
     {
         ::Window root{App::Root()};
         Display *display{App::Display()};
@@ -129,7 +129,7 @@ namespace pTK
         m_scale = Vec2f{scale / 96.0f, scale / 96.0f};
         const Size scaledSize{ScaleSize(size, m_scale)};
 
-        m_context = CreateContext(backend, &m_window, scaledSize, m_info);
+        m_context = CreateContext(info.backend, &m_window, scaledSize, m_info);
         
         m_lastPos = getWinPos();
         PTK_INFO("Initialized MainWindow_unix");

@@ -22,6 +22,8 @@
     #include "unix/MainWindow_unix.hpp"
     using PTK_MAINWINDOW_TYPE = pTK::MainWindow_unix;
     #define PTK_PLATFORM_STR "Unix"
+    #include "unix/KeyMap_unix.hpp"
+    #define PTK_KEYMAP_INIT_FUNC pTK::KeyCodeMapInit_unix
 #elif defined(PTK_PLATFORM_APPLE)
     #include "mac/Application_mac.hpp"
     using PTK_APPLICATION_TYPE = pTK::Application_mac;

@@ -36,7 +36,7 @@ namespace pTK
             @param backend  type of backend
             @return         default initialized MainWindow_unix
         */
-        MainWindow_unix(Window *window, const std::string& name, const Size& size, BackendType backend);
+        MainWindow_unix(Window *window, const std::string& name, const Size& size, WindowInfo info);
 
         /** Destructor for MainWindow_unix.
 

@@ -16,10 +16,6 @@
 // C++ Headers
 #include <optional>
 
-// OpenGL Headers
-#include <GL/gl.h>
-#include <GL/glx.h>
-
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
 #include "include/gpu/GrBackendSurface.h"

@@ -10,53 +10,18 @@
 #include "MainWindow_unix.hpp"
 
 // pTK Headers
+#include "ptk/Application.hpp"
 #include "ptk/core/Exception.hpp"
 #include "ptk/core/Event.hpp"
+#include "ptk/events/KeyMap.hpp"
 
 // C++ Headers
 #include <map>
 
 namespace pTK
-{   
-    // 
-    // Will probably rework keyboard input at some point, this works for now.
-    //
-
-    static std::map<unsigned long, KeyCode> initKeyCodes() noexcept
-    {
-        std::map<unsigned long, KeyCode> map{};
-        map[XK_space] = Key::Space; map[XK_Escape] = Key::Escape;
-        map[XK_0] = Key::D0; map[XK_1] = Key::D1; map[XK_2] = Key::D2; map[XK_3] = Key::D3;
-        map[XK_4] = Key::D4; map[XK_5] = Key::D5; map[XK_6] = Key::D6; map[XK_7] = Key::D7;
-        map[XK_8] = Key::D8; map[XK_9] = Key::D9;
-        map[XK_KP_0] = Key::D0; map[XK_KP_1] = Key::D1; map[XK_KP_2] = Key::D2;
-        map[XK_KP_3] = Key::D3; map[XK_KP_4] = Key::D4; map[XK_KP_5] = Key::D5;
-        map[XK_KP_6] = Key::D6; map[XK_KP_7] = Key::D7; map[XK_KP_8] = Key::D8;
-        map[XK_KP_9] = Key::D9;
-        map[XK_a] = Key::A; map[XK_b] = Key::B; map[XK_c] = Key::C; map[XK_d] = Key::D;
-        map[XK_e] = Key::E; map[XK_f] = Key::F; map[XK_g] = Key::G; map[XK_h] = Key::H;
-        map[XK_i] = Key::I; map[XK_j] = Key::J; map[XK_k] = Key::K; map[XK_l] = Key::L;
-        map[XK_m] = Key::M; map[XK_n] = Key::N; map[XK_o] = Key::O; map[XK_p] = Key::P;
-        map[XK_q] = Key::Q; map[XK_r] = Key::R; map[XK_s] = Key::S; map[XK_t] = Key::T;
-        map[XK_u] = Key::U; map[XK_v] = Key::V; map[XK_w] = Key::W; map[XK_x] = Key::X;
-        map[XK_y] = Key::Y; map[XK_z] = Key::Z;
-        return map;
-    }
-
-    static Key translateKeyCode(const std::map<unsigned long, KeyCode> & map, unsigned long code)
-    {
-        std::map<unsigned long, KeyCode>::const_iterator it{map.find(code)};
-        if (it != map.cend())
-            return it->second;
-        
-        return Key::Unknown;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-
+{
     struct AppUnixData
     {
-        const std::map<unsigned long, KeyCode> keyMap{initKeyCodes()};
         Display *display{nullptr};
         XContext xcontext{-1};
         int screen{-1};
@@ -66,20 +31,42 @@ namespace pTK
 
     static AppUnixData s_appData{};
 
+    // Application_unix class static definitions.
+    Application_unix Application_unix::s_Instance{};
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Application_unix::Application_unix()
-        : ApplicationBase()
+    void Application_unix::Init(const std::string&)
     {
-        if (!init())
-            throw PlatformError("Failed to initialize unix application");
+        if (s_appData.initialized) 
+        {
+            PTK_ERROR("App already initialized");
+            return;
+        }
+
+        XInitThreads();
+
+        s_appData.display = XOpenDisplay(nullptr);
+        s_appData.xcontext = XUniqueContext();
+        s_appData.screen = DefaultScreen(s_appData.display);
+        s_appData.root = RootWindow(s_appData.display, s_appData.screen);
+
+        s_appData.initialized = true;
+        PTK_INFO("Initialized Application_unix");
     }
 
-    Application_unix::~Application_unix()
+    void Application_unix::Destroy()
     {
         XCloseDisplay(s_appData.display);
         PTK_INFO("Destroyed Application_unix");
     }
+
+    Application_unix *Application_unix::Instance()
+    {
+        return &s_Instance;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     void Application_unix::pollEvents()
     {
@@ -162,26 +149,6 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool Application_unix::init()
-    {
-        if (s_appData.initialized) 
-        {
-            PTK_ERROR("App already initialized");
-            return false;
-        }
-
-        XInitThreads();
-
-        s_appData.display = XOpenDisplay(nullptr);
-        s_appData.xcontext = XUniqueContext();
-        s_appData.screen = DefaultScreen(s_appData.display);
-        s_appData.root = RootWindow(s_appData.display, s_appData.screen);
-
-        s_appData.initialized = true;
-        PTK_INFO("Initialized Application_unix");
-        return true;
-    }
-
     void Application_unix::handleEvent(XEvent *event)
     {
         PTK_ASSERT(event, "Undefined XEvent!");
@@ -200,7 +167,7 @@ namespace pTK
             case DestroyNotify:
             {
                 window->handleEvents(); // Handle all events before sending close event.
-                removeWindow(window); // Remove window from Application.
+                Application::Get()->removeWindow(window); // Remove window from Application.
                 break;
             }
             case ClientMessage:
@@ -260,13 +227,13 @@ namespace pTK
             }
             case KeyPress:
             {
-                KeyEvent kEvt{KeyEvent::Pressed, translateKeyCode(s_appData.keyMap, XLookupKeysym(&event->xkey, 0))};
+                KeyEvent kEvt{KeyEvent::Pressed, KeyMap::KeyCodeToKey(XLookupKeysym(&event->xkey, 0))};
                 window->sendEvent(&kEvt);
                 break;
             }
             case KeyRelease:
             {
-                KeyEvent kEvt{KeyEvent::Released, translateKeyCode(s_appData.keyMap, XLookupKeysym(&event->xkey, 0))};
+                KeyEvent kEvt{KeyEvent::Released, KeyMap::KeyCodeToKey(XLookupKeysym(&event->xkey, 0))};
                 window->sendEvent(&kEvt);
                 break;
             }

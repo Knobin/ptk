@@ -13,6 +13,7 @@
 
 // pTK Headers
 #include "ptk/util/Size.hpp"
+#include "ptk/core/Defines.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()

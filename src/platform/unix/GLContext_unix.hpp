@@ -15,8 +15,12 @@
 #include "ptk/core/platform/ContextBase.hpp"
 
 // OpenGL Headers
-#include <GL/gl.h>
-#include <GL/glx.h>
+extern "C" {
+    #define Status int
+    #include <GL/gl.h>
+    #include <GL/glx.h>
+    #undef Status
+}
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
