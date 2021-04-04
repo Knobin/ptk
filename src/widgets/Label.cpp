@@ -29,7 +29,7 @@ namespace pTK
     {
         bool status{Text::setFontFromFile(path)};
         if (status)
-            setConstSize(getBounds());
+            setSize(getBounds());
 
         return status;
     }
@@ -38,7 +38,7 @@ namespace pTK
     {
         bool status{Text::setFontFamily(fontFamily)};
         if (status)
-            setConstSize(getBounds());
+            setSize(getBounds());
 
         return status;
     }
@@ -46,13 +46,13 @@ namespace pTK
     void Label::setFontSize(uint fontSize)
     {
         Text::setFontSize(fontSize);
-        setConstSize(getBounds());
+        setSize(getBounds());
     }
     
     void Label::setText(const std::string& text)
     {
         Text::setText(text);
-        setConstSize(getBounds());
+        setSize(getBounds());
     }
     
     void Label::onDraw(SkCanvas* canvas)

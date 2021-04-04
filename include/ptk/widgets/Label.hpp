@@ -74,7 +74,6 @@ namespace pTK
         // Label should only change size on setFontSize!
         using Widget::setMinSize;
         using Widget::setSize;
-        using Widget::setConstSize;
         using Widget::setMaxSize;
     };
 }

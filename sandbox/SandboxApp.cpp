@@ -182,7 +182,7 @@ int main(int argc, char *argv[]) {
 
     // VBox as sidebar.
     pTK::Ref<pTK::VBox> sidebar = pTK::Create<pTK::VBox>();
-    sidebar->setSize({static_cast<int>(SCR_WIDTH*0.225f), pTK::Size::Limits::Max});
+    sidebar->setSize({static_cast<int>(SCR_WIDTH*0.225f), SCR_HEIGHT});
     sidebar->setAlign(pTK::Align::Left);
     sidebar->setBackground(pTK::Color(colSidebar));
 
@@ -257,7 +257,7 @@ int main(int argc, char *argv[]) {
     pTK::Color rColor{randomColor()};
     rColor.a = 255;
     r1->setColor(rColor);
-    r1->setConstSize({250, 125});
+    r1->setSize({250, 125});
     r1->setCornerRadius(5.0f);
     r1->setPadding({10, 10, 18, 18});
 
@@ -285,7 +285,7 @@ int main(int argc, char *argv[]) {
     //cText->setAlign(pTK::Align::Left | pTK::Align::Bottom);
 
     pTK::Ref<pTK::Checkbox> checkbox = pTK::Create<pTK::Checkbox>();
-    checkbox->setConstSize({ 25, 25 });
+    checkbox->setSize({ 25, 25 });
     checkbox->setCornerRadius(3); // 10% of size
     checkbox->setOutlineThickness(1.5f); // 5% of size
     checkbox->setColor(pTK::Color(0x00FF00FF));

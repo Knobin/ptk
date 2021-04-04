@@ -28,7 +28,7 @@ namespace pTK
          
             @return    default initialized HBox
         */
-        HBox() = default;
+        HBox();
 
         /** De-constructor for HBox.
 

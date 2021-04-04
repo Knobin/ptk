@@ -28,7 +28,7 @@ namespace pTK
          
             @return    default initialized VBox
         */
-        VBox() = default;
+        VBox();
 
         /** Destructor for VBox.
 

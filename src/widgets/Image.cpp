@@ -13,15 +13,12 @@ namespace pTK
     Image::Image()
         : Widget(),
             m_path{}, m_image{nullptr}, m_scale{1.0f, 1.0f}
-    {
-        setConstSize(Size(0,0));
-    }
+    {}
     
     Image::Image(const std::string& path)
         : Widget(),
             m_path{path}, m_image{nullptr}, m_scale{1.0f, 1.0f}
     {
-        setConstSize(Size(0,0));
         loadFromFile(path);
     }
     
@@ -36,7 +33,7 @@ namespace pTK
             {
                 PTK_INFO("Created image from \"{}\" successfully.", path);
                 m_path = path;
-                setConstSize(Size(static_cast<int>(m_image->width()*m_scale.x), static_cast<int>(m_image->height()*m_scale.y)));
+                setSize(Size(static_cast<int>(m_image->width()*m_scale.x), static_cast<int>(m_image->height()*m_scale.y)));
                 return true;
             }
         }
@@ -96,7 +93,7 @@ namespace pTK
             Size size;
             size.width  = static_cast<Size::value_type>(m_image->width()*x);
             size.height = static_cast<Size::value_type>(m_image->height()*y);
-            setConstSize(size);
+            setSize(size);
         }
     }
 }

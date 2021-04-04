@@ -10,11 +10,17 @@
 
 namespace pTK
 {
+    HBox::HBox()
+        : Box()
+    {
+        setMaxSize(Size::Max);
+    }
+
     void HBox::onAdd(const Ref<Widget>&)
     {
-        Size vbSize{getSize()};
-        Size minLayoutSize{calcMinSize()};
+        const Size minLayoutSize{calcMinSize()};
         setMinSize(minLayoutSize);
+        const Size vbSize{getSize()};
         
         if ((minLayoutSize.width > vbSize.width) || (minLayoutSize.height > vbSize.height))
         {
@@ -40,7 +46,17 @@ namespace pTK
     
     void HBox::onChildUpdate(size_type)
     {
-        refitContent(getSize());
+        const Size cMaxSize{calcMaxSize()};
+        Size maxSize{getMaxSize()};
+        if (cMaxSize > maxSize)
+            maxSize = cMaxSize;
+
+        const Size cMinSize{calcMinSize()};
+        Size minSize{getMinSize()};
+        if (cMinSize > minSize)
+            minSize = cMinSize;
+
+        setLimits(minSize, maxSize);
     }
     
     void HBox::expandOnAdd(const Size& newSize)

@@ -22,7 +22,6 @@ namespace pTK
         setStyle(Style::Default);
         m_text->setParent(this);
         m_text->setFontSize(14);
-        setConstSize({});
     }
     
     Button::Button(const Style& style)
@@ -32,7 +31,6 @@ namespace pTK
         setStyle(style);
         m_text->setParent(this);
         m_text->setFontSize(14);
-        setConstSize({});
     }
     
     void Button::setPosHint(const Point& pos)
@@ -74,10 +72,7 @@ namespace pTK
                 const int wMargin{((bSize.width - wSize.width) > dMargin) ? 0 : dMargin};
                 wSize.width = ((wSize.width > bSize.width) ? wSize.width : bSize.width) + (wMargin);
                 wSize.height = ((wSize.height > bSize.height) ? wSize.height : bSize.height) + (hMargin);
-                if (isConstSize())
-                    setConstSize(wSize);
-                else
-                    setSize(wSize);
+                setSize(wSize);
             }
             
             if (m_labelPos != textPos)
@@ -250,16 +245,10 @@ namespace pTK
         textBounds.height += 2*m_borderSize;
         textBounds.width += 2*m_borderSize;
 
-        if (!isConstSize())
-            setMinSize(textBounds);
+        setMinSize(textBounds);
 
         Size cSize{getSize()};
         if ((textBounds.height > cSize.height) || (textBounds.width > cSize.width))
-        {
-            if (isConstSize())
-                setConstSize(textBounds);
-            else
-                setSize(textBounds);
-        }
+            setSize(textBounds);
     }
 }

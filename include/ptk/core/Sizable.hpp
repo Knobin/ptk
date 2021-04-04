@@ -33,6 +33,12 @@ namespace pTK
         */
         explicit Sizable(const Size& size);
 
+        /** Constructs Sizable with default values with size.
+
+            @return  default initialized Sizable
+        */
+        Sizable(const Size& min, const Size& size, const Size& max);
+
         /** Destructor for Sizable.
 
         */
@@ -55,12 +61,6 @@ namespace pTK
             @param size    size
         */
         void setSize(const Size& size);
-
-        /** Function for setting size.
-
-            @param size    size
-        */
-        void setConstSize(const Size& size);
 
         /** Function for getting the size.
 
@@ -86,12 +86,6 @@ namespace pTK
             @param max    maximum size
         */
         void setLimits(const Size& min, const Size& max);
-
-        /** Function for checking if Sizable object has a const size.
-
-            @return    status
-         */
-        [[nodiscard]] bool isConstSize() const;
 
     private:
         /** Function for knowing when the size has been changed.
@@ -121,6 +115,10 @@ namespace pTK
         byte updateMinWidth(Size::value_type width);
         byte updateMinHeight(Size::value_type height);
 
+        // Helper functions for updating size.
+        byte updateWidth(Size::value_type width);
+        byte updateHeight(Size::value_type height);
+
         // Helper functions for updating maximum size.
         byte updateMaxWidth(Size::value_type width);
         byte updateMaxHeight(Size::value_type height);
@@ -129,9 +127,6 @@ namespace pTK
         Size m_minSize;
         Size m_size;
         Size m_maxSize;
-
-        bool m_minLock;
-        bool m_maxLock;
     };
 
     // Comparison operators.

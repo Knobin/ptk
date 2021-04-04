@@ -1,3 +1,12 @@
+// Must be before the Catch2 include.
+#include <ostream>
+#include "ptk/util/Size.hpp"
+
+std::ostream& operator<<(std::ostream& os, const pTK::Size& size) {
+    os << "{" << size.width << ", " << size.height << "}";
+    return os;
+}
+
 #define CATCH_CONFIG_MAIN
 #include "catch2/catch.hpp"
 
@@ -16,24 +25,57 @@ TEST_CASE("Constructors")
     
     SECTION("Sizable()")
     {
-        pTK::Sizable size;
-        REQUIRE(size.getMinSize() == pTK::Size::Min);
-        REQUIRE(size.getSize() == ZERO);
-        REQUIRE(size.getMaxSize() == pTK::Size::Max);
+        pTK::Sizable sizable{};
+        REQUIRE(sizable.getMinSize() == pTK::Size::Min);
+        REQUIRE(sizable.getSize() == pTK::Size::Min);
+        REQUIRE(sizable.getMaxSize() == pTK::Size::Min);
     }
     
-    SECTION("Sizable(const Size& size)")
+    SECTION("Sizable(size)")
     {
-        pTK::Size s1(10, 20);
-        pTK::Sizable size(s1);
-        REQUIRE(size.getMinSize() == pTK::Size::Min);
-        REQUIRE(size.getSize() == pTK::Size(10, 20));
-        REQUIRE(size.getMaxSize() == pTK::Size::Max);
-        
-        size.setMaxSize(pTK::Size(50, 100));
-        REQUIRE(size.getMinSize() == pTK::Size::Min);
-        REQUIRE(size.getSize() == pTK::Size(10, 20));
-        REQUIRE(size.getMaxSize() == pTK::Size(50, 100));
+        pTK::Size size(10, 20);
+        pTK::Sizable sizable{size};
+        REQUIRE(sizable.getMinSize() == size);
+        REQUIRE(sizable.getSize() == size);
+        REQUIRE(sizable.getMaxSize() == size);
+    }
+
+    SECTION("Sizable(min, size, max)")
+    {
+        pTK::Size min(10, 20);
+        pTK::Size size(30, 60);
+        pTK::Size max(50, 100);
+
+        // Correct, min < size < max
+        pTK::Sizable sizable{min, size, max};
+        REQUIRE(sizable.getMinSize() == min);
+        REQUIRE(sizable.getSize() == size);
+        REQUIRE(sizable.getMaxSize() == max);
+
+        sizable = pTK::Sizable{max, size, min};
+        REQUIRE(sizable.getMinSize() == size);
+        REQUIRE(sizable.getSize() == size);
+        REQUIRE(sizable.getMaxSize() == size);
+
+        sizable = pTK::Sizable{min, {5, 30}, max};
+        REQUIRE(sizable.getMinSize() == pTK::Size{5, 20});
+        REQUIRE(sizable.getSize() == pTK::Size{5, 30});
+        REQUIRE(sizable.getMaxSize() == max);
+
+        sizable = pTK::Sizable{min, {20, 15}, max};
+        REQUIRE(sizable.getMinSize() == pTK::Size{10, 15});
+        REQUIRE(sizable.getSize() == pTK::Size{20, 15});
+        REQUIRE(sizable.getMaxSize() == max);
+
+        sizable = pTK::Sizable{min, {70, 60}, max};
+        REQUIRE(sizable.getMinSize() == min);
+        REQUIRE(sizable.getSize() == pTK::Size{70, 60});
+        REQUIRE(sizable.getMaxSize() == pTK::Size{70, 100});
+
+        sizable = pTK::Sizable{min, {30, 110}, max};
+        REQUIRE(sizable.getMinSize() == min);
+        REQUIRE(sizable.getSize() == pTK::Size{30, 110});
+        REQUIRE(sizable.getMaxSize() == pTK::Size{50, 110});
     }
 }
 

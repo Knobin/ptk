@@ -14,6 +14,12 @@
 
 namespace pTK
 {
+    VBox::VBox()
+        : Box()
+    {
+        setMaxSize(Size::Max);
+    }
+
     void VBox::onAdd(const Ref<Widget>&)
     {
         const Size minLayoutSize{calcMinSize()};
@@ -45,20 +51,17 @@ namespace pTK
 
     void VBox::onChildUpdate(size_type)
     {
-        if (!isConstSize())
-        {
-            const Size cMaxSize{calcMaxSize()};
-            Size maxSize{getMaxSize()};
-            if (cMaxSize > maxSize)
-                maxSize = cMaxSize;
+        const Size cMaxSize{calcMaxSize()};
+        Size maxSize{getMaxSize()};
+        if (cMaxSize > maxSize)
+            maxSize = cMaxSize;
 
-            const Size cMinSize{calcMinSize()};
-            Size minSize{getMinSize()};
-            if (cMinSize > minSize)
-                minSize = cMinSize;
+        const Size cMinSize{calcMinSize()};
+        Size minSize{getMinSize()};
+        if (cMinSize > minSize)
+            minSize = cMinSize;
 
-            setLimits(minSize, maxSize);
-        }
+        setLimits(minSize, maxSize);
     }
 
     void VBox::expandOnAdd(const Size& newSize)

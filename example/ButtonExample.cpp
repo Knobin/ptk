@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
         std::cout << successBtn->getText() << " clicked!\n";
         return true;
     });
-    
+
     pTK::Ref<pTK::Button> dangerBtn = pTK::Create<pTK::Button>(pTK::Button::Style::Danger);
     dangerBtn->setText("Danger Button");
     window.add(dangerBtn);
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
         std::cout << dangerBtn->getText() << " clicked!\n";
         return true;
     });
-    
+
     pTK::Ref<pTK::Button> customBtn = pTK::Create<pTK::Button>();
     customBtn->setText("Custom Button");
     customBtn->setColor(pTK::Color(0x808080FF));
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
         std::cout << customBtn->getText() << " clicked!\n";
         return true;
     });
-    
+
     pTK::Ref<pTK::Button> customStyleBtn = pTK::Create<pTK::Button>();
     pTK::Button::Style style = pTK::Button::Style::Default;
     style.color = pTK::Color(0x808080FF);
@@ -61,16 +61,16 @@ int main(int argc, char *argv[])
         std::cout << customStyleBtn->getText() << " clicked!\n";
         return true;
     });
-    
+
     pTK::Ref<pTK::Button> customSizeBtn = pTK::Create<pTK::Button>(style);
-    customSizeBtn->setConstSize(pTK::Size(250, 100));
+    customSizeBtn->setSize(pTK::Size(250, 100));
     customSizeBtn->setText("Custom Size Button");
     window.add(customSizeBtn);
     customSizeBtn->onClick([&customSizeBtn](pTK::Mouse::Button, const pTK::Point&){
         std::cout << customSizeBtn->getText() << " clicked!\n";
         return true;
     });
-    
+
     pTK::Ref<pTK::Button> customLabelSizeBtn = pTK::Create<pTK::Button>(style);
     customLabelSizeBtn->setFontSize(24);
     customLabelSizeBtn->setText("Custom Font Size Button");
