@@ -9,10 +9,10 @@ const unsigned int SCR_HEIGHT = 540;
 
 int main(int argc, char *argv[])
 {
-    pTK::Application app(argc, argv);
-    pTK::Window window("pTK Label Example", {SCR_WIDTH, SCR_HEIGHT});
+    pTK::Application app("LabelExample Application", argc, argv);
+    pTK::Window window("LabelExample Window", {SCR_WIDTH, SCR_HEIGHT});
     
-    pTK::Ref<pTK::Label> label = pTK::create<pTK::Label>();
+    pTK::Ref<pTK::Label> label = pTK::Create<pTK::Label>();
     label->setName("My Label");
     label->setFontSize(48);
     label->setFontFamily("Arial");

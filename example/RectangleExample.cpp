@@ -9,10 +9,10 @@ const unsigned int SCR_HEIGHT = 540;
 
 int main(int argc, char *argv[])
 {
-    pTK::Application app(argc, argv);
-    pTK::Window window("pTK Rect Example", {SCR_WIDTH, SCR_HEIGHT});
+    pTK::Application app("RectangleExample Application", argc, argv);
+    pTK::Window window("RectangleExample Window", {SCR_WIDTH, SCR_HEIGHT});
     
-    pTK::Ref<pTK::Rectangle> rect = pTK::create<pTK::Rectangle>();
+    pTK::Ref<pTK::Rectangle> rect = pTK::Create<pTK::Rectangle>();
     rect->setName("My Rectangle");
     rect->setSize(pTK::Size(250, 100));
     rect->setPosHint(pTK::Point(250, 250));
