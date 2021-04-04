@@ -8,6 +8,10 @@
 // Local Headers
 #include "KeyMap_win.hpp"
 
+// Windows Headers
+#define NOMINMAX
+#include <windows.h>
+
 namespace pTK
 {
     std::map<int32, KeyCode> KeyCodeMapInit_win()

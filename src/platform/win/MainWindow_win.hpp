@@ -17,6 +17,7 @@
 #include <map>
 
 // Windows Headers
+#define NOMINMAX
 #include <windows.h>
 
 namespace pTK

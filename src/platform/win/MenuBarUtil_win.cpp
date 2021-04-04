@@ -12,6 +12,9 @@
 #include "ptk/events/KeyMap.hpp"
 #include "ptk/menu/NamedMenuItem.hpp"
 
+// C++ Headers
+#include <array>
+
 namespace pTK::MenuBarUtil_win
 {
     void SetNamedOrCheckboxItem(HMENU hmenu, MenuMap& menus, const Ref<MenuItem>& item, uint menuId, std::vector<ACCEL>& keys, bool isCheckbox)

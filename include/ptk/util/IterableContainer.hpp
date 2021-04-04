@@ -14,6 +14,7 @@
 // C++ Headers
 #include <vector>
 #include <map>
+#include <stdexcept>
 
 namespace pTK
 {

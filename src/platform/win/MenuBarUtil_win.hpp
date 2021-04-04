@@ -19,6 +19,10 @@
 #include <optional>
 #include <vector>
 
+// Windows Headers
+#define NOMINMAX
+#include <windows.h>
+
 namespace pTK::MenuBarUtil_win
 {
     using MenuMap = std::map<uint, std::tuple<Ref<MenuItem>, uint, bool, HMENU>>;

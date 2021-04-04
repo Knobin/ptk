@@ -18,6 +18,7 @@ PTK_DISABLE_WARN_BEGIN()
 PTK_DISABLE_WARN_END()
 
 // Windows Headers
+#define NOMINMAX
 #include <windows.h>
 
 namespace pTK

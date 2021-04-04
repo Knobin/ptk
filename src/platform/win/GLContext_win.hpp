@@ -12,10 +12,9 @@
 #include "ptk/core/platform/ContextBase.hpp"
 
 // Windows Headers
-#ifdef _WIN32
-    #define NOMINMAX
-    #include <windows.h>
-#endif
+#define NOMINMAX
+#include <windows.h>
+
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
