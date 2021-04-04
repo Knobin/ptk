@@ -54,6 +54,12 @@ namespace pTK
             @param menu     menu to remove
         */
         void removeMenu(const Ref<Menu>& menu);
+
+        /** Function for checking if the menu bar is empty.
+
+            @return     true if empty, otherwise false
+        */
+        bool empty() const;
     };
 }
 

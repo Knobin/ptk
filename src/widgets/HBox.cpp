@@ -53,7 +53,7 @@ namespace pTK
         layoutSize.width    = (vbSize.width > layoutSize.width) ? vbSize.width : layoutSize.width;
         
         setSize(layoutSize); // this will generate a Resize event.
-        const size_type children{size()};
+        const size_type children{container().size()};
         for (size_type i{0}; i < children; ++i)
         {
             auto child = at(i);
@@ -77,7 +77,7 @@ namespace pTK
     void HBox::refitContent(const Size& nsize)
     {
         const Size vbSize{nsize};
-        const size_type children{size()};
+        const size_type children{container().size()};
         std::vector<Size> sizes(children);
         
         // Initialize sizes.
@@ -159,8 +159,8 @@ namespace pTK
     
     std::vector<Size::value_type> HBox::calcSpaces(Size::value_type width)
     {
-        const size_type children{size()};
-        const size_type spaceCount{size() + 1};
+        const size_type children{container().size()};
+        const size_type spaceCount{children + 1};
         std::vector<Size::value_type> spaces(spaceCount);
         if (width != 0)
         {

@@ -26,4 +26,9 @@ namespace pTK
                 container().erase(it);
     }
 
+    bool MenuBar::empty() const
+    {
+        return container().empty();
+    }
+
 } // pTK

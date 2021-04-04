@@ -19,10 +19,10 @@
 namespace pTK
 {
     template<typename Container>
-    class IterableContainerBase
+    class IterableContainer
     {
     public:
-        /** typedefs for IterableContainerBase.
+        /** typedefs for IterableContainer.
         */
         using value_type = typename Container::value_type;
         using allocator_type = typename Container::allocator_type;
@@ -38,10 +38,10 @@ namespace pTK
         using difference_type = typename Container::difference_type;
         
     public:
-        IterableContainerBase() = default;
-        ~IterableContainerBase() = default;
+        IterableContainer() = default;
+        ~IterableContainer() = default;
         
-        IterableContainerBase(const IterableContainerBase& rhs)
+        IterableContainer(const IterableContainer& rhs)
         {
             m_holder = rhs.container();
         }
@@ -51,7 +51,7 @@ namespace pTK
             @param rhs     IterableContainer to copy from
             @return        IterableContainer with values from rhs
         */
-        IterableContainerBase &operator=(const IterableContainerBase& rhs)
+        IterableContainer &operator=(const IterableContainer& rhs)
         {
             if (this == &rhs)
                 return *this;
@@ -61,26 +61,9 @@ namespace pTK
             return *this;
         }
         
-        void swap(IterableContainerBase& other) noexcept
+        void swap(IterableContainer& other) noexcept
         {
             m_holder.swap(other);
-        }
-        
-        /** Function for retrieving the size of the IterableContainer.
-
-        */
-        size_type size() const noexcept
-        {
-            return m_holder.size();
-        }
-
-        /** Function for checking if the IterableContainer is empty.
-
-            @return    empty
-        */
-        [[nodiscard]] bool empty() const noexcept
-        {
-            return m_holder.empty();
         }
         
         /** Function for retrieving the an iterator that points to the first
@@ -273,13 +256,13 @@ namespace pTK
             -   void onRemove(const_reference item)
     */
     template<typename Key, typename T, typename Compare = std::less<Key>, typename Allocator = std::allocator<std::pair<const Key, T>>>
-    class IterableAssociative : public IterableContainerBase<std::map<Key, T, Compare, Allocator>>
+    class IterableAssociative : public IterableContainer<std::map<Key, T, Compare, Allocator>>
     {
     public:
         /** typedefs for IterableContainer.
         */
         using container_type = std::map<Key, T, Compare, Allocator>;
-        using base_type = IterableContainerBase<container_type>;
+        using base_type = IterableContainer<container_type>;
         using value_type = typename base_type::value_type;
         using allocator_type = typename base_type::allocator_type;
         using reference = value_type &;
@@ -335,13 +318,13 @@ namespace pTK
             -   void onRemove(const_reference item)
     */
     template<typename T, typename A = std::allocator<T>>
-    class IterableSequence : public IterableContainerBase<std::vector<T, A>>
+    class IterableSequence : public IterableContainer<std::vector<T, A>>
     {
     public:
         /** typedefs for IterableContainer.
         */
         using container_type = std::vector<T, A>;
-        using base_type = IterableContainerBase<container_type>;
+        using base_type = IterableContainer<container_type>;
         using value_type = typename base_type::value_type;
         using allocator_type = typename base_type::allocator_type;
         using reference = value_type &;

@@ -69,7 +69,7 @@ namespace pTK
         layoutSize.width    = (vbSize.width > layoutSize.width) ? vbSize.width : layoutSize.width;
         setSize(layoutSize); // this will generate a Resize event.
 
-        const size_t children{size()};
+        const size_t children{container().size()};
         Point vbPos{getPosition()};
         for (size_type i{0}; i < children; ++i)
         {
@@ -94,7 +94,7 @@ namespace pTK
     void VBox::refitContent(const Size& nsize)
     {
         const Size vbSize{nsize};
-        const size_type children{size()};
+        const size_type children{container().size()};
         std::vector<Size> sizes(children);
 
         // Initialize sizes.
@@ -175,8 +175,8 @@ namespace pTK
 
     std::vector<Size::value_type> VBox::calcSpaces(Size::value_type height)
     {
-        const size_type children{size()};
-        const size_type spaceCount{size() + 1};
+        const size_type children{container().size()};
+        const size_type spaceCount{children + 1};
         std::vector<Size::value_type> spaces(spaceCount);
         if (height != 0)
         {

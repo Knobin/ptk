@@ -129,7 +129,7 @@ namespace pTK
     int Application::run()
     {
         // Currently not supporting running the app without a window.
-        if (empty())
+        if (container().empty())
         {
             PTK_FATAL("No Window added to Application");
             return -1;
@@ -146,7 +146,7 @@ namespace pTK
         // Maybe do some setup things here?
 
         // Standard message loop for now.
-        while (!empty())
+        while (!container().empty())
         {
             AppInstance()->waitEvents();
             for (const auto& pair : *this)
