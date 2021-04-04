@@ -88,7 +88,10 @@ namespace pTK
         NSMenu* menuBar{nullptr};
         std::map<void*, NamedMenuItem*> menuItemMap{};
         std::string name{};
+        bool initialized{false};
     } s_appData{};
+
+    Application_mac Application_mac::s_Instance{};
 
     static void SetAppMenu(const std::string& name, NSMenu *menu)
     {
@@ -145,9 +148,14 @@ namespace pTK
         [menuItem setTarget : NSApp];
     }
 
-    Application_mac::Application_mac(const std::string& name)
-        : ApplicationBase()
+    void Application_mac::Init(const std::string& name)
     {
+        if (s_appData.initialized)
+        {
+            PTK_WARN("Application_mac already initialized!");
+            return;
+        }
+        
         @autoreleasepool {
             [NSApplication sharedApplication];
 
@@ -173,7 +181,7 @@ namespace pTK
         PTK_INFO("Initialized Application_mac");
     }
 
-    Application_mac::~Application_mac()
+    void Application_mac::Destroy()
     {
         @autoreleasepool {
             [NSApp setDelegate:nil];
@@ -183,6 +191,11 @@ namespace pTK
         }
 
         PTK_INFO("Destroyed Application_mac");
+    }
+
+    ApplicationBase *Application_mac::Instance()
+    {
+        return &s_Instance;
     }
 
     void Application_mac::pollEvents()
@@ -290,11 +303,19 @@ namespace pTK
                     [mItem setState: NSControlStateValueOn];
                 else if (item->status() == MenuItemStatus::Unchecked)
                     [mItem setState: NSControlStateValueOff];
-                item->onStatus("NS::Toggle", [mItem](MenuItemStatus, MenuItemStatus status){
+                
+                item->onUpdate("NS::Toggle", [mItem, nmItem](){
+                    MenuItemStatus status{nmItem->status()};
                     if (status == MenuItemStatus::Checked)
                         [mItem setState: NSControlStateValueOn];
                     else if (status == MenuItemStatus::Unchecked)
                         [mItem setState: NSControlStateValueOff];
+                    [mItem setTitle: [NSString stringWithstring:nmItem->name()]];
+                });
+            }else
+            {
+                item->onUpdate("NS::Update", [mItem, nmItem](){
+                    [mItem setTitle: [NSString stringWithstring:nmItem->name()]];
                 });
             }
 

@@ -24,16 +24,9 @@ namespace pTK
     class Application_mac : public ApplicationBase
     {
     public:
-        /** Constructs Application_mac with default values.
-
-            @return        default initialized Application_mac
-        */
-        Application_mac(const std::string& name);
-
-        /** Destructor for Application_mac
-
-        */
-        virtual ~Application_mac();
+        static void Init(const std::string& name);
+        static void Destroy();
+        static ApplicationBase *Instance();
 
         /** Function for polling all the window events.
 
@@ -52,6 +45,13 @@ namespace pTK
         void waitEventsTimeout(uint ms) override;
 
         static void SetMenuBar(const Ref<MenuBar>& menuBar);
+    
+    private:
+        Application_mac() = default;
+        virtual ~Application_mac() = default;
+        
+    private:
+        static Application_mac s_Instance;
     };
 }
 
