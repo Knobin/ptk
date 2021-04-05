@@ -39,7 +39,9 @@ namespace pTK
 
             @return    default initialized Size
         */
-        Size();
+        constexpr Size()
+            : width{0}, height{0}
+        {}
 
         /** Constructs Size with default values width and height.
 
@@ -47,15 +49,16 @@ namespace pTK
             @param height  height
             @return        default initialized Size
         */
-        Size(value_type other_width, value_type other_height);
-        ~Size() = default;
+        constexpr Size(value_type t_width, value_type t_height)
+            : width{t_width}, height{t_height}
+        {}
 
         /** Function for setting size.
 
             @param width   new width
             @param height  new height
         */
-        void setSize(value_type other_width, value_type other_height);
+        void set(value_type t_width, value_type t_height);
 
         value_type width;
         value_type height;

@@ -29,7 +29,7 @@ namespace pTK
          
             @return    default initialized Vec2
         */
-        Vec2()
+        constexpr Vec2()
             : x{}, y{}
         {
         }
@@ -38,7 +38,7 @@ namespace pTK
          
             @return    default initialized Vec2
         */
-        Vec2(T other_x, T other_y)
+        constexpr Vec2(T other_x, T other_y)
             : x{other_x}, y{other_y}
         {
         }
@@ -52,7 +52,7 @@ namespace pTK
             @return        default initialized Vec2
         */
         template <typename U>
-        explicit Vec2(const Vec2<U>& vec)
+        explicit constexpr Vec2(const Vec2<U>& vec)
             : x{static_cast<T>(vec.x)}, y{static_cast<T>(vec.y)}
         {
         }
@@ -66,7 +66,7 @@ namespace pTK
             @return        default initialized Vec2
         */
         template <typename U>
-        Vec2<T>& operator=( const Vec2<U>& vec )
+        constexpr Vec2<T>& operator=( const Vec2<U>& vec )
         {
             x = static_cast<T>(vec.x);
             y = static_cast<T>(vec.y);

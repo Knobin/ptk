@@ -16,22 +16,10 @@ namespace pTK
     const Size Size::Min(Size::Limits::Min, Size::Limits::Min);
     const Size Size::Max(Size::Limits::Max, Size::Limits::Max);
 
-    Size::Size()
-        : width{Limits::Min}, height{Limits::Min}
+    void Size::set(value_type t_width, value_type t_height)
     {
-
-    }
-
-    Size::Size(value_type other_width, value_type other_height)
-        : width{other_width}, height{other_height}
-    {
-
-    }
-
-    void Size::setSize(value_type other_width, value_type other_height)
-    {
-        width = other_width;
-        height = other_height;
+        width = t_width;
+        height = t_height;
     }
 
     // Comparison operators.

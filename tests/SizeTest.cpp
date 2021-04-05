@@ -6,12 +6,12 @@
 TEST_CASE("Constructors")
 {
     // Testing Constructors with correct data.
-    int cWidth = 50;
-    int cHeight = 300;
+    constexpr int width = 50;
+    constexpr int height = 300;
     
     SECTION("Size()")
     {
-        pTK::Size size;
+        constexpr pTK::Size size{};
         
         REQUIRE(size.width == 0);
         REQUIRE(size.height == 0);
@@ -19,69 +19,69 @@ TEST_CASE("Constructors")
     
     SECTION("Size(int width, int height)")
     {
-        pTK::Size size{cWidth, cHeight};
+        constexpr pTK::Size size{width, height};
         
-        REQUIRE(size.width == cWidth);
-        REQUIRE(size.height == cHeight);
+        REQUIRE(size.width == width);
+        REQUIRE(size.height == height);
     }
 }
 
 TEST_CASE("Getters and Setters")
 {
     // Testing Getters and Setters.
-    int cWidth = 55;
-    int cHeight = 350;
+    constexpr int width = 55;
+    constexpr int height = 350;
     
-    SECTION("setSize(int width, int height)")
+    SECTION("set(int width, int height)")
     {
-        pTK::Size size;
-        size.setSize(cWidth, cHeight);
-        REQUIRE(size.width == cWidth);
-        REQUIRE(size.height == cHeight);
+        pTK::Size size{};
+        size.set(width, height);
+        REQUIRE(size.width == width);
+        REQUIRE(size.height == height);
     }
 }
 
 TEST_CASE("Copy and Assignment")
 {
     // Testing Rectangle Copy and Assignment.
-    int cWidth = 949;
-    int cHeight = 84;
+    constexpr int width = 949;
+    constexpr int height = 84;
     
-    pTK::Size size;
-    size.setSize(cWidth, cHeight);
+    pTK::Size size{};
+    size.set(width, height);
     
     SECTION("Copy")
     {
         pTK::Size tmp = size;
-        REQUIRE(tmp.width == cWidth);
-        REQUIRE(tmp.height == cHeight);
+        REQUIRE(tmp.width == width);
+        REQUIRE(tmp.height == height);
     }
     
     SECTION("Assignment")
     {
         pTK::Size tmp;
         tmp = size;
-        REQUIRE(tmp.width == cWidth);
-        REQUIRE(tmp.height == cHeight);
+        REQUIRE(tmp.width == width);
+        REQUIRE(tmp.height == height);
     }
 }
 
 TEST_CASE ("Comparison")
 {
     // Testing Transformable Comparison.
-    int cWidth = 57;
-    int cHeight = 384;
+    constexpr int width = 57;
+    constexpr int height = 384;
     
-    pTK::Size size;
-    size.setSize(cWidth, cHeight);
+    pTK::Size size{};
+    size.set(width, height);
     
     pTK::Size s1 = size;
     
     pTK::Size s2;
-    s2.height = cHeight;
+    s2.height = height;
     
     pTK::Size s3;
-    s3.width = cWidth;
+    s3.width = width;
     
     SECTION("Equal")
     {
