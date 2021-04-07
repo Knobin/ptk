@@ -33,7 +33,7 @@ namespace pTK
 
     [[nodiscard]] bool CheckboxMenuItem::checked() const
     {
-        return static_cast<bool>(status() == MenuItemStatus::Checked);
+        return status() == MenuItemStatus::Checked;
     }
 
     void CheckboxMenuItem::setChecked(bool checked)

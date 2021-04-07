@@ -16,6 +16,7 @@
 // C++ Headers
 #include <functional>
 #include <map>
+#include <string>
 
 namespace pTK
 {
@@ -117,12 +118,12 @@ namespace pTK
     void MenuItem::handleEvent(FuncArgs&&... args) {
         if constexpr (Event == MenuItemEvent::Update)
         {
-            for (auto& it : m_updateCallbacks)
+            for (const auto& it : m_updateCallbacks)
                 it.second();
         }
         else if constexpr (Event == MenuItemEvent::Status)
         {
-            for (auto& it : m_statusCallbacks)
+            for (const auto& it : m_statusCallbacks)
                 it.second(std::forward<FuncArgs>(args)...);
         }
     }

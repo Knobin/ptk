@@ -12,6 +12,9 @@
 #include "ptk/menu/MenuItem.hpp"
 #include "ptk/menu/Shortcut.hpp"
 
+// C++ Headers
+#include <string>
+
 namespace pTK
 {
     /** NamedMenuItem class implementation.
