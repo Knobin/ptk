@@ -11,7 +11,7 @@
 namespace pTK
 {
     HBox::HBox()
-        : Box()
+        : WidgetContainer()
     {
         setMaxSize(Size::Max);
     }

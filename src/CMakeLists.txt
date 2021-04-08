@@ -2,14 +2,14 @@
 # Source files
 #
 
-set(CORE_FILES core/Box.cpp
-        core/EventCallbacks.cpp
+set(CORE_FILES core/EventCallbacks.cpp
         core/EventHandling.cpp
         core/Font.cpp
         core/Shape.cpp
         core/Sizable.cpp
         core/Text.cpp
         core/Widget.cpp
+        core/WidgetContainer.cpp
         core/platform/ContextBase.cpp)
 
 set(EVENT_FILES events/KeyMap.cpp)

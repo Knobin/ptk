@@ -1,22 +1,22 @@
 //
-//  core/Box.cpp
+//  core/WidgetContainer.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2019-11-18.
 //
 
 // pTK Headers
-#include "ptk/core/Box.hpp"
+#include "ptk/core/WidgetContainer.hpp"
 
 namespace pTK
 {
-    Box::~Box()
+    WidgetContainer::~WidgetContainer()
     {
         for (auto& item : *this)
             item->setParent(nullptr);
     }
 
-    void Box::add(const Ref<Widget>& widget)
+    void WidgetContainer::add(const Ref<Widget>& widget)
     {
         if (std::find(cbegin(), cend(), widget) == cend())
         {
@@ -27,7 +27,7 @@ namespace pTK
         }
     }
 
-    void Box::remove(const Ref<Widget>& widget)
+    void WidgetContainer::remove(const Ref<Widget>& widget)
     {
         auto it = std::find(cbegin(), cend(), widget);
         if (it != cend())
@@ -39,7 +39,7 @@ namespace pTK
         }
     }
 
-    void Box::setPosHint(const Point& pos)
+    void WidgetContainer::setPosHint(const Point& pos)
     {
         const Point deltaPos{pos - getPosition()};
         for (auto& item : *this)
@@ -52,7 +52,7 @@ namespace pTK
         Widget::setPosHint(pos);
     }
 
-    void Box::onDraw(SkCanvas* canvas)
+    void WidgetContainer::onDraw(SkCanvas* canvas)
     {
         PTK_ASSERT(canvas, "Canvas is undefined");
         
@@ -61,12 +61,12 @@ namespace pTK
             item->onDraw(canvas);
     }
 
-    bool Box::updateChild(Widget* widget)
+    bool WidgetContainer::updateChild(Widget* widget)
     {
         if (!m_busy)
         {
             m_busy = true;
-            Box::const_iterator it{std::find_if(cbegin(), cend(), [&](Box::const_reference item) {
+            WidgetContainer::const_iterator it{std::find_if(cbegin(), cend(), [&](WidgetContainer::const_reference item) {
                 return item.get() == widget;
             })};
             if (it != cend())
@@ -81,12 +81,12 @@ namespace pTK
         return false;
     }
 
-    bool Box::drawChild(Widget* widget)
+    bool WidgetContainer::drawChild(Widget* widget)
     {
         if (!m_busy)
         {
             m_busy = true;
-            Box::const_iterator it{std::find_if(cbegin(), cend(), [&](Box::const_reference item) {
+            WidgetContainer::const_iterator it{std::find_if(cbegin(), cend(), [&](WidgetContainer::const_reference item) {
                 return item.get() == widget;
             })};
             if (it != cend())
@@ -101,7 +101,7 @@ namespace pTK
         return false;
     }
 
-    bool Box::onClickEvent(Mouse::Button btn, const Point& pos)
+    bool WidgetContainer::onClickEvent(Mouse::Button btn, const Point& pos)
     {
         for (auto& item : *this)
         {
@@ -122,7 +122,7 @@ namespace pTK
         return false;
     }
 
-    bool Box::onReleaseEvent(Mouse::Button btn, const Point& pos)
+    bool WidgetContainer::onReleaseEvent(Mouse::Button btn, const Point& pos)
     {
         if (m_lastClickedWidget != nullptr)
             return m_lastClickedWidget->handleReleaseEvent(btn, pos);
@@ -130,7 +130,7 @@ namespace pTK
         return false;
     }
 
-    bool Box::onKeyEvent(Event::Type type, KeyCode keycode)
+    bool WidgetContainer::onKeyEvent(Event::Type type, KeyCode keycode)
     {
         if (m_lastClickedWidget != nullptr)
             return m_lastClickedWidget->handleKeyEvent(type, keycode);
@@ -138,7 +138,7 @@ namespace pTK
         return false;
     }
 
-    bool Box::onHoverEvent(const Point& pos)
+    bool WidgetContainer::onHoverEvent(const Point& pos)
     {
         for (auto& it : *this)
         {
@@ -177,7 +177,7 @@ namespace pTK
         return false;
     }
 
-    bool Box::onEnterEvent()
+    bool WidgetContainer::onEnterEvent()
     {
         if (m_currentHoverWidget != nullptr)
             return m_currentHoverWidget->handleEnterEvent();
@@ -185,7 +185,7 @@ namespace pTK
         return false;
     }
 
-    bool Box::onLeaveEvent()
+    bool WidgetContainer::onLeaveEvent()
     {
         if (m_currentHoverWidget != nullptr)
         {
@@ -199,7 +199,7 @@ namespace pTK
         return false;
     }
 
-    bool Box::onScrollEvent(const Vec2f& offset)
+    bool WidgetContainer::onScrollEvent(const Vec2f& offset)
     {
         if (m_currentHoverWidget != nullptr)
             return m_currentHoverWidget->handleScrollEvent(offset);
@@ -207,22 +207,22 @@ namespace pTK
         return false;
     }
 
-    void Box::setBackground(const Color& color)
+    void WidgetContainer::setBackground(const Color& color)
     {
         m_background = color;
     }
 
-    const Color& Box::getBackground() const
+    const Color& WidgetContainer::getBackground() const
     {
         return m_background;
     }
 
-    bool Box::busy() const
+    bool WidgetContainer::busy() const
     {
         return m_busy;
     }
 
-    void Box::drawBackground(SkCanvas *canvas) const
+    void WidgetContainer::drawBackground(SkCanvas *canvas) const
     {
         PTK_ASSERT(canvas, "Canvas is undefined");
         

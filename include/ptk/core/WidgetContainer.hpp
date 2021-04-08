@@ -1,12 +1,12 @@
 //
-//  core/Box.hpp
+//  core/WidgetContainer.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2019-11-18.
 //
 
-#ifndef PTK_CORE_BOX_HPP
-#define PTK_CORE_BOX_HPP
+#ifndef PTK_CORE_WIDGETCONTAINER_HPP
+#define PTK_CORE_WIDGETCONTAINER_HPP
 
 // pTK Headers
 #include "ptk/util/IterableContainer.hpp"
@@ -18,29 +18,24 @@
 
 namespace pTK
 {
-    /** Box class implementation.
+    /** WidgetContainer class implementation.
 
         Derived from Container, this class for holding Widgets in
-        order of displaying them in a vertical style.
-
-        Be sure to override these functions:
-            - virtual void setPosHint(const Point& pos);
-            - virtual void setSize(const Size& newSize);
-            - virtual void drawContent(SkCanvas *canvas);
+        order of displaying them.
     */
-    class Box : public IterableSequence<Ref<Widget>>, public Widget
+    class WidgetContainer : public IterableSequence<Ref<Widget>>, public Widget
     {
     public:
         /** Constructs Box with default values.
 
             @return    default initialized Box
         */
-        Box() = default;
+        WidgetContainer() = default;
 
         /** Destructor for Box.
 
         */
-        virtual ~Box();
+        virtual ~WidgetContainer();
         
         // TODO: Documentation.
         void add(const Ref<Widget>& widget);
@@ -179,6 +174,7 @@ namespace pTK
         Widget* m_currentHoverWidget{nullptr};
         bool m_busy{false};
     };
+
 } // namespace pTK
 
-#endif // PTK_CORE_BOX_HPP
+#endif // PTK_CORE_WIDGETCONTAINER_HPP

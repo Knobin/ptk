@@ -9,7 +9,7 @@
 #define PTK_WIDGETS_VBOX_HPP
 
 // pTK Headers
-#include "ptk/core/Box.hpp"
+#include "ptk/core/WidgetContainer.hpp"
 
 // C++ Headers
 #include <utility>
@@ -21,7 +21,7 @@ namespace pTK
         Derived from Box, this class for holding Cells in
         order of displaying them in a vertical style.
     */
-    class VBox : public Box
+    class VBox : public WidgetContainer
     {
     public:
         /** Constructs VBox with default values.

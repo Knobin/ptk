@@ -15,7 +15,7 @@
 namespace pTK
 {
     VBox::VBox()
-        : Box()
+        : WidgetContainer()
     {
         setMaxSize(Size::Max);
     }
