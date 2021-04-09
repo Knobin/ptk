@@ -52,37 +52,37 @@ void setWindowCallbacks(pTK::Window& window)
 {
     window.onFocus([&](){
         std::cout << "FOCUS" << std::endl;
-        return true;
+        return false;
     });
 
     window.onMove([&](const pTK::Point& pos){
         std::cout << "MOVE " << pos.x << "x" << pos.y << std::endl;
-        return true;
+        return false;
     });
 
     window.onLostFocus([&](){
         std::cout << "LOST FOCUS" << std::endl;
-        return true;
+        return false;
     });
 
     window.onClose([&](){
         std::cout << "CLOSE" << std::endl;
-        return true;
+        return false;
     });
 
     window.onResize([&](const pTK::Size& size){
         std::cout << "RESIZE: " << size.width << "x" << size.height << std::endl;
-        return true;
+        return false;
     });
 
     window.onMinimize([&](){
         std::cout << "MINIMIZED" << std::endl;
-        return true;
+        return false;
     });
 
     window.onRestore([&](){
         std::cout << "RESTORED" << std::endl;
-        return true;
+        return false;
     });
 }
 
@@ -172,7 +172,7 @@ int main(int argc, char *argv[]) {
 
         std::cout << "Key event " << static_cast<int32>(key) << std::endl;
 
-        return true;
+        return false;
     });
 
     // HBox.
@@ -203,7 +203,7 @@ int main(int argc, char *argv[]) {
     b1->setAlign(pTK::Top);
     b1->onRelease([](pTK::Mouse::Button, const pTK::Point&) {
         std::cout << "Do stuff with B1" << std::endl;
-        return true;
+        return false;
     });
 
     // Second button in sidebar.
@@ -214,7 +214,7 @@ int main(int argc, char *argv[]) {
     b2->setAlign(pTK::Top);
     b2->onRelease([](pTK::Mouse::Button, const pTK::Point&) {
       std::cout << "Do stuff with B2" << std::endl;
-      return true;
+      return false;
     });
 
     // Third button in sidebar.
@@ -225,7 +225,7 @@ int main(int argc, char *argv[]) {
     b3->setAlign(pTK::Top);
     b3->onRelease([](pTK::Mouse::Button, const pTK::Point&) {
       std::cout << "Do stuff with B3" << std::endl;
-      return true;
+      return false;
     });
 
     // Bottom button in sidebar.
@@ -237,7 +237,7 @@ int main(int argc, char *argv[]) {
     quit->setAlign(pTK::Bottom);
     quit->onRelease([&](pTK::Mouse::Button, const pTK::Point&){
         window.close();
-        return true;
+        return false;
     });
 
     // VBox as right side content. (TODO: should be a scrollable area).
@@ -268,7 +268,7 @@ int main(int argc, char *argv[]) {
     r2->onClick([&](pTK::Mouse::Button btn, const pTK::Point&) {
       if (btn == pTK::Mouse::Button::Left)
           r2->setColor(randomColor());
-      return true;
+      return false;
     });
 
     pTK::Ref<pTK::HBox> h1 = pTK::Create<pTK::HBox>();
@@ -304,7 +304,7 @@ int main(int argc, char *argv[]) {
         std::string statusText = "Checkbox Status: ";
         statusText.append((status) ? "true" : "false");
         cStatus->setText(statusText);
-        return true;
+        return false;
     });
 
     // Add content to sidebar.
@@ -325,6 +325,11 @@ int main(int argc, char *argv[]) {
     h1->setMaxSize({pTK::Size::Limits::Max, h1->getMinSize().height});
 
     // Add content to right side.
+    cTitle->onKey([](pTK::Event::Type type, pTK::KeyCode code) {
+        std::cout << "cTitle key event: " << pTK::KeyCodeToAlpha(code) << std::endl;
+        return false;
+    });
+
     content->add(cTitle);
     content->add(cText);
     content->add(h1);
