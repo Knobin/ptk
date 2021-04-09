@@ -217,6 +217,11 @@ namespace pTK
         return m_background;
     }
 
+    Widget *WidgetContainer::getSelectedWidget() const
+    {
+        return m_lastClickedWidget;
+    }
+
     bool WidgetContainer::busy() const
     {
         return m_busy;

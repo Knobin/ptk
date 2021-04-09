@@ -102,14 +102,6 @@ namespace pTK
             @param position    x and y position
         */
         bool handleReleaseEvent(Mouse::Button button, const Point& position);
-        
-    private:
-        using EventCallbacks::m_keyCallback;
-        using EventCallbacks::m_hoverCallback;
-        using EventCallbacks::m_leaveCallback;
-        using EventCallbacks::m_scrollCallback;
-        using EventCallbacks::m_clickCallback;
-        using EventCallbacks::m_releaseCallback;
     };
 }
 

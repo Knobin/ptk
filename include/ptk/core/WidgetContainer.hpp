@@ -126,6 +126,8 @@ namespace pTK
         */
         [[nodiscard]] const Color& getBackground() const;
 
+        [[nodiscard]] Widget *getSelectedWidget() const;
+
     protected:
         /** Function for checking if a child has called a parent function.
 

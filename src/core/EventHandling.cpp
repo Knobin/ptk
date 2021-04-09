@@ -13,75 +13,124 @@ namespace pTK
 
     EventHandling::EventHandling()
         : EventCallbacks(), EventFunctions()
-    {
-    }
+    {}
     
     bool EventHandling::handleKeyEvent(Event::Type type, KeyCode keycode)
     {
-        bool status = true;
-        if (m_keyCallback != nullptr)
-            status = m_keyCallback(type, keycode);
-        
-        return !status || onKeyEvent(type, keycode);
+        bool status{onKeyEvent(type, keycode)};
+
+        auto& container = getKeyCallbacks();
+        auto it = container.begin();
+        while (it != container.end())
+        {
+            if ((*it)(type, keycode))
+                it = container.erase(it);
+            else
+                ++it;
+        }
+
+        return status;
     }
     
     bool EventHandling::handleHoverEvent(const Point& pos)
     {
-        bool status = true;
+        bool status{onHoverEvent(pos)};
+
+        auto& container = getHoverCallbacks();
+        auto it = container.begin();
+        while (it != container.end())
+        {
+            if ((*it)(pos))
+                it = container.erase(it);
+            else
+                ++it;
+        }
         
-        if (m_hoverCallback != nullptr)
-            status = m_hoverCallback(pos);
-        
-        return !status || onHoverEvent(pos);
+        return status;
     }
     
     bool EventHandling::handleEnterEvent()
     {
-        bool status = true;
+        bool status{onEnterEvent()};
+
+        auto& container = getEnterCallbacks();
+        auto it = container.begin();
+        while (it != container.end())
+        {
+            if ((*it)())
+                it = container.erase(it);
+            else
+                ++it;
+        }
         
-        if (m_enterCallback != nullptr)
-            status = m_enterCallback();
-        
-        return !status || onEnterEvent();
+        return status;
     }
     
     bool EventHandling::handleLeaveEvent()
     {
-        bool status = true;
-        
-        if (m_leaveCallback != nullptr)
-            status = m_leaveCallback();
+        bool status{onLeaveEvent()};
 
-        return !status || onLeaveEvent();
+        auto& container = getLeaveCallbacks();
+        auto it = container.begin();
+        while (it != container.end())
+        {
+            if ((*it)())
+                it = container.erase(it);
+            else
+                ++it;
+        }
+
+        return status;
     }
     
     bool EventHandling::handleScrollEvent(const Vec2f& offset)
     {
-        bool status = true;
+        bool status{onScrollEvent(offset)};
+
+        auto& container = getScrollCallbacks();
+        auto it = container.begin();
+        while (it != container.end())
+        {
+            if ((*it)(offset))
+                it = container.erase(it);
+            else
+                ++it;
+        }
         
-        if (m_scrollCallback != nullptr)
-            status = m_scrollCallback(offset);
-        
-        return !status || onScrollEvent(offset);
+        return status;
     }
     
     bool EventHandling::handleClickEvent(Mouse::Button button, const Point& position)
     {
-        bool status = true;
+        bool status{onClickEvent(button, position)};
+
+        auto& container = getClickCallbacks();
+        auto it = container.begin();
+        while (it != container.end())
+        {
+            if ((*it)(button, position))
+                it = container.erase(it);
+            else
+                ++it;
+        }
         
-        if (m_clickCallback != nullptr)
-            status = m_clickCallback(button, position);
-        
-        return !status || onClickEvent(button, position);
+        return status;
     }
     
     bool EventHandling::handleReleaseEvent(Mouse::Button button, const Point& position)
     {
-        bool status = true;
+        bool status{onReleaseEvent(button, position)};
 
-        if (m_releaseCallback != nullptr)
-            status = m_releaseCallback(button, position);
+        auto& container = getReleaseCallbacks();
+        auto it = container.begin();
+        while (it != container.end())
+        {
+            if ((*it)(button, position))
+                it = container.erase(it);
+            else
+                ++it;
+        }
         
-        return !status || onReleaseEvent(button, position);
+        return status;
     }
 }
