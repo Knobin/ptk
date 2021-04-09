@@ -68,13 +68,13 @@ namespace pTK
          
             Derived from EventFunctions.
         */
-        bool onEnterEvent() override;
+        void onEnterEvent() override;
         
         /** Function for handling when mouse is leaving.
          
             Derived from EventFunctions.
         */
-        bool onLeaveEvent() override;
+        void onLeaveEvent() override;
         
         /** Function for handling when mouse is clicking.
          
@@ -83,7 +83,7 @@ namespace pTK
             @param button      which button on mouse triggered the event.
             @param position    x and y position
         */
-        bool onClickEvent(Mouse::Button, const Point&) override;
+        void onClickEvent(Mouse::Button, const Point&) override;
         
         /** Function for handling when mouse is released.
          
@@ -92,7 +92,7 @@ namespace pTK
             @param button      which button on mouse triggered the event.
             @param position    x and y position
         */
-        bool onReleaseEvent(Mouse::Button, const Point&) override;
+        void onReleaseEvent(Mouse::Button, const Point&) override;
         
         /** Function for handling when the checkbox is toggled.
          

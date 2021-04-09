@@ -30,7 +30,7 @@ namespace pTK
 
             @return    default initialized Box
         */
-        WidgetContainer() = default;
+        WidgetContainer();
 
         /** Destructor for Box.
 
@@ -74,36 +74,36 @@ namespace pTK
             @param type     Key event (press or release)
             @param KeyCode  Keycode
         */
-        bool onKeyEvent(Event::Type type, KeyCode keycode) override;
+        void onKeyEvent(Event::Type type, KeyCode keycode) override;
 
         /** Function for handling when mouse is hovering.
 
             @param pos     position
         */
-        bool onHoverEvent(const Point& pos) override;
+        void onHoverEvent(const Point& pos) override;
 
         /** Function for handling when mouse is entering.
 
         */
-        bool onEnterEvent() override;
+        void onEnterEvent() override;
 
         /** Function for handling when mouse is leaving.
 
         */
-        bool onLeaveEvent() override;
+        void onLeaveEvent() override;
 
         /** Function for handling when mouse is scrolling.
 
             @param offset     x and y offset
         */
-        bool onScrollEvent(const Vec2f& offset) override;
+        void onScrollEvent(const Vec2f& offset) override;
 
         /** Function for handling when mouse is clicking.
 
             @param button      which button on mouse triggered the event.
             @param position    x and y position
         */
-        bool onClickEvent(Mouse::Button btn, const Point& pos) override;
+        void onClickEvent(Mouse::Button btn, const Point& pos) override;
 
         /** Function for handling when mouse is released.
 
@@ -112,7 +112,7 @@ namespace pTK
             @param button      which button on mouse triggered the event.
             @param position    x and y position
         */
-        bool onReleaseEvent(Mouse::Button btn, const Point& pos) override;
+        void onReleaseEvent(Mouse::Button btn, const Point& pos) override;
 
         /** Function for setting the background of the Container.
 
@@ -142,6 +142,8 @@ namespace pTK
         void drawBackground(SkCanvas *canvas) const;
 
     private:
+        void initCallbacks();
+
         /** Callback to use when a Widget has been successfully added.
 
             @param widget   child that has been added

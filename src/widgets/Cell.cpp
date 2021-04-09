@@ -114,8 +114,8 @@ namespace pTK
         m_widgetPos = currentPos;
         m_widget->setPosHint(currentPos);
     }
-    
-    bool Cell::onClickEvent(Mouse::Button btn, const Point& pos)
+
+    void Cell::onClickEvent(Mouse::Button btn, const Point& pos)
     {
         Point wPos = m_widget->getPosition();
         Size wSize = m_widget->getSize();
@@ -125,34 +125,24 @@ namespace pTK
             {
                 m_widget->handleClickEvent(btn, pos);
                 m_clicked = true;
-                return true;
             }
         }
         m_clicked = false;
-        return false;
     }
-    
-    bool Cell::onReleaseEvent(Mouse::Button btn, const Point& pos)
+
+    void Cell::onReleaseEvent(Mouse::Button btn, const Point& pos)
     {
         if (m_clicked)
-        {
             m_widget->handleReleaseEvent(btn, pos);
-            return true;
-        }
-        return false;
     }
-    
-    bool Cell::onKeyEvent(Event::Type type, KeyCode keycode)
+
+    void Cell::onKeyEvent(Event::Type type, KeyCode keycode)
     {
         if (m_clicked)
-        {
             m_widget->handleKeyEvent(type, keycode);
-            return true;
-        }
-        return false;
     }
-    
-    bool Cell::onHoverEvent(const Point& pos)
+
+    void Cell::onHoverEvent(const Point& pos)
     {
         Point wPos = m_widget->getPosition();
         Size wSize = m_widget->getSize();
@@ -165,52 +155,38 @@ namespace pTK
                 
                 m_widget->handleHoverEvent(pos);
                 m_hover = true;
-                return true;
             }else if (m_hover)
             {
                 m_widget->handleLeaveEvent();
                 m_hover = false;
-                return true;
             }
         }else if (m_hover)
         {
             m_widget->handleLeaveEvent();
             m_hover = false;
-            return true;
         }
         
         m_hover = false;
-        return false;
     }
-    
-    bool Cell::onEnterEvent()
+
+    void Cell::onEnterEvent()
     {
         if (m_hover)
-        {
             m_widget->handleEnterEvent();
-            return true;
-        }
-        return false;
     }
-    
-    bool Cell::onLeaveEvent()
+
+    void Cell::onLeaveEvent()
     {
         if (m_hover)
         {
             m_widget->handleLeaveEvent();
             m_hover = false;
-            return true;
         }
-        return false;
     }
-    
-    bool Cell::onScrollEvent(const Vec2f& offset)
+
+    void Cell::onScrollEvent(const Vec2f& offset)
     {
         if (m_hover)
-        {
             m_widget->handleScrollEvent(offset);
-            return true;
-        }
-        return false;
     }
 }

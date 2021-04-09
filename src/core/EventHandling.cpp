@@ -14,10 +14,10 @@ namespace pTK
     EventHandling::EventHandling()
         : EventCallbacks(), EventFunctions()
     {}
-    
-    bool EventHandling::handleKeyEvent(Event::Type type, KeyCode keycode)
+
+    void EventHandling::handleKeyEvent(Event::Type type, KeyCode keycode)
     {
-        bool status{onKeyEvent(type, keycode)};
+        onKeyEvent(type, keycode);
 
         auto& container = getKeyCallbacks();
         auto it = container.begin();
@@ -28,13 +28,11 @@ namespace pTK
             else
                 ++it;
         }
-
-        return status;
     }
-    
-    bool EventHandling::handleHoverEvent(const Point& pos)
+
+    void EventHandling::handleHoverEvent(const Point& pos)
     {
-        bool status{onHoverEvent(pos)};
+        onHoverEvent(pos);
 
         auto& container = getHoverCallbacks();
         auto it = container.begin();
@@ -45,13 +43,11 @@ namespace pTK
             else
                 ++it;
         }
-        
-        return status;
     }
-    
-    bool EventHandling::handleEnterEvent()
+
+    void EventHandling::handleEnterEvent()
     {
-        bool status{onEnterEvent()};
+        onEnterEvent();
 
         auto& container = getEnterCallbacks();
         auto it = container.begin();
@@ -62,13 +58,11 @@ namespace pTK
             else
                 ++it;
         }
-        
-        return status;
     }
-    
-    bool EventHandling::handleLeaveEvent()
+
+    void EventHandling::handleLeaveEvent()
     {
-        bool status{onLeaveEvent()};
+        onLeaveEvent();
 
         auto& container = getLeaveCallbacks();
         auto it = container.begin();
@@ -79,13 +73,11 @@ namespace pTK
             else
                 ++it;
         }
-
-        return status;
     }
-    
-    bool EventHandling::handleScrollEvent(const Vec2f& offset)
+
+    void EventHandling::handleScrollEvent(const Vec2f& offset)
     {
-        bool status{onScrollEvent(offset)};
+        onScrollEvent(offset);
 
         auto& container = getScrollCallbacks();
         auto it = container.begin();
@@ -96,13 +88,11 @@ namespace pTK
             else
                 ++it;
         }
-        
-        return status;
     }
-    
-    bool EventHandling::handleClickEvent(Mouse::Button button, const Point& position)
+
+    void EventHandling::handleClickEvent(Mouse::Button button, const Point& position)
     {
-        bool status{onClickEvent(button, position)};
+        onClickEvent(button, position);
 
         auto& container = getClickCallbacks();
         auto it = container.begin();
@@ -113,13 +103,11 @@ namespace pTK
             else
                 ++it;
         }
-        
-        return status;
     }
-    
-    bool EventHandling::handleReleaseEvent(Mouse::Button button, const Point& position)
+
+    void EventHandling::handleReleaseEvent(Mouse::Button button, const Point& position)
     {
-        bool status{onReleaseEvent(button, position)};
+        onReleaseEvent(button, position);
 
         auto& container = getReleaseCallbacks();
         auto it = container.begin();
@@ -130,7 +118,5 @@ namespace pTK
             else
                 ++it;
         }
-        
-        return status;
     }
 }

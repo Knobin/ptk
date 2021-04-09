@@ -198,33 +198,28 @@ namespace pTK
         setColor(style.color); // Will call draw.
         setBounds();
     }
-    
-    bool Button::onEnterEvent()
+
+    void Button::onEnterEvent()
     {
         m_colorCopy = getColor();
         setColor(m_hoverColor);
         m_hover = true;
-        
-        return true;
     }
-    
-    bool Button::onLeaveEvent()
+
+    void Button::onLeaveEvent()
     {
         if (!m_click)
             setColor(m_colorCopy);
         m_hover = false;
-        
-        return true;
     }
-    
-    bool Button::onClickEvent(Mouse::Button, const Point&)
+
+    void Button::onClickEvent(Mouse::Button, const Point&)
     {
         setColor(m_clickColor);
         m_click = true;
-        return true;
     }
-    
-    bool Button::onReleaseEvent(Mouse::Button, const Point&)
+
+    void Button::onReleaseEvent(Mouse::Button, const Point&)
     {
         if (m_click)
         {
@@ -235,8 +230,6 @@ namespace pTK
         }
 
         m_click = false;
-        
-        return true;
     }
     
     void Button::setBounds()

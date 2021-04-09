@@ -10,6 +10,11 @@
 
 namespace pTK
 {
+    WidgetContainer::WidgetContainer()
+    {
+
+    }
+
     WidgetContainer::~WidgetContainer()
     {
         for (auto& item : *this)
@@ -101,7 +106,7 @@ namespace pTK
         return false;
     }
 
-    bool WidgetContainer::onClickEvent(Mouse::Button btn, const Point& pos)
+    void WidgetContainer::onClickEvent(Mouse::Button btn, const Point& pos)
     {
         for (auto& item : *this)
         {
@@ -112,33 +117,26 @@ namespace pTK
                 if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
                 {
                     Widget* temp{item.get()}; // Iterator might change, when passing the event.
-                    bool status{item->handleClickEvent(btn, pos)};
+                    item->handleClickEvent(btn, pos);
                     m_lastClickedWidget = temp;
-                    return status;
                 }
             }
         }
-
-        return false;
     }
 
-    bool WidgetContainer::onReleaseEvent(Mouse::Button btn, const Point& pos)
+    void WidgetContainer::onReleaseEvent(Mouse::Button btn, const Point& pos)
     {
         if (m_lastClickedWidget != nullptr)
-            return m_lastClickedWidget->handleReleaseEvent(btn, pos);
-
-        return false;
+            m_lastClickedWidget->handleReleaseEvent(btn, pos);
     }
 
-    bool WidgetContainer::onKeyEvent(Event::Type type, KeyCode keycode)
+    void WidgetContainer::onKeyEvent(Event::Type type, KeyCode keycode)
     {
         if (m_lastClickedWidget != nullptr)
-            return m_lastClickedWidget->handleKeyEvent(type, keycode);
-
-        return false;
+            m_lastClickedWidget->handleKeyEvent(type, keycode);
     }
 
-    bool WidgetContainer::onHoverEvent(const Point& pos)
+    void WidgetContainer::onHoverEvent(const Point& pos)
     {
         for (auto& it : *this)
         {
@@ -163,7 +161,8 @@ namespace pTK
                         handleEnterEvent();
                     }
 
-                    return m_currentHoverWidget->handleHoverEvent(pos);
+                    m_currentHoverWidget->handleHoverEvent(pos);
+                    return;
                 }
             }
         }
@@ -173,38 +172,29 @@ namespace pTK
 
         // New current hovered Widget.
         m_currentHoverWidget = nullptr;
-
-        return false;
     }
 
-    bool WidgetContainer::onEnterEvent()
+    void WidgetContainer::onEnterEvent()
     {
         if (m_currentHoverWidget != nullptr)
-            return m_currentHoverWidget->handleEnterEvent();
-
-        return false;
+            m_currentHoverWidget->handleEnterEvent();
     }
 
-    bool WidgetContainer::onLeaveEvent()
+    void WidgetContainer::onLeaveEvent()
     {
         if (m_currentHoverWidget != nullptr)
         {
-            bool status{m_currentHoverWidget->handleLeaveEvent()};
+            m_currentHoverWidget->handleLeaveEvent();
 
             // Reset current hovered Widget.
             m_currentHoverWidget = nullptr;
-
-            return status;
         }
-        return false;
     }
 
-    bool WidgetContainer::onScrollEvent(const Vec2f& offset)
+    void WidgetContainer::onScrollEvent(const Vec2f& offset)
     {
         if (m_currentHoverWidget != nullptr)
-            return m_currentHoverWidget->handleScrollEvent(offset);
-
-        return false;
+            m_currentHoverWidget->handleScrollEvent(offset);
     }
 
     void WidgetContainer::setBackground(const Color& color)
@@ -246,6 +236,15 @@ namespace pTK
         rect.set(pos, size);
         paint.setStyle(SkPaint::kStrokeAndFill_Style);
         canvas->drawRoundRect(rect, 0, 0, paint);
+    }
+
+    void WidgetContainer::initCallbacks()
+    {
+        onKey([container = this](Event::Type type, KeyCode keycode){
+            if (auto widget = container->m_currentHoverWidget)
+                widget->handleKeyEvent(type, keycode);
+            return false; // Do not remove callback, ever.
+        });
     }
 
 } // namespace pTK

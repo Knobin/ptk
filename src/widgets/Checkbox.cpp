@@ -133,8 +133,8 @@ namespace pTK
         set(true);
         return true;
     }
-    
-    bool Checkbox::onEnterEvent()
+
+    void Checkbox::onEnterEvent()
     {
         byte temp = m_state;
         if (m_state == 3)
@@ -145,11 +145,9 @@ namespace pTK
         m_hover = true;
         if (temp != m_state)
             draw();
-        
-        return true;
     }
-    
-    bool Checkbox::onLeaveEvent()
+
+    void Checkbox::onLeaveEvent()
     {
         byte temp = m_state;
         if ((m_state == 2) && (status()))
@@ -162,11 +160,9 @@ namespace pTK
         m_hover = false;
         if (temp != m_state)
             draw();
-        
-        return true;
     }
-    
-    bool Checkbox::onClickEvent(Mouse::Button, const Point&)
+
+    void Checkbox::onClickEvent(Mouse::Button, const Point&)
     {
         byte temp = m_state;
         m_click = true;
@@ -179,11 +175,9 @@ namespace pTK
         
         if (temp != m_state)
             draw();
-        
-        return true;
     }
-    
-    bool Checkbox::onReleaseEvent(Mouse::Button, const Point&)
+
+    void Checkbox::onReleaseEvent(Mouse::Button, const Point&)
     {
         byte temp = m_state;
         
@@ -195,8 +189,6 @@ namespace pTK
         
         if (temp != m_state)
             draw();
-        
-        return true;
     }
     
     void Checkbox::onToggleEvent(bool)

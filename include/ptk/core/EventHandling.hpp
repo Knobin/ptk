@@ -44,7 +44,7 @@ namespace pTK
             @param type    Key event (press or release)
             @param int     Keycode
         */
-        bool handleKeyEvent(Event::Type type, KeyCode keycode);
+        void handleKeyEvent(Event::Type type, KeyCode keycode);
         
         /** Function for handling when mouse is hovering.
          
@@ -52,7 +52,7 @@ namespace pTK
             One for the user to bind to and one for derived classes to handle
             the event internally.
         */
-        bool handleHoverEvent(const Point&);
+        void handleHoverEvent(const Point&);
         
         /** Function for handling when mouse is entering.
          
@@ -60,7 +60,7 @@ namespace pTK
             One for the user to bind to and one for derived classes to handle
             the event internally.
          */
-        bool handleEnterEvent();
+        void handleEnterEvent();
         
         /** Function for handling when mouse is leaving.
          
@@ -68,7 +68,7 @@ namespace pTK
             One for the user to bind to and one for derived classes to handle
             the event internally.
         */
-        bool handleLeaveEvent();
+        void handleLeaveEvent();
         
         /** Function for handling when mouse is scrolling.
          
@@ -78,7 +78,7 @@ namespace pTK
          
             @param offset     x and y offset
         */
-        bool handleScrollEvent(const Vec2f& offset);
+        void handleScrollEvent(const Vec2f& offset);
         
         
         /** Function for handling when mouse is clicking.
@@ -90,7 +90,7 @@ namespace pTK
             @param button      which button on mouse triggered the event.
             @param position    x and y position
         */
-        bool handleClickEvent(Mouse::Button button, const Point& position);
+        void handleClickEvent(Mouse::Button button, const Point& position);
         
         /** Function for handling when mouse is released.
          
@@ -101,7 +101,7 @@ namespace pTK
             @param button      which button on mouse triggered the event.
             @param position    x and y position
         */
-        bool handleReleaseEvent(Mouse::Button button, const Point& position);
+        void handleReleaseEvent(Mouse::Button button, const Point& position);
     };
 }
 
