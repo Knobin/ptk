@@ -505,10 +505,19 @@ namespace pTK
         }
     }
 
-    bool MainWindow_mac::setLimits(const Size&, const Size&)
+    bool MainWindow_mac::setLimits(const Size& min, const Size& max)
     {
-        // TODO
-        return false;
+        @autoreleasepool {
+            CGFloat frameHeight = m_data->window.frame.size.height - [m_data->window contentRectForFrameRect: m_data->window.frame].size.height;
+            
+            const NSSize minSize = NSMakeSize(min.width, min.height + frameHeight);
+            [m_data->window setMinSize:minSize];
+            
+            const NSSize maxSize = NSMakeSize(max.width, max.height + ((max.height != Size::Limits::Max) ? frameHeight : 0));
+            [m_data->window setMaxSize:maxSize];
+            
+            return true;
+        }
     }
 
     bool MainWindow_mac::minimize()
