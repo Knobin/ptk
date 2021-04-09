@@ -208,7 +208,7 @@ namespace pTK
     pTK::KeyEvent evt{pTK::Event::Type::KeyPressed, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(code))};
     window->parent()->sendEvent(&evt);
 
-    [self interpretKeyEvents:@[event]];
+    // [self interpretKeyEvents:@[event]];
 }
 
 - (void)keyUp:(NSEvent *)event
@@ -219,6 +219,11 @@ namespace pTK
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent*) __unused event
+{
+    return YES;
+}
+
+- (BOOL)performKeyEquivalent:(NSEvent*) __unused event
 {
     return YES;
 }
