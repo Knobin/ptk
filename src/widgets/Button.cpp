@@ -143,7 +143,7 @@ namespace pTK
         return m_text->getColor();
     }
     
-    void Button::setLabel(const Ref<Label> label)
+    void Button::setLabel(const Ref<Label>& label)
     {
         PTK_ASSERT(label, "Label is nullptr");
         m_text->setParent(nullptr);
@@ -197,6 +197,17 @@ namespace pTK
         setCornerRadius(style.cornerRadius);
         setColor(style.color); // Will call draw.
         setBounds();
+    }
+
+    Button::Style Button::getStyle() const
+    {
+        Style style{};
+        style.color = getColor();
+        style.hoverColor = m_hoverColor;
+        style.clickColor = m_clickColor;
+        style.textColor = m_text->getColor();
+        style.cornerRadius = getCornerRadius();
+        return style;
     }
 
     void Button::onEnterEvent()

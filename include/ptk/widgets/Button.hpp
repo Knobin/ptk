@@ -96,7 +96,7 @@ namespace pTK
          
             @return  current text
         */
-        const std::string& getText() const;
+        [[nodiscard]] const std::string& getText() const;
         
         /** Function for setting the font family of the Label.
          
@@ -110,7 +110,7 @@ namespace pTK
          
             @return  current font family
         */
-        std::string getFontFamily() const;
+        [[nodiscard]] std::string getFontFamily() const;
         
         /** Function for setting the font size of the Label.
          
@@ -124,7 +124,7 @@ namespace pTK
          
             @return  current font size
         */
-        uint getFontSize() const;
+        [[nodiscard]] uint getFontSize() const;
         
         /** Function for setting the Color of the text.
          
@@ -136,19 +136,19 @@ namespace pTK
          
             @return    Current hover color
         */
-        const Color& getTextColor() const;
+        [[nodiscard]] const Color& getTextColor() const;
         
         /** Function for setting a Label to the Button.
          
             @param label   New label
         */
-        void setLabel(const Ref<Label> label);
+        void setLabel(const Ref<Label>& label);
         
         /** Function for retrieving the Label of the Button.
          
             @return    Current set label
         */
-        Ref<Label> getLabel() const;
+        [[nodiscard]] Ref<Label> getLabel() const;
         
         /** Function for setting the Hover Color of the Button.
          
@@ -160,7 +160,7 @@ namespace pTK
          
             @return    Current hover color
         */
-        const Color& getHoverColor() const;
+        [[nodiscard]] const Color& getHoverColor() const;
         
         /** Function for setting the Click Color of the Button.
          
@@ -172,7 +172,7 @@ namespace pTK
          
             @return    Current click color
         */
-        const Color& getClickColor() const;
+        [[nodiscard]] const Color& getClickColor() const;
         
         /** Function for setting the border size to the text.
          
@@ -184,7 +184,7 @@ namespace pTK
          
             @return    Current margin
         */
-        uint getBorderSize() const;
+        [[nodiscard]] uint getBorderSize() const;
         
         /** Function for setting the style of the Button.
          
@@ -196,7 +196,7 @@ namespace pTK
          
             @return    Current margin
         */
-        Style getStyle() const;
+        [[nodiscard]] Style getStyle() const;
         
         /** Function for handling when mouse is entering.
          
@@ -236,7 +236,6 @@ namespace pTK
     private:
         Ref<Label> m_text;
         Point m_labelPos;
-        Size m_labelSize;
         uint m_borderSize;
         Color m_hoverColor;
         Color m_clickColor;
