@@ -10,7 +10,15 @@
 
 // pTK Headers
 #include "ptk/Core.hpp"
-#include "ptk/core/Font.hpp"
+#include "ptk/util/Color.hpp"
+#include "ptk/util/Size.hpp"
+#include "ptk/core/Drawable.hpp"
+
+// Skia Headers
+PTK_DISABLE_WARN_BEGIN()
+#include "include/core/SkFont.h"
+#include "include/core/SkTypeface.h"
+PTK_DISABLE_WARN_END()
 
 namespace pTK
 {
@@ -26,42 +34,23 @@ namespace pTK
         */
         Text();
 
-        /** Constructs Text with default values.
-        
-            @param font    Font to use 
-            @return        default initialized Text with Font
-        */
-        Text(const Ref<Font>& font);
-
         /** Destructor for Text.
 
         */
         virtual ~Text() = default;
-
-        /** Function for setting the Font.
-         
-            @param font    Font to set
-        */
-        void setFont(const Ref<Font>& font);
-
-        /** Function for retrieving the Font.
-         
-            @return  Font
-        */
-        Ref<Font> getFont() const;
         
         /** Function for setting the font from a given file.
          
             @param path    font file to load
             @return        status
         */
-        virtual bool setFontFromFile(const std::string& path);
+        bool setFontFromFile(const std::string& path);
 
         /** Function for setting the font family.
          
             @param font    font family to use.
         */
-        virtual bool setFontFamily(const std::string& fontFamily);
+        bool setFontFamily(const std::string& fontFamily);
         
         /** Function for retrieving the font family.
          
@@ -73,7 +62,7 @@ namespace pTK
          
             @param fontSize    size of the font
         */
-        virtual void setFontSize(uint fontSize);
+        void setFontSize(uint fontSize);
         
         /** Function for retrieving the font size.
          
@@ -85,7 +74,7 @@ namespace pTK
          
             @param text    text for Label
         */
-        virtual void setText(const std::string& text);
+        void setText(const std::string& text);
         
         /** Function for retrieving the text.
          
@@ -99,9 +88,21 @@ namespace pTK
         */
         Size getBounds() const;
         
+        /** Function for retrieving the raw SkFont.
+         
+         @return  raw SkFont
+         */
+        const SkFont* skFont() const;
+        
+        void drawText(SkCanvas* canvas, const Color& color, const Point& pos);
+        void drawText(SkCanvas* canvas, const Color& color, const Point& pos, float outlineSize, const Color& outColor);
+        
+    private:
+        virtual void onTextUpdate() {}
+        
     private:
         std::string m_text;
-        Ref<Font> m_font;
+        SkFont m_font;
     };
 }
 

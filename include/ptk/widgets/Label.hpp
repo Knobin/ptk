@@ -31,38 +31,6 @@ namespace pTK
         Label();
         virtual ~Label() = default;
         
-        /** Function for setting the font from a given file.
-         
-            Derived from Text.
-         
-            @param path    font file to load
-            @return        status
-        */
-        bool setFontFromFile(const std::string& path) override;
-        
-        /** Function for setting the font family of the Label.
-         
-            Derived from Text.
-         
-            @param font    font family for Label to use
-            @return        status
-        */
-        bool setFontFamily(const std::string& fontFamily) override;
-        
-        /** Function for setting the font size of the Label.
-         
-            Derived from Text.
-         
-            @param fontSize    size of the font
-        */
-        void setFontSize(uint fontSize) override;
-        
-        /** Function for setting the text of the Label
-         
-            @param text    text for Label
-        */
-        void setText(const std::string& text) override;
-        
         /** Draw function.
             Function is called when it is time to draw.
          
@@ -75,6 +43,8 @@ namespace pTK
         using Widget::setMinSize;
         using Widget::setSize;
         using Widget::setMaxSize;
+        
+        void onTextUpdate() override;
     };
 }
 
