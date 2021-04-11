@@ -36,9 +36,6 @@ namespace pTK
         
     private:
         void onTextUpdate() override;
-        
-        bool mouseLeft{false};
-        bool added{false};
     };
 }
 

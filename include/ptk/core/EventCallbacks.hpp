@@ -89,6 +89,9 @@ namespace pTK
             @param callback    function to call on leaving event
         */
         void onLeave(const std::function<bool()>& callback);
+
+        // TODO: Add documentation.
+        void onLeaveClick(const std::function<bool(Mouse::Button, const Point&)>& callback);
         
         /** Function for handling when mouse is scrolling.
          
@@ -117,6 +120,7 @@ namespace pTK
         [[nodiscard]] const std::vector<std::function<bool(const Vec2f&)>>& getScrollCallbacks() const;
         [[nodiscard]] const std::vector<std::function<bool(Event::Type, KeyCode)>>& getKeyCallbacks() const;
         [[nodiscard]] const std::vector<std::function<bool(const Point&)>>& getHoverCallbacks() const;
+        [[nodiscard]] const std::vector<std::function<bool(Mouse::Button, const Point&)>>& getLeaveClickCallbacks() const;
 
         [[nodiscard]] std::vector<std::function<bool()>>& getEnterCallbacks();
         [[nodiscard]] std::vector<std::function<bool(Mouse::Button, const Point&)>>& getClickCallbacks();
@@ -125,6 +129,7 @@ namespace pTK
         [[nodiscard]] std::vector<std::function<bool(const Vec2f&)>>& getScrollCallbacks();
         [[nodiscard]] std::vector<std::function<bool(Event::Type, KeyCode)>>& getKeyCallbacks();
         [[nodiscard]] std::vector<std::function<bool(const Point&)>>& getHoverCallbacks();
+        [[nodiscard]] std::vector<std::function<bool(Mouse::Button, const Point&)>>& getLeaveClickCallbacks();
 
     private:
         void initCallbacks();

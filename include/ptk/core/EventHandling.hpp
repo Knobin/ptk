@@ -69,6 +69,9 @@ namespace pTK
             the event internally.
         */
         void handleLeaveEvent();
+
+        // TODO: Add documentation.
+        void handleLeaveClickEvent(Mouse::Button button, const Point& position);
         
         /** Function for handling when mouse is scrolling.
          

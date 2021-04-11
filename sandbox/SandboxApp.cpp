@@ -28,15 +28,6 @@ const pTK::Button::Style sbBtnStyle{pTK::Color(0xE3E5E8FF),
                             pTK::Color(0xDCDFE2FF),
                             pTK::Color(colText), 0.0f};
 
-pTK::Color interpolateColor(const pTK::Color& c1, const pTK::Color& c2, double factor)
-{
-    pTK::Color result{c1};
-    result.r = static_cast<pTK::Color::value_type>(std::round(c1.r + factor * (c2.r - c1.r)));
-    result.g = static_cast<pTK::Color::value_type>(std::round(c1.g + factor * (c2.g - c1.g)));
-    result.b = static_cast<pTK::Color::value_type>(std::round(c1.b + factor * (c2.b - c1.b)));
-    return result;
-}
-
 pTK::Color randomColor()
 {
     using color_size = pTK::Color::size_type;
@@ -330,8 +321,26 @@ int main(int argc, char *argv[]) {
         return false;
     });
 
+    pTK::Ref<pTK::TextField> textField = pTK::Create<pTK::TextField>();
+    textField->setSize({400, 40});
+    textField->setFontSize(16);
+    textField->setCornerRadius(2.5f);
+    textField->setOutlineColor(pTK::Color{0xE5E5E5FF});
+    textField->setOutlineThickness(1.5f);
+    textField->setColor(pTK::Color{0xFDFDFDFF});
+
+    textField->onClick([&](pTK::Mouse::Button, const pTK::Point&){
+        textField->setOutlineColor(pTK::Color{0x007BFFFF});
+        return false;
+    });
+    textField->onLeaveClick([&](pTK::Mouse::Button, const pTK::Point&){
+        textField->setOutlineColor(pTK::Color{0xE5E5E5FF});
+        return false;
+    });
+
     content->add(cTitle);
     content->add(cText);
+    content->add(textField);
     content->add(h1);
     content->add(checkbox);
     content->add(cStatus);
@@ -346,33 +355,5 @@ int main(int argc, char *argv[]) {
     window.setMaxSize({1280, 720});
     // window.show();
 
-    std::atomic<bool> run{true};
-    std::thread t1{[&](){
-        pTK::Color c1{randomColor()};
-        pTK::Color c2{randomColor()};
-
-        constexpr std::size_t steps{250};
-        constexpr double stepFactor{1.0 / (steps - 1.0)};
-        size_t step{0};
-        constexpr size_t fps{72};
-
-        while (run)
-        {
-            if (step > steps)
-            {
-                c1 = r1->getColor();
-                c2 = randomColor();
-                step = 1;
-            }
-            r1->setColor(interpolateColor(c1, c2, stepFactor * step));
-            std::this_thread::sleep_for(std::chrono::milliseconds (1000 / fps));
-            ++step;
-        }
-    }};
-
-    int ret{app.exec(&window)};
-    run = false;
-    t1.join();
-
-    return ret;
+    return app.exec(&window);
 }

@@ -51,6 +51,9 @@ namespace pTK
          
         */
         virtual void onLeaveEvent() {}
+
+        // TODO: Add documentation.
+        virtual void onLeaveClickEvent(Mouse::Button, const Point&) {}
         
         /** Function for handling when mouse is scrolling.
          

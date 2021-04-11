@@ -13,46 +13,9 @@ namespace pTK
     TextField::TextField()
         : Rectangle(), Text()
     {
-        onClick([tf = this](Mouse::Button, const Point&){
-            if (tf->getText().back() == '|')
-                tf->setText(tf->getText().substr(0, tf->getText().size()-1));
-            else
-                tf->setText(tf->getText() + '|');
-            
-            if (!tf->added && tf->getParent())
-            {
-                tf->added = true;
-                tf->getParent()->onClick([tf](Mouse::Button, const Point&){
-                    if (tf->mouseLeft)
-                    {
-                        tf->setText(tf->getText().substr(0, tf->getText().size()-1));
-                        tf->added = false;
-                        tf->mouseLeft = false;
-                        return true;
-                    }
-                    return false;
-                });
-            }
-            
-            return false;
-        });
-        onLeave([tf = this](){
-            tf->mouseLeft = true;
-            return false;
-        });
         onKey([tf = this](Event::Type type, KeyCode keycode){
             if (type == Event::Type::KeyPressed && IsKeyCodeGraph(keycode))
-            {
-                if (tf->getText().back() == '|')
-                {
-                    std::string text = tf->getText();
-                    text.back() = KeyCodeToGraph(keycode);
-                    text += '|';
-                    tf->setText(text);
-                }
-                else
-                    tf->setText(tf->getText() + KeyCodeToGraph(keycode));
-            }
+                tf->setText(tf->getText() + KeyCodeToGraph(keycode));
                 
             return false;
         });

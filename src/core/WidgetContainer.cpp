@@ -11,8 +11,9 @@
 namespace pTK
 {
     WidgetContainer::WidgetContainer()
+        : IterableSequence<Ref<Widget>>(), Widget()
     {
-
+        initCallbacks();
     }
 
     WidgetContainer::~WidgetContainer()
@@ -108,6 +109,9 @@ namespace pTK
 
     void WidgetContainer::onClickEvent(Mouse::Button btn, const Point& pos)
     {
+        Widget *lastClicked{m_lastClickedWidget};
+        bool found{false};
+
         for (auto& item : *this)
         {
             const Point wPos{item->getPosition()};
@@ -117,11 +121,19 @@ namespace pTK
                 if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
                 {
                     Widget* temp{item.get()}; // Iterator might change, when passing the event.
+
                     item->handleClickEvent(btn, pos);
                     m_lastClickedWidget = temp;
+                    found = true;
                 }
             }
         }
+
+        if (lastClicked != nullptr && (lastClicked != m_lastClickedWidget || !found))
+            lastClicked->handleLeaveClickEvent(btn, pos);
+
+        if (!found)
+            m_lastClickedWidget = nullptr;
     }
 
     void WidgetContainer::onReleaseEvent(Mouse::Button btn, const Point& pos)
@@ -240,10 +252,19 @@ namespace pTK
 
     void WidgetContainer::initCallbacks()
     {
-        onKey([container = this](Event::Type type, KeyCode keycode){
+        /*onKey([container = this](Event::Type type, KeyCode keycode){
             if (auto widget = container->m_currentHoverWidget)
                 widget->handleKeyEvent(type, keycode);
             return false; // Do not remove callback, ever.
+        });*/
+
+        onLeaveClick([container = this](Mouse::Button btn, const Point& pos){
+            if (container->m_lastClickedWidget != nullptr)
+            {
+                container->m_lastClickedWidget->handleLeaveClickEvent(btn, pos);
+                container->m_lastClickedWidget = nullptr;
+            }
+            return false;
         });
     }
 
