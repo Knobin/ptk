@@ -27,10 +27,10 @@ namespace pTK
         }
     }
 
-    void EventHandling::handleKeyEvent(Event::Type type, KeyCode keycode)
+    void EventHandling::handleKeyEvent(Event::Type type, KeyCode keycode, byte modifier)
     {
-        onKeyEvent(type, keycode);
-        LoopAndConditionRemove(getKeyCallbacks(), type, keycode);
+        onKeyEvent(type, keycode, modifier);
+        LoopAndConditionRemove(getKeyCallbacks(), type, keycode, modifier);
     }
 
     void EventHandling::handleHoverEvent(const Point& pos)

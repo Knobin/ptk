@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
     setWindowCallbacks(window);
 
     // Set ESC key to close the window (and other debug stuff).
-    window.onKey([&](pTK::Event::Type, pTK::KeyCode key) {
+    window.onKey([&](pTK::Event::Type, pTK::KeyCode key, byte) {
         std::cout << "Key event " << static_cast<int32>(key) << std::endl;
         return false;
     });
@@ -301,7 +301,7 @@ int main(int argc, char *argv[]) {
     h1->setMaxSize({pTK::Size::Limits::Max, h1->getMinSize().height});
 
     // Add content to right side.
-    cTitle->onKey([](pTK::Event::Type, pTK::KeyCode code) {
+    cTitle->onKey([](pTK::Event::Type, pTK::KeyCode code, byte) {
         std::cout << "cTitle key event: " << pTK::KeyCodeToAlpha(code) << std::endl;
         return false;
     });

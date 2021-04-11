@@ -74,7 +74,7 @@ namespace pTK
             @param type     Key event (press or release)
             @param KeyCode  Keycode
         */
-        void onKeyEvent(Event::Type type, KeyCode keycode) override;
+        void onKeyEvent(Event::Type type, KeyCode keycode, byte modifier) override;
 
         /** Function for handling when mouse is hovering.
 

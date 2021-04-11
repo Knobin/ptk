@@ -70,7 +70,7 @@ namespace pTK
          
             @param callback    function to call on key event
         */
-        void onKey(const std::function<bool(Event::Type, KeyCode)>& callback);
+        void onKey(const std::function<bool(Event::Type, KeyCode, byte)>& callback);
         
         /** Function for handling when mouse is hovering.
          
@@ -118,7 +118,7 @@ namespace pTK
         [[nodiscard]] const std::vector<std::function<bool(Mouse::Button, const Point&)>>& getClickCallbacks() const;
         [[nodiscard]] const std::vector<std::function<bool(Mouse::Button, const Point&)>>& getReleaseCallbacks() const;
         [[nodiscard]] const std::vector<std::function<bool(const Vec2f&)>>& getScrollCallbacks() const;
-        [[nodiscard]] const std::vector<std::function<bool(Event::Type, KeyCode)>>& getKeyCallbacks() const;
+        [[nodiscard]] const std::vector<std::function<bool(Event::Type, KeyCode, byte)>>& getKeyCallbacks() const;
         [[nodiscard]] const std::vector<std::function<bool(const Point&)>>& getHoverCallbacks() const;
         [[nodiscard]] const std::vector<std::function<bool()>>& getLeaveClickCallbacks() const;
 
@@ -127,7 +127,7 @@ namespace pTK
         [[nodiscard]] std::vector<std::function<bool()>>& getLeaveCallbacks();
         [[nodiscard]] std::vector<std::function<bool(Mouse::Button, const Point&)>>& getReleaseCallbacks();
         [[nodiscard]] std::vector<std::function<bool(const Vec2f&)>>& getScrollCallbacks();
-        [[nodiscard]] std::vector<std::function<bool(Event::Type, KeyCode)>>& getKeyCallbacks();
+        [[nodiscard]] std::vector<std::function<bool(Event::Type, KeyCode, byte)>>& getKeyCallbacks();
         [[nodiscard]] std::vector<std::function<bool(const Point&)>>& getHoverCallbacks();
         [[nodiscard]] std::vector<std::function<bool()>>& getLeaveClickCallbacks();
 
@@ -139,7 +139,7 @@ namespace pTK
         std::map<std::string, std::vector<std::function<bool(Mouse::Button, const Point&)>>> m_clickCallbacks;
 
         std::vector<std::function<bool(const Vec2f&)>> m_scrollCallback;
-        std::vector<std::function<bool(Event::Type, KeyCode)>> m_keyCallback;
+        std::vector<std::function<bool(Event::Type, KeyCode, byte)>> m_keyCallback;
         std::vector<std::function<bool(const Point&)>> m_hoverCallback;
 
 

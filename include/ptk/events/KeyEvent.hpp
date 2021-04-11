@@ -13,6 +13,9 @@
 #include "ptk/core/Types.hpp"
 #include "ptk/events/KeyCodes.hpp"
 
+// C++ Headers
+#include <type_traits>
+
 namespace pTK
 {
     /** KeyEvent class implementation.
@@ -27,6 +30,17 @@ namespace pTK
         // Objects for easier type management.
         inline static const Event::Type Pressed = Event::Type::KeyPressed;
         inline static const Event::Type Released = Event::Type::KeyReleased;
+        
+        enum class Modifier : byte
+        {
+            NONE        = 0,
+            Shift       = 1,
+            Control     = 2,
+            Alt         = 4,
+            Super       = 8,
+            CapsLock    = 16,
+            NumLock     = 32
+        };
 
     public:
         /** Constructs KeyEvent with default values with type and code.
@@ -35,15 +49,30 @@ namespace pTK
             @param code     associated keycode
             @return         default initialized KeyEvent
         */
-        KeyEvent(Event::Type type, KeyCode code)
-            : Event(Event::Category::Key, type), keycode{code}
-        {
-
-        }
+        KeyEvent(Event::Type type, KeyCode code, std::underlying_type<KeyEvent::Modifier>::type mod = 0)
+            : Event(Event::Category::Key, type), keycode{code}, modifier{mod}
+        {}
 
         // Key code.
-        const KeyCode keycode;
+        KeyCode keycode;
+        
+        // Modifiers.
+        std::underlying_type<Modifier>::type modifier;
+        
+        bool isModifierSet(KeyEvent::Modifier mod) const;
+        
     };
+
+    constexpr bool IsKeyEventModifierSet(std::underlying_type<KeyEvent::Modifier>::type number, KeyEvent::Modifier mod)
+    {
+        using utype = std::underlying_type<KeyEvent::Modifier>::type;
+        return (static_cast<utype>(mod) & number);
+    }
+
+    inline bool KeyEvent::isModifierSet(KeyEvent::Modifier mod) const
+    {
+        return IsKeyEventModifierSet(modifier, mod);
+    }
 }
 
 #endif // PTK_EVENTS_KEYEVENT_HPP

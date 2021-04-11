@@ -8,6 +8,9 @@
 // pTK Headers
 #include "ptk/widgets/TextField.hpp"
 
+// C++ Headers
+#include <cctype>
+
 namespace pTK
 {
     TextField::TextField()
@@ -15,15 +18,26 @@ namespace pTK
     {
         m_cursor.setColor(Color{0x151515FF});
 
-        onKey([tf = this](Event::Type type, KeyCode keycode){
+        onKey([this](Event::Type type, KeyCode keycode, byte modifier){
             if (type == Event::Type::KeyPressed)
             {
-                if (IsKeyCodeGraph(keycode))
-                    tf->setText(tf->getText() + KeyCodeToGraph(keycode));
+                if (IsKeyCodeAlpha(keycode))
+                {
+                    bool shift = IsKeyEventModifierSet(modifier, KeyEvent::Modifier::Shift);
+                    bool capsLock = IsKeyEventModifierSet(modifier, KeyEvent::Modifier::CapsLock);
+                    char alpha = KeyCodeToAlpha(keycode);
+              
+                    if ((capsLock && !shift) || (!capsLock && shift))
+                        setText(getText() + alpha);
+                    else
+                        setText(getText() + static_cast<char>(std::tolower(alpha)));
+                }
+                else if (IsKeyCodeDigit(keycode))
+                    setText(getText() + KeyCodeToGraph(keycode));
                 else if (IsKeyCodeSpace(keycode))
-                    tf->setText(tf->getText() + ' ');
+                    setText(getText() + ' ');
                 else if (keycode == Key::Backspace)
-                    tf->setText(tf->getText().substr(0, tf->getText().size() - 1));
+                    setText(getText().substr(0, getText().size() - 1));
             }
 
                 
@@ -45,13 +59,12 @@ namespace pTK
     {
         Rectangle::onDraw(canvas);
         
-        const Size textBounds{getBounds()};
         const Size rectSize{getSize()};
 
         Point textPos{getPosition()};
         const Point::value_type startPos = getPosition().x + ((rectSize.height - m_cursor.getSize().height) / 2);
         textPos.x = startPos;
-        textPos.y += (rectSize.height - textBounds.height) / 2;
+        textPos.y += (rectSize.height - skFont()->getSpacing()) / 2;
         
         float advance = drawText(canvas, Color{0x151515FF}, textPos);
 
@@ -68,8 +81,6 @@ namespace pTK
 
     void TextField::onTextUpdate()
     {
-        setMinSize(getBounds());
-
         SkRect bounds{};
         skFont()->measureText("|", 1, SkTextEncoding::kUTF8, &bounds);
 
@@ -78,5 +89,11 @@ namespace pTK
         cursorSize.height = bHeight + ((getSize().height - bHeight) / 2);
         m_cursor.setSize(cursorSize);
         m_offset = static_cast<int>(std::ceil(bounds.width()) / 2);
+        
+        Size minSize{getBounds()};
+        minSize.width += m_offset + static_cast<Point::value_type>(cursorSize.width);
+        minSize.height = (minSize.height > cursorSize.height) ? minSize.height : cursorSize.height;
+        
+        setMinSize(minSize);
     }
 }

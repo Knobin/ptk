@@ -141,6 +141,34 @@ namespace pTK
 
 @end
 
+static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventModifierFlags flags)
+{
+    using utype = std::underlying_type<pTK::KeyEvent::Modifier>::type;
+    utype modifiers = 0;
+    
+    if (flags & NSEventModifierFlagShift) {
+        modifiers |= static_cast<utype>(pTK::KeyEvent::Modifier::Shift);
+    }
+    
+    if (flags & NSEventModifierFlagControl) {
+        modifiers |= static_cast<utype>(pTK::KeyEvent::Modifier::Control);
+    }
+    
+    if (flags & NSEventModifierFlagOption) {
+        modifiers |= static_cast<utype>(pTK::KeyEvent::Modifier::Alt);
+    }
+    
+    if (flags & NSEventModifierFlagCommand) {
+        modifiers |= static_cast<utype>(pTK::KeyEvent::Modifier::Super);
+    }
+    
+    if (flags & NSEventModifierFlagCapsLock) {
+        modifiers |= static_cast<utype>(pTK::KeyEvent::Modifier::CapsLock);
+    }
+    
+    return modifiers;
+}
+
 @implementation MainView
 
 - (MainView*)initWithWindow:(pTK::MainWindow_mac*)initWindow :(pTK::MainWindow_mac::WinData*)winData
@@ -205,7 +233,8 @@ namespace pTK
 - (void)keyDown:(NSEvent *)event
 {
     const int code = event.keyCode;
-    pTK::KeyEvent evt{pTK::Event::Type::KeyPressed, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(code))};
+    std::underlying_type<pTK::KeyEvent::Modifier>::type mod{GetModifiers(event.modifierFlags)};
+    pTK::KeyEvent evt{pTK::Event::Type::KeyPressed, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(code)), mod};
     window->parent()->sendEvent(&evt);
 
     // [self interpretKeyEvents:@[event]];

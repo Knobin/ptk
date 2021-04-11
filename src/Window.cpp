@@ -180,7 +180,7 @@ namespace pTK
     {
         PTK_ASSERT(event, "Undefined Event");
         KeyEvent* kEvent{static_cast<KeyEvent*>(event)};
-        handleKeyEvent(kEvent->type, kEvent->keycode);
+        handleKeyEvent(kEvent->type, kEvent->keycode, kEvent->modifier);
     }
 
     void Window::handleMouseEvent(Event* event)

@@ -66,7 +66,7 @@ namespace pTK
         return *this;
     }
     
-    void EventCallbacks::onKey(const std::function<bool(Event::Type, KeyCode)>& callback)
+    void EventCallbacks::onKey(const std::function<bool(Event::Type, KeyCode, byte)>& callback)
     {
         m_keyCallback.push_back(callback);
     }
@@ -139,7 +139,7 @@ namespace pTK
         return m_scrollCallback;
     }
 
-    const std::vector<std::function<bool(Event::Type, KeyCode)>>& EventCallbacks::getKeyCallbacks() const
+    const std::vector<std::function<bool(Event::Type, KeyCode, byte)>>& EventCallbacks::getKeyCallbacks() const
     {
         return m_keyCallback;
     }
@@ -187,7 +187,7 @@ namespace pTK
         return m_scrollCallback;
     }
 
-    std::vector<std::function<bool(Event::Type, KeyCode)>>& EventCallbacks::getKeyCallbacks()
+    std::vector<std::function<bool(Event::Type, KeyCode, byte)>>& EventCallbacks::getKeyCallbacks()
     {
         return m_keyCallback;
     }

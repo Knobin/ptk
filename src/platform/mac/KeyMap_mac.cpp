@@ -27,6 +27,9 @@ namespace pTK
         map[0x0C] = Key::Q; map[0x0F] = Key::R; map[0x01] = Key::S; map[0x11] = Key::T;
         map[0x20] = Key::U; map[0x09] = Key::V; map[0x0D] = Key::W; map[0x07] = Key::X;
         map[0x10] = Key::Y; map[0x06] = Key::Z;
+        
+        map[0x33] = Key::Backspace;
+        
         return map;
     }
 

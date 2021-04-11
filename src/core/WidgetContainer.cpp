@@ -142,10 +142,10 @@ namespace pTK
             m_lastClickedWidget->handleReleaseEvent(btn, pos);
     }
 
-    void WidgetContainer::onKeyEvent(Event::Type type, KeyCode keycode)
+    void WidgetContainer::onKeyEvent(Event::Type type, KeyCode keycode, byte modifier)
     {
         if (m_lastClickedWidget != nullptr)
-            m_lastClickedWidget->handleKeyEvent(type, keycode);
+            m_lastClickedWidget->handleKeyEvent(type, keycode, modifier);
     }
 
     void WidgetContainer::onHoverEvent(const Point& pos)

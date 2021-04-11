@@ -136,10 +136,10 @@ namespace pTK
             m_widget->handleReleaseEvent(btn, pos);
     }
 
-    void Cell::onKeyEvent(Event::Type type, KeyCode keycode)
+    void Cell::onKeyEvent(Event::Type type, KeyCode keycode, byte modifier)
     {
         if (m_clicked)
-            m_widget->handleKeyEvent(type, keycode);
+            m_widget->handleKeyEvent(type, keycode, modifier);
     }
 
     void Cell::onHoverEvent(const Point& pos)
