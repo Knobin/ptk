@@ -32,6 +32,7 @@ set(WIDGET_FILES widgets/Button.cpp
         widgets/Image.cpp
         widgets/Label.cpp
         widgets/Rectangle.cpp
+        widgets/TextField.cpp
         widgets/VBox.cpp)
 
 if (PTK_BUILD_TYPE MATCHES Debug)

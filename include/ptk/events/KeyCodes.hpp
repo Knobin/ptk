@@ -106,6 +106,29 @@ namespace pTK
         const auto value = static_cast<int32>(code);
         return ((value >= 340) && (value <= 351));
     }
+
+    constexpr bool IsKeyCodeGraph(const KeyCode code) noexcept
+    {
+        // A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+        // 0 1 2 3 4 5 6 7 8 9
+        return (IsKeyCodeAlpha(code) || IsKeyCodeDigit(code));
+        
+        // Lowercase is not supported yet: a b c d e f g h i j k l m n o p q r s t u v w x y z
+        // TODO: Add values below.
+        // ! " # $ % & ' ( ) * + , - . /
+        // : ; < = > ? @
+        // [ \ ] ^ _ `
+        // { | } ~
+    }
+
+    constexpr char KeyCodeToGraph(const KeyCode code) noexcept
+    {
+        if (IsKeyCodeAlpha(code))
+            return KeyCodeToAlpha(code);
+        if (IsKeyCodeDigit(code))
+            return static_cast<char>(static_cast<int32>(code));
+        return 0;
+    }
 }
 
 
