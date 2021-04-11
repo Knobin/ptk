@@ -36,6 +36,11 @@ namespace pTK
         
     private:
         void onTextUpdate() override;
+
+    private:
+        Rectangle m_cursor;
+        int m_offset{0};
+        bool m_drawCursor{false};
     };
 }
 

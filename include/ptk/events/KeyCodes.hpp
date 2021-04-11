@@ -62,6 +62,8 @@ namespace pTK
         Y       = 89,
         Z       = 90,
 
+        Backspace = 259,
+
         LeftShift    = 340,
         LeftControl  = 341,
         LeftAlt      = 342,
@@ -128,6 +130,11 @@ namespace pTK
         if (IsKeyCodeDigit(code))
             return static_cast<char>(static_cast<int32>(code));
         return 0;
+    }
+
+    constexpr bool IsKeyCodeSpace(const KeyCode code) noexcept
+    {
+        return code == Key::Space;
     }
 }
 

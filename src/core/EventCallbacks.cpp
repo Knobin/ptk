@@ -25,11 +25,11 @@ namespace pTK
 
     void EventCallbacks::initCallbacks()
     {
-        m_noArgsCallbacks["Enter"] = {};
-        m_noArgsCallbacks["Leave"] = {};
-        m_clickCallbacks["Click"] = {};
-        m_clickCallbacks["Release"] = {};
-        m_clickCallbacks["LeaveClick"] = {};
+        m_noArgsCallbacks["Enter"]      = {};
+        m_noArgsCallbacks["Leave"]      = {};
+        m_clickCallbacks["Click"]       = {};
+        m_clickCallbacks["Release"]     = {};
+        m_noArgsCallbacks["LeaveClick"] = {};
     }
 
     EventCallbacks::EventCallbacks(EventCallbacks&& other)
@@ -86,9 +86,9 @@ namespace pTK
         m_noArgsCallbacks["Leave"].push_back(callback);
     }
 
-    void EventCallbacks::onLeaveClick(const std::function<bool(Mouse::Button, const Point&)>& callback)
+    void EventCallbacks::onLeaveClick(const std::function<bool()>& callback)
     {
-        m_clickCallbacks["LeaveClick"].push_back(callback);
+        m_noArgsCallbacks["LeaveClick"].push_back(callback);
     }
     
     void EventCallbacks::onScroll(const std::function<bool(const Vec2f&)>& callback)
@@ -149,9 +149,9 @@ namespace pTK
         return m_hoverCallback;
     }
 
-    const std::vector<std::function<bool(Mouse::Button, const Point&)>>& EventCallbacks::getLeaveClickCallbacks() const
+    const std::vector<std::function<bool()>>& EventCallbacks::getLeaveClickCallbacks() const
     {
-        return m_clickCallbacks.find("LeaveClick")->second;
+        return m_noArgsCallbacks.find("LeaveClick")->second;
     }
 
     std::vector<std::function<bool()>>& EventCallbacks::getEnterCallbacks()
@@ -197,8 +197,8 @@ namespace pTK
         return m_hoverCallback;
     }
 
-    std::vector<std::function<bool(Mouse::Button, const Point&)>>& EventCallbacks::getLeaveClickCallbacks()
+    std::vector<std::function<bool()>>& EventCallbacks::getLeaveClickCallbacks()
     {
-        return m_clickCallbacks.find("LeaveClick")->second;
+        return m_noArgsCallbacks.find("LeaveClick")->second;
     }
 }

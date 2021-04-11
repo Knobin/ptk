@@ -33,6 +33,8 @@ namespace pTK
         map[0x55] = Key::U; map[0x56] = Key::V; map[0x57] = Key::W; map[0x58] = Key::X;
         map[0x59] = Key::Y; map[0x5A] = Key::Z;
 
+        map[VK_BACK] = Key::Backspace;
+
         map[VK_LSHIFT] = Key::LeftShift; map[VK_LCONTROL] = Key::LeftControl; map[VK_LMENU] = Key::LeftAlt;
         map[VK_RSHIFT] = Key::RightShift; map[VK_RCONTROL] = Key::RightControl; map[VK_RMENU] = Key::RightAlt;
 

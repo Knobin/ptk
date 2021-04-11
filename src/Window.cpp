@@ -256,6 +256,7 @@ namespace pTK
             {
                 if (m_onLostFocus)
                     m_onLostFocus();
+                handleLeaveClickEvent();
                 break;
             }
             case Event::Type::WindowMinimize:

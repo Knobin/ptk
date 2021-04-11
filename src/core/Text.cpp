@@ -94,8 +94,8 @@ namespace pTK
     Size Text::getBounds() const
     {
         SkRect bounds{};
-        m_font.measureText(m_text.c_str(), m_text.size(), SkTextEncoding::kUTF8, &bounds);
-        return Size(static_cast<int>(std::ceil(bounds.width())), static_cast<int>(std::ceil(bounds.height())));
+        float advance = m_font.measureText(m_text.c_str(), m_text.size(), SkTextEncoding::kUTF8, &bounds);
+        return Size(static_cast<int>(std::ceil(advance)), static_cast<int>(std::ceil(bounds.height())));
     }
 
     const SkFont* Text::skFont() const
@@ -103,32 +103,44 @@ namespace pTK
         return &m_font;
     }
 
-    static SkPaint GetSkPaintFromColor(const Color& color)
-    {
-        SkPaint paint{};
-        paint.setAntiAlias(true);
-        paint.setARGB(color.a, color.r, color.g, color.b);
-        return paint;
-    }
-
-    void Text::drawText(SkCanvas* canvas, const Color& color, const Point& pos)
+    float Text::drawText(SkCanvas* canvas, const Color& color, const Point& pos)
     {
         SkPaint paint = GetSkPaintFromColor(color);
         paint.setStyle(SkPaint::kStrokeAndFill_Style);
         
         SkRect bounds{};
-        m_font.measureText(m_text.c_str(), m_text.size(), SkTextEncoding::kUTF8, &bounds);
+        float advance = m_font.measureText(m_text.c_str(), m_text.size(), SkTextEncoding::kUTF8, &bounds);
         const SkPoint skPos{convertToSkPoint(pos)};
-        
-        canvas->drawString(m_text.c_str(), skPos.fX + (-1*bounds.x()), skPos.fY + (-1*bounds.y()), m_font, paint);
+
+        std::size_t startSpaces{0};
+        const std::string& text{getText()};
+        for (auto it = text.cbegin(); it != text.cend(); ++it)
+        {
+            if ((*it) == ' ')
+                ++startSpaces;
+            else
+                break;
+        }
+
+        SkScalar startSpaceOffset{0};
+        if (startSpaces > 0)
+        {
+            SkRect tmp{};
+            float spaceAdvance = m_font.measureText(m_text.c_str(), startSpaces, SkTextEncoding::kUTF8, &tmp);
+            startSpaceOffset = spaceAdvance;
+        }
+
+        canvas->drawString(m_text.c_str(), skPos.fX + startSpaceOffset + (-1*bounds.x()), skPos.fY + (-1*bounds.y()), m_font, paint);
+
+        return advance;
     }
 
-    void Text::drawText(SkCanvas* canvas, const Color& color, const Point& pos, float outlineSize, const Color& outColor)
+    float Text::drawText(SkCanvas* canvas, const Color& color, const Point& pos, float outlineSize, const Color& outColor)
     {
         SkPaint paint = GetSkPaintFromColor(color);
         
         SkRect bounds{};
-        m_font.measureText(m_text.c_str(), m_text.size(), SkTextEncoding::kUTF8, &bounds);
+        float advance = m_font.measureText(m_text.c_str(), m_text.size(), SkTextEncoding::kUTF8, &bounds);
         const SkPoint skPos{convertToSkPoint(pos)};
         
         // Outline
@@ -147,6 +159,8 @@ namespace pTK
             paint.setStyle(SkPaint::kStroke_Style);
             canvas->drawString(m_text.c_str(), skPos.fX + (-1*bounds.x()), skPos.fY + (-1*bounds.y()), m_font, paint);
         }
+
+        return advance;
     }
 
 }

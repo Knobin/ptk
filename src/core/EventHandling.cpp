@@ -10,7 +10,6 @@
 
 namespace pTK
 {
-
     EventHandling::EventHandling()
         : EventCallbacks(), EventFunctions()
     {}
@@ -52,10 +51,10 @@ namespace pTK
         LoopAndConditionRemove(getLeaveCallbacks());
     }
 
-    void EventHandling::handleLeaveClickEvent(Mouse::Button button, const Point& position)
+    void EventHandling::handleLeaveClickEvent()
     {
-        onLeaveClickEvent(button, position);
-        LoopAndConditionRemove(getLeaveClickCallbacks(), button, position);
+        onLeaveClickEvent();
+        LoopAndConditionRemove(getLeaveClickCallbacks());
     }
 
     void EventHandling::handleScrollEvent(const Vec2f& offset)

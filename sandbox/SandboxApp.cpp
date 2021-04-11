@@ -146,23 +146,8 @@ int main(int argc, char *argv[]) {
     setWindowCallbacks(window);
 
     // Set ESC key to close the window (and other debug stuff).
-    window.onKey([&](pTK::Event::Type type, pTK::KeyCode key) {
-        if ((type == pTK::KeyEvent::Released) && (key == pTK::Key::Escape))
-            window.close();
-        if ((type == pTK::KeyEvent::Released) && (key == pTK::Key::Space))
-            window.postEvent<pTK::ResizeEvent>(pTK::Size{1000, 600});
-        if ((type == pTK::KeyEvent::Released) && (key == pTK::Key::M))
-        {
-            window.minimize();
-            using namespace std::chrono_literals;
-            std::this_thread::sleep_for(1s);
-            window.minimize();
-            std::this_thread::sleep_for(1s);
-            window.restore();
-        }
-
+    window.onKey([&](pTK::Event::Type, pTK::KeyCode key) {
         std::cout << "Key event " << static_cast<int32>(key) << std::endl;
-
         return false;
     });
 
@@ -316,7 +301,7 @@ int main(int argc, char *argv[]) {
     h1->setMaxSize({pTK::Size::Limits::Max, h1->getMinSize().height});
 
     // Add content to right side.
-    cTitle->onKey([](pTK::Event::Type type, pTK::KeyCode code) {
+    cTitle->onKey([](pTK::Event::Type, pTK::KeyCode code) {
         std::cout << "cTitle key event: " << pTK::KeyCodeToAlpha(code) << std::endl;
         return false;
     });
@@ -333,7 +318,7 @@ int main(int argc, char *argv[]) {
         textField->setOutlineColor(pTK::Color{0x007BFFFF});
         return false;
     });
-    textField->onLeaveClick([&](pTK::Mouse::Button, const pTK::Point&){
+    textField->onLeaveClick([&](){
         textField->setOutlineColor(pTK::Color{0xE5E5E5FF});
         return false;
     });

@@ -86,6 +86,7 @@ namespace pTK
     // Functions for converting utility classes to SkPoint for drawing.
     SkPoint convertToSkPoint(const Point& pos, const Vec2f& scale = {1.0f, 1.0f});
     SkPoint convertToSkPoint(const Size& size, const Vec2f& scale = {1.0f, 1.0f});
+    SkPaint GetSkPaintFromColor(const Color& color);
 }
 
 #endif // PTK_CORE_PLATFORM_CONTEXTBASE_HPP

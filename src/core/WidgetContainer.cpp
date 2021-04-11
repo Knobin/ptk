@@ -130,7 +130,7 @@ namespace pTK
         }
 
         if (lastClicked != nullptr && (lastClicked != m_lastClickedWidget || !found))
-            lastClicked->handleLeaveClickEvent(btn, pos);
+            lastClicked->handleLeaveClickEvent();
 
         if (!found)
             m_lastClickedWidget = nullptr;
@@ -258,10 +258,10 @@ namespace pTK
             return false; // Do not remove callback, ever.
         });*/
 
-        onLeaveClick([container = this](Mouse::Button btn, const Point& pos){
+        onLeaveClick([container = this](){
             if (container->m_lastClickedWidget != nullptr)
             {
-                container->m_lastClickedWidget->handleLeaveClickEvent(btn, pos);
+                container->m_lastClickedWidget->handleLeaveClickEvent();
                 container->m_lastClickedWidget = nullptr;
             }
             return false;

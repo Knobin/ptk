@@ -57,7 +57,7 @@ namespace pTK
             canvas->drawRoundRect(rect, m_cornerRadius, m_cornerRadius, paint);
         }
     }
-    
+
     void Rectangle::setCornerRadius(float radius)
     {
         if (radius >= 0)

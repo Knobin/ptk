@@ -37,4 +37,12 @@ namespace pTK
     {
         return SkPoint{static_cast<float>(size.width)*scale.x, static_cast<float>(size.height)*scale.y};
     }
+
+    SkPaint GetSkPaintFromColor(const Color& color)
+    {
+        SkPaint paint{};
+        paint.setAntiAlias(true);
+        paint.setARGB(color.a, color.r, color.g, color.b);
+        return paint;
+    }
 }

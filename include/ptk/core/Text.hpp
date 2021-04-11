@@ -56,7 +56,7 @@ namespace pTK
          
             @return  current font family
         */
-        std::string getFontFamily() const;
+        [[nodiscard]] std::string getFontFamily() const;
         
         /** Function for setting the font size.
          
@@ -68,7 +68,7 @@ namespace pTK
          
             @return  current font size
         */
-        uint getFontSize() const;
+        [[nodiscard]] uint getFontSize() const;
         
         /** Function for setting the text.
          
@@ -80,7 +80,7 @@ namespace pTK
          
             @return  current text
         */
-        const std::string& getText() const;
+        [[nodiscard]] const std::string& getText() const;
         
         /** Function for retrieving the bounds of the text.
          
@@ -92,11 +92,11 @@ namespace pTK
          
          @return  raw SkFont
          */
-        const SkFont* skFont() const;
+        [[nodiscard]] const SkFont* skFont() const;
         
-        void drawText(SkCanvas* canvas, const Color& color, const Point& pos);
-        void drawText(SkCanvas* canvas, const Color& color, const Point& pos, float outlineSize, const Color& outColor);
-        
+        float drawText(SkCanvas* canvas, const Color& color, const Point& pos);
+        float drawText(SkCanvas* canvas, const Color& color, const Point& pos, float outlineSize, const Color& outColor);
+
     private:
         virtual void onTextUpdate() {}
         
