@@ -8,6 +8,11 @@
 // pTK Headers
 #include "ptk/core/Text.hpp"
 
+// Skia Headers
+PTK_DISABLE_WARN_BEGIN()
+#include "include/core/SkFontMetrics.h"
+PTK_DISABLE_WARN_END()
+
 namespace pTK
 {
     Text::Text()
@@ -103,6 +108,33 @@ namespace pTK
         return &m_font;
     }
 
+    static std::size_t SpaceCount(const std::string& str)
+    {
+        std::size_t count{0};
+        for (auto it = str.cbegin(); it != str.cend(); ++it)
+        {
+            if ((*it) == ' ')
+                ++count;
+            else
+                break;
+        }
+        return count;
+    }
+
+    static float StartSpaceOffset(const SkFont& font, const std::string& str)
+    {
+        float offset{0.0f};
+        std::size_t spaceCount{SpaceCount(str)};
+        
+        if (spaceCount > 0)
+        {
+            SkRect tmp{};
+            offset = font.measureText(str.c_str(), spaceCount, SkTextEncoding::kUTF8, &tmp);
+        }
+        
+        return offset;
+    }
+
     float Text::drawText(SkCanvas* canvas, const std::string& str, const Color& color, const Vec2f& pos)
     {
         SkPaint paint = GetSkPaintFromColor(color);
@@ -111,32 +143,11 @@ namespace pTK
         SkRect bounds{};
         float advance = m_font.measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &bounds);
         const SkPoint skPos{pos.x, pos.y};
-
-        std::size_t startSpaces{0};
-        const std::string& text{getText()};
-        for (auto it = text.cbegin(); it != text.cend(); ++it)
-        {
-            if ((*it) == ' ')
-                ++startSpaces;
-            else
-                break;
-        }
-
-        SkScalar startSpaceOffset{0};
-        if (startSpaces > 0)
-        {
-            SkRect tmp{};
-            float spaceAdvance = m_font.measureText(str.c_str(), startSpaces, SkTextEncoding::kUTF8, &tmp);
-            startSpaceOffset = spaceAdvance;
-        }
         
-        SkGlyphID id;
-        int count = m_font.textToGlyphs("a", 1, SkTextEncoding::kUTF8, &id, 1);
-        SkPoint point;
-        m_font.getPos(&id, 1, &point);
-        PTK_INFO("{} Glyph pos: {}x{}, {}x{}", count, point.x(), point.y(), point.fX, point.fY);
+        SkFontMetrics metrics{};
+        m_font.getMetrics(&metrics);
 
-        canvas->drawString(str.c_str(), skPos.x() + startSpaceOffset + (-1*bounds.x()), skPos.y() + (-1*bounds.y()), m_font, paint);
+        canvas->drawString(str.c_str(), skPos.x() + StartSpaceOffset(m_font, str) + (-1*bounds.x()), skPos.y() + (-1*metrics.fAscent), m_font, paint);
 
         return advance;
     }
@@ -149,6 +160,9 @@ namespace pTK
         float advance = m_font.measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &bounds);
         const SkPoint skPos{pos.x, pos.y};
         
+        SkFontMetrics metrics{};
+        m_font.getMetrics(&metrics);
+        
         // Outline
         paint.setStrokeWidth(outlineSize);
         if (outlineSize > 0.0f)
@@ -156,14 +170,14 @@ namespace pTK
         else
             paint.setStyle(SkPaint::kStrokeAndFill_Style);
         
-        canvas->drawString(str.c_str(), skPos.fX + (-1*bounds.x()), skPos.fY + (-1*bounds.y()), m_font, paint);
+        canvas->drawString(str.c_str(), skPos.x() + StartSpaceOffset(m_font, str) + (-1*bounds.x()), skPos.y() + (-1*metrics.fAscent), m_font, paint);
         
         if (outlineSize > 0.0f)
         {
             // Draw Outline
             paint.setARGB(outColor.a, outColor.r, outColor.g, outColor.b);
             paint.setStyle(SkPaint::kStroke_Style);
-            canvas->drawString(str.c_str(), skPos.fX + (-1*bounds.x()), skPos.fY + (-1*bounds.y()), m_font, paint);
+            canvas->drawString(str.c_str(), skPos.x() + StartSpaceOffset(m_font, str) + (-1*bounds.x()), skPos.y() + (-1*metrics.fAscent), m_font, paint);
         }
 
         return advance;

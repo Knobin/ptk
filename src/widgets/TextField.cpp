@@ -66,9 +66,7 @@ namespace pTK
         
         const Size rectSize{getSize()};
         
-        float advance = (!getText().empty()) ? drawText(canvas, getText(), Color{0x495057FF}, m_textPos) : 0;
-        
-        PTK_INFO("DRAW POS: {}x{}", m_textPos.x, m_textPos.y);
+        float advance = (!getText().empty()) ? drawText(canvas, getText(), Color{0x495057FF}, m_textPos) : 0.0f;
         
         if (getText().empty())
             drawText(canvas, m_placeholderText, Color{0x6D757DFF}, m_textPos);
@@ -101,12 +99,10 @@ namespace pTK
         skFont()->getMetrics(&metrics);
         m_totalTextHeight = std::abs(metrics.fAscent - metrics.fDescent);
         m_baseToAscent = m_totalTextHeight - std::abs(metrics.fDescent);
-        PTK_INFO("m_totalTextHeight: {}, m_baseToAscent: {}", m_totalTextHeight, m_baseToAscent);
         
         const Size rectSize{getSize()};
         m_textPos.x = getPosition().x + ((rectSize.height - m_baseToAscent) / 2) - 2;
         m_textPos.y = getPosition().y + ((rectSize.height - m_baseToAscent) / 2);
-        PTK_INFO("UPDATE POS: {}x{}", m_textPos.x, m_textPos.y);
         
         Size cursorSize{1, static_cast<Size::value_type>(m_totalTextHeight)};
         m_cursor.setSize(cursorSize);
