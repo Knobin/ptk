@@ -150,6 +150,11 @@ int main(int argc, char *argv[]) {
         std::cout << "Key event " << static_cast<int32>(key) << std::endl;
         return false;
     });
+    
+    window.onClick([](pTK::Mouse::Button, const pTK::Point& pos){
+        std::cout << "Click: " << pos.x << "x" << pos.y << std::endl;
+        return false;
+    });
 
     // HBox.
     pTK::Ref<pTK::HBox> hbox = pTK::Create<pTK::HBox>();
@@ -307,12 +312,14 @@ int main(int argc, char *argv[]) {
     });
 
     pTK::Ref<pTK::TextField> textField = pTK::Create<pTK::TextField>();
-    textField->setSize({400, 40});
-    textField->setFontSize(16);
+    textField->setSize({400, 38});
+    textField->setFontSize(20);
+    //textField->setFontFamily("Roboto");
     textField->setCornerRadius(2.5f);
     textField->setOutlineColor(pTK::Color{0xE5E5E5FF});
     textField->setOutlineThickness(1.5f);
     textField->setColor(pTK::Color{0xFDFDFDFF});
+    textField->setPlaceholderText("RPlaceholder text!");
 
     textField->onClick([&](pTK::Mouse::Button, const pTK::Point&){
         textField->setOutlineColor(pTK::Color{0x007BFFFF});

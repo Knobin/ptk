@@ -11,6 +11,7 @@
 // pTK Headers
 #include "ptk/widgets/Rectangle.hpp"
 #include "ptk/core/Text.hpp"
+#include "ptk/util/Vec2.hpp"
 
 namespace pTK
 {
@@ -34,12 +35,21 @@ namespace pTK
         */
         void onDraw(SkCanvas* canvas) override;
         
+        void setPlaceholderText(const std::string& text);
+        const std::string& getPlaceholderText() const;
+        
+        void setPosHint(const Point& pos) override;
+        
     private:
         void onTextUpdate() override;
+        void updateBounds();
 
     private:
         Rectangle m_cursor;
-        int m_offset{0};
+        std::string m_placeholderText{};
+        Vec2f m_textPos{0.0f, 0.0f};
+        float m_totalTextHeight{0};
+        float m_baseToAscent{0};
         bool m_drawCursor{false};
     };
 }

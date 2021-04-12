@@ -11,12 +11,17 @@
 // C++ Headers
 #include <cctype>
 
+// Skia Headers
+PTK_DISABLE_WARN_BEGIN()
+#include "include/core/SkFontMetrics.h"
+PTK_DISABLE_WARN_END()
+
 namespace pTK
 {
     TextField::TextField()
         : Rectangle(), Text(), m_cursor{}
     {
-        m_cursor.setColor(Color{0x151515FF});
+        m_cursor.setColor(Color{0x495057FF});
 
         onKey([this](Event::Type type, KeyCode keycode, byte modifier){
             if (type == Event::Type::KeyPressed)
@@ -60,18 +65,18 @@ namespace pTK
         Rectangle::onDraw(canvas);
         
         const Size rectSize{getSize()};
-
-        Point textPos{getPosition()};
-        const Point::value_type startPos = getPosition().x + ((rectSize.height - m_cursor.getSize().height) / 2);
-        textPos.x = startPos;
-        textPos.y += (rectSize.height - skFont()->getSpacing()) / 2;
         
-        float advance = drawText(canvas, Color{0x151515FF}, textPos);
+        float advance = (!getText().empty()) ? drawText(canvas, getText(), Color{0x495057FF}, m_textPos) : 0;
+        
+        PTK_INFO("DRAW POS: {}x{}", m_textPos.x, m_textPos.y);
+        
+        if (getText().empty())
+            drawText(canvas, m_placeholderText, Color{0x6D757DFF}, m_textPos);
 
         if (m_drawCursor)
         {
             Point cursorPos{};
-            cursorPos.x = static_cast<Point::value_type>(startPos + static_cast<Point::value_type>(std::ceil(advance)) + m_offset);
+            cursorPos.x = static_cast<Point::value_type>(m_textPos.x + static_cast<Point::value_type>(std::ceil(advance)));
             cursorPos.y = getPosition().y + ((rectSize.height - m_cursor.getSize().height) / 2);
 
             m_cursor.setPosHint(cursorPos);
@@ -81,19 +86,55 @@ namespace pTK
 
     void TextField::onTextUpdate()
     {
-        SkRect bounds{};
-        skFont()->measureText("|", 1, SkTextEncoding::kUTF8, &bounds);
+        updateBounds();
+    }
 
-        Size cursorSize{1, 0};
-        int bHeight = static_cast<int>(std::ceil(bounds.width()));
-        cursorSize.height = bHeight + ((getSize().height - bHeight) / 2);
+    void TextField::setPosHint(const Point& pos)
+    {
+        Widget::setPosHint(pos);
+        updateBounds();
+    }
+
+    void TextField::updateBounds()
+    {
+        SkFontMetrics metrics{};
+        skFont()->getMetrics(&metrics);
+        m_totalTextHeight = std::abs(metrics.fAscent - metrics.fDescent);
+        m_baseToAscent = m_totalTextHeight - std::abs(metrics.fDescent);
+        PTK_INFO("m_totalTextHeight: {}, m_baseToAscent: {}", m_totalTextHeight, m_baseToAscent);
+        
+        const Size rectSize{getSize()};
+        m_textPos.x = getPosition().x + ((rectSize.height - m_baseToAscent) / 2) - 2;
+        m_textPos.y = getPosition().y + ((rectSize.height - m_baseToAscent) / 2);
+        PTK_INFO("UPDATE POS: {}x{}", m_textPos.x, m_textPos.y);
+        
+        Size cursorSize{1, static_cast<Size::value_type>(m_totalTextHeight)};
         m_cursor.setSize(cursorSize);
-        m_offset = static_cast<int>(std::ceil(bounds.width()) / 2);
         
         Size minSize{getBounds()};
-        minSize.width += m_offset + static_cast<Point::value_type>(cursorSize.width);
+        minSize.width += static_cast<Point::value_type>(cursorSize.width);
         minSize.height = (minSize.height > cursorSize.height) ? minSize.height : cursorSize.height;
         
+        SkRect placeholderBounds{};
+        skFont()->measureText(m_placeholderText.c_str(), m_placeholderText.size(), SkTextEncoding::kUTF8, &placeholderBounds);
+        Size::value_type pWidth = static_cast<Size::value_type>(std::ceil(placeholderBounds.width()));
+        Size::value_type pHeight = static_cast<Size::value_type>(std::ceil(placeholderBounds.height()));
+        
+        minSize.width = (minSize.width > pWidth) ? minSize.width : pWidth;
+        minSize.height = (minSize.height > pHeight) ? minSize.height : pHeight;
+        
         setMinSize(minSize);
+        update();
+    }
+
+    void TextField::setPlaceholderText(const std::string& text)
+    {
+        m_placeholderText = text;
+        updateBounds();
+    }
+
+    const std::string& TextField::getPlaceholderText() const
+    {
+        return m_placeholderText;
     }
 }

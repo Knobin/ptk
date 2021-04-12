@@ -27,7 +27,8 @@ namespace pTK
     
     void Label::onDraw(SkCanvas* canvas)
     {
-        drawText(canvas, getColor(), getPosition(), getOutlineThickness(), getOutlineColor());
+        const Vec2f pos{static_cast<float>(getPosition().x), static_cast<float>(getPosition().y)};
+        drawText(canvas, getText(), getColor(), pos, getOutlineThickness(), getOutlineColor());
     }
 
     void Label::onTextUpdate()

@@ -94,8 +94,8 @@ namespace pTK
          */
         [[nodiscard]] const SkFont* skFont() const;
         
-        float drawText(SkCanvas* canvas, const Color& color, const Point& pos);
-        float drawText(SkCanvas* canvas, const Color& color, const Point& pos, float outlineSize, const Color& outColor);
+        float drawText(SkCanvas* canvas, const std::string& str, const Color& color, const Vec2f& pos);
+        float drawText(SkCanvas* canvas, const std::string& str, const Color& color, const Vec2f& pos, float outlineSize, const Color& outColor);
 
     private:
         virtual void onTextUpdate() {}
