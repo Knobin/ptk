@@ -37,14 +37,23 @@ namespace pTK
          
             @return  default initialized Color
         */
-        Color();
+        constexpr Color()
+            : r{0}, g{0}, b{0}, a{255}
+        {}
         
         /** Constructs Color with default values with color.
          
             @param color   color with alpha in int form
             @return        Color initialized
         */
-        explicit Color(size_type color);
+        explicit constexpr Color(size_type color)
+            : r{0}, g{0}, b{0}, a{255}
+        {
+            r = static_cast<value_type>((color & 0xFF000000) >> 24);
+            g = static_cast<value_type>((color & 0x00FF0000) >> 16);
+            b = static_cast<value_type>((color & 0x0000FF00) >> 8);
+            a = static_cast<value_type>(color & 0xFF);
+        }
         
         /** Constructs Color with default with red, green blue and alpha.
             Default value for alpha is 255, if none is specified.
@@ -55,12 +64,9 @@ namespace pTK
             @param alpha   amount of alpha [0, 255]
             @return        Color initialized
         */
-        Color(byte red, byte green, byte blue, byte alpha = 255);
-
-        /** Destructor for Color.
-
-        */
-        virtual ~Color() = default;
+        constexpr Color(byte red, byte green, byte blue, byte alpha = 255)
+            : r{red}, g{green}, b{blue}, a{alpha}
+        {}
         
         /** Get function for retrieving copy of Color in int form.
          

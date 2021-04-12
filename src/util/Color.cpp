@@ -13,23 +13,6 @@
 
 namespace pTK
 {
-    Color::Color()
-        : r{0}, g{0}, b{0}, a{255}
-    {
-    }
-    
-    Color::Color(size_type color)
-        : r{0}, g{0}, b{0}, a{255}
-    {
-        set_rgba(color);
-    }
-    
-    Color::Color(byte red, byte green, byte blue, byte alpha)
-        : r{red}, g{green}, b{blue}, a{alpha}
-    {
-        
-    }
-    
     // Get.
     Color::size_type Color::to_int() const
     {
