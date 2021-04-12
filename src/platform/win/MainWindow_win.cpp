@@ -538,6 +538,32 @@ namespace pTK
         return key;
     }
 
+    static std::underlying_type<KeyEvent::Modifier>::type GetKeyModifiers()
+    {
+        using utype = std::underlying_type<KeyEvent::Modifier>::type;
+        utype mods = static_cast<utype>(KeyEvent::Modifier::NONE);
+
+        if (GetKeyState(VK_SHIFT) & 0x800)
+            mods |= static_cast<utype>(KeyEvent::Modifier::Shift);
+
+        if (GetKeyState(VK_CONTROL) & 0x800)
+            mods |= static_cast<utype>(KeyEvent::Modifier::Control);
+
+        if (GetKeyState(VK_MENU) & 0x800)
+            mods |= static_cast<utype>(KeyEvent::Modifier::Alt);
+
+        if ((GetKeyState(VK_LWIN) && GetKeyState(VK_RWIN)) & 0x800)
+            mods |= static_cast<utype>(KeyEvent::Modifier::Super);
+
+        if (GetKeyState(VK_CAPITAL) & 1)
+            mods |= static_cast<utype>(KeyEvent::Modifier::CapsLock);
+
+        if (GetKeyState(VK_NUMLOCK) & 1)
+            mods |= static_cast<utype>(KeyEvent::Modifier::NumLock);
+
+        return mods;
+    }
+
     static void HandleKeyEvent(Window *window, const Event::Type& type, WPARAM wParam, LPARAM lParam)
     {
         KeyCode key{KeyMap::KeyCodeToKey(static_cast<int32>(wParam))};
@@ -547,7 +573,7 @@ namespace pTK
             key = KeyMap::KeyCodeToKey(static_cast<int32>(lrKey));
         }
 
-        KeyEvent evt{type, key};
+        KeyEvent evt{type, key, GetKeyModifiers()};
         window->sendEvent(&evt);
     }
 
