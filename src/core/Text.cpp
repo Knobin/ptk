@@ -146,14 +146,17 @@ namespace pTK
         
         SkFontMetrics metrics{};
         m_font.getMetrics(&metrics);
-
+        
         canvas->drawString(str.c_str(), skPos.x() + StartSpaceOffset(m_font, str) + (-1*bounds.x()), skPos.y() + (-1*metrics.fAscent), m_font, paint);
-
+        
         return advance;
     }
 
     float Text::drawText(SkCanvas* canvas, const std::string& str, const Color& color, const Vec2f& pos, float outlineSize, const Color& outColor)
     {
+        if (!(outlineSize > 0.0f))
+            return drawText(canvas, str, color, pos);
+        
         SkPaint paint = GetSkPaintFromColor(color);
         
         SkRect bounds{};
@@ -165,20 +168,14 @@ namespace pTK
         
         // Outline
         paint.setStrokeWidth(outlineSize);
-        if (outlineSize > 0.0f)
-            paint.setStyle(SkPaint::kFill_Style);
-        else
-            paint.setStyle(SkPaint::kStrokeAndFill_Style);
+        paint.setStyle(SkPaint::kFill_Style);
         
         canvas->drawString(str.c_str(), skPos.x() + StartSpaceOffset(m_font, str) + (-1*bounds.x()), skPos.y() + (-1*metrics.fAscent), m_font, paint);
         
-        if (outlineSize > 0.0f)
-        {
-            // Draw Outline
-            paint.setARGB(outColor.a, outColor.r, outColor.g, outColor.b);
-            paint.setStyle(SkPaint::kStroke_Style);
-            canvas->drawString(str.c_str(), skPos.x() + StartSpaceOffset(m_font, str) + (-1*bounds.x()), skPos.y() + (-1*metrics.fAscent), m_font, paint);
-        }
+        // Draw Outline
+        paint.setARGB(outColor.a, outColor.r, outColor.g, outColor.b);
+        paint.setStyle(SkPaint::kStroke_Style);
+        canvas->drawString(str.c_str(), skPos.x() + StartSpaceOffset(m_font, str) + (-1*bounds.x()), skPos.y() + (-1*metrics.fAscent), m_font, paint);
 
         return advance;
     }
