@@ -102,8 +102,8 @@ namespace pTK
         // m_baseToAscent = -1*metrics.fAscent;//m_totalTextHeight - std::abs(metrics.fDescent);
         
         const Size rectSize{getSize()};
-        m_textPos.x = getPosition().x + ((rectSize.height - m_totalTextHeight) / 2) - 2;
-        m_textPos.y = getPosition().y + ((rectSize.height + metrics.fAscent) / 2);
+        m_textPos.x = getPosition().x + ((rectSize.height - metrics.fCapHeight) / 2);
+        m_textPos.y = getPosition().y + ((rectSize.height - metrics.fCapHeight) / 2);
         
         Size cursorSize{1, static_cast<Size::value_type>(m_totalTextHeight)};
         m_cursor.setSize(cursorSize);

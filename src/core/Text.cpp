@@ -152,11 +152,11 @@ namespace pTK
         Rectangle rect{};
         rect.setPosHint({static_cast<int>(pos.x), static_cast<int>(pos.y)});
         float total = metrics.fDescent - metrics.fAscent;
-        rect.setSize({static_cast<int>(std::ceil(advance)), static_cast<int>(std::ceil(-1*metrics.fAscent))});
+        rect.setSize({static_cast<int>(std::ceil(advance)), static_cast<int>(std::ceil(metrics.fCapHeight))});
         rect.setColor(Color{0xFF1212AA});
         //rect.onDraw(canvas);
         
-        canvas->drawString(str.c_str(), pos.x + StartSpaceOffset(m_font, str) + (-1*bounds.x()), pos.y + (-1*metrics.fAscent), m_font, paint);
+        canvas->drawString(str.c_str(), pos.x + StartSpaceOffset(m_font, str) + (-1*bounds.x()), pos.y + metrics.fCapHeight, m_font, paint);
         
         return advance;
     }
