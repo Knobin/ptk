@@ -8,6 +8,8 @@
 // pTK Headers
 #include "ptk/core/Text.hpp"
 
+#include "ptk/widgets/Rectangle.hpp"
+
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
 #include "include/core/SkFontMetrics.h"
@@ -142,12 +144,19 @@ namespace pTK
         
         SkRect bounds{};
         float advance = m_font.measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &bounds);
-        const SkPoint skPos{pos.x, pos.y};
         
         SkFontMetrics metrics{};
         m_font.getMetrics(&metrics);
+        m_font.setBaselineSnap(true);
         
-        canvas->drawString(str.c_str(), skPos.x() + StartSpaceOffset(m_font, str) + (-1*bounds.x()), skPos.y() + (-1*metrics.fAscent), m_font, paint);
+        Rectangle rect{};
+        rect.setPosHint({static_cast<int>(pos.x), static_cast<int>(pos.y)});
+        float total = metrics.fDescent - metrics.fAscent;
+        rect.setSize({static_cast<int>(std::ceil(advance)), static_cast<int>(std::ceil(-1*metrics.fAscent))});
+        rect.setColor(Color{0xFF1212AA});
+        //rect.onDraw(canvas);
+        
+        canvas->drawString(str.c_str(), pos.x + StartSpaceOffset(m_font, str) + (-1*bounds.x()), pos.y + (-1*metrics.fAscent), m_font, paint);
         
         return advance;
     }

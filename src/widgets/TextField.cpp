@@ -22,7 +22,7 @@ namespace pTK
         : Rectangle(), Text(), m_cursor{}
     {
         m_cursor.setColor(Color{0x495057FF});
-
+      
         onKey([this](Event::Type type, KeyCode keycode, byte modifier){
             if (type == Event::Type::KeyPressed)
             {
@@ -66,10 +66,10 @@ namespace pTK
         
         const Size rectSize{getSize()};
         
-        float advance = (!getText().empty()) ? drawText(canvas, getText(), Color{0x495057FF}, m_textPos) : 0.0f;
+        float advance = (!getText().empty()) ? drawText(canvas, getText(), m_textColor, m_textPos) : 0.0f;
         
         if (getText().empty())
-            drawText(canvas, m_placeholderText, Color{0x6D757DFF}, m_textPos);
+            drawText(canvas, m_placeholderText, m_placeholderColor, m_textPos);
 
         if (m_drawCursor)
         {
@@ -97,12 +97,13 @@ namespace pTK
     {
         SkFontMetrics metrics{};
         skFont()->getMetrics(&metrics);
-        m_totalTextHeight = std::abs(metrics.fAscent - metrics.fDescent);
-        m_baseToAscent = m_totalTextHeight - std::abs(metrics.fDescent);
+        m_totalTextHeight = metrics.fDescent - metrics.fAscent;
+        // int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
+        // m_baseToAscent = -1*metrics.fAscent;//m_totalTextHeight - std::abs(metrics.fDescent);
         
         const Size rectSize{getSize()};
-        m_textPos.x = getPosition().x + ((rectSize.height - m_baseToAscent) / 2) - 2;
-        m_textPos.y = getPosition().y + ((rectSize.height - m_baseToAscent) / 2);
+        m_textPos.x = getPosition().x + ((rectSize.height - m_totalTextHeight) / 2) - 2;
+        m_textPos.y = getPosition().y + ((rectSize.height + metrics.fAscent) / 2);
         
         Size cursorSize{1, static_cast<Size::value_type>(m_totalTextHeight)};
         m_cursor.setSize(cursorSize);
@@ -132,5 +133,28 @@ namespace pTK
     const std::string& TextField::getPlaceholderText() const
     {
         return m_placeholderText;
+    }
+
+    void TextField::setPlaceholderColor(const Color& color)
+    {
+        m_placeholderColor = color;
+        update();
+    }
+
+    const Color& TextField::getPlaceholderColor() const
+    {
+        return m_placeholderColor;
+    }
+
+    void TextField::setTextColor(const Color& color)
+    {
+        m_textColor = color;
+        m_cursor.setColor(color);
+        update();
+    }
+
+    const Color& TextField::getTextColor() const
+    {
+        return m_textColor;
     }
 }
