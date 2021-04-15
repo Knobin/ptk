@@ -71,7 +71,7 @@ namespace pTK
     std::string Text::getFontFamily() const
     {
         SkString str{};
-        m_font.getTypeface()->getFamilyName(&str);
+        m_font.getTypefaceOrDefault()->getFamilyName(&str);
         
         return std::string(str.c_str());
     }
