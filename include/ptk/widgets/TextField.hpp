@@ -56,6 +56,7 @@ namespace pTK
         Color m_textColor{0xFFFFFFFF};
         Color m_placeholderColor{0xF0F0F0FF};
         float m_cursorHeight{0.0f};
+        std::size_t m_cursorLocation{0};
         bool m_drawCursor{false};
     };
 }

@@ -77,7 +77,12 @@ namespace pTK
         Shift   = 348,
         Control = 349,
         Alt     = 350,
-        Command = 351
+        Command = 351,
+
+        Right   = 262,
+        Left    = 263,
+        Down    = 264,
+        Up      = 265
 
     } Key;
 

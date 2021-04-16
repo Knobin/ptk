@@ -24,23 +24,67 @@ namespace pTK
         onKey([this](Event::Type type, KeyCode keycode, byte modifier){
             if (type == Event::Type::KeyPressed)
             {
-                if (IsKeyCodeAlpha(keycode))
+                if (IsKeyCodeAlpha(keycode) || IsKeyCodeDigit(keycode) || IsKeyCodeSpace(keycode))
                 {
                     bool shift = IsKeyEventModifierSet(modifier, KeyEvent::Modifier::Shift);
                     bool capsLock = IsKeyEventModifierSet(modifier, KeyEvent::Modifier::CapsLock);
-                    char alpha = KeyCodeToAlpha(keycode);
-              
-                    if ((capsLock && !shift) || (!capsLock && shift))
-                        setText(getText() + alpha);
-                    else
-                        setText(getText() + static_cast<char>(std::tolower(alpha)));
+
+                    char toInsert{0};
+                    if (IsKeyCodeAlpha(keycode))
+                    {
+                        char alpha = KeyCodeToAlpha(keycode);
+                        toInsert = ((capsLock && !shift) || (!capsLock && shift)) ? alpha : static_cast<char>(std::tolower(alpha));
+                    }
+                    else if (IsKeyCodeDigit(keycode))
+                        toInsert = KeyCodeToGraph(keycode);
+                    else if (IsKeyCodeSpace(keycode))
+                        toInsert = ' ';
+
+                    if (toInsert != 0)
+                    {
+                        std::string str{getText()};
+                        str.insert(m_cursorLocation , 1, toInsert);
+                        ++m_cursorLocation;
+                        setText(str);
+                    }
                 }
-                else if (IsKeyCodeDigit(keycode))
-                    setText(getText() + KeyCodeToGraph(keycode));
-                else if (IsKeyCodeSpace(keycode))
-                    setText(getText() + ' ');
-                else if (keycode == Key::Backspace)
-                    setText(getText().substr(0, getText().size() - 1));
+                else
+                {
+                    switch (keycode) {
+                        case Key::Backspace:
+                        {
+                            if (m_cursorLocation > 0)
+                            {
+                                std::string str{getText()};
+                                str.erase(m_cursorLocation - 1, 1);
+                                setText(str);
+                                --m_cursorLocation;
+                            }
+
+                            break;
+                        }
+                        case Key::Left:
+                        {
+                            if (m_cursorLocation > 0)
+                            {
+                                --m_cursorLocation;
+                                draw();
+                            }
+                            break;
+                        }
+                        case Key::Right:
+                        {
+                            if ((!getText().empty()) && (m_cursorLocation < (getText().size())))
+                            {
+                                ++m_cursorLocation;
+                                draw();
+                            }
+                            break;
+                        }
+                        default:
+                            break;
+                    }
+                }
             }
 
                 
@@ -61,7 +105,7 @@ namespace pTK
     void TextField::onDraw(SkCanvas* canvas)
     {
         Rectangle::onDraw(canvas);
-        
+        PTK_INFO("CURSOR LOCATION: {}", m_cursorLocation);
         const Size rectSize{getSize()};
         
         float advance = (!getText().empty()) ? drawTextLine(canvas, getText(), m_textColor, m_textPos) : 0.0f;
@@ -74,7 +118,14 @@ namespace pTK
             SkPaint paint{GetSkPaintFromColor(m_textColor)};
             paint.setStrokeWidth(1.0f);
 
+            if (m_cursorLocation <= getText().size())
+            {
+                SkRect tmp{};
+                advance = skFont()->measureText(getText().c_str(), m_cursorLocation, SkTextEncoding::kUTF8, &tmp);
+            }
+
             float posX = m_textPos.x + advance + ((getText().empty()) ? - 2.0f : 0.0f);
+
             float startY = static_cast<float>(getPosition().y)  + ((static_cast<float>(rectSize.height) - m_cursorHeight) / 2);
             float endY = startY + m_cursorHeight;
             canvas->drawLine({posX, startY}, {posX, endY}, paint);
