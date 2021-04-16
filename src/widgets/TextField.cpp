@@ -23,101 +23,7 @@ namespace pTK
     {
         onKey([this](Event::Type type, KeyCode keycode, byte modifier){
             if (type == Event::Type::KeyPressed)
-            {
-                if (IsKeyCodeAlpha(keycode) || IsKeyCodeDigit(keycode) || IsKeyCodeSpace(keycode))
-                {
-                    bool shift = IsKeyEventModifierSet(modifier, KeyEvent::Modifier::Shift);
-                    bool capsLock = IsKeyEventModifierSet(modifier, KeyEvent::Modifier::CapsLock);
-
-                    char toInsert{0};
-                    if (IsKeyCodeAlpha(keycode))
-                    {
-                        char alpha = KeyCodeToAlpha(keycode);
-                        toInsert = ((capsLock && !shift) || (!capsLock && shift)) ? alpha : static_cast<char>(std::tolower(alpha));
-                    }
-                    else if (IsKeyCodeDigit(keycode))
-                        toInsert = KeyCodeToGraph(keycode);
-                    else if (IsKeyCodeSpace(keycode))
-                        toInsert = ' ';
-
-                    if (toInsert != 0)
-                    {
-                        std::string str{getText()};
-                        str.insert(m_cursorLocation , 1, toInsert);
-                        ++m_cursorLocation;
-                        setText(str);
-                    }
-                }
-                else
-                {
-                    switch (keycode) {
-                        case Key::Backspace:
-                        {
-                            if (m_cursorLocation > 0)
-                            {
-                                std::string str{getText()};
-                                str.erase(m_cursorLocation - 1, 1);
-                                setText(str);
-                                --m_cursorLocation;
-                            }
-
-                            break;
-                        }
-                        case Key::Delete:
-                        {
-                            if (m_cursorLocation < getText().size())
-                            {
-                                std::string str{getText()};
-                                str.erase(m_cursorLocation, 1);
-                                setText(str);
-                            }
-
-                            break;
-                        }
-                        case Key::Left:
-                        {
-                            if (m_cursorLocation > 0)
-                            {
-                                --m_cursorLocation;
-                                draw();
-                            }
-                            break;
-                        }
-                        case Key::Right:
-                        {
-                            if ((!getText().empty()) && (m_cursorLocation < getText().size()))
-                            {
-                                ++m_cursorLocation;
-                                draw();
-                            }
-                            break;
-                        }
-                        case Key::Home:
-                        {
-                            if (m_cursorLocation != 0)
-                            {
-                                m_cursorLocation = 0;
-                                draw();
-                            }
-                            break;
-                        }
-                        case Key::End:
-                        {
-                            std::size_t size{getText().size()};
-                            if (m_cursorLocation != size)
-                            {
-                                m_cursorLocation = size;
-                                draw();
-                            }
-                            break;
-                        }
-                        default:
-                            break;
-                    }
-                }
-            }
-
-                
+                handleKeyPress(keycode, modifier);
             return false;
         });
 
@@ -130,6 +36,119 @@ namespace pTK
             m_drawCursor = false;
             return false;
         });
+    }
+
+    void TextField::handleKeyPress(KeyCode keycode, byte modifier)
+    {
+        if (IsKeyCodeAlpha(keycode) || IsKeyCodeDigit(keycode) || IsKeyCodeSpace(keycode))
+        {
+            addToText(keycode, modifier);
+        }
+        else
+        {
+            switch (keycode) {
+                case Key::Backspace:
+                case Key::Delete:
+                {
+                    removeFromText(((keycode == Key::Delete) ? 1 : -1));
+                    break;
+                }
+                case Key::Left:
+                case Key::Right:
+                {
+                    moveCursor(((keycode == Key::Left) ? -1 : 1), getText().size(), true);
+                    break;
+                }
+                case Key::Home:
+                case Key::End:
+                {
+                    moveCursorToPos(((keycode == Key::Home) ? 0 : getText().size()), getText().size(), true);
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    }
+
+    void TextField::addToText(KeyCode keycode, byte modifier)
+    {
+        bool shift = IsKeyEventModifierSet(modifier, KeyEvent::Modifier::Shift);
+        bool capsLock = IsKeyEventModifierSet(modifier, KeyEvent::Modifier::CapsLock);
+
+        char toInsert{0};
+        if (IsKeyCodeAlpha(keycode))
+        {
+            char alpha = KeyCodeToAlpha(keycode);
+            toInsert = ((capsLock && !shift) || (!capsLock && shift)) ? alpha : static_cast<char>(std::tolower(alpha));
+        }
+        else if (IsKeyCodeDigit(keycode))
+            toInsert = KeyCodeToGraph(keycode);
+        else if (IsKeyCodeSpace(keycode))
+            toInsert = ' ';
+
+        if (toInsert != 0)
+        {
+            std::string str{getText()};
+            str.insert(m_cursorLocation , 1, toInsert);
+            moveCursor(1, str.size());
+            setText(str);
+        }
+    }
+
+    void TextField::removeFromText(int direction)
+    {
+        if (direction > 0)
+        {
+            if (m_cursorLocation < getText().size())
+            {
+                std::string str{getText()};
+                str.erase(m_cursorLocation, 1);
+                setText(str);
+            }
+        }
+        else
+        {
+            if (m_cursorLocation > 0)
+            {
+                std::string str{getText()};
+                str.erase(m_cursorLocation - 1, 1);
+                moveCursor(-1, str.size());
+                setText(str);
+            }
+        }
+    }
+
+    void TextField::moveCursor(int direction, std::size_t strSize, bool shouldDraw)
+    {
+        if (direction > 0)
+        {
+            if (m_cursorLocation < strSize)
+            {
+                ++m_cursorLocation;
+                if (shouldDraw)
+                    draw();
+            }
+        }
+        else
+        {
+            if (m_cursorLocation > 0)
+            {
+                --m_cursorLocation;
+                if (shouldDraw)
+                    draw();
+            }
+        }
+    }
+
+    void TextField::moveCursorToPos(std::size_t pos, std::size_t strSize, bool shouldDraw)
+    {
+        if ((m_cursorLocation != pos) && (pos <= strSize))
+        {
+            m_cursorLocation = pos;
+            if (shouldDraw)
+                draw();
+        }
     }
 
     void TextField::onDraw(SkCanvas* canvas)
@@ -228,7 +247,6 @@ namespace pTK
     void TextField::setTextColor(const Color& color)
     {
         m_textColor = color;
-        //m_cursor.setColor(color);
         update();
     }
 

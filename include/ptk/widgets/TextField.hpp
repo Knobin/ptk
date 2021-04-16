@@ -50,6 +50,12 @@ namespace pTK
         void onTextUpdate() override;
         void updateBounds();
 
+        void handleKeyPress(KeyCode keycode, byte modifier);
+        void addToText(KeyCode keycode, byte modifier);
+        void removeFromText(int direction);
+        void moveCursor(int direction, std::size_t strSize, bool shouldDraw = false);
+        void moveCursorToPos(std::size_t pos, std::size_t strSize, bool shouldDraw = false);
+
     private:
         std::string m_placeholderText{};
         Vec2f m_textPos{0.0f, 0.0f};
