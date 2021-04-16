@@ -18,9 +18,10 @@ PTK_DISABLE_WARN_END()
 namespace pTK
 {
     Text::Text()
-        : m_text{""}, m_font{}
+        : m_text{""}, m_font{}, m_capHeight{0.0f}, m_ascentToDescent{0.0f}
     {
         m_font.setEdging(SkFont::Edging::kAntiAlias);
+        updateFontInfo();
     }
 
     bool Text::setFontFromFile(const std::string& path)
@@ -32,6 +33,7 @@ namespace pTK
             {
                 m_font.setTypeface(tf);
                 PTK_INFO("Loaded font family \"{0}\" from file \"{1}\"", getFontFamily(), path);
+                updateFontInfo();
                 onTextUpdate();
                 return true;
             } else
@@ -56,6 +58,7 @@ namespace pTK
             if (fontFamily == getFontFamily())
             {
                 PTK_INFO("Loaded \"{0}\" successfully.", getFontFamily());
+                updateFontInfo();
                 onTextUpdate();
                 return true;
             }
@@ -79,6 +82,7 @@ namespace pTK
     void Text::setFontSize(uint fontSize)
     {
         m_font.setSize(static_cast<SkScalar>(fontSize));
+        updateFontInfo();
         onTextUpdate();
     }
     
@@ -97,6 +101,16 @@ namespace pTK
     {
         return m_text;
     }
+
+    float Text::ascentToDescent() const
+    {
+        return m_ascentToDescent;
+    }
+
+    float Text::capHeight() const
+    {
+        return m_capHeight;
+    }
     
     Size Text::getBounds() const
     {
@@ -113,9 +127,9 @@ namespace pTK
     static std::size_t SpaceCount(const std::string& str)
     {
         std::size_t count{0};
-        for (auto it = str.cbegin(); it != str.cend(); ++it)
+        for (char it : str)
         {
-            if ((*it) == ' ')
+            if (it == ' ')
                 ++count;
             else
                 break;
@@ -137,56 +151,57 @@ namespace pTK
         return offset;
     }
 
-    float Text::drawText(SkCanvas* canvas, const std::string& str, const Color& color, const Vec2f& pos)
+    float Text::drawTextLineWithPaint(SkCanvas* canvas, const std::string& str, const Vec2f& pos, const SkPaint& paint)
     {
-        SkPaint paint = GetSkPaintFromColor(color);
-        paint.setStyle(SkPaint::kStrokeAndFill_Style);
-        
         SkRect bounds{};
         float advance = m_font.measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &bounds);
-        
-        SkFontMetrics metrics{};
-        m_font.getMetrics(&metrics);
-        m_font.setBaselineSnap(true);
-        
+
+#ifdef PTK_DRAW_TEXT_RECT
         Rectangle rect{};
         rect.setPosHint({static_cast<int>(pos.x), static_cast<int>(pos.y)});
-        float total = metrics.fDescent - metrics.fAscent;
-        rect.setSize({static_cast<int>(std::ceil(advance)), static_cast<int>(std::ceil(metrics.fCapHeight))});
+        rect.setSize({static_cast<int>(std::ceil(advance)), static_cast<int>(std::ceil(m_capHeight))});
         rect.setColor(Color{0xFF1212AA});
-        //rect.onDraw(canvas);
-        
-        canvas->drawString(str.c_str(), pos.x + StartSpaceOffset(m_font, str) + (-1*bounds.x()), pos.y + metrics.fCapHeight, m_font, paint);
-        
+        rect.onDraw(canvas);
+#endif
+
+        canvas->drawString(str.c_str(), pos.x + StartSpaceOffset(m_font, str) + (-1*bounds.x()), pos.y + m_capHeight, m_font, paint);
+
         return advance;
     }
 
-    float Text::drawText(SkCanvas* canvas, const std::string& str, const Color& color, const Vec2f& pos, float outlineSize, const Color& outColor)
+    float Text::drawTextLine(SkCanvas* canvas, const std::string& str, const Color& color, const Vec2f& pos)
+    {
+        SkPaint paint = GetSkPaintFromColor(color);
+        paint.setStyle(SkPaint::kStrokeAndFill_Style);
+
+        return drawTextLineWithPaint(canvas, str, pos, paint);
+    }
+
+    float Text::drawTextLine(SkCanvas* canvas, const std::string& str, const Color& color, const Vec2f& pos, float outlineSize, const Color& outColor)
     {
         if (!(outlineSize > 0.0f))
-            return drawText(canvas, str, color, pos);
+            return drawTextLine(canvas, str, color, pos);
         
         SkPaint paint = GetSkPaintFromColor(color);
-        
-        SkRect bounds{};
-        float advance = m_font.measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &bounds);
-        const SkPoint skPos{pos.x, pos.y};
-        
-        SkFontMetrics metrics{};
-        m_font.getMetrics(&metrics);
-        
-        // Outline
         paint.setStrokeWidth(outlineSize);
         paint.setStyle(SkPaint::kFill_Style);
-        
-        canvas->drawString(str.c_str(), skPos.x() + StartSpaceOffset(m_font, str) + (-1*bounds.x()), skPos.y() + (-1*metrics.fAscent), m_font, paint);
-        
-        // Draw Outline
+
+        float advance = drawTextLineWithPaint(canvas, str, pos, paint);
+
         paint.setARGB(outColor.a, outColor.r, outColor.g, outColor.b);
         paint.setStyle(SkPaint::kStroke_Style);
-        canvas->drawString(str.c_str(), skPos.x() + StartSpaceOffset(m_font, str) + (-1*bounds.x()), skPos.y() + (-1*metrics.fAscent), m_font, paint);
+
+        drawTextLineWithPaint(canvas, str, pos, paint);
 
         return advance;
+    }
+
+    void Text::updateFontInfo()
+    {
+        SkFontMetrics metrics{};
+        m_font.getMetrics(&metrics);
+        m_capHeight = std::abs(metrics.fCapHeight);
+        m_ascentToDescent = metrics.fDescent - metrics.fAscent;
     }
 
 }

@@ -81,12 +81,15 @@ namespace pTK
             @return  current text
         */
         [[nodiscard]] const std::string& getText() const;
-        
+
+        [[nodiscard]] float ascentToDescent() const;
+        [[nodiscard]] float capHeight() const;
+
         /** Function for retrieving the bounds of the text.
          
             @return  bounds of the text
         */
-        Size getBounds() const;
+        [[nodiscard]] Size getBounds() const;
         
         /** Function for retrieving the raw SkFont.
          
@@ -94,15 +97,19 @@ namespace pTK
          */
         [[nodiscard]] const SkFont* skFont() const;
         
-        float drawText(SkCanvas* canvas, const std::string& str, const Color& color, const Vec2f& pos);
-        float drawText(SkCanvas* canvas, const std::string& str, const Color& color, const Vec2f& pos, float outlineSize, const Color& outColor);
+        float drawTextLine(SkCanvas* canvas, const std::string& str, const Color& color, const Vec2f& pos);
+        float drawTextLine(SkCanvas* canvas, const std::string& str, const Color& color, const Vec2f& pos, float outlineSize, const Color& outColor);
 
     private:
         virtual void onTextUpdate() {}
+        void updateFontInfo();
+        float drawTextLineWithPaint(SkCanvas* canvas, const std::string& str, const Vec2f& pos, const SkPaint& paint);
         
     private:
         std::string m_text;
         SkFont m_font;
+        float m_capHeight;
+        float m_ascentToDescent;
     };
 }
 

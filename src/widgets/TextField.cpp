@@ -19,10 +19,8 @@ PTK_DISABLE_WARN_END()
 namespace pTK
 {
     TextField::TextField()
-        : Rectangle(), Text(), m_cursor{}
+        : Rectangle(), Text()
     {
-        m_cursor.setColor(Color{0x495057FF});
-      
         onKey([this](Event::Type type, KeyCode keycode, byte modifier){
             if (type == Event::Type::KeyPressed)
             {
@@ -66,19 +64,20 @@ namespace pTK
         
         const Size rectSize{getSize()};
         
-        float advance = (!getText().empty()) ? drawText(canvas, getText(), m_textColor, m_textPos) : 0.0f;
+        float advance = (!getText().empty()) ? drawTextLine(canvas, getText(), m_textColor, m_textPos) : 0.0f;
         
         if (getText().empty())
-            drawText(canvas, m_placeholderText, m_placeholderColor, m_textPos);
+            drawTextLine(canvas, m_placeholderText, m_placeholderColor, m_textPos);
 
         if (m_drawCursor)
         {
-            Point cursorPos{};
-            cursorPos.x = static_cast<Point::value_type>(m_textPos.x + static_cast<Point::value_type>(std::ceil(advance)));
-            cursorPos.y = getPosition().y + ((rectSize.height - m_cursor.getSize().height) / 2);
+            SkPaint paint{GetSkPaintFromColor(m_textColor)};
+            paint.setStrokeWidth(1.0f);
 
-            m_cursor.setPosHint(cursorPos);
-            m_cursor.onDraw(canvas);
+            float posX = m_textPos.x + advance + ((getText().empty()) ? - 2.0f : 0.0f);
+            float startY = static_cast<float>(getPosition().y)  + ((static_cast<float>(rectSize.height) - m_cursorHeight) / 2);
+            float endY = startY + m_cursorHeight;
+            canvas->drawLine({posX, startY}, {posX, endY}, paint);
         }
     }
 
@@ -95,27 +94,26 @@ namespace pTK
 
     void TextField::updateBounds()
     {
-        SkFontMetrics metrics{};
-        skFont()->getMetrics(&metrics);
-        m_totalTextHeight = metrics.fDescent - metrics.fAscent;
-        // int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
-        // m_baseToAscent = -1*metrics.fAscent;//m_totalTextHeight - std::abs(metrics.fDescent);
-        
+        const float capitalHeight{capHeight()};
         const Size rectSize{getSize()};
-        m_textPos.x = getPosition().x + ((rectSize.height - metrics.fCapHeight) / 2);
-        m_textPos.y = getPosition().y + ((rectSize.height - metrics.fCapHeight) / 2);
+        const Point pos{getPosition()};
+
+        float fHeight{static_cast<float>(rectSize.height)};
+        float center{(fHeight - capitalHeight) / 2};
+        m_textPos.x = static_cast<float>(pos.x) + center;
+        m_textPos.y = static_cast<float>(pos.y) + center;
         
-        Size cursorSize{1, static_cast<Size::value_type>(m_totalTextHeight)};
-        m_cursor.setSize(cursorSize);
+        m_cursorHeight = ascentToDescent();
         
         Size minSize{getBounds()};
-        minSize.width += static_cast<Point::value_type>(cursorSize.width);
-        minSize.height = (minSize.height > cursorSize.height) ? minSize.height : cursorSize.height;
+        minSize.width += 1;
+        auto ceilCursorHeight = static_cast<Point::value_type>(std::ceil(m_cursorHeight));
+        minSize.height = (minSize.height > ceilCursorHeight) ? minSize.height : ceilCursorHeight;
         
         SkRect placeholderBounds{};
         skFont()->measureText(m_placeholderText.c_str(), m_placeholderText.size(), SkTextEncoding::kUTF8, &placeholderBounds);
-        Size::value_type pWidth = static_cast<Size::value_type>(std::ceil(placeholderBounds.width()));
-        Size::value_type pHeight = static_cast<Size::value_type>(std::ceil(placeholderBounds.height()));
+        auto pWidth = static_cast<Size::value_type>(std::ceil(placeholderBounds.width()));
+        auto pHeight = static_cast<Size::value_type>(std::ceil(placeholderBounds.height()));
         
         minSize.width = (minSize.width > pWidth) ? minSize.width : pWidth;
         minSize.height = (minSize.height > pHeight) ? minSize.height : pHeight;
@@ -149,7 +147,7 @@ namespace pTK
     void TextField::setTextColor(const Color& color)
     {
         m_textColor = color;
-        m_cursor.setColor(color);
+        //m_cursor.setColor(color);
         update();
     }
 

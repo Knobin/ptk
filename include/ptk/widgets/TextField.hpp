@@ -36,13 +36,13 @@ namespace pTK
         void onDraw(SkCanvas* canvas) override;
         
         void setPlaceholderText(const std::string& text);
-        const std::string& getPlaceholderText() const;
+        [[nodiscard]] const std::string& getPlaceholderText() const;
         
         void setPlaceholderColor(const Color& color);
-        const Color& getPlaceholderColor() const;
+        [[nodiscard]] const Color& getPlaceholderColor() const;
         
         void setTextColor(const Color& color);
-        const Color& getTextColor() const;
+        [[nodiscard]] const Color& getTextColor() const;
         
         void setPosHint(const Point& pos) override;
         
@@ -51,13 +51,11 @@ namespace pTK
         void updateBounds();
 
     private:
-        Rectangle m_cursor;
         std::string m_placeholderText{};
         Vec2f m_textPos{0.0f, 0.0f};
         Color m_textColor{0xFFFFFFFF};
         Color m_placeholderColor{0xF0F0F0FF};
-        float m_totalTextHeight{0};
-        float m_baseToAscent{0};
+        float m_cursorHeight{0.0f};
         bool m_drawCursor{false};
     };
 }
