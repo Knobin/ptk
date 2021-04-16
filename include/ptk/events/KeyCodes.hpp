@@ -62,7 +62,16 @@ namespace pTK
         Y       = 89,
         Z       = 90,
 
-        Backspace = 259,
+        Backspace   = 259,
+        Delete      = 261,
+
+        Right   = 262,
+        Left    = 263,
+        Down    = 264,
+        Up      = 265,
+
+        Home    = 268,
+        End     = 269,
 
         LeftShift    = 340,
         LeftControl  = 341,
@@ -77,12 +86,7 @@ namespace pTK
         Shift   = 348,
         Control = 349,
         Alt     = 350,
-        Command = 351,
-
-        Right   = 262,
-        Left    = 263,
-        Down    = 264,
-        Up      = 265
+        Command = 351
 
     } Key;
 

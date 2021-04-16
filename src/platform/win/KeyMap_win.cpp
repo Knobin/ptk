@@ -34,11 +34,14 @@ namespace pTK
         map[0x59] = Key::Y; map[0x5A] = Key::Z;
 
         map[VK_BACK] = Key::Backspace;
+        map[VK_DELETE] = Key::Delete;
+
+        map[VK_RIGHT] = Key::Right; map[VK_LEFT] = Key::Left; map[VK_DOWN] = Key::Down; map[VK_UP] = Key::Up;
+
+        map[VK_HOME] = Key::Home; map[VK_END] = Key::End;
 
         map[VK_LSHIFT] = Key::LeftShift; map[VK_LCONTROL] = Key::LeftControl; map[VK_LMENU] = Key::LeftAlt;
         map[VK_RSHIFT] = Key::RightShift; map[VK_RCONTROL] = Key::RightControl; map[VK_RMENU] = Key::RightAlt;
-
-        map[VK_RIGHT] = Key::Right; map[VK_LEFT] = Key::Left; map[VK_DOWN] = Key::Down; map[VK_UP] = Key::Up;
 
         return map;
     }

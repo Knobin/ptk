@@ -63,6 +63,17 @@ namespace pTK
 
                             break;
                         }
+                        case Key::Delete:
+                        {
+                            if (m_cursorLocation < getText().size())
+                            {
+                                std::string str{getText()};
+                                str.erase(m_cursorLocation, 1);
+                                setText(str);
+                            }
+
+                            break;
+                        }
                         case Key::Left:
                         {
                             if (m_cursorLocation > 0)
@@ -74,9 +85,28 @@ namespace pTK
                         }
                         case Key::Right:
                         {
-                            if ((!getText().empty()) && (m_cursorLocation < (getText().size())))
+                            if ((!getText().empty()) && (m_cursorLocation < getText().size()))
                             {
                                 ++m_cursorLocation;
+                                draw();
+                            }
+                            break;
+                        }
+                        case Key::Home:
+                        {
+                            if (m_cursorLocation != 0)
+                            {
+                                m_cursorLocation = 0;
+                                draw();
+                            }
+                            break;
+                        }
+                        case Key::End:
+                        {
+                            std::size_t size{getText().size()};
+                            if (m_cursorLocation != size)
+                            {
+                                m_cursorLocation = size;
                                 draw();
                             }
                             break;
@@ -124,7 +154,7 @@ namespace pTK
                 advance = skFont()->measureText(getText().c_str(), m_cursorLocation, SkTextEncoding::kUTF8, &tmp);
             }
 
-            float posX = m_textPos.x + advance + ((getText().empty()) ? - 2.0f : 0.0f);
+            float posX = m_textPos.x + advance - ((m_cursorLocation == 0) ? 2.0f : 0.0f);
 
             float startY = static_cast<float>(getPosition().y)  + ((static_cast<float>(rectSize.height) - m_cursorHeight) / 2);
             float endY = startY + m_cursorHeight;
