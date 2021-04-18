@@ -169,7 +169,7 @@ namespace pTK
             if (m_cursorLocation <= getText().size())
             {
                 SkRect tmp{};
-                advance = skFont()->measureText(getText().c_str(), m_cursorLocation, SkTextEncoding::kUTF8, &tmp);
+                advance = skFont().measureText(getText().c_str(), m_cursorLocation, SkTextEncoding::kUTF8, &tmp);
             }
 
             float posX = m_textPos.x + advance - ((m_cursorLocation == 0) ? 2.0f : 0.0f);
@@ -210,7 +210,7 @@ namespace pTK
         minSize.height = (minSize.height > ceilCursorHeight) ? minSize.height : ceilCursorHeight;
         
         SkRect placeholderBounds{};
-        skFont()->measureText(m_placeholderText.c_str(), m_placeholderText.size(), SkTextEncoding::kUTF8, &placeholderBounds);
+        skFont().measureText(m_placeholderText.c_str(), m_placeholderText.size(), SkTextEncoding::kUTF8, &placeholderBounds);
         auto pWidth = static_cast<Size::value_type>(std::ceil(placeholderBounds.width()));
         auto pHeight = static_cast<Size::value_type>(std::ceil(placeholderBounds.height()));
         

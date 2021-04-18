@@ -34,22 +34,57 @@ namespace pTK
             Derived from Drawable.
         */
         void onDraw(SkCanvas* canvas) override;
-        
+
+        /** Function for setting the placeholder text.
+
+            @param text    string to set
+        */
         void setPlaceholderText(const std::string& text);
+
+        /** Function for retrieving the placeholder text.
+
+            @return  current text
+        */
         [[nodiscard]] const std::string& getPlaceholderText() const;
-        
+
+        /** Function for setting the placeholder color.
+
+            @param color    color to set
+        */
         void setPlaceholderColor(const Color& color);
+
+        /** Function for retrieving the placeholder color.
+
+            @return  placeholder color
+        */
         [[nodiscard]] const Color& getPlaceholderColor() const;
-        
+
+        /** Function for setting the text color.
+
+            @param color    color to set
+        */
         void setTextColor(const Color& color);
+
+        /** Function for retrieving the text color.
+
+            @return  text color
+        */
         [[nodiscard]] const Color& getTextColor() const;
-        
+
+        /** Function for requesting the position of the Widget.
+
+            @param pos  requested position of the Widget.
+        */
         void setPosHint(const Point& pos) override;
         
     private:
+        // Callback function from Text.
         void onTextUpdate() override;
+
+        // Updates the bounds, font member variables and minimal size.
         void updateBounds();
 
+        // Handles for keyboard input.
         void handleKeyPress(KeyCode keycode, byte modifier);
         void addToText(KeyCode keycode, byte modifier);
         void removeFromText(int direction);

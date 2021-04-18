@@ -18,7 +18,7 @@ PTK_DISABLE_WARN_END()
 namespace pTK
 {
     Text::Text()
-        : m_text{""}, m_font{}, m_capHeight{0.0f}, m_ascentToDescent{0.0f}
+        : m_text{}, m_font{}
     {
         m_font.setEdging(SkFont::Edging::kAntiAlias);
         updateFontInfo();
@@ -116,12 +116,12 @@ namespace pTK
     {
         SkRect bounds{};
         float advance = m_font.measureText(m_text.c_str(), m_text.size(), SkTextEncoding::kUTF8, &bounds);
-        return Size(static_cast<int>(std::ceil(advance)), static_cast<int>(std::ceil(bounds.height())));
+        return {static_cast<int>(std::ceil(advance)), static_cast<int>(std::ceil(bounds.height()))};
     }
 
-    const SkFont* Text::skFont() const
+    const SkFont& Text::skFont() const
     {
-        return &m_font;
+        return m_font;
     }
 
     static std::size_t SpaceCount(const std::string& str)

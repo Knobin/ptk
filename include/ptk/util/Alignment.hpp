@@ -79,7 +79,7 @@ namespace pTK
 
             @return current align
         */
-        std::underlying_type<Align>::type getAlign() const;
+        [[nodiscard]] std::underlying_type<Align>::type getAlign() const;
 
         /** Function for setting the margin of the Widget.
 
@@ -129,31 +129,31 @@ namespace pTK
 
             @return  current margin
         */
-        const Margin& getMargin() const;
+        [[nodiscard]] const Margin& getMargin() const;
 
         /** Function for retrieving the top margin of the Widget.
 
             @return  current top margin
         */
-        Margin::value_type getMarginTop() const;
+        [[nodiscard]] Margin::value_type getMarginTop() const;
 
         /** Function for retrieving the bottom margin of the Widget.
 
             @return  current bottom margin
         */
-        Margin::value_type getMarginBottom() const;
+        [[nodiscard]] Margin::value_type getMarginBottom() const;
 
         /** Function for retrieving the left margin of the Widget.
 
             @return  current left margin
         */
-        Margin::value_type getMarginLeft() const;
+        [[nodiscard]] Margin::value_type getMarginLeft() const;
 
         /** Function for retrieving the right margin of the Widget.
 
             @return  current right margin
         */
-        Margin::value_type getMarginRight() const;
+        [[nodiscard]] Margin::value_type getMarginRight() const;
 
         /** Function for setting the padding of the Widget.
 
@@ -203,31 +203,31 @@ namespace pTK
 
             @return  current padding
         */
-        const Margin& getPadding() const;
+        [[nodiscard]] const Margin& getPadding() const;
 
         /** Function for retrieving the top padding of the Widget.
 
             @return  current top padding
         */
-        Padding::value_type getPaddingTop() const;
+        [[nodiscard]] Padding::value_type getPaddingTop() const;
 
         /** Function for retrieving the bottom padding of the Widget.
 
             @return  current bottom padding
         */
-        Padding::value_type getPaddingBottom() const;
+        [[nodiscard]] Padding::value_type getPaddingBottom() const;
 
         /** Function for retrieving the left padding of the Widget.
 
             @return  current left padding
         */
-        Padding::value_type getPaddingLeft() const;
+        [[nodiscard]] Padding::value_type getPaddingLeft() const;
 
         /** Function for retrieving the right padding of the Widget.
 
             @return  current right padding
         */
-        Padding::value_type getPaddingRight() const;
+        [[nodiscard]] Padding::value_type getPaddingRight() const;
 
     private:
         /** Function for notifying that Align property has changed.

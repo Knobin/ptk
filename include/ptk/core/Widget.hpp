@@ -61,7 +61,7 @@ namespace pTK
          
             @return  current position
         */
-        const Point& getPosition() const;
+        [[nodiscard]] const Point& getPosition() const;
         
         /** Function for setting the name of the Widget.
          
@@ -73,7 +73,7 @@ namespace pTK
          
             @return  name
         */
-        const std::string& getName() const;
+        [[nodiscard]] const std::string& getName() const;
 
         /** Function for notifying the parent of a change and
             to put it on an internal render queue.
