@@ -242,11 +242,11 @@ namespace pTK
     {
         if (!shortcut.modifiers().empty() && IsKeyCodeAlpha(shortcut.key()))
         {
-            constexpr std::pair<std::array<KeyCode, 3>, NSEventModifierFlags> shiftKeys{{pTK::KeyCode::LeftShift, pTK::KeyCode::RightShift, pTK::KeyCode::Shift}, NSEventModifierFlagShift};
-            constexpr std::pair<std::array<KeyCode, 3>, NSEventModifierFlags> controlKeys{{pTK::KeyCode::LeftControl, pTK::KeyCode::RightControl, pTK::KeyCode::Control}, NSEventModifierFlagControl};
-            constexpr std::pair<std::array<KeyCode, 3>, NSEventModifierFlags> altKeys{{pTK::KeyCode::LeftAlt, pTK::KeyCode::RightAlt, pTK::KeyCode::Alt}, NSEventModifierFlagOption};
-            constexpr std::pair<std::array<KeyCode, 3>, NSEventModifierFlags> commandKeys{{pTK::KeyCode::LeftCommand, pTK::KeyCode::RightCommand, pTK::KeyCode::Command}, NSEventModifierFlagCommand};
-            constexpr std::array<std::pair<std::array<KeyCode, 3>, NSEventModifierFlags>, 4> keys{shiftKeys, controlKeys, altKeys, commandKeys};
+            constexpr std::pair<std::array<KeyCode, 2>, NSEventModifierFlags> shiftKeys{{pTK::KeyCode::LeftShift, pTK::KeyCode::RightShift}, NSEventModifierFlagShift};
+            constexpr std::pair<std::array<KeyCode, 2>, NSEventModifierFlags> controlKeys{{pTK::KeyCode::LeftControl, pTK::KeyCode::RightControl}, NSEventModifierFlagControl};
+            constexpr std::pair<std::array<KeyCode, 2>, NSEventModifierFlags> altKeys{{pTK::KeyCode::LeftAlt, pTK::KeyCode::RightAlt}, NSEventModifierFlagOption};
+            constexpr std::pair<std::array<KeyCode, 2>, NSEventModifierFlags> commandKeys{{pTK::KeyCode::LeftSuper, pTK::KeyCode::RightSuper}, NSEventModifierFlagCommand};
+            constexpr std::array<std::pair<std::array<KeyCode, 2>, NSEventModifierFlags>, 4> keys{shiftKeys, controlKeys, altKeys, commandKeys};
 
             NSEventModifierFlags flag{};
             for (KeyCode modifier : shortcut.modifiers())
