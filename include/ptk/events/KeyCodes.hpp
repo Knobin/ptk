@@ -76,17 +76,17 @@ namespace pTK
         LeftShift    = 340,
         LeftControl  = 341,
         LeftAlt      = 342,
-        LeftCommand  = 343,
+        LeftSuper    = 343,
 
         RightShift   = 344,
         RightControl = 345,
         RightAlt     = 346,
-        RightCommand = 347,
+        RightSuper   = 347,
 
-        Shift   = 348,
-        Control = 349,
-        Alt     = 350,
-        Command = 351
+        // Shift   = 348,
+        // Control = 349,
+        // Alt     = 350,
+        // Command = 351
 
     } Key;
 

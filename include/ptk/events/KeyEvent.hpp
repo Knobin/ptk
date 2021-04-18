@@ -91,8 +91,8 @@ namespace pTK
             case pTK::Key::RightAlt:
                 mod = KeyEvent::Modifier::Alt;
                 break;
-            case pTK::Key::LeftCommand:
-            case pTK::Key::RightCommand:
+            case pTK::Key::LeftSuper:
+            case pTK::Key::RightSuper:
                 mod = KeyEvent::Modifier::Super;
                 break;
             default:

@@ -149,6 +149,32 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+    static std::underlying_type<KeyEvent::Modifier>::type GetKeyModifiers(int state)
+    {
+        using utype = std::underlying_type<KeyEvent::Modifier>::type;
+        utype mods = static_cast<utype>(KeyEvent::Modifier::NONE);
+
+        if (state & ShiftMask)
+            mods |= static_cast<utype>(KeyEvent::Modifier::Shift);
+
+        if (state & ControlMask)
+            mods |= static_cast<utype>(KeyEvent::Modifier::Control);
+
+        if (state & Mod1Mask)
+            mods |= static_cast<utype>(KeyEvent::Modifier::Alt);
+
+        if (state & Mod4Mask)
+            mods |= static_cast<utype>(KeyEvent::Modifier::Super);
+
+        if (state & LockMask)
+            mods |= static_cast<utype>(KeyEvent::Modifier::CapsLock);
+
+        if (state % Mod2Mask)
+            mods |= static_cast<utype>(KeyEvent::Modifier::NumLock);
+
+        return mods;
+    }
+
     void Application_unix::handleEvent(XEvent *event)
     {
         PTK_ASSERT(event, "Undefined XEvent!");
@@ -226,14 +252,12 @@ namespace pTK
                 break;
             }
             case KeyPress:
-            {
-                KeyEvent kEvt{KeyEvent::Pressed, KeyMap::KeyCodeToKey(XLookupKeysym(&event->xkey, 0))};
-                window->sendEvent(&kEvt);
-                break;
-            }
             case KeyRelease:
             {
-                KeyEvent kEvt{KeyEvent::Released, KeyMap::KeyCodeToKey(XLookupKeysym(&event->xkey, 0))};
+                auto mods = GetKeyModifiers(event->xkey.state);
+                pTK::Key key{KeyMap::KeyCodeToKey(XLookupKeysym(&event->xkey, 0))};
+                Event::Type type = (event->type == KeyPress) ? KeyEvent::Pressed : KeyEvent::Released;
+                KeyEvent kEvt{type, key, mods};
                 window->sendEvent(&kEvt);
                 break;
             }

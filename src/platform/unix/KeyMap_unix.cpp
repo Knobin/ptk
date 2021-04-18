@@ -34,8 +34,18 @@ namespace pTK
         map[XK_u] = Key::U; map[XK_v] = Key::V; map[XK_w] = Key::W; map[XK_x] = Key::X;
         map[XK_y] = Key::Y; map[XK_z] = Key::Z;
 
-        //map[VK_LSHIFT] = Key::LeftShift; map[VK_LCONTROL] = Key::LeftControl; map[VK_LMENU] = Key::LeftAlt;
-        //map[VK_RSHIFT] = Key::RightShift; map[VK_RCONTROL] = Key::RightControl; map[VK_RMENU] = Key::RightAlt;
+        map[XK_BackSpace] = Key::Backspace;
+        map[XK_Delete] = Key::Delete;
+
+        map[XK_Right] = Key::Right; map[XK_Left] = Key::Left; map[XK_Down] = Key::Down; map[XK_Up] = Key::Up;
+
+        map[XK_Home] = Key::Home; map[XK_End] = Key::End;
+
+        map[XK_Shift_L] = Key::LeftShift; map[XK_Control_L] = Key::LeftControl; 
+        map[XK_Alt_L] = Key::LeftAlt; map[XK_Super_L] = Key::LeftSuper;
+        
+        map[XK_Shift_R] = Key::RightShift; map[XK_Control_R] = Key::RightControl; 
+        map[XK_Alt_R] = Key::RightAlt; map[XK_Super_R] = Key::RightSuper;
 
         return map;
     }
