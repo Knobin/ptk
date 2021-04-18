@@ -154,7 +154,6 @@ namespace pTK
     void TextField::onDraw(SkCanvas* canvas)
     {
         Rectangle::onDraw(canvas);
-        PTK_INFO("CURSOR LOCATION: {}", m_cursorLocation);
         const Size rectSize{getSize()};
         
         float advance = (!getText().empty()) ? drawTextLine(canvas, getText(), m_textColor, m_textPos) : 0.0f;

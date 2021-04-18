@@ -73,6 +73,34 @@ namespace pTK
     {
         return IsKeyEventModifierSet(modifier, mod);
     }
+
+    constexpr KeyEvent::Modifier KeyCodeToKeyEventModifier(const KeyCode code)
+    {
+        KeyEvent::Modifier mod = KeyEvent::Modifier::NONE;
+        
+        switch (code) {
+            case pTK::Key::LeftShift:
+            case pTK::Key::RightShift:
+                mod = KeyEvent::Modifier::Shift;
+                break;
+            case pTK::Key::LeftControl:
+            case pTK::Key::RightControl:
+                mod = KeyEvent::Modifier::Control;
+                break;
+            case pTK::Key::LeftAlt:
+            case pTK::Key::RightAlt:
+                mod = KeyEvent::Modifier::Alt;
+                break;
+            case pTK::Key::LeftCommand:
+            case pTK::Key::RightCommand:
+                mod = KeyEvent::Modifier::Super;
+                break;
+            default:
+                break;
+        }
+        
+        return mod;
+    }
 }
 
 #endif // PTK_EVENTS_KEYEVENT_HPP

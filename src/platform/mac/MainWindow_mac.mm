@@ -39,6 +39,7 @@ namespace pTK
         Point pos;
         Vec2f scale;
         long id;
+        std::underlying_type<KeyEvent::Modifier>::type modsPressed = 0;
     };
 
 } // namespace pTK
@@ -232,9 +233,8 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 
 - (void)keyDown:(NSEvent *)event
 {
-    const int code = event.keyCode;
-    std::underlying_type<pTK::KeyEvent::Modifier>::type mod{GetModifiers(event.modifierFlags)};
-    pTK::KeyEvent evt{pTK::Event::Type::KeyPressed, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(code)), mod};
+    std::underlying_type<pTK::KeyEvent::Modifier>::type mods{GetModifiers(event.modifierFlags)};
+    pTK::KeyEvent evt{pTK::Event::Type::KeyPressed, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode)), mods};
     window->parent()->sendEvent(&evt);
 
     // [self interpretKeyEvents:@[event]];
@@ -242,17 +242,38 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 
 - (void)keyUp:(NSEvent *)event
 {
-    const int code = event.keyCode;
-    pTK::KeyEvent evt{pTK::Event::Type::KeyReleased, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(code))};
+    std::underlying_type<pTK::KeyEvent::Modifier>::type mods{GetModifiers(event.modifierFlags)};
+    pTK::KeyEvent evt{pTK::Event::Type::KeyReleased, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode)), mods};
+    window->parent()->sendEvent(&evt);
+}
+
+- (void)flagsChanged:(NSEvent *)event
+{
+    pTK::KeyCode key = pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode));
+    pTK::KeyEvent::Modifier keyMod = pTK::KeyCodeToKeyEventModifier(key);
+    
+    using utype = std::underlying_type<pTK::KeyEvent::Modifier>::type;
+    utype keyFlagMod = static_cast<utype>(keyMod);
+    
+    std::underlying_type<pTK::KeyEvent::Modifier>::type mods{GetModifiers([event modifierFlags])};
+    pTK::Event::Type type = pTK::Event::Type::KeyReleased;
+    
+    if (keyFlagMod != 0)
+    {
+        if (data->modsPressed & keyFlagMod)
+            data->modsPressed &= ~(keyFlagMod);
+        else
+        {
+            type = pTK::Event::Type::KeyPressed;
+            data->modsPressed |= keyFlagMod;
+        }
+    }
+    
+    pTK::KeyEvent evt{type, key, mods};
     window->parent()->sendEvent(&evt);
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent*) __unused event
-{
-    return YES;
-}
-
-- (BOOL)performKeyEquivalent:(NSEvent*) __unused event
 {
     return YES;
 }

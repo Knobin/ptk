@@ -29,6 +29,30 @@ namespace pTK
         map[0x10] = Key::Y; map[0x06] = Key::Z;
         
         map[0x33] = Key::Backspace;
+        map[0x75] = Key::Delete;
+        
+        map[0x7C] = Key::Right; map[0x7B] = Key::Left;
+        map[0x7D] = Key::Down; map[0x7E] = Key::Up;
+        
+        map[0x38] = Key::LeftShift;
+        map[0x3B] = Key::LeftControl;
+        map[0x3A] = Key::LeftAlt;
+        map[0x37] = Key::LeftCommand;
+        
+        map[0x3C] = Key::LeftShift;
+        map[0x3E] = Key::LeftControl;
+        map[0x3D] = Key::LeftAlt;
+        map[0x36] = Key::LeftCommand;
+        
+        // kVK_Command                   = 0x37,
+        // kVK_Shift                     = 0x38,
+        // kVK_CapsLock                  = 0x39,
+        // kVK_Option                    = 0x3A,
+        // kVK_Control                   = 0x3B,
+        // kVK_RightCommand              = 0x36,
+        // kVK_RightShift                = 0x3C,
+        // kVK_RightOption               = 0x3D,
+        // kVK_RightControl              = 0x3E,
         
         return map;
     }
