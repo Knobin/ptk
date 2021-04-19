@@ -148,9 +148,9 @@ int main(int argc, char *argv[]) {
     sidebar->setAlign(pTK::Align::Left);
     sidebar->setBackground(pTK::Color(0x1B1B1BFF));
 
-    int maxWidth = static_cast<int>(sidebar->getMaxSize().width*0.85f);
-    int paddingLR = static_cast<int>((sidebar->getMaxSize().width*0.15f) / 2.0f);
-    int paddingTB = static_cast<int>(paddingLR / 8.0f);
+    uint32 maxWidth = static_cast<uint32>(sidebar->getMaxSize().width*0.85f);
+    uint32 paddingLR = static_cast<uint32>((sidebar->getMaxSize().width*0.15f) / 2.0f);
+    uint32 paddingTB = static_cast<uint32>(paddingLR / 8.0f);
     pTK::Padding paddingF{paddingLR + paddingLR/2, paddingTB*4, paddingLR, paddingLR};
     pTK::Padding padding{paddingTB, paddingTB, paddingLR, paddingLR};
 

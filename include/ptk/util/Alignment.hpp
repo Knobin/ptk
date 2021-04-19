@@ -42,9 +42,10 @@ namespace pTK
      
         Pretty self-explanatory.
     */
+    template<typename T>
     struct Directions
     {
-        using value_type = int32;
+        using value_type = T;
 
         value_type top;
         value_type bottom;
@@ -52,8 +53,8 @@ namespace pTK
         value_type right;
     };
     
-    using Margin = Directions;
-    using Padding = Directions;
+    using Margin = Directions<uint32>;
+    using Padding = Directions<uint32>;
 
     class Alignment
     {
