@@ -96,6 +96,29 @@ namespace pTK
         update(); // Tell parent to hide widget.
     }
 
+    Size Widget::getOuterSize() const 
+    {
+        return calcOuterFromSize(getSize());
+    }
+
+    Size Widget::calcOuterFromSize(const Size& size) const
+    {
+        const Margin margin{getMargin()};
+        const Margin::value_type hMargin{AddWithoutOverflow(margin.left, margin.right)};
+        const Margin::value_type vMargin{AddWithoutOverflow(margin.top, margin.bottom)};
+
+        const Padding padding{getPadding()};
+        const Padding::value_type hPadding{AddWithoutOverflow(padding.left, padding.right)};
+        const Padding::value_type vPadding{AddWithoutOverflow(padding.top, padding.bottom)};
+
+        using s_type = Size::value_type;
+        const s_type totalH = AddWithoutOverflow(static_cast<s_type>(hMargin), static_cast<s_type>(hPadding));
+        const s_type totalV = AddWithoutOverflow(static_cast<s_type>(vMargin), static_cast<s_type>(vPadding));
+        
+        return {AddWithoutOverflow(size.width, totalH),
+                AddWithoutOverflow(size.height, totalV)};
+    }
+
     void Widget::onAlignChange(std::underlying_type<Align>::type)
     {
         update();

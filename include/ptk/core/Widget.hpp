@@ -94,6 +94,9 @@ namespace pTK
 
         */
         void hide() override;
+
+        [[nodiscard]] Size getOuterSize() const;
+        [[nodiscard]] Size calcOuterFromSize(const Size& size) const;
         
     protected:
         /** Function for updating the child.

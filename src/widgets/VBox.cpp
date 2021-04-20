@@ -96,21 +96,25 @@ namespace pTK
 
     void VBox::refitContent(const Size& nsize)
     {
-        const Size vbSize{nsize};
         const size_type children{container().size()};
+        if (children == 0)
+            return;
+
+        const Size vbSize{nsize};
         std::vector<Size> sizes(children);
 
         // Initialize sizes.
         for (uint i{0}; i < children; ++i)
         {
-            sizes.at(i) = at(i)->getMinSize();
-            const Size::value_type maxWidth{at(i)->getMaxSize().width};
+            sizes.at(i) = at(i)->calcOuterFromSize(at(i)->getMinSize());
+
+            const Size::value_type maxWidth{ at(i)->calcOuterFromSize(at(i)->getMaxSize()).width };
             sizes.at(i).width = (vbSize.width > maxWidth) ? maxWidth : vbSize.width;
         }
 
         // Expand children to its max sizes possible.
-        const Size::value_type heightLeft      = vbSize.height - calcMinSize().height;
-        Size::value_type totalEachLeft   = heightLeft;
+        const Size::value_type heightLeft = vbSize.height - calcMinSize().height;
+        Size::value_type totalEachLeft = heightLeft;
 
         // Distribute heightLeft.
         // Need to fix this some time.
@@ -123,7 +127,8 @@ namespace pTK
             for (size_type i{0}; i < children; ++i)
             {
                 // Max - Min
-                const Size::value_type delta{at(i)->getMaxSize().height - sizes.at(i).height};
+                const Size::value_type maxHeight = at(i)->calcOuterFromSize(at(i)->getMaxSize()).height;
+                const Size::value_type delta{maxHeight - sizes.at(i).height};
 
                 if (delta > 0)
                 {
@@ -160,9 +165,11 @@ namespace pTK
         for (size_type i{0}; i != children; i++)
         {
             auto child{at(i)};
-            const Size cSize{sizes.at(i)};
+            Size cSize{sizes.at(i)};
             const Margin cMargin{child->getMargin()};
             const Padding cPadding{child->getPadding()};
+            cSize.height -= static_cast<Size::value_type>(cMargin.top + cMargin.bottom + cPadding.top + cPadding.bottom);
+            cSize.width -= static_cast<Size::value_type>(cMargin.left + cMargin.right + cPadding.left + cPadding.right);
             vbPos.y += cMargin.top + cPadding.top + spaces.at(i);
             if (child->getSize() != cSize)
                 child->setSize(cSize);
@@ -245,39 +252,33 @@ namespace pTK
 
     Size VBox::calcMinSize() const
     {
-        Size contentMinSize{Size::Min};
+        Size contMinSize{Size::Min};
         for (auto it{cbegin()}; it != cend(); ++it)
         {
-            const Padding cPadding{(*it)->getPadding()};
-            const Padding::value_type vPadding{cPadding.top + cPadding.bottom};
-            const Padding::value_type hPadding{cPadding.left + cPadding.right};
+            const Size minSize{(*it)->calcOuterFromSize((*it)->getMinSize())};
 
-            const Size cMinSize{(*it)->getMinSize()};
-            contentMinSize.height += static_cast<Size::value_type>(vPadding + cMinSize.height);
-            contentMinSize.width =
-                ((cMinSize.width + static_cast<Size::value_type>(hPadding)) > contentMinSize.width)
-                ? cMinSize.width + static_cast<Size::value_type>(hPadding) : contentMinSize.width;
+            contMinSize.height = AddWithoutOverflow(contMinSize.height, minSize.height);
+            contMinSize.width = (minSize.width > contMinSize.width) ? minSize.width : contMinSize.width;
         }
 
-        return contentMinSize;
+        contMinSize = calcOuterFromSize(contMinSize);
+
+        return contMinSize;
     }
 
     Size VBox::calcMaxSize() const
     {
-        Size contentMaxSize{ Size::Max };
+        Size contMaxSize{Size::Max};
         for (auto it{ cbegin() }; it != cend(); ++it)
         {
-            const Padding cPadding{(*it)->getPadding()};
-            const Padding::value_type vPadding{cPadding.top + cPadding.bottom};
-            const Padding::value_type hPadding{cPadding.left + cPadding.right};
+            const Size maxSize{ (*it)->calcOuterFromSize((*it)->getMaxSize()) };
 
-            const Size maxSize{(*it)->getMaxSize()};
-            contentMaxSize.height += (maxSize.height < (contentMaxSize.height - static_cast<Size::value_type>(vPadding)))
-                ? maxSize.height + static_cast<Size::value_type>(vPadding) : contentMaxSize.height;
-            contentMaxSize.width += (maxSize.width < (contentMaxSize.width - static_cast<Size::value_type>(hPadding)))
-                ? maxSize.width + static_cast<Size::value_type>(hPadding) : contentMaxSize.width;
+            contMaxSize.height = AddWithoutOverflow(contMaxSize.height, maxSize.height);
+            contMaxSize.width = (maxSize.width > contMaxSize.width) ? maxSize.width : contMaxSize.width;
         }
 
-        return contentMaxSize;
+        contMaxSize = calcOuterFromSize(contMaxSize);
+
+        return contMaxSize;
     }
 }
