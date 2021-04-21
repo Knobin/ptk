@@ -98,7 +98,14 @@ namespace pTK
          
             @return  bounds of the text
         */
-        [[nodiscard]] Size getBounds() const;
+        [[nodiscard]] Vec2f getBounds() const;
+
+        /** Function for retrieving the bounds of the text.
+
+            @param  str     string to measure
+            @return         bounds of the str
+        */
+        [[nodiscard]] Vec2f getBoundsFromStr(const std::string& str) const;
         
         /** Function for retrieving the raw SkFont.
          

@@ -204,18 +204,16 @@ namespace pTK
         
         m_cursorHeight = ascentToDescent();
         
-        Size minSize{getBounds()};
+        Size minSize{Vec2ToSize(getBounds(), std::ceilf)};
         minSize.width += 1;
         auto ceilCursorHeight = static_cast<Point::value_type>(std::ceil(m_cursorHeight));
         minSize.height = (minSize.height > ceilCursorHeight) ? minSize.height : ceilCursorHeight;
         
-        SkRect placeholderBounds{};
-        skFont().measureText(m_placeholderText.c_str(), m_placeholderText.size(), SkTextEncoding::kUTF8, &placeholderBounds);
-        auto pWidth = static_cast<Size::value_type>(std::ceil(placeholderBounds.width()));
-        auto pHeight = static_cast<Size::value_type>(std::ceil(placeholderBounds.height()));
+        Vec2f placeholderBounds{ getBoundsFromStr(m_placeholderText) };
+        Size placeholderSize{ Vec2ToSize(placeholderBounds, std::ceilf) };
         
-        minSize.width = (minSize.width > pWidth) ? minSize.width : pWidth;
-        minSize.height = (minSize.height > pHeight) ? minSize.height : pHeight;
+        minSize.width = (minSize.width > placeholderSize.width) ? minSize.width : placeholderSize.width;
+        minSize.height = (minSize.height > placeholderSize.height) ? minSize.height : placeholderSize.height;
         
         setMinSize(minSize);
         update();

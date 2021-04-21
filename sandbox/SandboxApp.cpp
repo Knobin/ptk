@@ -64,11 +64,11 @@ public:
 
     void onTextUpdate() override
     {
-        pTK::Size size = getBounds();
-        size.width += 20;
-        size.height += 20;
+        pTK::Vec2f textBounds{getBounds()};
+        textBounds.x += 20;
+        textBounds.y += 20;
 
-        setMinSize(size);
+        setMinSize(Vec2ToSize(textBounds, std::ceilf));
     }
 
     pTK::Color colorCopy{0x00000000};
@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
 
     pTK::WindowInfo flags{};
     flags.visibility = pTK::WindowInfo::Visibility::Windowed;
-    flags.backend = pTK::WindowInfo::Backend::Hardware;
+    flags.backend = pTK::WindowInfo::Backend::Software;
     flags.position = {250, 250};
     flags.menus = menuBar;
 
@@ -164,6 +164,7 @@ int main(int argc, char *argv[]) {
 
     // Buttons.
     pTK::Ref<CustomBtn> home = CreateCustomBtn("Home", margin, maxWidth);
+    home->setFontFamily("JetBrains Mono");
     home->colorCopy = pTK::Color{0x272727FF};
     home->setColor(pTK::Color{0x272727FF});
     pTK::Ref<CustomBtn> projects = CreateCustomBtn("Projects", margin, maxWidth);
@@ -193,6 +194,14 @@ int main(int argc, char *argv[]) {
         return false;
     });
 
+    pTK::Margin marginL{ marginTB * 4, marginLR + marginLR / 2, marginLR, marginLR };
+    pTK::Ref<CustomBtn> close = CreateCustomBtn("Close", marginL, maxWidth);
+    close->setAlign(pTK::Align::HCenter, pTK::Align::Bottom);
+    close->onClick([&](pTK::Mouse::Button, const pTK::Point&) {
+        app.close();
+        return false;
+    });
+
     pTK::Ref<pTK::Rectangle> vline = pTK::Create<pTK::Rectangle>();
     vline->setColor(pTK::Color{0x161616FF});
     vline->setMaxSize({1, pTK::Size::Limits::Max});
@@ -203,6 +212,7 @@ int main(int argc, char *argv[]) {
     sidebar->add(projects);
     sidebar->add(about);
     sidebar->add(contact);
+    sidebar->add(close);
 
     hbox->add(sidebar);
     hbox->add(vline);
@@ -239,17 +249,13 @@ int main(int argc, char *argv[]) {
     textField->setSize({400, 38});
     textField->setFontSize(20);
     textField->setCornerRadius(2.5f);
-    // m_placeholderColor = 0x6D757DFF
-    // m_textColor = 0x495057FF
-    //textField->setOutlineColor(pTK::Color{0xE5E5E5FF});
     textField->setOutlineColor(pTK::Color{0x181818FF});
     textField->setOutlineThickness(1.5f);
-    //textField->setColor(pTK::Color{0xFDFDFDFF});
     textField->setPlaceholderColor(pTK::Color{0xD4D4D4FF});
     textField->setTextColor(pTK::Color{0xF4F4F4FF});
     textField->setColor(pTK::Color{0x262626FF});
-    textField->setPlaceholderText("PgjFAlaceholder text!");
-    std::cout << "Family: " << textField->getFontFamily() << std::endl;
+    textField->setPlaceholderText("Add text here!");
+    std::cout << "Deafult font family: " << textField->getFontFamily() << std::endl;
 
     textField->onClick([&](pTK::Mouse::Button, const pTK::Point&){
         textField->setOutlineColor(pTK::Color{0x007BFFFF});

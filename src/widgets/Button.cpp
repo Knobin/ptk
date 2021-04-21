@@ -245,14 +245,15 @@ namespace pTK
     
     void Button::setBounds()
     {
-        Size textBounds{m_text->getBounds()};
-        textBounds.height += 2*m_borderSize;
-        textBounds.width += 2*m_borderSize;
+        Vec2f textBounds{m_text->getBounds()};
+        textBounds.y += 2*m_borderSize;
+        textBounds.x += 2*m_borderSize;
 
-        setMinSize(textBounds);
+        const Size sizeBounds = Vec2ToSize(textBounds, std::ceilf);
+        setMinSize(sizeBounds);
 
         Size cSize{getSize()};
-        if ((textBounds.height > cSize.height) || (textBounds.width > cSize.width))
-            setSize(textBounds);
+        if ((sizeBounds.height > cSize.height) || (sizeBounds.width > cSize.width))
+            setSize(sizeBounds);
     }
 }

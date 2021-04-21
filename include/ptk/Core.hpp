@@ -11,6 +11,8 @@
 // pTK Headers
 #include "ptk/core/Defines.hpp"
 #include "ptk/Log.hpp"
+#include "ptk/util/Size.hpp"
+#include "ptk/util/Vec2.hpp"
 
 // C++ Headers
 #include <memory>
@@ -30,7 +32,7 @@ namespace pTK
 
     // returns x + y if no overflow and max of T if overflow.
     template<typename T>
-    T AddWithoutOverflow(T x, T y)
+    constexpr T AddWithoutOverflow(T x, T y) noexcept
     {
         constexpr auto max = std::numeric_limits<T>::max();
 
@@ -38,6 +40,13 @@ namespace pTK
             return max;
 
         return x + y;
+    }
+
+    template<typename T, typename Rounding>
+    constexpr Size Vec2ToSize(const Vec2<T>& v, Rounding func) noexcept
+    {
+        return {static_cast<Size::value_type>(func(v.x)),
+                static_cast<Size::value_type>(func(v.y))};
     }
 }
 

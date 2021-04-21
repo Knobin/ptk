@@ -33,7 +33,7 @@ namespace pTK
 
     void Label::onTextUpdate()
     {
-        const Size bounds{getBounds()};
+        const Size bounds = Vec2ToSize(getBounds(), std::ceilf);
         setMinSize(bounds);
         setSize(bounds);
         setMaxSize(bounds);

@@ -11,6 +11,7 @@
 // pTK Headers
 #include "ptk/widgets/Label.hpp"
 #include "ptk/widgets/Rectangle.hpp"
+#include "ptk/core/Text.hpp"
 
 namespace pTK
 {

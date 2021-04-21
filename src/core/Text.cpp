@@ -20,7 +20,8 @@ namespace pTK
     Text::Text()
         : m_text{}, m_font{}
     {
-        m_font.setEdging(SkFont::Edging::kAntiAlias);
+        //m_font.setEdging(SkFont::Edging::kAntiAlias);
+        m_font.setEdging(SkFont::Edging::kSubpixelAntiAlias);
         updateFontInfo();
     }
 
@@ -112,12 +113,19 @@ namespace pTK
         return m_capHeight;
     }
     
-    Size Text::getBounds() const
+    Vec2f Text::getBounds() const
+    {
+        return getBoundsFromStr(getText());
+    }
+
+    Vec2f Text::getBoundsFromStr(const std::string& str) const
     {
         SkRect bounds{};
-        float advance = m_font.measureText(m_text.c_str(), m_text.size(), SkTextEncoding::kUTF8, &bounds);
-        return {static_cast<int>(std::ceil(advance)), static_cast<int>(std::ceil(bounds.height()))};
+        /*float advance =*/ m_font.measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &bounds);
+        // return { advance, bounds.height() };
+        return { bounds.width(), bounds.height() };
     }
+
 
     const SkFont& Text::skFont() const
     {
