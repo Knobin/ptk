@@ -15,7 +15,9 @@ pTK::Color RandomColor()
     static std::mt19937 rgen(rdev());
     std::uniform_int_distribution<color_size> idist(0, std::numeric_limits<color_size>::max());
     color_size hex = idist(rgen);
+    hex |= 0xFF; // set alpha bits to 255.
     const pTK::Color color{hex};
+   
     return color;
 }
 
@@ -89,14 +91,13 @@ struct BtnManager
     }
 };
 
-pTK::Ref<CustomBtn> CreateCustomBtn(const std::string& text, const pTK::Padding& padding, int maxWidth)
+pTK::Ref<CustomBtn> CreateCustomBtn(const std::string& text, const pTK::Margin& margin, int maxWidth)
 {
-    // Home.
     pTK::Ref<CustomBtn> btn = pTK::Create<CustomBtn>(text);
-    btn->setPadding(padding);
+    btn->setMargin(margin);
     btn->setCornerRadius(2.5f);
     btn->setMaxSize({maxWidth, btn->getSize().height});
-    btn->setAlign(pTK::Align::Top | pTK::Align::HCenter);
+    btn->setAlign(pTK::Align::Top, pTK::Align::HCenter);
 
     return btn;
 }
@@ -149,25 +150,25 @@ int main(int argc, char *argv[]) {
     sidebar->setBackground(pTK::Color(0x1B1B1BFF));
 
     uint32 maxWidth = static_cast<uint32>(sidebar->getMaxSize().width*0.85f);
-    uint32 paddingLR = static_cast<uint32>((sidebar->getMaxSize().width*0.15f) / 2.0f);
-    uint32 paddingTB = static_cast<uint32>(paddingLR / 8.0f);
-    pTK::Padding paddingF{paddingLR + paddingLR/2, paddingTB*4, paddingLR, paddingLR};
-    pTK::Padding padding{paddingTB, paddingTB, paddingLR, paddingLR};
+    uint32 marginLR = static_cast<uint32>((sidebar->getMaxSize().width*0.15f) / 2.0f);
+    uint32 marginTB = static_cast<uint32>(marginLR / 8.0f);
+    pTK::Margin marginF{marginLR + marginLR/2, marginTB*4, marginLR, marginLR};
+    pTK::Margin margin{marginTB, marginTB, marginLR, marginLR};
 
     pTK::Ref<pTK::Label> navTitle = pTK::Create<pTK::Label>();
     navTitle->setText("Navigation");
     navTitle->setFontSize(12);
-    navTitle->setPadding(paddingF);
+    navTitle->setMargin(marginF);
     navTitle->setColor(pTK::Color{0x8F8F8FFF});
-    navTitle->setAlign(pTK::Align::Left | pTK::Align::Top);
+    navTitle->setAlign(pTK::Align::Left, pTK::Align::Top);
 
     // Buttons.
-    pTK::Ref<CustomBtn> home = CreateCustomBtn("Home", padding, maxWidth);
+    pTK::Ref<CustomBtn> home = CreateCustomBtn("Home", margin, maxWidth);
     home->colorCopy = pTK::Color{0x272727FF};
     home->setColor(pTK::Color{0x272727FF});
-    pTK::Ref<CustomBtn> projects = CreateCustomBtn("Projects", padding, maxWidth);
-    pTK::Ref<CustomBtn> about = CreateCustomBtn("About", padding, maxWidth);
-    pTK::Ref<CustomBtn> contact = CreateCustomBtn("Contact", padding, maxWidth);
+    pTK::Ref<CustomBtn> projects = CreateCustomBtn("Projects", margin, maxWidth);
+    pTK::Ref<CustomBtn> about = CreateCustomBtn("About", margin, maxWidth);
+    pTK::Ref<CustomBtn> contact = CreateCustomBtn("Contact", margin, maxWidth);
 
     BtnManager btnManager{};
     btnManager.buttons.push_back(home);
@@ -214,16 +215,25 @@ int main(int argc, char *argv[]) {
     pTK::Ref<pTK::Label> cTitle = pTK::Create<pTK::Label>();
     cTitle->setText("Home");
     cTitle->setFontSize(26);
-    cTitle->setPadding({18, 9, 18, 18});
+    cTitle->setMargin({18, 9, 18, 18});
     cTitle->setColor(pTK::Color{0xFEFEFEFF});
-    cTitle->setAlign(pTK::Align::Left | pTK::Align::Top);
+    cTitle->setAlign(pTK::Align::Left, pTK::Align::Top);
 
     pTK::Ref<pTK::Rectangle> hline = pTK::Create<pTK::Rectangle>();
     //hline->setColor(pTK::Color{0xF0F0F0FF});
     hline->setColor(RandomColor());
     hline->setMaxSize({pTK::Size::Limits::Max, 1});
-    hline->setPadding({0, 0, 18, 18});
-    hline->setAlign(pTK::Align::Left | pTK::Align::Top);
+    hline->setMargin({0, 0, 18, 18});
+    hline->setAlign(pTK::Align::Left, pTK::Align::Top);
+
+    pTK::Ref<pTK::Button> btn = pTK::Create<pTK::Button>(pTK::Button::Style::Default);
+    btn->setAlign(pTK::Align::Left, pTK::Align::Top);
+    btn->setText("Random Color!");
+    btn->setMargin({ 18, 18, 18, 18 });
+    btn->onClick([&hline](pTK::Mouse::Button, const pTK::Point&) {
+        hline->setColor(RandomColor());
+        return false;
+    });
 
     pTK::Ref<pTK::TextField> textField = pTK::Create<pTK::TextField>();
     textField->setSize({400, 38});
@@ -252,6 +262,7 @@ int main(int argc, char *argv[]) {
 
     content->add(cTitle);
     content->add(hline);
+    content->add(btn);
     content->add(textField);
 
     hbox->add(content);

@@ -194,17 +194,17 @@ namespace pTK
             {
                 const std::underlying_type<Align>::type cAlign{at(i)->getAlign()};
 
-                if (isAlignSet(cAlign, Align::Top))
+                if (IsAlignSet(cAlign, Align::Top))
                 {
                     spaces.at(i) = 0;
                     spaces.at(i+1) = 1;
                 }
-                else if (isAlignSet(cAlign, Align::Bottom))
+                else if (IsAlignSet(cAlign, Align::Bottom))
                 {
                     spaces.at(i) = 1;
                     spaces.at(i+1) = 0;
                 }
-                else if (isAlignSet(cAlign, Align::Center) || isAlignSet(cAlign, Align::VCenter))
+                else if (IsAlignSet(cAlign, Align::Center) || IsAlignSet(cAlign, Align::VCenter))
                 {
                     spaces.at(i) = 1;
                     spaces.at(i+1) = 1;
@@ -229,23 +229,22 @@ namespace pTK
     Point::value_type VBox::alignChildH(size_type index, const Size& parentSize, const Size& childSize)
     {
         Point::value_type posx{0};
-        Size cSize{childSize};
-        const Margin cMargin{at(index)->getMargin()};
-        const Padding cPadding{at(index)->getPadding()};
+        const auto& child{ at(index) };
 
-        // Pre
-        cSize.width += static_cast<Size::value_type>(cPadding.left + cPadding.right);
+        // Total size with margin and padding.
+        Size cSize{ child->calcOuterFromSize(childSize) };
 
-        // Align
+        // Align.
         const std::underlying_type<Align>::type cAlign{at(index)->getAlign()};
-        if (isAlignSet(cAlign, Align::Right))
+        if (IsAlignSet(cAlign, Align::Right))
             posx = static_cast<Point::value_type>(parentSize.width - cSize.width);
-        else if (isAlignSet(cAlign, Align::Center) || isAlignSet(cAlign, Align::HCenter))
+        else if (IsAlignSet(cAlign, Align::Center) || IsAlignSet(cAlign, Align::HCenter))
             posx = static_cast<Point::value_type>((parentSize.width/2) - (cSize.width/2));
 
-        // Post
-        posx += static_cast<Point::value_type>(cMargin.left);
-        posx += static_cast<Point::value_type>(cPadding.left);
+        // Offset position.
+        // Maybe remove "AddWithoutOverflow" since it is highly unlikely that it overflows int32.
+        posx = AddWithoutOverflow(posx, static_cast<Point::value_type>(child->getMargin().left));
+        posx = AddWithoutOverflow(posx, static_cast<Point::value_type>(child->getPadding().left));
 
         return posx;
     }

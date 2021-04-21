@@ -11,21 +11,9 @@
 namespace pTK
 {
     Alignment::Alignment()
-        : m_align{Align::Center}, m_margin{}, m_padding{}
-    {
-
-    }
-
-    bool isAlignSet(std::underlying_type<Align>::type number, Align align)
-    {
-        return ((number & align) == align);
-    }
-
-    void Alignment::setAlign(std::underlying_type<Align>::type alignment)
-    {
-        m_align = alignment;
-        onAlignChange(m_align);
-    }
+        : m_align{static_cast<std::underlying_type<Align>::type>(Align::Center)}, 
+            m_margin{}, m_padding{}
+    {}
 
     std::underlying_type<Align>::type Alignment::getAlign() const
     {
