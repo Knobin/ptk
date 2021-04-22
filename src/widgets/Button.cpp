@@ -67,9 +67,9 @@ namespace pTK
             if ((wSize.width > bSize.width) || (wSize.height > bSize.height))
             {
                 // Apparently, this looks good.
-                const int dMargin{static_cast<int>(static_cast<float>(m_borderSize*2.0f))};
-                const int hMargin{((bSize.height - wSize.height) > dMargin) ? 0 : dMargin};
-                const int wMargin{((bSize.width - wSize.width) > dMargin) ? 0 : dMargin};
+                const Size::value_type dMargin{static_cast<Size::value_type>(static_cast<float>(m_borderSize*2.0f))};
+                const Size::value_type hMargin{((bSize.height - wSize.height) > dMargin) ? 0 : dMargin};
+                const Size::value_type wMargin{((bSize.width - wSize.width) > dMargin) ? 0 : dMargin};
                 wSize.width = ((wSize.width > bSize.width) ? wSize.width : bSize.width) + (wMargin);
                 wSize.height = ((wSize.height > bSize.height) ? wSize.height : bSize.height) + (hMargin);
                 setSize(wSize);

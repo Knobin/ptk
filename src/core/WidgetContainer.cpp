@@ -109,16 +109,20 @@ namespace pTK
 
     void WidgetContainer::onClickEvent(Mouse::Button btn, const Point& pos)
     {
+        
         Widget *lastClicked{m_lastClickedWidget};
         bool found{false};
-
+        
         for (auto& item : *this)
         {
-            const Point wPos{item->getPosition()};
+            const Point startPos{item->getPosition()};
             const Size wSize{item->getSize()};
-            if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
+            const Point endPos{AddWithoutOverflow(startPos.x, static_cast<Point::value_type>(wSize.width)),
+                                AddWithoutOverflow(startPos.y, static_cast<Point::value_type>(wSize.height))};
+            
+            if ((startPos.x <= pos.x) && (endPos.x >= pos.x))
             {
-                if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
+                if ((startPos.y <= pos.y) && (endPos.y >= pos.y))
                 {
                     Widget* temp{item.get()}; // Iterator might change, when passing the event.
 
@@ -152,11 +156,14 @@ namespace pTK
     {
         for (auto& it : *this)
         {
-            const Point wPos{it->getPosition()};
+            const Point startPos{it->getPosition()};
             const Size wSize{it->getSize()};
-            if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
+            const Point endPos{AddWithoutOverflow(startPos.x, static_cast<Point::value_type>(wSize.width)),
+                                AddWithoutOverflow(startPos.y, static_cast<Point::value_type>(wSize.height))};
+            
+            if ((startPos.x <= pos.x) && (endPos.x >= pos.x))
             {
-                if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
+                if ((startPos.y <= pos.y) && (endPos.y >= pos.y))
                 {
                     // Send Leave Event.
                     if (m_currentHoverWidget != it.get() || m_currentHoverWidget == nullptr)

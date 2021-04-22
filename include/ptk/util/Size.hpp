@@ -23,7 +23,7 @@ namespace pTK
     class Size
     {
     public:
-        using value_type = int32;
+        using value_type = uint32;
 
         struct Limits
         {

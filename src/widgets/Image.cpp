@@ -33,7 +33,8 @@ namespace pTK
             {
                 PTK_INFO("Created image from \"{}\" successfully.", path);
                 m_path = path;
-                setSize(Size(static_cast<int>(m_image->width()*m_scale.x), static_cast<int>(m_image->height()*m_scale.y)));
+                setSize(Size(static_cast<Size::value_type>(m_image->width()*m_scale.x),
+                            static_cast<Size::value_type>(m_image->height()*m_scale.y)));
                 return true;
             }
         }

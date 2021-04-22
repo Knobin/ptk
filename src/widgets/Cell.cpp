@@ -107,8 +107,10 @@ namespace pTK
         Size size = getSize();
         Point currentPos = getPosition();
         Size widgetSize = m_widget->getSize();
-        currentPos += Point{size.width/2, size.height/2};
-        currentPos -= Point{widgetSize.width/2, widgetSize.height/2};
+        currentPos += Point{static_cast<Point::value_type>(size.width/2),
+                            static_cast<Point::value_type>(size.height/2)};
+        currentPos -= Point{static_cast<Point::value_type>(widgetSize.width/2),
+                            static_cast<Point::value_type>(widgetSize.height/2)};
         currentPos.x = (currentPos.x < 0) ? 0 : currentPos.x;
         currentPos.y = (currentPos.y < 0) ? 0 : currentPos.y;
         m_widgetPos = currentPos;
@@ -117,11 +119,14 @@ namespace pTK
 
     void Cell::onClickEvent(Mouse::Button btn, const Point& pos)
     {
-        Point wPos = m_widget->getPosition();
-        Size wSize = m_widget->getSize();
-        if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
+        const Point startPos{m_widget->getPosition()};
+        const Size wSize{m_widget->getSize()};
+        const Point endPos{AddWithoutOverflow(startPos.x, static_cast<Point::value_type>(wSize.width)),
+                            AddWithoutOverflow(startPos.y, static_cast<Point::value_type>(wSize.height))};
+        
+        if ((startPos.x <= pos.x) && (endPos.x >= pos.x))
         {
-            if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
+            if ((startPos.y <= pos.y) && (endPos.y >= pos.y))
             {
                 m_widget->handleClickEvent(btn, pos);
                 m_clicked = true;
@@ -144,11 +149,14 @@ namespace pTK
 
     void Cell::onHoverEvent(const Point& pos)
     {
-        Point wPos = m_widget->getPosition();
-        Size wSize = m_widget->getSize();
-        if ((wPos.x <= pos.x) && (wPos.x + wSize.width >= pos.x))
+        const Point startPos{m_widget->getPosition()};
+        const Size wSize{m_widget->getSize()};
+        const Point endPos{AddWithoutOverflow(startPos.x, static_cast<Point::value_type>(wSize.width)),
+                            AddWithoutOverflow(startPos.y, static_cast<Point::value_type>(wSize.height))};
+        
+        if ((startPos.x <= pos.x) && (endPos.x >= pos.x))
         {
-            if ((wPos.y <= pos.y) && (wPos.y + wSize.height >= pos.y))
+            if ((startPos.y <= pos.y) && (endPos.y >= pos.y))
             {
                 if (!m_hover)
                     m_widget->handleEnterEvent();

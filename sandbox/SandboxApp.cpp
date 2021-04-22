@@ -5,8 +5,8 @@
 #include <random>
 
 // Window Size.
-constexpr unsigned int SCR_WIDTH{960};
-constexpr unsigned int SCR_HEIGHT{540};
+constexpr pTK::Size::value_type SCR_WIDTH{960};
+constexpr pTK::Size::value_type SCR_HEIGHT{540};
 
 pTK::Color RandomColor()
 {
@@ -91,7 +91,7 @@ struct BtnManager
     }
 };
 
-pTK::Ref<CustomBtn> CreateCustomBtn(const std::string& text, const pTK::Margin& margin, int maxWidth)
+pTK::Ref<CustomBtn> CreateCustomBtn(const std::string& text, const pTK::Margin& margin, pTK::Size::value_type maxWidth)
 {
     pTK::Ref<CustomBtn> btn = pTK::Create<CustomBtn>(text);
     btn->setMargin(margin);
@@ -121,11 +121,11 @@ int main(int argc, char *argv[]) {
 
     pTK::WindowInfo flags{};
     flags.visibility = pTK::WindowInfo::Visibility::Windowed;
-    flags.backend = pTK::WindowInfo::Backend::Software;
+    flags.backend = pTK::WindowInfo::Backend::Hardware;
     flags.position = {250, 250};
     flags.menus = menuBar;
 
-    pTK::Window window{"pTK Sandbox Window", {960, 540}, flags};
+    pTK::Window window{"pTK Sandbox Window", {SCR_WIDTH, SCR_HEIGHT}, flags};
     window.setBackground(pTK::Color(0x1E1E1EFF));
     
     window.onKey([](pTK::Event::Type type, pTK::Key key, byte){
@@ -149,9 +149,9 @@ int main(int argc, char *argv[]) {
     sidebar->setAlign(pTK::Align::Left);
     sidebar->setBackground(pTK::Color(0x1B1B1BFF));
 
-    uint32 maxWidth = static_cast<uint32>(sidebar->getMaxSize().width*0.85f);
-    uint32 marginLR = static_cast<uint32>((sidebar->getMaxSize().width*0.15f) / 2.0f);
-    uint32 marginTB = static_cast<uint32>(marginLR / 8.0f);
+    auto maxWidth = static_cast<pTK::Size::value_type>(sidebar->getMaxSize().width*0.85f);
+    auto marginLR = static_cast<pTK::Size::value_type>((sidebar->getMaxSize().width*0.15f) / 2.0f);
+    auto marginTB = static_cast<pTK::Size::value_type>(marginLR / 8.0f);
     pTK::Margin marginF{marginLR + marginLR/2, marginTB*4, marginLR, marginLR};
     pTK::Margin margin{marginTB, marginTB, marginLR, marginLR};
 
@@ -164,7 +164,6 @@ int main(int argc, char *argv[]) {
 
     // Buttons.
     pTK::Ref<CustomBtn> home = CreateCustomBtn("Home", margin, maxWidth);
-    home->setFontFamily("JetBrains Mono");
     home->colorCopy = pTK::Color{0x272727FF};
     home->setColor(pTK::Color{0x272727FF});
     pTK::Ref<CustomBtn> projects = CreateCustomBtn("Projects", margin, maxWidth);

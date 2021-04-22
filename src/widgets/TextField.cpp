@@ -206,7 +206,7 @@ namespace pTK
         
         Size minSize{Vec2ToSize(getBounds(), std::ceilf)};
         minSize.width += 1;
-        auto ceilCursorHeight = static_cast<Point::value_type>(std::ceil(m_cursorHeight));
+        auto ceilCursorHeight = static_cast<Size::value_type>(std::ceil(m_cursorHeight));
         minSize.height = (minSize.height > ceilCursorHeight) ? minSize.height : ceilCursorHeight;
         
         Vec2f placeholderBounds{ getBoundsFromStr(m_placeholderText) };

@@ -363,7 +363,8 @@ namespace pTK
 
             // Default is currently MainDisplay (where 0,0 is), could cause some headaches later on.
             // Same with setPosHint, don't have a secondary monitor to test on right now.
-            const CGFloat y = CGDisplayBounds(CGMainDisplayID()).size.height - (flags.position.y + size.height - 1) - 1;
+            const auto ypos = static_cast<Size::value_type>(flags.position.y);
+            const CGFloat y = CGDisplayBounds(CGMainDisplayID()).size.height - (ypos + size.height - 1) - 1;
             const NSRect rect = NSMakeRect(flags.position.x, y, size.width, size.height);
 
             NSUInteger style = (NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable);
