@@ -10,18 +10,6 @@
 
 namespace pTK
 {
-    Point::Point()
-        : x{}, y{}
-    {
-        
-    }
-    
-    Point::Point(value_type other_x, value_type other_y)
-        : x{other_x}, y{other_y}
-    {
-        
-    }
-
     void Point::set(value_type other_x, value_type other_y)
     {
         x = other_x;

@@ -5,10 +5,10 @@
 #include <random>
 
 // Window Size.
-constexpr pTK::Size::value_type SCR_WIDTH{960};
-constexpr pTK::Size::value_type SCR_HEIGHT{540};
+static constexpr pTK::Size::value_type SCR_WIDTH{960};
+static constexpr pTK::Size::value_type SCR_HEIGHT{540};
 
-pTK::Color RandomColor()
+static pTK::Color RandomColor()
 {
     using color_size = pTK::Color::size_type;
     static std::random_device rdev;
