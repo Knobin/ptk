@@ -66,7 +66,8 @@ namespace pTK
         adjustedSize.left = 0;
         adjustedSize.right = from.width;
         ::AdjustWindowRectExForDpi (&adjustedSize, style, menu, 0, static_cast<UINT>(dpi));
-        return {adjustedSize.right - adjustedSize.left, adjustedSize.bottom - adjustedSize.top};
+        return {static_cast<Size::value_type>(adjustedSize.right - adjustedSize.left), 
+                static_cast<Size::value_type>(adjustedSize.bottom - adjustedSize.top)};
     }
 
     static Size ScaleSize(const Size& size, const Vec2f& scale) noexcept
@@ -81,16 +82,16 @@ namespace pTK
 
     struct WinBackendData
     {
-        Window *window;
-        Vec2f scale;
-        Size size;
-        Point pos;
-        DWORD style;
-        bool minimized;
-        uint wait;
-        bool ignoreSize;
-        bool hasMenu;
-        MenuBarUtil_win::MenuMap menuItems;
+        Window* window{nullptr};
+        Vec2f scale{};
+        Size size{};
+        Point pos{};
+        DWORD style{};
+        bool minimized{ false };
+        uint wait{ 0 };
+        bool ignoreSize{ false };
+        bool hasMenu{ false };
+        MenuBarUtil_win::MenuMap menuItems{};
         HACCEL accelTable{nullptr};
     };
 
@@ -100,10 +101,8 @@ namespace pTK
         : MainWindowBase(window)
     {
         // Default window data.
-        m_data = std::make_unique<WinBackendData>(WinBackendData{window});
-        m_data->minimized = false;
-        m_data->wait = 0;
-        m_data->ignoreSize = false;
+        m_data = std::make_unique<WinBackendData>();
+        m_data->window = window;
         m_data->pos = flags.position;
 
         // Menubar.
@@ -192,7 +191,7 @@ namespace pTK
     {
         if (m_data->pos != pos)
         {
-            RECT rc{0};
+            RECT rc{};
             if (::GetWindowRect(m_hwnd, &rc))
             {
                 if (::MoveWindow(m_hwnd, pos.x, pos.y, rc.right - rc.left, rc.bottom - rc.top, FALSE))
@@ -372,7 +371,8 @@ namespace pTK
     {
         RECT rect{};
         ::GetWindowRect(m_hwnd, &rect);
-        return {rect.right - rect.left, rect.bottom - rect.top};
+        return {static_cast<Size::value_type>(rect.right - rect.left), 
+                static_cast<Size::value_type>(rect.bottom - rect.top)};
     }
 
     bool MainWindow_win::setLimits(const Size&, const Size&)
@@ -494,10 +494,11 @@ namespace pTK
     static void HandleWindowResize(WinBackendData* data, MainWindowBase *backend, HWND hwnd)
     {
         Window *window{data->window};
-        RECT rc{0};
+        RECT rc{};
         if (::GetClientRect(hwnd, &rc) && (rc.right != 0 && rc.bottom != 0))
         {
-            if (rc.right != data->size.width || rc.bottom != data->size.height)
+            if (static_cast<Size::value_type>(rc.right) != data->size.width || 
+                static_cast<Size::value_type>(rc.bottom) != data->size.height)
             {
                 if (backend)
                 {
