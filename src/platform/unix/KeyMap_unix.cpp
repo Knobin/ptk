@@ -6,12 +6,12 @@
 //
 
 // Local Headers
-#include "KeyMap_unix.hpp"
-#include "x11.hpp"
+#include "ptk/platform/unix/KeyMap_unix.hpp"
+#include "ptk/platform/unix/x11.hpp"
 
 namespace pTK
 {
-    // 
+    //
     // Will probably rework keyboard input at some point, this works for now.
     //
 
@@ -41,10 +41,10 @@ namespace pTK
 
         map[XK_Home] = Key::Home; map[XK_End] = Key::End;
 
-        map[XK_Shift_L] = Key::LeftShift; map[XK_Control_L] = Key::LeftControl; 
+        map[XK_Shift_L] = Key::LeftShift; map[XK_Control_L] = Key::LeftControl;
         map[XK_Alt_L] = Key::LeftAlt; map[XK_Super_L] = Key::LeftSuper;
-        
-        map[XK_Shift_R] = Key::RightShift; map[XK_Control_R] = Key::RightControl; 
+
+        map[XK_Shift_R] = Key::RightShift; map[XK_Control_R] = Key::RightControl;
         map[XK_Alt_R] = Key::RightAlt; map[XK_Super_R] = Key::RightSuper;
 
         return map;

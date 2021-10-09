@@ -9,7 +9,7 @@
 #define PTK_PLATFORM_WIN_PLATFORM_HPP
 
 // pTK Headers
-#include "ptk/core/platform/ApplicationBase.hpp"
+#include "ptk/platform/base/ApplicationBase.hpp"
 
 // C++ Headers
 #include <string>

@@ -9,10 +9,10 @@
 #define PTK_PLATFORM_UNIX_APPLICATION_HPP
 
 // Local Headers
-#include "x11.hpp"
+#include "ptk/platform/unix/x11.hpp"
 
 // pTK Headers
-#include "ptk/core/platform/ApplicationBase.hpp"
+#include "ptk/platform/base/ApplicationBase.hpp"
 
 namespace pTK
 {
@@ -43,7 +43,7 @@ namespace pTK
     public:
         // TODO: Add documentation.
         static Display *Display();
-        
+
         // TODO: Add documentation.
         static XContext Context();
 
@@ -56,10 +56,10 @@ namespace pTK
     private:
         Application_unix() = default;
         virtual ~Application_unix() = default;
-        
+
         bool init();
         void handleEvent(XEvent *event);
-    
+
     private:
         static Application_unix s_Instance;
     };

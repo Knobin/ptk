@@ -6,8 +6,8 @@
 //
 
 // Local Headers
-#include "GLContext_unix.hpp"
-#include "Application_unix.hpp"
+#include "ptk/platform/unix/GLContext_unix.hpp"
+#include "ptk/platform/unix/Application_unix.hpp"
 
 // pTK Headers
 #include "ptk/Log.hpp"
@@ -189,9 +189,9 @@ namespace pTK
         m_visual = glXGetVisualFromFBConfig(display, *bestFbc);
         if (m_visual == 0)
             throw ContextError("Could not create correct visual window");
-        if (screenID != m_visual->screen) 
+        if (screenID != m_visual->screen)
             throw ContextError("screenId(" + std::to_string(screenID) + ") does not match visual->screen(" + std::to_string(m_visual->screen) + ")");
-        
+
         m_GLContext = CreateGLXContext(display, screenID, *bestFbc);
         if (!glXIsDirect(display, m_GLContext)) {
             PTK_INFO("Indirect GLX rendering context obtained");

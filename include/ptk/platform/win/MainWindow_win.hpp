@@ -1,46 +1,51 @@
 //
-//  platform/mac/MainWindow_win.hpp
+//  platform/win/MainWindow_win.hpp
 //  pTK
 //
-//  Created by Robin Gustafsson on 2020-08-20.
+//  Created by Robin Gustafsson on 2020-02-07.
 //
 
-#ifndef PTK_PlATFORM_MAC_MAINWINDOW_HPP
-#define PTK_PlATFORM_MAC_MAINWINDOW_HPP
+#ifndef PTK_PlATFORM_WIN_MAINWINDOW_HPP
+#define PTK_PlATFORM_WIN_MAINWINDOW_HPP
 
 // pTK Headers
-#include "ptk/core/platform/MainWindowBase.hpp"
+#include "ptk/platform/base/MainWindowBase.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/events/MouseEvent.hpp"
 
 // C++ Headers
 #include <map>
 
+// Windows Headers
+#define NOMINMAX
+#include <windows.h>
+
 namespace pTK
 {
     class Window;
+    struct WinBackendData;
 
-    /** MainWindow_mac class implementation.
+    /** MainWindow_win class implementation.
 
-        This class handles the macOS Cocoa Window.
+        This class handles the Windows Window.
     */
-    class MainWindow_mac : public MainWindowBase
+    class MainWindow_win : public MainWindowBase
     {
     public:
         /** Constructs MainWindow_win with default values.
 
-            @param window   pointer to parent Window
+            @param window   parent Window class
             @param name     name of the window
             @param size     size of the window
-            @param flags    setup flags for the window
-            @return         default initialized MainWindow_mac
+            @param backend  type of backend
+            @return         default initialized MainWindow_win
         */
-        MainWindow_mac(Window *window, const std::string& name, const Size& size, const WindowInfo& flags);
+        MainWindow_win(Window *window, const std::string& name, const Size& size, const WindowInfo& flags);
 
         /** Destructor for MainWindow_win.
 
         */
-        virtual ~MainWindow_mac();
+        virtual ~MainWindow_win();
 
         /** Function for closing the window.
 
@@ -105,6 +110,18 @@ namespace pTK
         */
         bool setLimits(const Size&, const Size&) override;
 
+        /** Function for initiating the drawing.
+
+            This function will be called before any drawing is supposed to be done.
+        */
+        void beginPaint() override;
+
+        /** Function for ending the drawing.
+
+            This function will be called after the drawing is completed.
+        */
+        void endPaint() override;
+
         /** Function for setting the title of the window.
 
             @param name     title to show
@@ -145,6 +162,12 @@ namespace pTK
         */
         Size getWinSize() const override;
 
+        /** Function for retrieving the current Windows style of the Window.
+
+            @return Window style
+        */
+        [[nodiscard]] DWORD getWindowStyle() const;
+
         /** Function for minimizing the window.
 
             @return     true if operation is successful, otherwise false
@@ -174,32 +197,21 @@ namespace pTK
             @return         true if operation is successful, otherwise false
         */
         bool setScaleHint(const Vec2f& scale) override;
-        
-        /** Function for retrieving the NSWindow id.
-         
-            @return     id of the NSWindow
-        */
-        [[nodiscard]] long windowID() const;
-        
-        /** Function for retrieving the NSWindow pointer.
-            
-            Be sure to cast this to a NSWindow*.
-         
-            @return     pointer to NSWindow
-        */
-        [[nodiscard]] void *nsWindow() const;
 
-    public:
-        // Structure for internal window data.
-        struct WinData;
-        
+        static LRESULT CALLBACK WndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+        [[nodiscard]] HWND handle() const;
+
+        [[nodiscard]] HACCEL accelTable() const;
+
     private:
-        void init(const std::string& name, const Size& size, const WindowInfo& flags);
-        
-    private:
+        HWND m_hwnd;
         std::unique_ptr<ContextBase> m_context;
-        std::unique_ptr<WinData> m_data;
+        PAINTSTRUCT m_ps{};
+        [[maybe_unused]] HDC m_hdc{};
+
+        std::unique_ptr<WinBackendData> m_data;
     };
 }
 
-#endif // PTK_PlATFORM_MAC_MAINWINDOW_HPP
+#endif // PTK_PlATFORM_WIN_MAINWINDOW_HPP

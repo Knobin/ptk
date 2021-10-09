@@ -6,10 +6,10 @@
 //
 
 // Local Headers
-#include "MainWindow_mac.hpp"
-#include "../common/RasterContext.hpp"
-#include "Application_mac.hpp"
-#include "RasterPolicy_mac.hpp"
+#include "ptk/platform/mac/MainWindow_mac.hpp"
+#include "ptk/platform/common/RasterContext.hpp"
+#include "ptk/platform/mac/Application_mac.hpp"
+#include "ptk/platform/mac/RasterPolicy_mac.hpp"
 
 // pTK Headers
 #include "ptk/Window.hpp"
@@ -21,7 +21,7 @@
 
 // Include Metal backend.
 #ifdef PTK_METAL
-    #include "MetalContext_mac.hpp"
+    #include "ptk/platform/mac/MetalContext_mac.hpp"
 #endif
 
 // macOS Headers
@@ -146,27 +146,27 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 {
     using utype = std::underlying_type<pTK::KeyEvent::Modifier>::type;
     utype modifiers = 0;
-    
+
     if (flags & NSEventModifierFlagShift) {
         modifiers |= static_cast<utype>(pTK::KeyEvent::Modifier::Shift);
     }
-    
+
     if (flags & NSEventModifierFlagControl) {
         modifiers |= static_cast<utype>(pTK::KeyEvent::Modifier::Control);
     }
-    
+
     if (flags & NSEventModifierFlagOption) {
         modifiers |= static_cast<utype>(pTK::KeyEvent::Modifier::Alt);
     }
-    
+
     if (flags & NSEventModifierFlagCommand) {
         modifiers |= static_cast<utype>(pTK::KeyEvent::Modifier::Super);
     }
-    
+
     if (flags & NSEventModifierFlagCapsLock) {
         modifiers |= static_cast<utype>(pTK::KeyEvent::Modifier::CapsLock);
     }
-    
+
     return modifiers;
 }
 
@@ -251,13 +251,13 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 {
     pTK::KeyCode key = pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode));
     pTK::KeyEvent::Modifier keyMod = pTK::KeyCodeToKeyEventModifier(key);
-    
+
     using utype = std::underlying_type<pTK::KeyEvent::Modifier>::type;
     utype keyFlagMod = static_cast<utype>(keyMod);
-    
+
     std::underlying_type<pTK::KeyEvent::Modifier>::type mods{GetModifiers([event modifierFlags])};
     pTK::Event::Type type = pTK::Event::Type::KeyReleased;
-    
+
     if (keyFlagMod != 0)
     {
         if (data->modsPressed & keyFlagMod)
@@ -268,7 +268,7 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
             data->modsPressed |= keyFlagMod;
         }
     }
-    
+
     pTK::KeyEvent evt{type, key, mods};
     window->parent()->sendEvent(&evt);
 }
@@ -560,13 +560,13 @@ namespace pTK
     {
         @autoreleasepool {
             CGFloat frameHeight = m_data->window.frame.size.height - [m_data->window contentRectForFrameRect: m_data->window.frame].size.height;
-            
+
             const NSSize minSize = NSMakeSize(min.width, min.height + frameHeight);
             [m_data->window setMinSize:minSize];
-            
+
             const NSSize maxSize = NSMakeSize(max.width, max.height + ((max.height != Size::Limits::Max) ? frameHeight : 0));
             [m_data->window setMaxSize:maxSize];
-            
+
             return true;
         }
     }

@@ -11,7 +11,7 @@
 // pTK Headers
 #include "ptk/util/Point.hpp"
 #include "ptk/util/Size.hpp"
-#include "ptk/core/platform/ContextBase.hpp"
+#include "ptk/platform/base/ContextBase.hpp"
 #include "ptk/Core.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/core/WindowInfo.hpp"

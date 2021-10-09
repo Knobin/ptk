@@ -9,7 +9,7 @@
 #define PTK_PLATFORM_MAC_APPLICATION_HPP
 
 // pTK Headers
-#include "ptk/core/platform/ApplicationBase.hpp"
+#include "ptk/platform/base/ApplicationBase.hpp"
 #include "ptk/menu/MenuBar.hpp"
 
 namespace pTK
@@ -45,11 +45,11 @@ namespace pTK
         void waitEventsTimeout(uint ms) override;
 
         static void SetMenuBar(const Ref<MenuBar>& menuBar);
-    
+
     private:
         Application_mac() = default;
         virtual ~Application_mac() = default;
-        
+
     private:
         static Application_mac s_Instance;
     };

@@ -6,11 +6,11 @@
 //
 
 // Local Headers
-#include "MainWindow_win.hpp"
-#include "Application_win.hpp"
-#include "../common/RasterContext.hpp"
-#include "RasterPolicy_win.hpp"
-#include "MenuBarUtil_win.hpp"
+#include "ptk/platform/win/MainWindow_win.hpp"
+#include "ptk/platform/win/Application_win.hpp"
+#include "ptk/platform/common/RasterContext.hpp"
+#include "ptk/platform/win/RasterPolicy_win.hpp"
+#include "ptk/platform/win/MenuBarUtil_win.hpp"
 
 // pTK Headers
 #include "ptk/Application.hpp"
@@ -19,7 +19,7 @@
 
 // Include OpenGL backend if HW Acceleration is enabled.
 #ifdef PTK_OPENGL
-#include "GLContext_win.hpp"
+#include "ptk/platform/win/GLContext_win.hpp"
 #endif // PTK_OPENGL
 
 // Windows Headers
@@ -66,7 +66,7 @@ namespace pTK
         adjustedSize.left = 0;
         adjustedSize.right = from.width;
         ::AdjustWindowRectExForDpi (&adjustedSize, style, menu, 0, static_cast<UINT>(dpi));
-        return {static_cast<Size::value_type>(adjustedSize.right - adjustedSize.left), 
+        return {static_cast<Size::value_type>(adjustedSize.right - adjustedSize.left),
                 static_cast<Size::value_type>(adjustedSize.bottom - adjustedSize.top)};
     }
 
@@ -96,7 +96,7 @@ namespace pTK
     };
 
     ///////////////////////////////////////////////////////////////////////////////
-    
+
     MainWindow_win::MainWindow_win(Window *window, const std::string& name, const Size& size, const WindowInfo& flags)
         : MainWindowBase(window)
     {
@@ -371,7 +371,7 @@ namespace pTK
     {
         RECT rect{};
         ::GetWindowRect(m_hwnd, &rect);
-        return {static_cast<Size::value_type>(rect.right - rect.left), 
+        return {static_cast<Size::value_type>(rect.right - rect.left),
                 static_cast<Size::value_type>(rect.bottom - rect.top)};
     }
 
@@ -497,7 +497,7 @@ namespace pTK
         RECT rc{};
         if (::GetClientRect(hwnd, &rc) && (rc.right != 0 && rc.bottom != 0))
         {
-            if (static_cast<Size::value_type>(rc.right) != data->size.width || 
+            if (static_cast<Size::value_type>(rc.right) != data->size.width ||
                 static_cast<Size::value_type>(rc.bottom) != data->size.height)
             {
                 if (backend)

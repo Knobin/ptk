@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "KeyMap_mac.hpp"
+#include "ptk/platform/mac/KeyMap_mac.hpp"
 
 namespace pTK
 {
@@ -27,19 +27,19 @@ namespace pTK
         map[0x0C] = Key::Q; map[0x0F] = Key::R; map[0x01] = Key::S; map[0x11] = Key::T;
         map[0x20] = Key::U; map[0x09] = Key::V; map[0x0D] = Key::W; map[0x07] = Key::X;
         map[0x10] = Key::Y; map[0x06] = Key::Z;
-        
+
         map[0x33] = Key::Backspace;
         map[0x75] = Key::Delete;
-        
+
         map[0x7C] = Key::Right; map[0x7B] = Key::Left;
         map[0x7D] = Key::Down; map[0x7E] = Key::Up;
-        
+
         map[0x38] = Key::LeftShift; map[0x3B] = Key::LeftControl;
         map[0x3A] = Key::LeftAlt; map[0x37] = Key::LeftSuper;
-        
+
         map[0x3C] = Key::LeftShift; map[0x3E] = Key::LeftControl;
         map[0x3D] = Key::LeftAlt; map[0x36] = Key::LeftSuper;
-        
+
         return map;
     }
 

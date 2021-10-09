@@ -9,7 +9,7 @@
 #define PTK_WINDOW_HPP
 
 // pTK Headers
-#include "ptk/core/platform/MainWindowBase.hpp"
+#include "ptk/platform/base/MainWindowBase.hpp"
 #include "ptk/util/SingleObject.hpp"
 #include "ptk/widgets/VBox.hpp"
 #include "ptk/core/Event.hpp"

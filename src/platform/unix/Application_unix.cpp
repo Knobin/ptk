@@ -6,8 +6,8 @@
 //
 
 // Local Headers
-#include "Application_unix.hpp"
-#include "MainWindow_unix.hpp"
+#include "ptk/platform/unix/Application_unix.hpp"
+#include "ptk/platform/unix/MainWindow_unix.hpp"
 
 // pTK Headers
 #include "ptk/Application.hpp"
@@ -38,7 +38,7 @@ namespace pTK
 
     void Application_unix::Init(const std::string&)
     {
-        if (s_appData.initialized) 
+        if (s_appData.initialized)
         {
             PTK_ERROR("App already initialized");
             return;
@@ -117,7 +117,7 @@ namespace pTK
             XNextEvent(display, &event);
             evtFound = true;
         }
-        
+
         if (evtFound)
         {
             handleEvent(&event);
@@ -131,7 +131,7 @@ namespace pTK
     {
         return s_appData.display;
     }
-    
+
     XContext Application_unix::Context()
     {
         return s_appData.xcontext;
@@ -182,7 +182,7 @@ namespace pTK
         Window *window{nullptr};
         if (XFindContext(s_appData.display, event->xany.window, s_appData.xcontext, reinterpret_cast<XPointer*>(&window)) != 0)
             return;
-            
+
         switch (event->type)
         {
             case Expose:
@@ -246,7 +246,7 @@ namespace pTK
             }
             case MotionNotify:
             {
-                MotionEvent mEvt{{static_cast<Point::value_type>(event->xbutton.x), 
+                MotionEvent mEvt{{static_cast<Point::value_type>(event->xbutton.x),
                                     static_cast<Point::value_type>(event->xbutton.y)}};
                 window->sendEvent(&mEvt);
                 break;

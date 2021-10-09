@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "GLContext_win.hpp"
+#include "ptk/platform/win/GLContext_win.hpp"
 
 // OpenGL Windows Headers
 #include <GL/gl.h>

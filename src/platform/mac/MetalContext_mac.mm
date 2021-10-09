@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "MetalContext_mac.hpp"
+#include "ptk/platform/mac/MetalContext_mac.hpp"
 
 // pTK Headers
 #include "ptk/core/Exception.hpp"
@@ -42,14 +42,14 @@ namespace pTK
                 m_context->abandonContext();
                 m_context.reset();
             }
-            
+
             m_mainView.layer = nil;
             m_mainView.wantsLayer = NO;
-            
+
             m_metalLayer = nil;
             [m_queue release];
             [m_device release];
-            
+
             PTK_INFO("Destroyed MetalContext_mac");
         } // autoreleasepool
     }
@@ -65,18 +65,18 @@ namespace pTK
             if (!m_queue)
                 throw ContextError("Could not create command queue");
             [m_queue setLabel:@"PTK Main Queue"];
-                
+
             m_metalLayer = [CAMetalLayer layer];
             m_metalLayer.device = m_device;
             m_metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
-            
+
             NSRect rect;
             NSRect frameRect = [m_mainView frame];
             rect.size.width = size.width;
             rect.size.height = size.height;
             m_metalLayer.drawableSize = rect.size;
             m_metalLayer.frame = frameRect;
-                
+
             BOOL useVsync = YES;
             m_metalLayer.displaySyncEnabled = useVsync;
             m_metalLayer.layoutManager = [CAConstraintLayoutManager layoutManager];
@@ -85,7 +85,7 @@ namespace pTK
             m_metalLayer.magnificationFilter = kCAFilterNearest;
             NSColorSpace* cs = m_mainView.window.colorSpace;
             m_metalLayer.colorspace = cs.CGColorSpace;
-                
+
             m_metalLayer.contentsScale = static_cast<double>(scale.x);
             m_mainView.wantsLayer = YES;
             m_mainView.layer = m_metalLayer;
@@ -93,14 +93,14 @@ namespace pTK
             m_context = GrContext::MakeMetal([m_device retain], [m_queue retain]);
             if (!m_context)
                 throw ContextError("Could not create GrContext");
-                
+
             Size fSize{static_cast<Size::value_type>(rect.size.width),
                 static_cast<Size::value_type>(rect.size.height)};
-            
+
             PTK_INFO("Initialized MetalContext_mac");
         } // autoreleasepool
     }
-    
+
     void MetalContext_mac::resize(const Size& size)
     {
         @autoreleasepool {
@@ -122,11 +122,11 @@ namespace pTK
                 CFRelease(m_drawableHandle);
                 m_drawableHandle = nullptr;
             }
-            
+
             sk_sp<SkSurface> surface;
             if (m_context)
                 surface = SkSurface::MakeFromCAMetalLayer(m_context.get(), m_metalLayer, kTopLeft_GrSurfaceOrigin, 1, kBGRA_8888_SkColorType, nullptr, nullptr, &m_drawableHandle);
-            
+
             return surface;
         } // autoreleasepool
     }
@@ -138,12 +138,12 @@ namespace pTK
               PTK_WARN("Could not acquire next Metal drawable from the SkSurface.");
               return;
             }
-            
+
             id<MTLCommandBuffer> commandBuffer = [m_queue commandBuffer];
             id<CAMetalDrawable> drawable = reinterpret_cast<id<CAMetalDrawable>>(m_drawableHandle);
             CFRelease(m_drawableHandle);
             m_drawableHandle = nullptr;
-            
+
             [commandBuffer commit];
             [commandBuffer waitUntilScheduled];
             [drawable present];

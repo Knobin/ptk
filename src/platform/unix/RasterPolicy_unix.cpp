@@ -6,8 +6,8 @@
 //
 
 // Local Headers
-#include "RasterPolicy_unix.hpp"
-#include "Application_unix.hpp"
+#include "ptk/platform/unix/RasterPolicy_unix.hpp"
+#include "ptk/platform/unix/Application_unix.hpp"
 
 // pTK Headers
 #include "ptk/Log.hpp"
@@ -42,7 +42,7 @@ namespace pTK
             m_image = nullptr;
             delete [] static_cast<uint32_t*>(pixels);
         }
-        
+
         const std::size_t width{static_cast<std::size_t>(nSize.width)};
         const std::size_t height{static_cast<std::size_t>(nSize.height)};
 
@@ -52,17 +52,17 @@ namespace pTK
 
         pixels = static_cast<void*>(buffer);
         size = sizeof(uint32_t) * width * height;
-        
+
         wSize = nSize;
-        m_image = XCreateImage(App::Display(), m_info.visual, 24, ZPixmap, 0, static_cast<char*>(pixels), 
+        m_image = XCreateImage(App::Display(), m_info.visual, 24, ZPixmap, 0, static_cast<char*>(pixels),
                                 static_cast<unsigned int>(nSize.width), static_cast<unsigned int>(nSize.height), 32, 0);
-        
+
         return true;
     }
 
     void RasterPolicy_unix::swapBuffers() const
     {
-        XPutImage(App::Display(), *m_window, m_gc, m_image, 0, 0, 0, 0, 
+        XPutImage(App::Display(), *m_window, m_gc, m_image, 0, 0, 0, 0,
                 static_cast<unsigned int>(wSize.width), static_cast<unsigned int>(wSize.height));
     }
 }

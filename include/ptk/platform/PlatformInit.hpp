@@ -9,7 +9,7 @@
 #define PTK_PLATFORM_PLATFORMINIT_HPP
 
 // pTK Headers
-#include "ptk/core/platform/ApplicationBase.hpp"
+#include "ptk/platform/base/ApplicationBase.hpp"
 
 namespace pTK
 {

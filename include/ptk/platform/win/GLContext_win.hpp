@@ -1,25 +1,25 @@
 //
-//  platform/mac/MetalContext_mac.h
+//  platform/win/WinRasterContext.hpp
 //  pTK
 //
-//  Created by Robin Gustafsson on 2020-09-12.
+//  Created by Robin Gustafsson on 2020-04-20.
 //
 
-#ifndef PTK_PlATFORM_MAC_METALCONTEXT_HPP
-#define PTK_PlATFORM_MAC_METALCONTEXT_HPP
+#ifndef PTK_PlATFORM_WIN_WINGLCONTEXT_HPP
+#define PTK_PlATFORM_WIN_WINGLCONTEXT_HPP
 
 // pTK Headers
-#include "ptk/core/platform/ContextBase.hpp"
+#include "ptk/platform/base/ContextBase.hpp"
+
+// Windows Headers
+#define NOMINMAX
+#include <windows.h>
+
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
 #include "include/gpu/GrContext.h"
 PTK_DISABLE_WARN_END()
-
-#import <Metal/Metal.h>
-#import <QuartzCore/CAMetalLayer.h>
-
-@class NSView;
 
 namespace pTK
 {
@@ -28,19 +28,19 @@ namespace pTK
         Context for a hardware based OpenGL Windows backend.
         All drawings will be done using the GPU.
     */
-    class MetalContext_mac : public ContextBase
+    class GLContext_win : public ContextBase
     {
     public:
         /** Constructs GLContext_win with default values.
 
             @return    default initialized GLContext_win
         */
-        MetalContext_mac(void* mainView, const Size& size, const Vec2f& scale);
+        GLContext_win(HWND handle, const Size& size);
 
         /** Win32RasterCanvas for GLCanvas.
 
         */
-        virtual ~MetalContext_mac();
+        virtual ~GLContext_win();
 
         /** Function for resizing the context.
 
@@ -61,19 +61,14 @@ namespace pTK
         void swapBuffers() override;
 
     private:
-        void init(void* mainView, const Size& size, const Vec2f& scale);
-        
-    private:
+        HWND m_hwnd;
+        HGLRC m_hglrc;
+        sk_sp<SkSurface> m_surface;
         sk_sp<GrContext> m_context;
+        GrGLFramebufferInfo m_info;
+        SkColorType m_colorType;
         SkSurfaceProps m_props;
-        
-        NSView* m_mainView;
-        id<MTLDevice> m_device;
-        id<MTLCommandQueue> m_queue;
-        CAMetalLayer* m_metalLayer;
-        mutable GrMTLHandle m_drawableHandle = nil;
     };
 }
 
-
-#endif // PTK_PlATFORM_MAC_METALCONTEXT_HPP
+#endif // PTK_PlATFORM_WIN_WINGLCONTEXT_HPP

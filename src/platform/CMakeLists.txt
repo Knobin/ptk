@@ -2,16 +2,11 @@
 # File used to add the platform specific files to pTK.
 
 # MacOS files
-set(PLATFORM_FILES_MAC platform/mac/Application_mac.hpp
-    platform/mac/Application_mac.mm
-    platform/mac/MainWindow_mac.hpp
+set(PLATFORM_FILES_MAC platform/mac/Application_mac.mm
     platform/mac/MainWindow_mac.mm
-    platform/mac/KeyMap_mac.hpp
     platform/mac/KeyMap_mac.cpp
-    platform/mac/RasterPolicy_mac.hpp
     platform/mac/RasterPolicy_mac.mm)
-set(PLATFORM_FILES_MAC_METAL platform/mac/MetalContext_mac.hpp
-    platform/mac/MetalContext_mac.mm)
+set(PLATFORM_FILES_MAC_METAL platform/mac/MetalContext_mac.mm)
 
 # Windows files
 set(PLATFORM_FILES_WIN platform/win/Application_win.cpp
@@ -29,9 +24,7 @@ set(PLATFORM_FILES_UNIX platform/unix/Application_unix.cpp
 set(PLATFORM_FILES_UNIX_OPENGL platform/unix/GLContext_unix.cpp)
 
 # Set platform files
-set(PLATFORM_FILES platform/Platform.hpp
-        platform/PlatformInit.hpp
-        platform/PlatformInit.cpp)
+set(PLATFORM_FILES platform/PlatformInit.cpp platform/base/ContextBase.cpp)
 if (PTK_PLATFORM STREQUAL "Unix")
     set(PLATFORM_FILES ${PLATFORM_FILES}
         ${PLATFORM_FILES_UNIX})

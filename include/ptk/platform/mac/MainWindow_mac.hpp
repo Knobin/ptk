@@ -1,18 +1,17 @@
 //
-//  platform/unix/MainWindow_unix.hpp
+//  platform/mac/MainWindow_win.hpp
 //  pTK
 //
-//  Created by Robin Gustafsson on 2020-10-10.
+//  Created by Robin Gustafsson on 2020-08-20.
 //
 
-#ifndef PTK_PLATFORM_UNIX_MAINWINDOW_HPP
-#define PTK_PLATFORM_UNIX_MAINWINDOW_HPP
-
-// Local Headers
-#include "x11.hpp"
+#ifndef PTK_PlATFORM_MAC_MAINWINDOW_HPP
+#define PTK_PlATFORM_MAC_MAINWINDOW_HPP
 
 // pTK Headers
-#include "ptk/core/platform/MainWindowBase.hpp"
+#include "ptk/platform/base/MainWindowBase.hpp"
+#include "ptk/core/Event.hpp"
+#include "ptk/events/MouseEvent.hpp"
 
 // C++ Headers
 #include <map>
@@ -21,27 +20,27 @@ namespace pTK
 {
     class Window;
 
-    /** MainWindow_unix class implementation.
+    /** MainWindow_mac class implementation.
 
-        This class handles the Windows Window.
+        This class handles the macOS Cocoa Window.
     */
-    class MainWindow_unix : public MainWindowBase
+    class MainWindow_mac : public MainWindowBase
     {
     public:
-        /** Constructs MainWindow_unix with default values.
+        /** Constructs MainWindow_win with default values.
 
-            @param window   parent Window class
+            @param window   pointer to parent Window
             @param name     name of the window
             @param size     size of the window
-            @param backend  type of backend
-            @return         default initialized MainWindow_unix
+            @param flags    setup flags for the window
+            @return         default initialized MainWindow_mac
         */
-        MainWindow_unix(Window *window, const std::string& name, const Size& size, WindowInfo info);
+        MainWindow_mac(Window *window, const std::string& name, const Size& size, const WindowInfo& flags);
 
-        /** Destructor for MainWindow_unix.
+        /** Destructor for MainWindow_win.
 
         */
-        virtual ~MainWindow_unix();
+        virtual ~MainWindow_mac();
 
         /** Function for closing the window.
 
@@ -176,29 +175,31 @@ namespace pTK
         */
         bool setScaleHint(const Vec2f& scale) override;
 
-        ::Window xWindow() const;
-        Atom deleteAtom() const;
+        /** Function for retrieving the NSWindow id.
 
-        Size& lastSize();
-        Point& lastPos();
+            @return     id of the NSWindow
+        */
+        [[nodiscard]] long windowID() const;
+
+        /** Function for retrieving the NSWindow pointer.
+
+            Be sure to cast this to a NSWindow*.
+
+            @return     pointer to NSWindow
+        */
+        [[nodiscard]] void *nsWindow() const;
+
+    public:
+        // Structure for internal window data.
+        struct WinData;
 
     private:
-        std::pair<unsigned long, unsigned char*> getWindowProperty(Atom property, Atom type) const;
+        void init(const std::string& name, const Size& size, const WindowInfo& flags);
 
     private:
         std::unique_ptr<ContextBase> m_context;
-
-        sk_sp<SkSurface> m_surface;
-        // GC m_gc;
-
-        Size m_lastSize;
-        Point m_lastPos{};
-        Vec2f m_scale{1.0f, 1.0f};
-
-        ::Window m_window;
-        Atom m_atomWmDeleteWindow;
-        XVisualInfo m_info;
+        std::unique_ptr<WinData> m_data;
     };
 }
 
-#endif // PTK_PLATFORM_UNIX_MAINWINDOW_HPP
+#endif // PTK_PlATFORM_MAC_MAINWINDOW_HPP

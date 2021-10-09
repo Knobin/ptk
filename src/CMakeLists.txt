@@ -8,8 +8,7 @@ set(CORE_FILES core/EventCallbacks.cpp
         core/Sizable.cpp
         core/Text.cpp
         core/Widget.cpp
-        core/WidgetContainer.cpp
-        core/platform/ContextBase.cpp)
+        core/WidgetContainer.cpp)
 
 set(EVENT_FILES events/KeyMap.cpp)
 

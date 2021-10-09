@@ -9,10 +9,10 @@
 #define PTK_PlATFORM_UNIX_GLCONTEXT_HPP
 
 // Local Headers
-#include "x11.hpp"
+#include "ptk/platform/unix/x11.hpp"
 
 // pTK Headers
-#include "ptk/core/platform/ContextBase.hpp"
+#include "ptk/platform/base/ContextBase.hpp"
 
 // OpenGL Headers
 extern "C" {

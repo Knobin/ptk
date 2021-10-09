@@ -6,8 +6,8 @@
 //
 
 // Local Headers
-#include "PlatformInit.hpp"
-#include "Platform.hpp"
+#include "ptk/platform/PlatformInit.hpp"
+#include "ptk/platform/Platform.hpp"
 
 namespace pTK
 {

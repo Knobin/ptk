@@ -13,13 +13,13 @@
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
-#include "ptk/core/platform/ContextBase.hpp"
+#include "ptk/platform/base/ContextBase.hpp"
 PTK_DISABLE_WARN_END()
 
 namespace pTK
 {
     /** Drawable class implementation.
-     
+
         This class is the base class for drawable widget.
         Widgets without this class cannot be drawn.
     */
@@ -27,7 +27,7 @@ namespace pTK
     {
     public:
         /** Constructs Drawable with default values.
-         
+
             @return    default initialized Drawable
         */
         Drawable()
@@ -39,15 +39,15 @@ namespace pTK
 
         */
         virtual ~Drawable() = default;
-        
+
         /** Draw function.
-         
+
             Function is called when it is time to draw.
-         
+
             @param canvas   SkCanvas to draw to.
         */
         virtual void onDraw(SkCanvas*) {}
-        
+
         /** Function to enable drawing.
 
         */
@@ -55,24 +55,24 @@ namespace pTK
         {
             m_visible = true;
         }
-        
+
         /** Function to disable drawing and hide it.
-         
+
         */
         virtual void hide()
         {
             m_visible = false;
         }
-        
+
         /** Function for checking if it is visible.
-         
+
             @return    status
         */
         bool visible() const
         {
             return m_visible;
         }
-        
+
     private:
         bool m_visible;
     };

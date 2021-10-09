@@ -6,8 +6,8 @@
 //
 
 // Local Headers
-#include "Application_win.hpp"
-#include "MainWindow_win.hpp"
+#include "ptk/platform/win/Application_win.hpp"
+#include "ptk/platform/win/MainWindow_win.hpp"
 
 // pTK Headers
 #include "ptk/core/Exception.hpp"

@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "platform/Platform.hpp"
+#include "ptk/platform/Platform.hpp"
 
 // pTK Headers
 #include "ptk/Window.hpp"
@@ -46,16 +46,16 @@ namespace pTK
         m_eventQueue.lock();
         std::size_t eventCount{m_eventQueue.size()};
         m_eventQueue.unlock();
-        
+
         while (eventCount > 0)
         {
             m_eventQueue.lock();
             std::unique_ptr<Event> event = std::move(m_eventQueue.front());
             m_eventQueue.pop();
             m_eventQueue.unlock();
-            
+
             handleEvent(event.get());
-            
+
             --eventCount;
             if (eventCount == 0)
             {
@@ -300,7 +300,7 @@ namespace pTK
         Vec2f scale{m_winBackend->getDPIScale()};
         matrix.setScale(scale.x, scale.y);
         canvas->setMatrix(matrix);
-    
+
         // Background.
         Size size{getSize()};
         SkRect rect{0, 0, static_cast<float>(size.width), static_cast<float>(size.height)};
@@ -308,7 +308,7 @@ namespace pTK
         SkPaint paint{};
         paint.setARGB(255, bg.r, bg.g, bg.b);
         canvas->drawRect(rect, paint);
-        
+
         for (auto& widget : *this)
             widget->onDraw(canvas);
 

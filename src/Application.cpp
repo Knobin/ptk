@@ -7,8 +7,8 @@
 //
 
 // Local Headers
-#include "platform/Platform.hpp"
-#include "platform/PlatformInit.hpp"
+#include "ptk/platform/Platform.hpp"
+#include "ptk/platform/PlatformInit.hpp"
 
 // pTK Headers
 #include "ptk/Application.hpp"

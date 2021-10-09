@@ -6,9 +6,9 @@
 //
 
 // Local Headers
-#include "Application_mac.hpp"
-#include "MainWindow_mac.hpp"
-#include "Utility_mac.hpp"
+#include "ptk/platform/mac/Application_mac.hpp"
+#include "ptk/platform/mac/MainWindow_mac.hpp"
+#include "ptk/platform/mac/Utility_mac.hpp"
 
 // pTK Headers
 #include "ptk/Application.hpp"
@@ -155,7 +155,7 @@ namespace pTK
             PTK_WARN("Application_mac already initialized!");
             return;
         }
-        
+
         @autoreleasepool {
             [NSApplication sharedApplication];
 
@@ -303,7 +303,7 @@ namespace pTK
                     [mItem setState: NSControlStateValueOn];
                 else if (item->status() == MenuItemStatus::Unchecked)
                     [mItem setState: NSControlStateValueOff];
-                
+
                 item->onUpdate("NS::Toggle", [mItem, nmItem](){
                     MenuItemStatus status{nmItem->status()};
                     if (status == MenuItemStatus::Checked)

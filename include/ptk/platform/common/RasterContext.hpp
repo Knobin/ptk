@@ -9,7 +9,7 @@
 #define PTK_PlATFORM_COMMON_RASTERCONTEXT_HPP
 
 // pTK Headers
-#include "ptk/core/platform/ContextBase.hpp"
+#include "ptk/platform/base/ContextBase.hpp"
 #include "ptk/core/Exception.hpp"
 
 // Skia Headers

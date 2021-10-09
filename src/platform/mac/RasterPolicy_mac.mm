@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "RasterPolicy_mac.hpp"
+#include "ptk/platform/mac/RasterPolicy_mac.hpp"
 
 // macOS Headers
 #import <Cocoa/Cocoa.h>
@@ -27,7 +27,7 @@ namespace pTK
             delete [] static_cast<uint32_t*>(pixels);;
         }
     }
-    
+
     bool RasterPolicy_mac::resize(const Size& newSize)
     {
         @autoreleasepool {
