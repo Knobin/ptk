@@ -9,7 +9,7 @@
 #define PTK_WINDOW_HPP
 
 // pTK Headers
-#include "ptk/platform/base/WindowHandle.hpp"
+#include "ptk/platform/Platform.hpp"
 #include "ptk/util/SingleObject.hpp"
 #include "ptk/widgets/VBox.hpp"
 #include "ptk/core/Event.hpp"
@@ -31,8 +31,7 @@ namespace pTK
         the backend and connect the events with the widgets.
 
         Window creation is handled in the Backend and this class is sort of an API for the
-        backend. The class will always have the same size independent of platform.
-        This makes the class suitable to derive from, if needed.
+        backend.
 
         Currently, it will default to a hardware based backend if no one is specified.
         If that backend is not available, it will fall back to a software based backend.
@@ -156,7 +155,13 @@ namespace pTK
 
             @return    backend
         */
-        WindowHandle* getHandle() const;
+        const WindowHandle* getHandle() const;
+
+        /** Function for retrieving the platform handle.
+
+            @return    backend
+        */
+        WindowHandle* getHandle();
 
         /** Function for minimizing the window.
 
@@ -216,7 +221,7 @@ namespace pTK
 
     private:
         EventQueue<std::deque> m_eventQueue{};
-        std::unique_ptr<WindowHandle> m_handle{nullptr};
+        PTK_WINDOW_HANDLE_T m_handle;
         std::thread::id m_threadID;
         bool m_draw{false};
         bool m_close{false};
@@ -233,7 +238,7 @@ namespace pTK
         {
             if (std::this_thread::get_id() != m_threadID)
             {
-                m_handle->notifyEvent();
+                m_handle.notifyEvent();
             }
         }
         m_eventQueue.unlock();

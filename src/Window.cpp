@@ -15,14 +15,15 @@
 namespace pTK
 {
     Window::Window(const std::string& name, const Size& size, const WindowInfo& flags)
-        : VBox(), SingleObject(), m_threadID{std::this_thread::get_id()}, m_info{flags}
+        : VBox(), SingleObject(), m_handle{this, name, size, flags},
+          m_threadID{std::this_thread::get_id()}, m_info{flags}
     {
         // Set Widget properties.
         Sizable::setSize(size);
         setName(name);
         Drawable::hide();
 
-        m_handle = std::make_unique<PTK_WINDOW_HANDLE_T>(this, name, size, flags);
+        // m_handle = std::make_unique<PTK_WINDOW_HANDLE_T>(this, name, size, flags);
         PTK_INFO("Initialized Window");
     }
 
@@ -79,9 +80,7 @@ namespace pTK
 
     Vec2f Window::getDPIScale() const
     {
-        if (m_handle)
-            return m_handle->getDPIScale();
-        return Vec2f{};
+        return m_handle.getDPIScale();
     }
 
     bool Window::shouldClose() const
@@ -92,7 +91,7 @@ namespace pTK
     void Window::show()
     {
         Drawable::show();
-        m_handle->show();
+        m_handle.show();
 
         postEvent<PaintEvent>(Point{0, 0}, getSize());
     }
@@ -100,19 +99,18 @@ namespace pTK
     void Window::hide()
     {
         Drawable::hide();
-        m_handle->hide();
+        m_handle.hide();
     }
 
     bool Window::isHidden() const
     {
-        return m_handle->isHidden();
+        return m_handle.isHidden();
     }
 
     void Window::onSizeChange(const Size& size)
     {
         refitContent(size);
-        if (m_handle)
-            m_handle->resize(size);
+        m_handle.resize(size);
         m_draw = true;
         if (m_onResize)
             m_onResize(size);
@@ -120,8 +118,7 @@ namespace pTK
 
     void Window::onLimitChange(const Size& min, const Size& max)
     {
-        if (m_handle)
-            m_handle->setLimits(min, max);
+        m_handle.setLimits(min, max);
     }
 
     // Window specific callbacks.
@@ -237,7 +234,7 @@ namespace pTK
             case Event::Type::WindowScale:
             {
                 ScaleEvent* sEvent{static_cast<ScaleEvent*>(event)};
-                m_handle->setScaleHint(sEvent->scale);
+                m_handle.setScaleHint(sEvent->scale);
                 m_draw = true;
                 break;
             }
@@ -282,7 +279,7 @@ namespace pTK
         if (!m_close)
         {
             m_close = true;
-            m_handle->close();
+            m_handle.close();
             if (m_onClose)
                 m_onClose();
         }
@@ -290,14 +287,14 @@ namespace pTK
 
     void Window::forceDrawAll()
     {
-        m_handle->beginPaint();
-        ContextBase* context{m_handle->getContext()};
+        m_handle.beginPaint();
+        ContextBase* context{m_handle.getContext()};
         sk_sp<SkSurface> surface = context->surface();
         SkCanvas* canvas{surface->getCanvas()};
 
         // Apply monitor scale.
         SkMatrix matrix{};
-        Vec2f scale{m_handle->getDPIScale()};
+        Vec2f scale{m_handle.getDPIScale()};
         matrix.setScale(scale.x, scale.y);
         canvas->setMatrix(matrix);
 
@@ -313,30 +310,30 @@ namespace pTK
             widget->onDraw(canvas);
 
         surface->flushAndSubmit();
-        m_handle->swapBuffers();
-        m_handle->endPaint();
+        m_handle.swapBuffers();
+        m_handle.endPaint();
     }
 
     void Window::setPosHint(const Point& pos)
     {
-        if (m_handle && m_handle->setPosHint(pos))
+        if (m_handle.setPosHint(pos))
             if (m_onMove)
                 m_onMove(pos);
     }
 
     Point Window::getWinPos() const
     {
-        return m_handle->getWinPos();
+        return m_handle.getWinPos();
     }
 
     Size Window::getWinSize() const
     {
-        return m_handle->getWinSize();
+        return m_handle.getWinSize();
     }
 
     void Window::setTitle(const std::string& name)
     {
-        m_handle->setTitle(name);
+        m_handle.setTitle(name);
     }
 
     bool Window::setIcon(const std::string& path)
@@ -356,7 +353,7 @@ namespace pTK
                 std::unique_ptr<byte[]> pixelData{std::make_unique<byte[]>(storageSize)};
 
                 if (image->readPixels(imageInfo, pixelData.get(), imageInfo.minRowBytes(), 0, 0))
-                    return m_handle->setIcon(static_cast<int32>(image->width()),
+                    return m_handle.setIcon(static_cast<int32>(image->width()),
                                           static_cast<int32>(image->height()), pixelData.get());
 #ifdef PTK_DEBUG
                 else
@@ -381,9 +378,14 @@ namespace pTK
         return false;
     }
 
-    WindowHandle* Window::getHandle() const
+    const WindowHandle* Window::getHandle() const
     {
-        return m_handle.get();
+        return &m_handle;
+    }
+
+    WindowHandle* Window::getHandle()
+    {
+        return &m_handle;
     }
 
     void Window::minimize()
@@ -394,8 +396,8 @@ namespace pTK
 
             // Window might not be minimized when handling the event.
             // Minimize it if so.
-            if (!m_handle->isMinimized())
-                m_handle->minimize();
+            if (!m_handle.isMinimized())
+                m_handle.minimize();
 
             Drawable::hide();
             if (m_onMinimize)
@@ -409,8 +411,8 @@ namespace pTK
         {
             // Window might be minimized when handling the event.
             // Restore it if so.
-            if (m_handle->isMinimized())
-                m_handle->restore();
+            if (m_handle.isMinimized())
+                m_handle.restore();
 
             m_minimized = false;
             Drawable::show();
@@ -426,7 +428,7 @@ namespace pTK
 
     bool Window::isFocused() const
     {
-        return m_handle->isFocused();
+        return m_handle.isFocused();
     }
 
 } // namespace pTK

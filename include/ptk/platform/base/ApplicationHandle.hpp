@@ -11,13 +11,14 @@
 // pTK Headers
 #include "ptk/Core.hpp"
 #include "ptk/util/SingleObject.hpp"
-#include "ptk/Window.hpp"
 
-// C++ Headers
+// C++ Header
 #include <map>
 
 namespace pTK
 {
+    class Window;
+
     /** ApplicationHandle class implementation.
 
         This is the implementation for the Application backend.

@@ -10,6 +10,7 @@
 
 // pTK Headers
 #include "ptk/platform/base/ApplicationHandle.hpp"
+#include "ptk/events/KeyCodes.hpp"
 
 namespace pTK
 {
