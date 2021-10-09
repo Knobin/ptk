@@ -5,11 +5,11 @@
 //  Created by Robin Gustafsson on 2020-02-07.
 //
 
-#ifndef PTK_PlATFORM_WIN_MAINWINDOW_HPP
-#define PTK_PlATFORM_WIN_MAINWINDOW_HPP
+#ifndef PTK_PlATFORM_WIN_WINDOWHANDLE_HPP
+#define PTK_PlATFORM_WIN_WINDOWHANDLE_HPP
 
 // pTK Headers
-#include "ptk/platform/base/MainWindowBase.hpp"
+#include "ptk/platform/base/WindowHandle.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/events/MouseEvent.hpp"
 
@@ -29,7 +29,7 @@ namespace pTK
 
         This class handles the Windows Window.
     */
-    class MainWindow_win : public MainWindowBase
+    class WindowHandle_win : public WindowHandle
     {
     public:
         /** Constructs MainWindow_win with default values.
@@ -40,12 +40,12 @@ namespace pTK
             @param backend  type of backend
             @return         default initialized MainWindow_win
         */
-        MainWindow_win(Window *window, const std::string& name, const Size& size, const WindowInfo& flags);
+        WindowHandle_win(Window *window, const std::string& name, const Size& size, const WindowInfo& flags);
 
         /** Destructor for MainWindow_win.
 
         */
-        virtual ~MainWindow_win();
+        virtual ~WindowHandle_win();
 
         /** Function for closing the window.
 
@@ -214,4 +214,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_PlATFORM_WIN_MAINWINDOW_HPP
+#endif // PTK_PlATFORM_WIN_WINDOWHANDLE_HPP

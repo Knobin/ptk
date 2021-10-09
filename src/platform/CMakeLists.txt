@@ -9,9 +9,9 @@ set(PLATFORM_FILES_MAC platform/mac/ApplicationHandle_mac.mm
 set(PLATFORM_FILES_MAC_METAL platform/mac/MetalContext_mac.mm)
 
 # Windows files
-set(PLATFORM_FILES_WIN platform/win/Application_win.cpp
+set(PLATFORM_FILES_WIN platform/win/ApplicationHandle_win.cpp
     platform/win/KeyMap_win.cpp
-    platform/win/MainWindow_win.cpp
+    platform/win/WindowHandle_win.cpp
     platform/win/MenuBarUtil_win.cpp
     platform/win/RasterPolicy_win.cpp)
 set(PLATFORM_FILES_WIN_OPENGL platform/win/GLContext_win.cpp)

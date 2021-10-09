@@ -1,13 +1,13 @@
 //
-//  platform/win/MainWindow_win.cpp
+//  platform/win/WindowHandle_win.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-02-07.
 //
 
 // Local Headers
-#include "ptk/platform/win/MainWindow_win.hpp"
-#include "ptk/platform/win/Application_win.hpp"
+#include "ptk/platform/win/WindowHandle_win.hpp"
+#include "ptk/platform/win/ApplicationHandle_win.hpp"
 #include "ptk/platform/common/RasterContext.hpp"
 #include "ptk/platform/win/RasterPolicy_win.hpp"
 #include "ptk/platform/win/MenuBarUtil_win.hpp"
@@ -97,8 +97,8 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    MainWindow_win::MainWindow_win(Window *window, const std::string& name, const Size& size, const WindowInfo& flags)
-        : MainWindowBase(window)
+    WindowHandle_win::WindowHandle_win(Window *window, const std::string& name, const Size& size, const WindowInfo& flags)
+        : WindowHandle(window)
     {
         // Default window data.
         m_data = std::make_unique<WinBackendData>();
@@ -126,7 +126,7 @@ namespace pTK
         m_data->style = WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
         const Size adjSize{CalcAdjustedWindowSize(m_data->size, m_data->style, m_data->hasMenu, dpiX)};
         // Old position was set to CW_USEDEFAULT (replaced with flags.position).
-        m_hwnd = ::CreateWindowExW(0, L"PTK", Application_win::stringToUTF16(name).c_str(), m_data->style,
+        m_hwnd = ::CreateWindowExW(0, L"PTK", ApplicationHandle_win::stringToUTF16(name).c_str(), m_data->style,
                                     flags.position.x, flags.position.y, adjSize.width, adjSize.height,
                                      nullptr, nullptr, ::GetModuleHandleW(nullptr), nullptr);
         if (!m_hwnd)
@@ -166,10 +166,10 @@ namespace pTK
             m_data->accelTable = ::CreateAcceleratorTableW(accelShortcuts.data(), static_cast<int>(accelShortcuts.size()));
         }
 
-        PTK_INFO("Initialized MainWindow_win {}x{} at {}x{}", m_data->size.width, m_data->size.height, flags.position.x, flags.position.y);
+        PTK_INFO("Initialized WindowHandle_win {}x{} at {}x{}", m_data->size.width, m_data->size.height, flags.position.x, flags.position.y);
     }
 
-    MainWindow_win::~MainWindow_win()
+    WindowHandle_win::~WindowHandle_win()
     {
         for (auto it = m_data->menuItems.rbegin(); it != m_data->menuItems.rend(); ++it)
         {
@@ -184,10 +184,10 @@ namespace pTK
         ::DestroyAcceleratorTable(m_data->accelTable);
         m_data->accelTable = nullptr;
 
-        PTK_INFO("Destroyed MainWindow_win");
+        PTK_INFO("Destroyed WindowHandle_win");
     }
 
-    bool MainWindow_win::setPosHint(const Point& pos)
+    bool WindowHandle_win::setPosHint(const Point& pos)
     {
         if (m_data->pos != pos)
         {
@@ -205,23 +205,23 @@ namespace pTK
         return false;
     }
 
-    void MainWindow_win::beginPaint()
+    void WindowHandle_win::beginPaint()
     {
         m_ps = PAINTSTRUCT();
         m_hdc = BeginPaint(m_hwnd, &m_ps);
     }
 
-    void MainWindow_win::endPaint()
+    void WindowHandle_win::endPaint()
     {
         ::EndPaint(m_hwnd, &m_ps);
     }
 
-    bool MainWindow_win::setTitle(const std::string& name)
+    bool WindowHandle_win::setTitle(const std::string& name)
     {
-        return ::SetWindowTextW(m_hwnd, Application_win::stringToUTF16(name).c_str());
+        return ::SetWindowTextW(m_hwnd, ApplicationHandle_win::stringToUTF16(name).c_str());
     }
 
-    bool MainWindow_win::setIcon(int32 width, int32 height, byte* pixels)
+    bool WindowHandle_win::setIcon(int32 width, int32 height, byte* pixels)
     {
         // DIB information.
         BITMAPV5HEADER bmInfo{};
@@ -291,23 +291,23 @@ namespace pTK
         return true;
     }
 
-    void MainWindow_win::notifyEvent()
+    void WindowHandle_win::notifyEvent()
     {
         // Signal the window to exit the event wait.
         PostMessage(m_hwnd, WM_NULL, 0, 0);
     }
 
-    DWORD MainWindow_win::getWindowStyle() const
+    DWORD WindowHandle_win::getWindowStyle() const
     {
         return m_data->style;
     }
 
-    void MainWindow_win::swapBuffers()
+    void WindowHandle_win::swapBuffers()
     {
         m_context->swapBuffers();
     }
 
-    bool MainWindow_win::resize(const Size& size)
+    bool WindowHandle_win::resize(const Size& size)
     {
         // Apply the DPI scaling.
         const Size scaledSize{ScaleSize(size, m_data->scale)};
@@ -326,12 +326,12 @@ namespace pTK
         return true;
     }
 
-    bool MainWindow_win::close()
+    bool WindowHandle_win::close()
     {
         return ::DestroyWindow(m_hwnd);
     }
 
-    bool MainWindow_win::show()
+    bool WindowHandle_win::show()
     {
         if (!::ShowWindow(m_hwnd, SW_SHOW))
         {
@@ -342,32 +342,32 @@ namespace pTK
         return false;
     }
 
-    bool MainWindow_win::hide()
+    bool WindowHandle_win::hide()
     {
         return ::ShowWindow(m_hwnd, SW_HIDE);
     }
 
-    bool MainWindow_win::isHidden() const
+    bool WindowHandle_win::isHidden() const
     {
         return !static_cast<bool>(::IsWindowVisible(m_hwnd));
     }
 
-    ContextBase* MainWindow_win::getContext() const
+    ContextBase* WindowHandle_win::getContext() const
     {
         return m_context.get();
     }
 
-    Vec2f MainWindow_win::getDPIScale() const
+    Vec2f WindowHandle_win::getDPIScale() const
     {
         return m_data->scale;
     }
 
-    Point MainWindow_win::getWinPos() const
+    Point WindowHandle_win::getWinPos() const
     {
         return m_data->pos;
     }
 
-    Size MainWindow_win::getWinSize() const
+    Size WindowHandle_win::getWinSize() const
     {
         RECT rect{};
         ::GetWindowRect(m_hwnd, &rect);
@@ -375,7 +375,7 @@ namespace pTK
                 static_cast<Size::value_type>(rect.bottom - rect.top)};
     }
 
-    bool MainWindow_win::setLimits(const Size&, const Size&)
+    bool WindowHandle_win::setLimits(const Size&, const Size&)
     {
         RECT rect{};
         ::GetWindowRect(m_hwnd, &rect);
@@ -384,29 +384,29 @@ namespace pTK
         return true;
     }
 
-    bool MainWindow_win::minimize()
+    bool WindowHandle_win::minimize()
     {
         ::ShowWindow(m_hwnd, SW_MINIMIZE);
         return true;
     }
 
-    bool MainWindow_win::isMinimized() const
+    bool WindowHandle_win::isMinimized() const
     {
         return static_cast<bool>(IsMinimized(m_hwnd));
     }
 
-    bool MainWindow_win::restore()
+    bool WindowHandle_win::restore()
     {
         ::ShowWindow(m_hwnd, SW_RESTORE);
         return true;
     }
 
-    bool MainWindow_win::isFocused() const
+    bool WindowHandle_win::isFocused() const
     {
         return (m_hwnd == ::GetFocus());
     }
 
-    bool MainWindow_win::setScaleHint(const Vec2f& scale)
+    bool WindowHandle_win::setScaleHint(const Vec2f& scale)
     {
         if (m_data->scale != scale)
         {
@@ -417,12 +417,12 @@ namespace pTK
         return false;
     }
 
-    HWND MainWindow_win::handle() const
+    HWND WindowHandle_win::handle() const
     {
         return m_hwnd;
     }
 
-    HACCEL MainWindow_win::accelTable() const
+    HACCEL WindowHandle_win::accelTable() const
     {
         return m_data->accelTable;
     }
@@ -463,7 +463,7 @@ namespace pTK
         Window *window{data->window};
         LPMINMAXINFO lpMMI{reinterpret_cast<LPMINMAXINFO>(lParam)};
         const Size minSize{window->getMinSize()};
-        MainWindow_win* backend{static_cast<MainWindow_win*>(window->getBackend())};
+        WindowHandle_win* backend{static_cast<WindowHandle_win*>(window->getHandle())};
         const Size adjMinSize{CalcAdjustedWindowSize(ScaleSize(minSize, data->scale),
                                                      backend->getWindowStyle(), data->hasMenu, data->scale.x * 96.0f)};
         lpMMI->ptMinTrackSize.x = adjMinSize.width;
@@ -491,7 +491,7 @@ namespace pTK
         data->window->sendEvent(&evt);
     }
 
-    static void HandleWindowResize(WinBackendData* data, MainWindowBase *backend, HWND hwnd)
+    static void HandleWindowResize(WinBackendData* data, WindowHandle *backend, HWND hwnd)
     {
         Window *window{data->window};
         RECT rc{};
@@ -578,7 +578,7 @@ namespace pTK
         window->sendEvent(&evt);
     }
 
-    LRESULT MainWindow_win::WndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    LRESULT WindowHandle_win::WndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         WinBackendData* data{
             reinterpret_cast<WinBackendData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA))};
@@ -678,7 +678,7 @@ namespace pTK
             case WM_WINDOWPOSCHANGED:
             {
                 WINDOWPOS* winData{reinterpret_cast<WINDOWPOS*>(lParam)};
-                MainWindowBase* backend{window->getBackend()};
+                WindowHandle* backend{window->getHandle()};
 
                 // Window was moved.
                 if (!(winData->flags & SWP_NOMOVE))

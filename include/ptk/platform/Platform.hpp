@@ -9,10 +9,10 @@
 #define PTK_PLATFORM_HPP
 
 #if defined(PTK_PLATFORM_WINDOWS)
-    #include "win/Application_win.hpp"
-    using PTK_APPLICATION_TYPE = pTK::Application_win;
-    #include "win/MainWindow_win.hpp"
-    using PTK_MAINWINDOW_TYPE = pTK::MainWindow_win;
+    #include "win/ApplicationHandle_win.hpp"
+    using PTK_APPLICATION_HANDLE_T = pTK::ApplicationHandle_win;
+    #include "win/WindowHandle_win.hpp"
+    using PTK_WINDOW_HANDLE_T = pTK::WindowHandle_win;
     #define PTK_PLATFORM_STR "Windows"
     #include "win/KeyMap_win.hpp"
     #define PTK_KEYMAP_INIT_FUNC pTK::KeyCodeMapInit_win

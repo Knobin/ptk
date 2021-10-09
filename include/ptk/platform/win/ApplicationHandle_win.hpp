@@ -1,33 +1,33 @@
 //
-//  platform/win/Platform_win.hpp
+//  platform/win/ApplicationHandle_win.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-04-26.
 //
 
-#ifndef PTK_PLATFORM_WIN_PLATFORM_HPP
-#define PTK_PLATFORM_WIN_PLATFORM_HPP
+#ifndef PTK_PLATFORM_WIN_APPLICATIONHANDLE_HPP
+#define PTK_PLATFORM_WIN_APPLICATIONHANDLE_HPP
 
 // pTK Headers
-#include "ptk/platform/base/ApplicationBase.hpp"
+#include "ptk/platform/base/ApplicationHandle.hpp"
 
 // C++ Headers
 #include <string>
 
 namespace pTK
 {
-    /** Application_win class implementation.
+    /** ApplicationHandle_win class implementation.
 
         Base application implementation for Windows.
         This class will be instantiated when the Application is created.
     */
-    class Application_win : public ApplicationBase
+    class ApplicationHandle_win : public ApplicationHandle
     {
     public:
         static void Init(const std::string& name);
         static void Destroy();
 
-        static Application_win *Instance();
+        static ApplicationHandle_win *Instance();
 
         /** Function for polling all the window events.
 
@@ -67,12 +67,12 @@ namespace pTK
         void onWindowRemove(const std::pair<int32, Window*> item) override;
 
     private:
-        Application_win() = default;
-        virtual ~Application_win() = default;
+        ApplicationHandle_win() = default;
+        virtual ~ApplicationHandle_win() = default;
 
-        static Application_win s_Instance;
+        static ApplicationHandle_win s_Instance;
         static bool s_Initialized;
     };
 }
 
-#endif // PTK_PLATFORM_WIN_PLATFORM_HPP
+#endif // PTK_PLATFORM_WIN_APPLICATIONHANDLE_HPP
