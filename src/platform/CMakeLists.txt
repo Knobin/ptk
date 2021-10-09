@@ -2,8 +2,8 @@
 # File used to add the platform specific files to pTK.
 
 # MacOS files
-set(PLATFORM_FILES_MAC platform/mac/Application_mac.mm
-    platform/mac/MainWindow_mac.mm
+set(PLATFORM_FILES_MAC platform/mac/ApplicationHandle_mac.mm
+    platform/mac/WindowHandle_mac.mm
     platform/mac/KeyMap_mac.cpp
     platform/mac/RasterPolicy_mac.mm)
 set(PLATFORM_FILES_MAC_METAL platform/mac/MetalContext_mac.mm)

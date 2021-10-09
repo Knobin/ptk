@@ -5,11 +5,11 @@
 //  Created by Robin Gustafsson on 2020-08-20.
 //
 
-#ifndef PTK_PlATFORM_MAC_MAINWINDOW_HPP
-#define PTK_PlATFORM_MAC_MAINWINDOW_HPP
+#ifndef PTK_PlATFORM_MAC_WINDOWHANDLE_HPP
+#define PTK_PlATFORM_MAC_WINDOWHANDLE_HPP
 
 // pTK Headers
-#include "ptk/platform/base/MainWindowBase.hpp"
+#include "ptk/platform/base/WindowHandle.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/events/MouseEvent.hpp"
 
@@ -20,14 +20,14 @@ namespace pTK
 {
     class Window;
 
-    /** MainWindow_mac class implementation.
+    /** WindowHandle_mac class implementation.
 
         This class handles the macOS Cocoa Window.
     */
-    class MainWindow_mac : public MainWindowBase
+    class WindowHandle_mac : public WindowHandle
     {
     public:
-        /** Constructs MainWindow_win with default values.
+        /** Constructs WindowHandle_win with default values.
 
             @param window   pointer to parent Window
             @param name     name of the window
@@ -35,12 +35,12 @@ namespace pTK
             @param flags    setup flags for the window
             @return         default initialized MainWindow_mac
         */
-        MainWindow_mac(Window *window, const std::string& name, const Size& size, const WindowInfo& flags);
+        WindowHandle_mac(Window *window, const std::string& name, const Size& size, const WindowInfo& flags);
 
         /** Destructor for MainWindow_win.
 
         */
-        virtual ~MainWindow_mac();
+        virtual ~WindowHandle_mac();
 
         /** Function for closing the window.
 
@@ -202,4 +202,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_PlATFORM_MAC_MAINWINDOW_HPP
+#endif // PTK_PlATFORM_MAC_WINDOWHANDLE_HPP

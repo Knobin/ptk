@@ -9,7 +9,7 @@
 #define PTK_WINDOW_HPP
 
 // pTK Headers
-#include "ptk/platform/base/MainWindowBase.hpp"
+#include "ptk/platform/base/WindowHandle.hpp"
 #include "ptk/util/SingleObject.hpp"
 #include "ptk/widgets/VBox.hpp"
 #include "ptk/core/Event.hpp"
@@ -152,11 +152,11 @@ namespace pTK
         */
         bool setIcon(const std::string& path);
 
-        /** Function for retrieving the backend.
+        /** Function for retrieving the platform handle.
 
             @return    backend
         */
-        MainWindowBase* getBackend() const;
+        WindowHandle* getHandle() const;
 
         /** Function for minimizing the window.
 
@@ -216,7 +216,7 @@ namespace pTK
 
     private:
         EventQueue<std::deque> m_eventQueue{};
-        std::unique_ptr<MainWindowBase> m_winBackend{nullptr};
+        std::unique_ptr<WindowHandle> m_handle{nullptr};
         std::thread::id m_threadID;
         bool m_draw{false};
         bool m_close{false};
@@ -233,7 +233,7 @@ namespace pTK
         {
             if (std::this_thread::get_id() != m_threadID)
             {
-                m_winBackend->notifyEvent();
+                m_handle->notifyEvent();
             }
         }
         m_eventQueue.unlock();

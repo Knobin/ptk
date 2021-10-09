@@ -1,12 +1,12 @@
 //
-//  core/platform/MainWindowBase.hpp
+//  platform/base/WindowHandle.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-03-13.
 //
 
-#ifndef PTK_CORE_PLATFORM_MAINWINDOWBASE_HPP
-#define PTK_CORE_PLATFORM_MAINWINDOWBASE_HPP
+#ifndef PTK_PLATFORM_BASE_WINDOWHANDLE_HPP
+#define PTK_PLATFORM_BASE_WINDOWHANDLE_HPP
 
 // pTK Headers
 #include "ptk/util/Point.hpp"
@@ -20,30 +20,30 @@ namespace pTK
 {
     class Window;
 
-    /** MainWindowBase class implementation
+    /** WindowHandle class implementation
 
         Specifies the backend API that the platform must implement.
     */
-    class MainWindowBase
+    class WindowHandle
     {
     public:
-        MainWindowBase() = delete;
+        WindowHandle() = delete;
 
-        /** Constructs MainWindowBase with default values.
+        /** Constructs WindowHandle with default values.
 
             @param backend  type of backend
             @return         default initialized MainWindowBase
         */
-        MainWindowBase(Window *window)
+        WindowHandle(Window *window)
             : m_parent{window}
         {
 
         }
 
-        /** Destructor for MainWindowBase.
+        /** Destructor for WindowHandle.
 
         */
-        virtual ~MainWindowBase() = default;
+        virtual ~WindowHandle() = default;
 
         /** Function for showing the window.
 
@@ -205,4 +205,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_CORE_PLATFORM_MAINWINDOWBASE_HPP
+#endif // PTK_PLATFORM_BASE_WINDOWHANDLE_HPP

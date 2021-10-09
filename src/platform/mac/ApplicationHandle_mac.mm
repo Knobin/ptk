@@ -6,8 +6,8 @@
 //
 
 // Local Headers
-#include "ptk/platform/mac/Application_mac.hpp"
-#include "ptk/platform/mac/MainWindow_mac.hpp"
+#include "ptk/platform/mac/ApplicationHandle_mac.hpp"
+#include "ptk/platform/mac/WindowHandle_mac.hpp"
 #include "ptk/platform/mac/Utility_mac.hpp"
 
 // pTK Headers
@@ -91,7 +91,7 @@ namespace pTK
         bool initialized{false};
     } s_appData{};
 
-    Application_mac Application_mac::s_Instance{};
+    ApplicationHandle_mac ApplicationHandle_mac::s_Instance{};
 
     static void SetAppMenu(const std::string& name, NSMenu *menu)
     {
@@ -148,11 +148,11 @@ namespace pTK
         [menuItem setTarget : NSApp];
     }
 
-    void Application_mac::Init(const std::string& name)
+    void ApplicationHandle_mac::Init(const std::string& name)
     {
         if (s_appData.initialized)
         {
-            PTK_WARN("Application_mac already initialized!");
+            PTK_WARN("ApplicationHandle_mac already initialized!");
             return;
         }
 
@@ -178,10 +178,10 @@ namespace pTK
                 [NSApp run];
         }
 
-        PTK_INFO("Initialized Application_mac");
+        PTK_INFO("Initialized ApplicationHandle_mac");
     }
 
-    void Application_mac::Destroy()
+    void ApplicationHandle_mac::Destroy()
     {
         @autoreleasepool {
             [NSApp setDelegate:nil];
@@ -190,15 +190,15 @@ namespace pTK
             [s_appData.menuBar release];
         }
 
-        PTK_INFO("Destroyed Application_mac");
+        PTK_INFO("Destroyed ApplicationHandle_mac");
     }
 
-    ApplicationBase *Application_mac::Instance()
+    ApplicationHandle *ApplicationHandle_mac::Instance()
     {
         return &s_Instance;
     }
 
-    void Application_mac::pollEvents()
+    void ApplicationHandle_mac::pollEvents()
     {
         @autoreleasepool {
             NSEvent *event = nil;
@@ -212,7 +212,7 @@ namespace pTK
         }
     }
 
-    void Application_mac::waitEvents()
+    void ApplicationHandle_mac::waitEvents()
     {
         @autoreleasepool {
             NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny
@@ -225,7 +225,7 @@ namespace pTK
         }
     }
 
-    void Application_mac::waitEventsTimeout(uint ms)
+    void ApplicationHandle_mac::waitEventsTimeout(uint ms)
     {
         @autoreleasepool {
             NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny
@@ -366,7 +366,7 @@ namespace pTK
         [parent setSubmenu : submenu forItem : menuItem];
     }
 
-    void Application_mac::SetMenuBar(const Ref<MenuBar>& menuBar)
+    void ApplicationHandle_mac::SetMenuBar(const Ref<MenuBar>& menuBar)
     {
         [s_appData.menuBar removeAllItems];
         s_appData.menuItemMap.clear();

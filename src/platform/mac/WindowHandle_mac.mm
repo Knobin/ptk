@@ -6,9 +6,9 @@
 //
 
 // Local Headers
-#include "ptk/platform/mac/MainWindow_mac.hpp"
+#include "ptk/platform/mac/WindowHandle_mac.hpp"
 #include "ptk/platform/common/RasterContext.hpp"
-#include "ptk/platform/mac/Application_mac.hpp"
+#include "ptk/platform/mac/ApplicationHandle_mac.hpp"
 #include "ptk/platform/mac/RasterPolicy_mac.hpp"
 
 // pTK Headers
@@ -32,7 +32,7 @@
 
 namespace pTK
 {
-    struct MainWindow_mac::WinData
+    struct WindowHandle_mac::WinData
     {
         NSWindow *window;
         Size size;
@@ -48,17 +48,17 @@ namespace pTK
 
 @interface WindowDelegate : NSObject<NSWindowDelegate>
 {
-    pTK::MainWindow_mac *ptkWindow;
-    pTK::MainWindow_mac::WinData *data;
+    pTK::WindowHandle_mac *ptkWindow;
+    pTK::WindowHandle_mac::WinData *data;
 }
 
-- (WindowDelegate*)initWithWindow:(pTK::MainWindow_mac*)pWindow :(pTK::MainWindow_mac::WinData*)winData;
+- (WindowDelegate*)initWithWindow:(pTK::WindowHandle_mac*)pWindow :(pTK::WindowHandle_mac::WinData*)winData;
 
 @end
 
 @implementation WindowDelegate
 
-- (WindowDelegate*)initWithWindow:(pTK::MainWindow_mac*)pWindow :(pTK::MainWindow_mac::WinData*)winData
+- (WindowDelegate*)initWithWindow:(pTK::WindowHandle_mac*)pWindow :(pTK::WindowHandle_mac::WinData*)winData
 {
     self = [super init];
     if (self != nil)
@@ -133,12 +133,12 @@ namespace pTK
 
 @interface MainView : NSView
 {
-    pTK::MainWindow_mac *window;
-    pTK::MainWindow_mac::WinData *data;
+    pTK::WindowHandle_mac *window;
+    pTK::WindowHandle_mac::WinData *data;
     NSTrackingArea *trackingArea;
 }
 
-- (MainView*)initWithWindow:(pTK::MainWindow_mac*)initWindow :(pTK::MainWindow_mac::WinData*)winData;
+- (MainView*)initWithWindow:(pTK::WindowHandle_mac*)initWindow :(pTK::WindowHandle_mac::WinData*)winData;
 
 @end
 
@@ -172,7 +172,7 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 
 @implementation MainView
 
-- (MainView*)initWithWindow:(pTK::MainWindow_mac*)initWindow :(pTK::MainWindow_mac::WinData*)winData
+- (MainView*)initWithWindow:(pTK::WindowHandle_mac*)initWindow :(pTK::WindowHandle_mac::WinData*)winData
 {
     self = [super init];
     if (self != nil) {
@@ -315,7 +315,7 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 
 namespace pTK
 {
-    static std::unique_ptr<ContextBase> createMacContext(WindowInfo::Backend type, const std::unique_ptr<MainWindow_mac::WinData>& data)
+    static std::unique_ptr<ContextBase> createMacContext(WindowInfo::Backend type, const std::unique_ptr<WindowHandle_mac::WinData>& data)
     {
 #ifdef PTK_DEBUG
       if (data->scale.x != data->scale.y)
@@ -336,27 +336,27 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    MainWindow_mac::MainWindow_mac(Window *window, const std::string& name, const Size& size, const WindowInfo& flags)
-        : MainWindowBase(window)
+    WindowHandle_mac::WindowHandle_mac(Window *window, const std::string& name, const Size& size, const WindowInfo& flags)
+        : WindowHandle(window)
     {
         init(name, size, flags);
     }
 
-    MainWindow_mac::~MainWindow_mac()
+    WindowHandle_mac::~WindowHandle_mac()
     {
         if (m_data->window != nil)
         {
             [m_data->window close];
             m_data->window = nil;
         }
-        PTK_INFO("Destroyed MainWindow_mac");
+        PTK_INFO("Destroyed WindowHandle_mac");
     }
 
-    void MainWindow_mac::init(const std::string& name, const Size& size, const WindowInfo& flags)
+    void WindowHandle_mac::init(const std::string& name, const Size& size, const WindowInfo& flags)
     {
         @autoreleasepool {
-            m_data = std::make_unique<MainWindow_mac::WinData>();
-            PTK_ASSERT(m_data, "Could not allocate memory for data structure in MainWindow_mac");
+            m_data = std::make_unique<WindowHandle_mac::WinData>();
+            PTK_ASSERT(m_data, "Could not allocate memory for data structure in WindowHandle_mac");
             m_data->size = size;
 
             WindowDelegate *winDelegate = [[WindowDelegate alloc] initWithWindow:this:m_data.get()];
@@ -403,12 +403,12 @@ namespace pTK
 
             setTitle(name);
             m_data->pos = getWinPos();
-            Application_mac::SetMenuBar(flags.menus);
+            ApplicationHandle_mac::SetMenuBar(flags.menus);
         }
-        PTK_INFO("Initialized MainWindow_mac");
+        PTK_INFO("Initialized WindowHandle_mac");
     }
 
-    bool MainWindow_mac::setPosHint(const Point& pos)
+    bool WindowHandle_mac::setPosHint(const Point& pos)
     {
         if (pos != m_data->pos)
         {
@@ -425,7 +425,7 @@ namespace pTK
         return false;
     }
 
-    bool MainWindow_mac::setTitle(const std::string& name)
+    bool WindowHandle_mac::setTitle(const std::string& name)
     {
         NSString *str = [NSString stringWithUTF8String:name.c_str()];
         if (!str)
@@ -435,13 +435,13 @@ namespace pTK
         return true;
     }
 
-    bool MainWindow_mac::setIcon(int32, int32, byte*)
+    bool WindowHandle_mac::setIcon(int32, int32, byte*)
     {
         PTK_WARN("macOS Windows does not have icons");
         return false;
     }
 
-    void MainWindow_mac::notifyEvent()
+    void WindowHandle_mac::notifyEvent()
     {
         @autoreleasepool {
             NSEvent* event = [NSEvent otherEventWithType:NSEventTypeApplicationDefined
@@ -459,12 +459,12 @@ namespace pTK
         }
     }
 
-    void MainWindow_mac::swapBuffers()
+    void WindowHandle_mac::swapBuffers()
     {
         m_context->swapBuffers();
     }
 
-    bool MainWindow_mac::resize(const Size& size)
+    bool WindowHandle_mac::resize(const Size& size)
     {
         if (size != m_data->size)
         {
@@ -484,7 +484,7 @@ namespace pTK
         return false;
     }
 
-    bool MainWindow_mac::close()
+    bool WindowHandle_mac::close()
     {
         @autoreleasepool {
             [m_data->window close];
@@ -494,7 +494,7 @@ namespace pTK
         }
     }
 
-    bool MainWindow_mac::show()
+    bool WindowHandle_mac::show()
     {
         @autoreleasepool {
             if (m_data->window != nil)
@@ -508,7 +508,7 @@ namespace pTK
         }
     }
 
-    bool MainWindow_mac::hide()
+    bool WindowHandle_mac::hide()
     {
         @autoreleasepool {
             if (m_data->window != nil)
@@ -520,24 +520,24 @@ namespace pTK
         }
     }
 
-    bool MainWindow_mac::isHidden() const
+    bool WindowHandle_mac::isHidden() const
     {
         @autoreleasepool {
             return [m_data->window isVisible];;
         }
     }
 
-    ContextBase* MainWindow_mac::getContext() const
+    ContextBase* WindowHandle_mac::getContext() const
     {
         return m_context.get();
     }
 
-    Vec2f MainWindow_mac::getDPIScale() const
+    Vec2f WindowHandle_mac::getDPIScale() const
     {
         return m_data->scale;
     }
 
-    Point MainWindow_mac::getWinPos() const
+    Point WindowHandle_mac::getWinPos() const
     {
         @autoreleasepool {
             const NSRect rect = [m_data->window contentRectForFrameRect:[m_data->window frame]];
@@ -547,7 +547,7 @@ namespace pTK
         }
     }
 
-    Size MainWindow_mac::getWinSize() const
+    Size WindowHandle_mac::getWinSize() const
     {
         @autoreleasepool {
             const NSRect rect = [[m_data->window contentView] frame];
@@ -556,7 +556,7 @@ namespace pTK
         }
     }
 
-    bool MainWindow_mac::setLimits(const Size& min, const Size& max)
+    bool WindowHandle_mac::setLimits(const Size& min, const Size& max)
     {
         @autoreleasepool {
             CGFloat frameHeight = m_data->window.frame.size.height - [m_data->window contentRectForFrameRect: m_data->window.frame].size.height;
@@ -571,7 +571,7 @@ namespace pTK
         }
     }
 
-    bool MainWindow_mac::minimize()
+    bool WindowHandle_mac::minimize()
     {
         @autoreleasepool {
             [m_data->window miniaturize:nil];
@@ -579,14 +579,14 @@ namespace pTK
         }
     }
 
-    bool MainWindow_mac::isMinimized() const
+    bool WindowHandle_mac::isMinimized() const
     {
         @autoreleasepool {
             return [m_data->window isMiniaturized];;
         }
     }
 
-    bool MainWindow_mac::restore()
+    bool WindowHandle_mac::restore()
     {
         @autoreleasepool {
             [m_data->window deminiaturize:nil];
@@ -594,14 +594,14 @@ namespace pTK
         }
     }
 
-    bool MainWindow_mac::isFocused() const
+    bool WindowHandle_mac::isFocused() const
     {
         @autoreleasepool {
             return [m_data->window isKeyWindow];
         }
     }
 
-    bool MainWindow_mac::setScaleHint(const Vec2f& scale)
+    bool WindowHandle_mac::setScaleHint(const Vec2f& scale)
     {
         if (m_data->scale != scale)
         {
@@ -612,12 +612,12 @@ namespace pTK
         return false;
     }
 
-    long MainWindow_mac::windowID() const
+    long WindowHandle_mac::windowID() const
     {
         return m_data->id;
     }
 
-    void *MainWindow_mac::nsWindow() const
+    void *WindowHandle_mac::nsWindow() const
     {
         return static_cast<void*>(m_data->window);
     }

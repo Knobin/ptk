@@ -9,7 +9,7 @@
 #define PTK_PLATFORM_PLATFORMINIT_HPP
 
 // pTK Headers
-#include "ptk/platform/base/ApplicationBase.hpp"
+#include "ptk/platform/base/ApplicationHandle.hpp"
 
 namespace pTK
 {
@@ -17,7 +17,7 @@ namespace pTK
 
     void AppInit(const std::string& name);
     void AppDestroy();
-    ApplicationBase *AppInstance();
+    ApplicationHandle *AppInstance();
 
 } // namespace pTK
 

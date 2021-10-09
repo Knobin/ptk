@@ -18,17 +18,17 @@ namespace pTK
 
     void AppInit(const std::string& name)
     {
-        PTK_APPLICATION_TYPE::Init(name);
+        PTK_APPLICATION_HANDLE_T::Init(name);
     }
 
     void AppDestroy()
     {
-        PTK_APPLICATION_TYPE::Destroy();
+        PTK_APPLICATION_HANDLE_T::Destroy();
     }
 
-    ApplicationBase *AppInstance()
+    ApplicationHandle *AppInstance()
     {
-        return PTK_APPLICATION_TYPE::Instance();
+        return PTK_APPLICATION_HANDLE_T::Instance();
     }
 
 } // namespace pTK

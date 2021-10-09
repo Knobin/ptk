@@ -25,10 +25,10 @@
     #include "unix/KeyMap_unix.hpp"
     #define PTK_KEYMAP_INIT_FUNC pTK::KeyCodeMapInit_unix
 #elif defined(PTK_PLATFORM_APPLE)
-    #include "mac/Application_mac.hpp"
-    using PTK_APPLICATION_TYPE = pTK::Application_mac;
-    #include "mac/MainWindow_mac.hpp"
-    using PTK_MAINWINDOW_TYPE = pTK::MainWindow_mac;
+    #include "mac/ApplicationHandle_mac.hpp"
+    using PTK_APPLICATION_HANDLE_T = pTK::ApplicationHandle_mac;
+    #include "mac/WindowHandle_mac.hpp"
+    using PTK_WINDOW_HANDLE_T = pTK::WindowHandle_mac;
     #define PTK_PLATFORM_STR "Apple"
     #include "mac/KeyMap_mac.hpp"
     #define PTK_KEYMAP_INIT_FUNC pTK::KeyCodeMapInit_mac
