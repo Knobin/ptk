@@ -187,18 +187,16 @@ namespace pTK
 
             @return     pointer to NSWindow
         */
-        [[nodiscard]] void *nsWindow() const;
-
-    public:
-        // Structure for internal window data.
-        struct WinData;
+        [[nodiscard]] void *NSWindow() const;
 
     private:
         void init(const std::string& name, const Size& size, const WindowInfo& flags);
 
     private:
-        std::unique_ptr<ContextBase> m_context;
-        std::unique_ptr<WinData> m_data;
+        std::unique_ptr<ContextBase> m_context{nullptr};
+        Vec2f m_scale;
+        void *m_NSWindow{nullptr};
+        long m_id{};
     };
 }
 

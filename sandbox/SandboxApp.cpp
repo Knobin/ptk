@@ -17,7 +17,7 @@ static pTK::Color RandomColor()
     color_size hex = idist(rgen);
     hex |= 0xFF; // set alpha bits to 255.
     const pTK::Color color{hex};
-   
+
     return color;
 }
 
@@ -31,7 +31,7 @@ public:
         setColor(pTK::Color{0x00000000});
 
         onEnter([this](){
-            setColor(pTK::Color{0x2C2C2CFF});
+            setColor(hoverColor);
             return false;
         });
         onLeave([this](){
@@ -39,12 +39,12 @@ public:
             return false;
         });
         onClick([this](pTK::Mouse::Button, const pTK::Point&){
-            colorCopy = pTK::Color{0x272727FF};
-            setColor(pTK::Color{0x272727FF});
+            colorCopy = clickColor;
+            setColor(clickColor);
             return false;
         });
         onRelease([this](pTK::Mouse::Button, const pTK::Point&){
-            setColor(pTK::Color{0x2C2C2CFF});
+            setColor(hoverColor);
             return false;
         });
     }
@@ -72,6 +72,8 @@ public:
     }
 
     pTK::Color colorCopy{0x00000000};
+    pTK::Color hoverColor{0x2C2C2CFF};
+    pTK::Color clickColor{0x272727FF};
 };
 
 struct BtnManager
@@ -127,7 +129,7 @@ int main(int argc, char *argv[]) {
 
     pTK::Window window{"pTK Sandbox Window", {SCR_WIDTH, SCR_HEIGHT}, flags};
     window.setBackground(pTK::Color(0x1E1E1EFF));
-    
+
     window.onKey([](pTK::Event::Type type, pTK::Key key, byte){
         std::string str = (type == pTK::KeyEvent::Pressed) ? "pressed" : "released";
         std::cout << "Key " << str << ": " << static_cast<int32>(key) << std::endl;
@@ -195,8 +197,10 @@ int main(int argc, char *argv[]) {
 
     pTK::Margin marginL{ marginTB * 4, marginLR + marginLR / 2, marginLR, marginLR };
     pTK::Ref<CustomBtn> close = CreateCustomBtn("Close", marginL, maxWidth);
+    close->hoverColor = pTK::Color{0xDE2A33FF};
+    close->clickColor = pTK::Color{0xB8232AFF};
     close->setAlign(pTK::Align::HCenter, pTK::Align::Bottom);
-    close->onClick([&](pTK::Mouse::Button, const pTK::Point&) {
+    close->onRelease([&](pTK::Mouse::Button, const pTK::Point&) {
         app.close();
         return false;
     });

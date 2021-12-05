@@ -226,8 +226,6 @@ namespace pTK
         bool m_draw{false};
         bool m_close{false};
         bool m_minimized{false};
-        WindowInfo m_info;
-
     };
 
     template<typename T, typename... Args>

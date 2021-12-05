@@ -30,41 +30,25 @@
 // C++ Headers
 #include <cmath>
 
-namespace pTK
-{
-    struct WindowHandle_mac::WinData
-    {
-        NSWindow *window;
-        Size size;
-        Point pos;
-        Vec2f scale;
-        long id;
-        std::underlying_type<KeyEvent::Modifier>::type modsPressed = 0;
-    };
-
-} // namespace pTK
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 @interface WindowDelegate : NSObject<NSWindowDelegate>
 {
     pTK::WindowHandle_mac *ptkWindow;
-    pTK::WindowHandle_mac::WinData *data;
 }
 
-- (WindowDelegate*)initWithWindow:(pTK::WindowHandle_mac*)pWindow :(pTK::WindowHandle_mac::WinData*)winData;
+- (WindowDelegate*)initWithWindow:(pTK::WindowHandle_mac*)pWindow;
 
 @end
 
 @implementation WindowDelegate
 
-- (WindowDelegate*)initWithWindow:(pTK::WindowHandle_mac*)pWindow :(pTK::WindowHandle_mac::WinData*)winData
+- (WindowDelegate*)initWithWindow:(pTK::WindowHandle_mac*)pWindow
 {
     self = [super init];
     if (self != nil)
     {
          ptkWindow = pWindow;
-         data = winData;
     }
 
     return self;
@@ -81,26 +65,22 @@ namespace pTK
 
 - (void)windowDidResize:(NSNotification*) __unused notification
 {
-    const NSRect rect = [data->window.contentView bounds];
+    NSWindow *window = static_cast<NSWindow*>(ptkWindow->nsWindow());
+    const NSRect rect = [window.contentView bounds];
     const pTK::Size size{static_cast<pTK::Size::value_type>(rect.size.width),
                          static_cast<pTK::Size::value_type>(rect.size.height)};
-    if (size != data->size)
-    {
-        pTK::ResizeEvent evt{size};
-        ptkWindow->parent()->sendEvent(&evt);
-        ptkWindow->parent()->forceDrawAll();
-    }
+
+    pTK::ResizeEvent evt{size};
+    ptkWindow->parent()->sendEvent(&evt);
+    ptkWindow->parent()->forceDrawAll();
 
 }
 
 - (void)windowDidMove:(NSNotification*) __unused notification
 {
     pTK::Point pos{ptkWindow->getWinPos()};
-    if (pos != data->pos)
-    {
-        pTK::MoveEvent evt{pos};
-        ptkWindow->parent()->sendEvent(&evt);
-    }
+    pTK::MoveEvent evt{pos};
+    ptkWindow->parent()->sendEvent(&evt);
 }
 
 - (void)windowDidMiniaturize:(NSNotification*) __unused notification
@@ -133,12 +113,12 @@ namespace pTK
 
 @interface MainView : NSView
 {
-    pTK::WindowHandle_mac *window;
-    pTK::WindowHandle_mac::WinData *data;
+    pTK::WindowHandle_mac *ptkwindow;
+    std::underlying_type<pTK::KeyEvent::Modifier>::type modsPressed;
     NSTrackingArea *trackingArea;
 }
 
-- (MainView*)initWithWindow:(pTK::WindowHandle_mac*)initWindow :(pTK::WindowHandle_mac::WinData*)winData;
+- (MainView*)initWithWindow:(pTK::WindowHandle_mac*)initWindow;
 
 @end
 
@@ -172,12 +152,12 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 
 @implementation MainView
 
-- (MainView*)initWithWindow:(pTK::WindowHandle_mac*)initWindow :(pTK::WindowHandle_mac::WinData*)winData
+- (MainView*)initWithWindow:(pTK::WindowHandle_mac*)initWindow
 {
     self = [super init];
     if (self != nil) {
-        window = initWindow;
-        data = winData;
+        ptkwindow = initWindow;
+        modsPressed = 0;
 
         const NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow |
             NSTrackingEnabledDuringMouseDrag | NSTrackingCursorUpdate | NSTrackingInVisibleRect | NSTrackingAssumeInside;
@@ -220,14 +200,14 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 
 - (void)updateLayer
 {
-    pTK::PaintEvent evt{pTK::Point{0,0}, window->parent()->getSize()};
-    window->parent()->sendEvent(&evt);
+    pTK::PaintEvent evt{pTK::Point{0,0}, ptkwindow->parent()->getSize()};
+    ptkwindow->parent()->sendEvent(&evt);
 }
 
 - (void)drawRect:(NSRect) __unused rect
 {
-    pTK::PaintEvent evt{pTK::Point{0,0}, window->parent()->getSize()};
-    window->parent()->sendEvent(&evt);
+    pTK::PaintEvent evt{pTK::Point{0,0}, ptkwindow->parent()->getSize()};
+    ptkwindow->parent()->sendEvent(&evt);
 }
 
 
@@ -235,7 +215,7 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 {
     std::underlying_type<pTK::KeyEvent::Modifier>::type mods{GetModifiers(event.modifierFlags)};
     pTK::KeyEvent evt{pTK::Event::Type::KeyPressed, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode)), mods};
-    window->parent()->sendEvent(&evt);
+    ptkwindow->parent()->sendEvent(&evt);
 
     // [self interpretKeyEvents:@[event]];
 }
@@ -244,7 +224,7 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 {
     std::underlying_type<pTK::KeyEvent::Modifier>::type mods{GetModifiers(event.modifierFlags)};
     pTK::KeyEvent evt{pTK::Event::Type::KeyReleased, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode)), mods};
-    window->parent()->sendEvent(&evt);
+    ptkwindow->parent()->sendEvent(&evt);
 }
 
 - (void)flagsChanged:(NSEvent *)event
@@ -260,17 +240,17 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 
     if (keyFlagMod != 0)
     {
-        if (data->modsPressed & keyFlagMod)
-            data->modsPressed &= ~(keyFlagMod);
+        if (modsPressed & keyFlagMod)
+            modsPressed &= ~(keyFlagMod);
         else
         {
             type = pTK::Event::Type::KeyPressed;
-            data->modsPressed |= keyFlagMod;
+            modsPressed |= keyFlagMod;
         }
     }
 
     pTK::KeyEvent evt{type, key, mods};
-    window->parent()->sendEvent(&evt);
+    ptkwindow->parent()->sendEvent(&evt);
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent*) __unused event
@@ -280,33 +260,36 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 
 - (void)mouseDown:(NSEvent*) __unused event
 {
-    const NSPoint pos = [data->window mouseLocationOutsideOfEventStream];
-    const NSRect content = [data->window.contentView frame];
+    NSWindow *nswindow = static_cast<NSWindow*>(ptkwindow->nsWindow());
+    const NSPoint pos = [nswindow mouseLocationOutsideOfEventStream];
+    const NSRect content = [nswindow.contentView frame];
     pTK::ButtonEvent evt{pTK::Event::Type::MouseButtonPressed,
                          pTK::Mouse::Button::Left,
                          {static_cast<pTK::Point::value_type>(pos.x),
                           static_cast<pTK::Point::value_type>(content.size.height - pos.y)}};
-    window->parent()->sendEvent(&evt);
+    ptkwindow->parent()->sendEvent(&evt);
 }
 
 - (void)mouseUp:(NSEvent*) __unused event
 {
-    const NSPoint pos = [data->window mouseLocationOutsideOfEventStream];
-    const NSRect content = [data->window.contentView frame];
+    NSWindow *nswindow = static_cast<NSWindow*>(ptkwindow->nsWindow());
+    const NSPoint pos = [nswindow mouseLocationOutsideOfEventStream];
+    const NSRect content = [nswindow.contentView frame];
     pTK::ButtonEvent evt{pTK::Event::Type::MouseButtonReleased,
                          pTK::Mouse::Button::Left,
                          {static_cast<pTK::Point::value_type>(pos.x),
                           static_cast<pTK::Point::value_type>(content.size.height - pos.y)}};
-    window->parent()->sendEvent(&evt);
+    ptkwindow->parent()->sendEvent(&evt);
 }
 
 - (void)mouseMoved:(NSEvent*) event
 {
+    NSWindow *nswindow = static_cast<NSWindow*>(ptkwindow->nsWindow());
     const NSPoint pos = [event locationInWindow];
-    const NSRect content = [data->window.contentView frame];
+    const NSRect content = [nswindow.contentView frame];
     pTK::MotionEvent evt{{static_cast<pTK::Point::value_type>(pos.x),
                           static_cast<pTK::Point::value_type>(content.size.height - pos.y)}};
-    window->parent()->sendEvent(&evt);
+    ptkwindow->parent()->sendEvent(&evt);
 }
 
 @end
@@ -315,22 +298,22 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 
 namespace pTK
 {
-    static std::unique_ptr<ContextBase> createMacContext(WindowInfo::Backend type, const std::unique_ptr<WindowHandle_mac::WinData>& data)
+    static std::unique_ptr<ContextBase> CreateMacContext(WindowInfo::Backend type, NSWindow *nswindow, const Size& size, const Vec2f& scale)
     {
 #ifdef PTK_DEBUG
-      if (data->scale.x != data->scale.y)
-          PTK_WARN("Window scale is not the same, x: {}, y: {}", data->scale.x, data->scale.y);
+      if (scale.x != scale.y)
+          PTK_WARN("Window scale is not the same, x: {}, y: {}", scale.x, scale.y);
 #endif
-        const Size scaledSize{static_cast<Size::value_type>(data->size.width * data->scale.x),
-                            static_cast<Size::value_type>(data->size.height * data->scale.y)};
+        const Size scaledSize{static_cast<Size::value_type>(size.width * scale.x),
+                            static_cast<Size::value_type>(size.height * scale.y)};
 #ifdef PTK_METAL
         if (type == WindowInfo::Backend::Hardware)
-            return std::make_unique<MetalContext_mac>(static_cast<void*>([data->window contentView]), scaledSize, data->scale);
+            return std::make_unique<MetalContext_mac>(static_cast<void*>([nswindow contentView]), scaledSize, scale);
 #endif
 
         // Software backend is always available.
         // Altough, it is slow on macOS and should be avoided.
-        RasterPolicy_mac policy(data->window);
+        RasterPolicy_mac policy(nswindow);
         return std::make_unique<RasterContext<RasterPolicy_mac>>(scaledSize, policy);
     }
 
@@ -344,10 +327,12 @@ namespace pTK
 
     WindowHandle_mac::~WindowHandle_mac()
     {
-        if (m_data->window != nil)
+        NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
+        if (nswindow != nil)
         {
-            [m_data->window close];
-            m_data->window = nil;
+            [nswindow close];
+            nswindow = nil;
+            m_NSWindow = nullptr;
         }
         PTK_INFO("Destroyed WindowHandle_mac");
     }
@@ -355,11 +340,7 @@ namespace pTK
     void WindowHandle_mac::init(const std::string& name, const Size& size, const WindowInfo& flags)
     {
         @autoreleasepool {
-            m_data = std::make_unique<WindowHandle_mac::WinData>();
-            PTK_ASSERT(m_data, "Could not allocate memory for data structure in WindowHandle_mac");
-            m_data->size = size;
-
-            WindowDelegate *winDelegate = [[WindowDelegate alloc] initWithWindow:this:m_data.get()];
+            WindowDelegate *winDelegate = [[WindowDelegate alloc] initWithWindow:this];
 
             // Default is currently MainDisplay (where 0,0 is), could cause some headaches later on.
             // Same with setPosHint, don't have a secondary monitor to test on right now.
@@ -368,29 +349,30 @@ namespace pTK
             const NSRect rect = NSMakeRect(flags.position.x, y, size.width, size.height);
 
             NSUInteger style = (NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable);
-            m_data->window = [[NSWindow alloc] initWithContentRect:rect styleMask:style backing:NSBackingStoreBuffered defer:NO];
+            NSWindow *nswindow = [[NSWindow alloc] initWithContentRect:rect styleMask:style backing:NSBackingStoreBuffered defer:NO];
+            m_NSWindow = static_cast<void*>(nswindow);
 
-            MainView *view = [[MainView alloc] initWithWindow:this:m_data.get()];
+            MainView *view = [[MainView alloc] initWithWindow:this];
             if (view == nil)
                 throw WindowError("Failed to allocate Mainview");
 
-            [m_data->window setContentView:view];
-            [m_data->window makeFirstResponder:view];
-            [m_data->window setDelegate:winDelegate];
-            [m_data->window setAcceptsMouseMovedEvents:YES];
-            [m_data->window setRestorable:NO];
+            [nswindow setContentView:view];
+            [nswindow makeFirstResponder:view];
+            [nswindow setDelegate:winDelegate];
+            [nswindow setAcceptsMouseMovedEvents:YES];
+            [nswindow setRestorable:NO];
 
             [view release];
 
-            m_data->id = m_data->window.windowNumber;
+            m_id = nswindow.windowNumber;
 
-            const NSRect fRect = [m_data->window.contentView frame];
-            const NSRect pRect = [m_data->window.contentView convertRectToBacking:fRect];
-            m_data->scale = {static_cast<Vec2f::value_type>(pRect.size.width / fRect.size.width),
+            const NSRect fRect = [nswindow.contentView frame];
+            const NSRect pRect = [nswindow.contentView convertRectToBacking:fRect];
+            m_scale = {static_cast<Vec2f::value_type>(pRect.size.width / fRect.size.width),
                              static_cast<Vec2f::value_type>(pRect.size.height / fRect.size.height)};
-            PTK_INFO("System DPI scale is {0:0.2f}x{1:0.2f}", static_cast<double>(m_data->scale.x), static_cast<double>(m_data->scale.y));
+            PTK_INFO("System DPI scale is {0:0.2f}x{1:0.2f}", static_cast<double>(m_scale.x), static_cast<double>(m_scale.y));
 
-            m_context = createMacContext(flags.backend, m_data);
+            m_context = CreateMacContext(flags.backend, nswindow, size, m_scale);
 
             switch (flags.visibility)
             {
@@ -402,7 +384,6 @@ namespace pTK
             }
 
             setTitle(name);
-            m_data->pos = getWinPos();
             ApplicationHandle_mac::SetMenuBar(flags.menus);
         }
         PTK_INFO("Initialized WindowHandle_mac");
@@ -410,19 +391,15 @@ namespace pTK
 
     bool WindowHandle_mac::setPosHint(const Point& pos)
     {
-        if (pos != m_data->pos)
-        {
-            @autoreleasepool {
-                const NSRect content = [m_data->window.contentView frame];
-                const CGFloat y = CGDisplayBounds(CGMainDisplayID()).size.height - (pos.y + content.size.height - 1) - 1;
-                const NSRect rect = NSMakeRect(pos.x, y, 0, 0);
-                const NSRect frame = [m_data->window frameRectForContentRect:rect];
-                [m_data->window setFrameOrigin:frame.origin];
-                m_data->pos = pos;
-                return true;
-            }
+        @autoreleasepool {
+            NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
+            const NSRect content = [nswindow.contentView frame];
+            const CGFloat y = CGDisplayBounds(CGMainDisplayID()).size.height - (pos.y + content.size.height - 1) - 1;
+            const NSRect rect = NSMakeRect(pos.x, y, 0, 0);
+            const NSRect frame = [nswindow frameRectForContentRect:rect];
+            [nswindow setFrameOrigin:frame.origin];
+            return true;
         }
-        return false;
     }
 
     bool WindowHandle_mac::setTitle(const std::string& name)
@@ -431,7 +408,8 @@ namespace pTK
         if (!str)
             return false;
 
-        [m_data->window setTitle:str];
+        NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
+        [nswindow setTitle:str];
         return true;
     }
 
@@ -466,29 +444,28 @@ namespace pTK
 
     bool WindowHandle_mac::resize(const Size& size)
     {
-        if (size != m_data->size)
-        {
-            @autoreleasepool {
-                NSRect content = [m_data->window contentRectForFrameRect:[m_data->window frame]];
-                content.origin.y += content.size.height - size.height;
-                content.size = NSMakeSize(size.width, size.height);
-                [m_data->window setFrame:[m_data->window frameRectForContentRect:content] display:YES];
-                const Size scaledSize{static_cast<Size::value_type>(size.width * m_data->scale.x),
-                                      static_cast<Size::value_type>(size.height * m_data->scale.y)};
-                if (scaledSize != m_context->getSize())
-                    m_context->resize(scaledSize);
-                m_data->size = size;
-                return true;
-            }
+        @autoreleasepool {
+            NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
+            NSRect content = [nswindow contentRectForFrameRect:[nswindow frame]];
+            content.origin.y += content.size.height - size.height;
+            content.size = NSMakeSize(size.width, size.height);
+            [nswindow setFrame:[nswindow frameRectForContentRect:content] display:YES];
+
+            const Size scaledSize{static_cast<Size::value_type>(size.width * m_scale.x),
+                static_cast<Size::value_type>(size.height * m_scale.y)};
+            if (scaledSize != m_context->getSize())
+                m_context->resize(scaledSize);
+            return true;
         }
-        return false;
     }
 
     bool WindowHandle_mac::close()
     {
         @autoreleasepool {
-            [m_data->window close];
-            m_data->window = nil;
+            NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
+            [nswindow close];
+            nswindow = nil;
+            m_NSWindow = nullptr;
             Application::Get()->removeWindow(parent());
             return true;
         }
@@ -497,11 +474,12 @@ namespace pTK
     bool WindowHandle_mac::show()
     {
         @autoreleasepool {
-            if (m_data->window != nil)
+            NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
+            if (nswindow != nil)
             {
-                [m_data->window orderFront:nil];
+                [nswindow orderFront:nil];
                 [NSApp activateIgnoringOtherApps:YES];
-                [m_data->window makeKeyAndOrderFront:NSApp];
+                [nswindow makeKeyAndOrderFront:NSApp];
                 return true;
             }
             return false;
@@ -511,9 +489,10 @@ namespace pTK
     bool WindowHandle_mac::hide()
     {
         @autoreleasepool {
-            if (m_data->window != nil)
+            NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
+            if (nswindow != nil)
             {
-                [m_data->window orderOut:nil];
+                [nswindow orderOut:nil];
                 return true;
             }
             return false;
@@ -523,7 +502,8 @@ namespace pTK
     bool WindowHandle_mac::isHidden() const
     {
         @autoreleasepool {
-            return [m_data->window isVisible];;
+            NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
+            return [nswindow isVisible];;
         }
     }
 
@@ -534,13 +514,14 @@ namespace pTK
 
     Vec2f WindowHandle_mac::getDPIScale() const
     {
-        return m_data->scale;
+        return m_scale;
     }
 
     Point WindowHandle_mac::getWinPos() const
     {
         @autoreleasepool {
-            const NSRect rect = [m_data->window contentRectForFrameRect:[m_data->window frame]];
+            NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
+            const NSRect rect = [nswindow contentRectForFrameRect:[nswindow frame]];
             using pType = pTK::Point::value_type;
             const pType y{static_cast<pType>(CGDisplayBounds(CGMainDisplayID()).size.height - (rect.origin.y + rect.size.height - 1) - 1)};
             return Point{static_cast<pType>(rect.origin.x), y};
@@ -550,7 +531,8 @@ namespace pTK
     Size WindowHandle_mac::getWinSize() const
     {
         @autoreleasepool {
-            const NSRect rect = [[m_data->window contentView] frame];
+            NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
+            const NSRect rect = [[nswindow contentView] frame];
             return {static_cast<Size::value_type>(rect.size.width),
                     static_cast<Size::value_type>(rect.size.height)};
         }
@@ -559,13 +541,14 @@ namespace pTK
     bool WindowHandle_mac::setLimits(const Size& min, const Size& max)
     {
         @autoreleasepool {
-            CGFloat frameHeight = m_data->window.frame.size.height - [m_data->window contentRectForFrameRect: m_data->window.frame].size.height;
+            NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
+            CGFloat frameHeight = nswindow.frame.size.height - [nswindow contentRectForFrameRect: nswindow.frame].size.height;
 
             const NSSize minSize = NSMakeSize(min.width, min.height + frameHeight);
-            [m_data->window setMinSize:minSize];
+            [nswindow setMinSize:minSize];
 
             const NSSize maxSize = NSMakeSize(max.width, max.height + ((max.height != Size::Limits::Max) ? frameHeight : 0));
-            [m_data->window setMaxSize:maxSize];
+            [nswindow setMaxSize:maxSize];
 
             return true;
         }
@@ -574,7 +557,8 @@ namespace pTK
     bool WindowHandle_mac::minimize()
     {
         @autoreleasepool {
-            [m_data->window miniaturize:nil];
+            NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
+            [nswindow miniaturize:nil];
             return true;
         }
     }
@@ -582,14 +566,16 @@ namespace pTK
     bool WindowHandle_mac::isMinimized() const
     {
         @autoreleasepool {
-            return [m_data->window isMiniaturized];;
+            NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
+            return [nswindow isMiniaturized];;
         }
     }
 
     bool WindowHandle_mac::restore()
     {
         @autoreleasepool {
-            [m_data->window deminiaturize:nil];
+            NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
+            [nswindow deminiaturize:nil];
             return true;
         }
     }
@@ -597,15 +583,16 @@ namespace pTK
     bool WindowHandle_mac::isFocused() const
     {
         @autoreleasepool {
-            return [m_data->window isKeyWindow];
+            NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
+            return [nswindow isKeyWindow];
         }
     }
 
     bool WindowHandle_mac::setScaleHint(const Vec2f& scale)
     {
-        if (m_data->scale != scale)
+        if (m_scale != scale)
         {
-            m_data->scale = scale;
+            m_scale = scale;
             resize(parent()->getSize());
             return true;
         }
@@ -614,12 +601,12 @@ namespace pTK
 
     long WindowHandle_mac::windowID() const
     {
-        return m_data->id;
+        return m_id;
     }
 
-    void *WindowHandle_mac::nsWindow() const
+    void *WindowHandle_mac::NSWindow() const
     {
-        return static_cast<void*>(m_data->window);
+        return m_NSWindow;
     }
 
 } // namespace pTK

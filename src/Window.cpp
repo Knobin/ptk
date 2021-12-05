@@ -5,9 +5,6 @@
 //  Created by Robin Gustafsson on 2020-03-04.
 //
 
-// Local Headers
-#include "ptk/platform/Platform.hpp"
-
 // pTK Headers
 #include "ptk/Window.hpp"
 #include "ptk/Application.hpp"
@@ -16,7 +13,7 @@ namespace pTK
 {
     Window::Window(const std::string& name, const Size& size, const WindowInfo& flags)
         : VBox(), SingleObject(), m_handle{this, name, size, flags},
-          m_threadID{std::this_thread::get_id()}, m_info{flags}
+          m_threadID{std::this_thread::get_id()}
     {
         // Set Widget properties.
         Sizable::setSize(size);
