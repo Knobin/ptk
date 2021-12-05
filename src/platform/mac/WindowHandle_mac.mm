@@ -65,7 +65,7 @@
 
 - (void)windowDidResize:(NSNotification*) __unused notification
 {
-    NSWindow *window = static_cast<NSWindow*>(ptkWindow->nsWindow());
+    NSWindow *window = static_cast<NSWindow*>(ptkWindow->handle());
     const NSRect rect = [window.contentView bounds];
     const pTK::Size size{static_cast<pTK::Size::value_type>(rect.size.width),
                          static_cast<pTK::Size::value_type>(rect.size.height)};
@@ -260,7 +260,7 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 
 - (void)mouseDown:(NSEvent*) __unused event
 {
-    NSWindow *nswindow = static_cast<NSWindow*>(ptkwindow->nsWindow());
+    NSWindow *nswindow = static_cast<NSWindow*>(ptkwindow->handle());
     const NSPoint pos = [nswindow mouseLocationOutsideOfEventStream];
     const NSRect content = [nswindow.contentView frame];
     pTK::ButtonEvent evt{pTK::Event::Type::MouseButtonPressed,
@@ -272,7 +272,7 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 
 - (void)mouseUp:(NSEvent*) __unused event
 {
-    NSWindow *nswindow = static_cast<NSWindow*>(ptkwindow->nsWindow());
+    NSWindow *nswindow = static_cast<NSWindow*>(ptkwindow->handle());
     const NSPoint pos = [nswindow mouseLocationOutsideOfEventStream];
     const NSRect content = [nswindow.contentView frame];
     pTK::ButtonEvent evt{pTK::Event::Type::MouseButtonReleased,
@@ -284,7 +284,7 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 
 - (void)mouseMoved:(NSEvent*) event
 {
-    NSWindow *nswindow = static_cast<NSWindow*>(ptkwindow->nsWindow());
+    NSWindow *nswindow = static_cast<NSWindow*>(ptkwindow->handle());
     const NSPoint pos = [event locationInWindow];
     const NSRect content = [nswindow.contentView frame];
     pTK::MotionEvent evt{{static_cast<pTK::Point::value_type>(pos.x),
@@ -604,7 +604,7 @@ namespace pTK
         return m_id;
     }
 
-    void *WindowHandle_mac::NSWindow() const
+    void *WindowHandle_mac::handle() const
     {
         return m_NSWindow;
     }
