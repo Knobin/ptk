@@ -187,7 +187,7 @@ namespace pTK
 
             @return     pointer to NSWindow
         */
-        [[nodiscard]] void *NSWindow() const;
+        [[nodiscard]] void *handle() const;
 
     private:
         void init(const std::string& name, const Size& size, const WindowInfo& flags);

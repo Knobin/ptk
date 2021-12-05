@@ -85,12 +85,11 @@ namespace pTK
                 Auto margin is not included.
              */
             const Margin cMargin{child->getMargin()};
-            const Padding cPadding{child->getPadding()};
-            vbPos.y += cMargin.top + cPadding.top;
+            vbPos.y += cMargin.top;
             if (child->getSize() != cSize)
                 child->setSize(cSize);
             child->setPosHint(Point(vbPos.x + alignChildH(i, newSize, cSize), vbPos.y));
-            vbPos.y += cSize.height + cMargin.bottom + cPadding.bottom;
+            vbPos.y += cSize.height + cMargin.bottom;
         }
     }
 
@@ -167,14 +166,13 @@ namespace pTK
             auto child{at(i)};
             Size cSize{sizes.at(i)};
             const Margin cMargin{child->getMargin()};
-            const Padding cPadding{child->getPadding()};
-            cSize.height -= static_cast<Size::value_type>(cMargin.top + cMargin.bottom + cPadding.top + cPadding.bottom);
-            cSize.width -= static_cast<Size::value_type>(cMargin.left + cMargin.right + cPadding.left + cPadding.right);
-            vbPos.y += cMargin.top + cPadding.top + spaces.at(i);
+            cSize.height -= static_cast<Size::value_type>(cMargin.top + cMargin.bottom);
+            cSize.width -= static_cast<Size::value_type>(cMargin.left + cMargin.right);
+            vbPos.y += cMargin.top + spaces.at(i);
             if (child->getSize() != cSize)
                 child->setSize(cSize);
             child->setPosHint(Point(vbPos.x + alignChildH(i, vbSize, cSize), vbPos.y));
-            vbPos.y += cSize.height + cMargin.bottom + cPadding.bottom;
+            vbPos.y += cSize.height + cMargin.bottom;
         }
     }
 
@@ -231,7 +229,7 @@ namespace pTK
         Point::value_type posx{0};
         const auto& child{ at(index) };
 
-        // Total size with margin and padding.
+        // Total size including margin.
         Size cSize{ child->calcOuterFromSize(childSize) };
 
         // Align.
@@ -244,7 +242,6 @@ namespace pTK
         // Offset position.
         // Maybe remove "AddWithoutOverflow" since it is highly unlikely that it overflows int32.
         posx = AddWithoutOverflow(posx, static_cast<Point::value_type>(child->getMargin().left));
-        posx = AddWithoutOverflow(posx, static_cast<Point::value_type>(child->getPadding().left));
 
         return posx;
     }

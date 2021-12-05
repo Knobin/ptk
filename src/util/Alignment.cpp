@@ -11,15 +11,14 @@
 namespace pTK
 {
     Alignment::Alignment()
-        : m_align{static_cast<std::underlying_type<Align>::type>(Align::Center)}, 
-            m_margin{}, m_padding{}
+        :  m_margin{}, m_align{static_cast<std::underlying_type<Align>::type>(Align::Center)}
     {}
 
     std::underlying_type<Align>::type Alignment::getAlign() const
     {
         return m_align;
     }
-    
+
     void Alignment::setMargin(const Margin& margin)
     {
         m_margin = margin;
@@ -87,74 +86,5 @@ namespace pTK
     Margin::value_type Alignment::getMarginRight() const
     {
         return m_margin.right;
-    }
-
-    void Alignment::setPadding(const Padding& padding)
-    {
-        m_padding = padding;
-        onPaddingChange(m_margin);
-    }
-
-    void Alignment::setPaddingTop(Padding::value_type topPadding)
-    {
-        m_padding.top = topPadding;
-        onPaddingChange(m_margin);
-    }
-
-    void Alignment::setPaddingBottom(Padding::value_type bottomPadding)
-    {
-        m_padding.bottom = bottomPadding;
-        onPaddingChange(m_margin);
-    }
-
-    void Alignment::setPaddingLeft(Padding::value_type leftPadding)
-    {
-        m_padding.left = leftPadding;
-        onPaddingChange(m_margin);
-    }
-
-    void Alignment::setPaddingRight(Padding::value_type rightPadding)
-    {
-        m_padding.right = rightPadding;
-        onPaddingChange(m_margin);
-    }
-
-    void Alignment::setPaddingTopBottom(Padding::value_type topPadding, Padding::value_type bottomPadding)
-    {
-        m_padding.top = topPadding;
-        m_padding.bottom = bottomPadding;
-        onPaddingChange(m_margin);
-    }
-
-    void Alignment::setPaddingLeftRight(Padding::value_type leftPadding, Padding::value_type rightPadding)
-    {
-        m_padding.left = leftPadding;
-        m_padding.right = rightPadding;
-        onPaddingChange(m_margin);
-    }
-
-    const Margin& Alignment::getPadding() const
-    {
-        return m_padding;
-    }
-
-    Padding::value_type Alignment::getPaddingTop() const
-    {
-        return m_padding.top;
-    }
-
-    Padding::value_type Alignment::getPaddingBottom() const
-    {
-        return m_padding.bottom;
-    }
-
-    Padding::value_type Alignment::getPaddingLeft() const
-    {
-        return m_padding.left;
-    }
-
-    Padding::value_type Alignment::getPaddingRight() const
-    {
-        return m_padding.right;
     }
 }

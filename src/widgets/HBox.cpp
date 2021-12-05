@@ -21,29 +21,29 @@ namespace pTK
         const Size minLayoutSize{calcMinSize()};
         setMinSize(minLayoutSize);
         const Size vbSize{getSize()};
-        
+
         if ((minLayoutSize.width > vbSize.width) || (minLayoutSize.height > vbSize.height))
         {
             /** Children will not fit in the current size.
-             
+
              Set minimal size to HBox and set minimal size to each child.
              */
             expandOnAdd(minLayoutSize);
         }else
         {
             /** Childs will fit in the current size.
-             
+
              Only need to resize and position children.
              */
             refitContent(vbSize);
         }
     }
-    
+
     void HBox::onRemove(const Ref<Widget>&)
     {
         refitContent(getSize());
     }
-    
+
     void HBox::onChildUpdate(size_type)
     {
         const Size cMaxSize{calcMaxSize()};
@@ -58,23 +58,23 @@ namespace pTK
 
         setLimits(minSize, maxSize);
     }
-    
+
     void HBox::expandOnAdd(const Size& newSize)
     {
         Size layoutSize{newSize};
         const Size vbSize{getSize()};
         Point vbPos{getPosition()};
-        
+
         layoutSize.height   = (vbSize.height > layoutSize.height) ? vbSize.height : layoutSize.height;
         layoutSize.width    = (vbSize.width > layoutSize.width) ? vbSize.width : layoutSize.width;
-        
+
         setSize(layoutSize); // this will generate a Resize event.
         const size_type children{container().size()};
         for (size_type i{0}; i < children; ++i)
         {
             auto child = at(i);
             Size cSize = child->getMinSize();
-            
+
             /** We should not have to consider auto margin for children.
                 This function should only be called when adding and children wont fit in current
                 size and we only expand so the they will fit with their size and margin.
@@ -83,13 +83,12 @@ namespace pTK
             if (child->getSize() != cSize)
                 child->setSize(cSize);
             Margin cMargin{child->getMargin()};
-            Padding cPadding{child->getPadding()};
-            vbPos.x += cMargin.left + cPadding.left;;
+            vbPos.x += cMargin.left;
             child->setPosHint(Point(vbPos.x, vbPos.y + alignChildV(i, vbSize, cSize)));
-            vbPos.x += cSize.width + cMargin.right + cPadding.right;
+            vbPos.x += cSize.width + cMargin.right;
         }
     }
-    
+
     void HBox::refitContent(const Size& nsize)
     {
         const size_type children{container().size()};
@@ -98,7 +97,7 @@ namespace pTK
 
         const Size vbSize{nsize};
         std::vector<Size> sizes(children);
-        
+
         // Initialize sizes.
         for (size_type i{0}; i < children; ++i)
         {
@@ -107,11 +106,11 @@ namespace pTK
             const Size::value_type maxHeight{at(i)->calcOuterFromSize(at(i)->getMaxSize()).height};
             sizes.at(i).height = (vbSize.height > maxHeight) ? maxHeight : vbSize.height;
         }
-        
+
         // Expand children to its max sizes possible.
         const Size::value_type widthLeft{vbSize.width - calcMinSize().width};
         Size::value_type totalEachLeft{widthLeft};
-        
+
         // Distribute heightLeft.
         // Need to fix this some time.
         // TODO: it takes many iteration before the height is distributed, especially if only 1 can grow.
@@ -126,7 +125,7 @@ namespace pTK
 
                 const Size::value_type maxWidth = at(i)->calcOuterFromSize(at(i)->getMaxSize()).width;
                 const Size::value_type delta{maxWidth - sizes.at(i).width};
-                
+
                 if (delta > 0)
                 {
                     if (eachAdd > delta)
@@ -141,22 +140,22 @@ namespace pTK
                         done = false;
                     }
                 }
-                
+
                 if (totalEachLeft == 0)
                 {
                     done = true;
                     break;
                 }
             }
-            
+
             // We cannot add more to the widgets.
             if ((done) || (eachAdd == 0))
                 break;
         }
-        
+
         // TODO: Fix if we break in while loop (size left unused).
         const std::vector<Size::value_type> spaces{calcSpaces(totalEachLeft)};
-        
+
         // Set sizes to children.
         Point vbPos{getPosition()};
         for (size_type i{0}; i != children; i++)
@@ -164,14 +163,13 @@ namespace pTK
             auto child{at(i)};
             Size cSize{sizes.at(i)};
             const Margin cMargin{child->getMargin()};
-            const Padding cPadding{child->getPadding()};
-            cSize.height -= static_cast<Size::value_type>(cMargin.top + cMargin.bottom + cPadding.top + cPadding.bottom);
-            cSize.width -= static_cast<Size::value_type>(cMargin.left + cMargin.right + cPadding.left + cPadding.right);
-            vbPos.x += cMargin.left + cPadding.left + spaces.at(i);
+            cSize.height -= static_cast<Size::value_type>(cMargin.top + cMargin.bottom);
+            cSize.width -= static_cast<Size::value_type>(cMargin.left + cMargin.right);
+            vbPos.x += cMargin.left + spaces.at(i);
             if (child->getSize() != cSize)
                 child->setSize(cSize);
             child->setPosHint(Point(vbPos.x, vbPos.y + alignChildV(i, vbSize, cSize)));
-            vbPos.x += cSize.width + cMargin.right + cPadding.right;
+            vbPos.x += cSize.width + cMargin.right;
         }
     }
 
@@ -179,7 +177,7 @@ namespace pTK
     {
         refitContent(size);
     }
-    
+
     std::vector<Size::value_type> HBox::calcSpaces(Size::value_type width)
     {
         const size_type children{container().size()};
@@ -190,7 +188,7 @@ namespace pTK
             for (size_type i{0}; i != children; i++)
             {
                 const std::underlying_type<Align>::type cAlign{at(i)->getAlign()};
-                
+
                 if (IsAlignSet(cAlign, Align::Left))
                 {
                     spaces.at(i) = 0;
@@ -207,21 +205,21 @@ namespace pTK
                     spaces.at(i+1) = 1;
                 }
             }
-            
+
             Size::value_type spacesToUse{0};
             for (size_type i{0}; i != spaceCount; i++)
                 if (spaces.at(i) == 1)
                     ++spacesToUse;
-            
+
             Size::value_type spaceWidth{(spacesToUse != 0) ? static_cast<Size::value_type>(width) / spacesToUse : 0};
             for (size_type i{0}; i != spaceCount; i++)
                 if (spaces.at(i) == 1)
                     spaces.at(i) = spaceWidth;
         }
-        
+
         return spaces;
     }
-    
+
     Point::value_type HBox::alignChildV(size_type index, const Size& parentSize, const Size& childSize)
     {
         Point::value_type posy{0};
@@ -240,7 +238,6 @@ namespace pTK
         // Offset position.
         // Maybe remove "AddWithoutOverflow" since it is highly unlikely that it overflows int32.
         posy = AddWithoutOverflow(posy, static_cast<Point::value_type>(child->getMargin().top));
-        posy = AddWithoutOverflow(posy, static_cast<Point::value_type>(child->getPadding().top));
 
         return posy;
     }
@@ -277,4 +274,3 @@ namespace pTK
         return contMaxSize;
     }
 }
-

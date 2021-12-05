@@ -21,7 +21,7 @@
 namespace pTK
 {
     /** Widget class implementation.
-     
+
         This class is low level class for widget, that
         has the essential component for rendering.
     */
@@ -29,48 +29,48 @@ namespace pTK
     {
     public:
         /** Constructs Widget with default values.
-         
+
             @return    default initialized Widget
         */
         Widget();
 
         /** Destructor for Widget.
-        
+
         */
         virtual ~Widget() = default;
-        
+
         /** Function sets the Container parent of the Widget.
-         
+
             @param parent  the parent Container
         */
         void setParent(Widget* parent);
-        
+
         /** Function for retrieving the Container parent of the Widget.
-         
+
             @return  the Container parent of the Widget
         */
         Widget* getParent() const;
-        
+
         /** Function for requesting the position of the Widget.
-         
+
             @param pos  requested position of the Widget.
         */
         virtual void setPosHint(const Point& pos);
-        
+
         /** Function for retrieving the current position of the Widget.
-         
+
             @return  current position
         */
         [[nodiscard]] const Point& getPosition() const;
-        
+
         /** Function for setting the name of the Widget.
-         
+
             @param  name   name of the widget
         */
         void setName(const std::string& name);
-        
+
         /** Function for retrieving the name of the Widget.
-         
+
             @return  name
         */
         [[nodiscard]] const std::string& getName() const;
@@ -97,29 +97,29 @@ namespace pTK
 
         [[nodiscard]] Size getOuterSize() const;
         [[nodiscard]] Size calcOuterFromSize(const Size& size) const;
-        
+
     protected:
         /** Function for updating the child.
-         
+
             override this function for receiving update
             requests from children (update function is called
             in the child). i.e. something in the
-            child has changed, probably a new size or 
+            child has changed, probably a new size or
             position is set.
 
             @param child    request from
 
         */
         virtual bool updateChild(Widget*);
-        
+
         /** Function for redrawing the child.
 
             override this function for receiving draw
             requests from children (draw function is called
             in the child). i.e. something in the
-            child has changed and it only needs to be 
+            child has changed and it only needs to be
             redrawn.
-         
+
             @param child    request from
         */
         virtual bool drawChild(Widget*);
@@ -132,18 +132,16 @@ namespace pTK
         // Alignment functions derived from Alignment.
         void onAlignChange(std::underlying_type<Align>::type) override;
         void onMarginChange(const Margin&) override;
-        void onPaddingChange(const Padding&) override;
 
     private:
         Widget* m_parent;
         Point m_pos;
         std::string m_name;
     };
-    
+
     // Comparison operators.
     bool operator==(const Widget& lhs, const Widget& rhs);
     bool operator!=(const Widget& lhs, const Widget& rhs);
 }
 
 #endif // PTK_CORE_WIDGET_HPP
-

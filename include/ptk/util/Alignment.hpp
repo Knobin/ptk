@@ -27,7 +27,7 @@ namespace pTK
         VCenter = 0x0040,
         Center  = 0x0080
     };
-    
+
     /** Function for checking if a specific Align is set.
 
         e.g. Align align{Align::Top | Align::Left};
@@ -50,7 +50,7 @@ namespace pTK
     }
 
     /** Directions struct implementation.
-     
+
         Pretty self-explanatory.
     */
     template<typename T>
@@ -63,9 +63,8 @@ namespace pTK
         value_type left;
         value_type right;
     };
-    
+
     using Margin = Directions<uint32>;
-    using Padding = Directions<uint32>;
 
     class Alignment
     {
@@ -178,80 +177,6 @@ namespace pTK
         */
         [[nodiscard]] Margin::value_type getMarginRight() const;
 
-        /** Function for setting the padding of the Widget.
-
-            @param padding  Padding to apply.
-        */
-        void setPadding(const Padding& padding);
-
-        /** Function for setting the top padding of the Widget.
-
-            @param topPadding  value to apply for top padding.
-        */
-        void setPaddingTop(Padding::value_type topPadding);
-
-        /** Function for setting the bottom padding of the Widget.
-
-            @param bottomPadding  value to apply for bottom padding.
-        */
-        void setPaddingBottom(Margin::value_type bottomPadding);
-
-        /** Function for setting the left padding of the Widget.
-
-            @param leftPadding  value to apply for left padding.
-        */
-        void setPaddingLeft(Padding::value_type leftPadding);
-
-        /** Function for setting the right padding of the Widget.
-
-            @param rightPadding  value to apply for right padding.
-        */
-        void setPaddingRight(Padding::value_type rightPadding);
-
-        /** Function for setting the top and bottom padding of the Widget.
-
-            @param topPadding  value to apply for top padding.
-            @param bottomPadding  value to apply for bottom padding.
-        */
-        void setPaddingTopBottom(Padding::value_type topPadding, Padding::value_type bottomPadding);
-
-        /** Function for setting the left and right padding of the Widget.
-
-            @param leftPadding  value to apply for left padding.
-            @param rightPadding  value to apply for right padding.
-        */
-        void setPaddingLeftRight(Padding::value_type leftPadding, Padding::value_type rightPadding);
-
-        /** Function for retrieving the padding of the Widget.
-
-            @return  current padding
-        */
-        [[nodiscard]] const Margin& getPadding() const;
-
-        /** Function for retrieving the top padding of the Widget.
-
-            @return  current top padding
-        */
-        [[nodiscard]] Padding::value_type getPaddingTop() const;
-
-        /** Function for retrieving the bottom padding of the Widget.
-
-            @return  current bottom padding
-        */
-        [[nodiscard]] Padding::value_type getPaddingBottom() const;
-
-        /** Function for retrieving the left padding of the Widget.
-
-            @return  current left padding
-        */
-        [[nodiscard]] Padding::value_type getPaddingLeft() const;
-
-        /** Function for retrieving the right padding of the Widget.
-
-            @return  current right padding
-        */
-        [[nodiscard]] Padding::value_type getPaddingRight() const;
-
     private:
         /** Function for notifying that Align property has changed.
 
@@ -265,16 +190,9 @@ namespace pTK
         */
         virtual void onMarginChange(const Margin&) {}
 
-        /** Function for notifying that Padding property has changed.
-
-            @param padding    new Padding value
-        */
-        virtual void onPaddingChange(const Padding&) {}
-
     private:
-        std::underlying_type<Align>::type m_align;
         Margin m_margin;
-        Padding m_padding;
+        std::underlying_type<Align>::type m_align;
     };
 }
 
