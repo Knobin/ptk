@@ -73,7 +73,7 @@ namespace pTK
         m_keyCallback.push_back(callback);
     }
 
-    void EventCallbacks::onInput(const std::function<bool(KeyCode, uint32, byte)>& callback)
+    void EventCallbacks::onInput(const std::function<bool(KeyCode, uint32, Text::Encoding, byte)>& callback)
     {
         m_keyInputCallback.push_back(callback);
     }
@@ -151,7 +151,7 @@ namespace pTK
         return m_keyCallback;
     }
 
-    const std::vector<std::function<bool(KeyCode, uint32, byte)>>& EventCallbacks::getKeyInputCallbacks() const
+    const std::vector<std::function<bool(KeyCode, uint32, Text::Encoding, byte)>>& EventCallbacks::getKeyInputCallbacks() const
     {
         return m_keyInputCallback;
     }
@@ -204,7 +204,7 @@ namespace pTK
         return m_keyCallback;
     }
 
-    std::vector<std::function<bool(KeyCode, uint32, byte)>>& EventCallbacks::getKeyInputCallbacks()
+    std::vector<std::function<bool(KeyCode, uint32, Text::Encoding, byte)>>& EventCallbacks::getKeyInputCallbacks()
     {
         return m_keyInputCallback;
     }

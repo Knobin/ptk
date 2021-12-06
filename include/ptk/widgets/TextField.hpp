@@ -90,10 +90,11 @@ namespace pTK
 
         // Handles for keyboard input.
         void handleKeyPress(KeyCode keycode, byte modifier);
-        void addToText(KeyCode keycode, byte modifier);
         void removeFromText(int direction);
         void moveCursor(int direction, std::size_t strSize, bool shouldDraw = false);
         void moveCursorToPos(std::size_t pos, std::size_t strSize, bool shouldDraw = false);
+
+        void handleInput(KeyCode key, uint32 data, Text::Encoding encoding, byte modifier);
 
     private:
         std::string m_placeholderText{};

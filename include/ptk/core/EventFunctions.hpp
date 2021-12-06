@@ -43,7 +43,7 @@ namespace pTK
             @param char     display character
             @param mod      modifier keys
         */
-        virtual void onKeyInput(KeyCode, uint32, byte) {}
+        virtual void onKeyInput(KeyCode, uint32, Text::Encoding, byte) {}
         
         /** Function for handling when mouse is hovering.
          

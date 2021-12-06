@@ -178,7 +178,7 @@ namespace pTK
         if (kEvent->type == KeyEvent::Pressed || kEvent->type == KeyEvent::Released)
             handleKeyEvent(kEvent->type, kEvent->keycode, kEvent->modifier);
         else if (kEvent->type == KeyEvent::Input)
-            handleKeyInput(kEvent->keycode, kEvent->data, kEvent->modifier);
+            handleKeyInput(kEvent->keycode, kEvent->data, kEvent->encoding, kEvent->modifier);
     }
 
     void Window::handleMouseEvent(Event* event)

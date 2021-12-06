@@ -566,8 +566,29 @@ namespace pTK
         
         KeyCode key{ KeyMap::KeyCodeToKey(lookup) };
 
-        KeyEvent evt{ KeyEvent::Input, key, static_cast<uint32>(wParam),
-            Text::Encoding::UTF16, GetKeyModifiers() };
+        uint32 data{ 0 };
+
+        switch (wParam)
+        {
+            case 0x08: // Backspace
+            case 0x0A: // Linefeed
+            case 0x1B: // Escape
+            case 0x09: // Tab
+            case 0x0D: // Carriage return
+            {
+                // Ignore these for now.
+                // TODO: Decide on how to fix this (includes these or not?).
+                break;
+            }
+            default:
+            {
+                // Displayable character.
+                data = static_cast<uint32>(wParam);
+                break;
+            } 
+        }
+
+        KeyEvent evt{ KeyEvent::Input, key, data, Text::Encoding::UTF16, GetKeyModifiers() };
         window->sendEvent(&evt);
     }
 

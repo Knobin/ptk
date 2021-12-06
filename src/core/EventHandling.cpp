@@ -33,10 +33,10 @@ namespace pTK
         LoopAndConditionRemove(getKeyCallbacks(), type, keycode, modifier);
     }
 
-    void EventHandling::handleKeyInput(KeyCode keycode, uint32 data, byte modifier)
+    void EventHandling::handleKeyInput(KeyCode keycode, uint32 data, Text::Encoding encoding, byte modifier)
     {
-        onKeyInput(keycode, data, modifier);
-        LoopAndConditionRemove(getKeyInputCallbacks(), keycode, data, modifier);
+        onKeyInput(keycode, data, encoding, modifier);
+        LoopAndConditionRemove(getKeyInputCallbacks(), keycode, data, encoding, modifier);
     }
 
     void EventHandling::handleHoverEvent(const Point& pos)

@@ -152,6 +152,12 @@ namespace pTK
             m_lastClickedWidget->handleKeyEvent(type, keycode, modifier);
     }
 
+    void WidgetContainer::onKeyInput(KeyCode keycode, uint32 data, Text::Encoding encoding, byte modifier)
+    {
+        if (m_lastClickedWidget != nullptr)
+            m_lastClickedWidget->handleKeyInput(keycode, data, encoding, modifier);
+    }
+
     void WidgetContainer::onHoverEvent(const Point& pos)
     {
         for (auto& it : *this)

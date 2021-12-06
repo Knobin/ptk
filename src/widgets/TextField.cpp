@@ -27,6 +27,11 @@ namespace pTK
             return false;
         });
 
+        onInput([this](KeyCode key, uint32 data, Text::Encoding encoding, byte modifier) {
+            handleInput(key, data, encoding, modifier);
+            return false;
+        });
+
         onClick([this](Mouse::Button, const Point&){
             m_drawCursor = true;
             return false;
@@ -40,59 +45,27 @@ namespace pTK
 
     void TextField::handleKeyPress(KeyCode keycode, byte modifier)
     {
-        if (IsKeyCodeAlpha(keycode) || IsKeyCodeDigit(keycode) || IsKeyCodeSpace(keycode))
-        {
-            addToText(keycode, modifier);
-        }
-        else
-        {
-            switch (keycode) {
-                case Key::Backspace:
-                case Key::Delete:
-                {
-                    removeFromText(((keycode == Key::Delete) ? 1 : -1));
-                    break;
-                }
-                case Key::Left:
-                case Key::Right:
-                {
-                    moveCursor(((keycode == Key::Left) ? -1 : 1), getText().size(), true);
-                    break;
-                }
-                case Key::Home:
-                case Key::End:
-                {
-                    moveCursorToPos(((keycode == Key::Home) ? 0 : getText().size()), getText().size(), true);
-                    break;
-                }
-                default:
-                    break;
+        switch (keycode) {
+            case Key::Backspace:
+            case Key::Delete:
+            {
+                removeFromText(((keycode == Key::Delete) ? 1 : -1));
+                break;
             }
-        }
-    }
-
-    void TextField::addToText(KeyCode keycode, byte modifier)
-    {
-        bool shift = IsKeyEventModifierSet(modifier, KeyEvent::Modifier::Shift);
-        bool capsLock = IsKeyEventModifierSet(modifier, KeyEvent::Modifier::CapsLock);
-
-        char toInsert{0};
-        if (IsKeyCodeAlpha(keycode))
-        {
-            char alpha = KeyCodeToAlpha(keycode);
-            toInsert = ((capsLock && !shift) || (!capsLock && shift)) ? alpha : static_cast<char>(std::tolower(alpha));
-        }
-        else if (IsKeyCodeDigit(keycode))
-            toInsert = KeyCodeToGraph(keycode);
-        else if (IsKeyCodeSpace(keycode))
-            toInsert = ' ';
-
-        if (toInsert != 0)
-        {
-            std::string str{getText()};
-            str.insert(m_cursorLocation , 1, toInsert);
-            moveCursor(1, str.size());
-            setText(str);
+            case Key::Left:
+            case Key::Right:
+            {
+                moveCursor(((keycode == Key::Left) ? -1 : 1), getText().size(), true);
+                break;
+            }
+            case Key::Home:
+            case Key::End:
+            {
+                moveCursorToPos(((keycode == Key::Home) ? 0 : getText().size()), getText().size(), true);
+                break;
+            }
+            default:
+                break;
         }
     }
 
@@ -116,6 +89,19 @@ namespace pTK
                 moveCursor(-1, str.size());
                 setText(str);
             }
+        }
+    }
+
+    void TextField::handleInput(KeyCode, uint32 data, Text::Encoding, byte)
+    {
+        // This currently ignores the encoding.
+        // TODO: Fix encoding for the data.
+        
+        if (data != 0)
+        {
+            m_text += static_cast<char>(data);
+            moveCursor(1, m_text.size());
+            onTextUpdate();
         }
     }
 

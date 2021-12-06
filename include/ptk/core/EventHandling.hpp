@@ -54,9 +54,10 @@ namespace pTK
 
             @param keyCode  Keycode
             @param char     display character
+            @param encoding encoding of the characer data
             @param mod      modifier keys
         */
-        void handleKeyInput(KeyCode keycode, uint32 data, byte modifier);
+        void handleKeyInput(KeyCode keycode, uint32 data, Text::Encoding encoding, byte modifier);
         
         /** Function for handling when mouse is hovering.
          
