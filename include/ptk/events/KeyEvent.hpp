@@ -12,6 +12,7 @@
 #include "ptk/core/Event.hpp"
 #include "ptk/core/Types.hpp"
 #include "ptk/events/KeyCodes.hpp"
+#include "ptk/core/Text.hpp"
 
 // C++ Headers
 #include <type_traits>
@@ -43,12 +44,6 @@ namespace pTK
             NumLock     = 32
         };
 
-        enum class Encoding : byte
-        {
-            NONE = 0,
-            UTF8, UTF16, UTF32
-        };
-
     public:
         /** Constructs KeyEvent with default values with type and code.
          
@@ -66,7 +61,7 @@ namespace pTK
             @param code     associated keycode
             @return         default initialized KeyEvent
         */
-        KeyEvent(Event::Type type, KeyCode code, uint32 ch, Encoding enc, std::underlying_type<KeyEvent::Modifier>::type mod = 0)
+        KeyEvent(Event::Type type, KeyCode code, uint32 ch, Text::Encoding enc, std::underlying_type<KeyEvent::Modifier>::type mod = 0)
             : Event(Event::Category::Key, type), keycode{ code }, data{ ch }, encoding{ enc }, modifier{ mod }
         {}
 
@@ -77,7 +72,7 @@ namespace pTK
         uint32 data;
 
         // Contains the encoding of the char.
-        Encoding encoding{ Encoding::UTF8 };
+        Text::Encoding encoding{ Text::Encoding::UTF8 };
         
         // Modifiers.
         std::underlying_type<Modifier>::type modifier;

@@ -24,11 +24,12 @@ static pTK::Color RandomColor()
 class CustomBtn : public pTK::Rectangle, public pTK::Text
 {
 public:
-    CustomBtn(const std::string& text)
+    CustomBtn(const std::string& str)
     {
         setFontSize(14);
-        setText(text);
+        text = str;
         setColor(pTK::Color{0x00000000});
+        onTextUpdate();
 
         onEnter([this](){
             setColor(hoverColor);
@@ -59,12 +60,13 @@ public:
         const float fHeight{static_cast<float>(getSize().height)};
         textPos.y = static_cast<float>(getPosition().y) + ((fHeight - capHeight()) / 2);
 
-        drawTextLine(canvas, getText(), pTK::Color{0xF5F5F5FF}, textPos);
+        pTK::Text::StrData data{ text.c_str(), text.size(), pTK::Text::Encoding::UTF8 };
+        drawTextLine(canvas, data, pTK::Color{ 0xF5F5F5FF }, textPos);
     }
 
     void onTextUpdate() override
     {
-        pTK::Vec2f textBounds{getBounds()};
+        pTK::Vec2f textBounds{getBoundsFromStr(text)};
         textBounds.x += 20;
         textBounds.y += 20;
 
@@ -74,6 +76,7 @@ public:
     pTK::Color colorCopy{0x00000000};
     pTK::Color hoverColor{0x2C2C2CFF};
     pTK::Color clickColor{0x272727FF};
+    std::string text{};
 };
 
 struct BtnManager

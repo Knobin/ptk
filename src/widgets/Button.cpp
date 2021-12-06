@@ -245,7 +245,7 @@ namespace pTK
     
     void Button::setBounds()
     {
-        Vec2f textBounds{m_text->getBounds()};
+        Vec2f textBounds{m_text->getBoundsFromStr(getText())};
         textBounds.y += 2*m_borderSize;
         textBounds.x += 2*m_borderSize;
 

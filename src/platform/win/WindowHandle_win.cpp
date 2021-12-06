@@ -567,7 +567,7 @@ namespace pTK
         KeyCode key{ KeyMap::KeyCodeToKey(lookup) };
 
         KeyEvent evt{ KeyEvent::Input, key, static_cast<uint32>(wParam),
-            KeyEvent::Encoding::UTF16, GetKeyModifiers() };
+            Text::Encoding::UTF16, GetKeyModifiers() };
         window->sendEvent(&evt);
     }
 

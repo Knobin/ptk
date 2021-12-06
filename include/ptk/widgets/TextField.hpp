@@ -76,6 +76,10 @@ namespace pTK
             @param pos  requested position of the Widget.
         */
         void setPosHint(const Point& pos) override;
+
+        void setText(const std::string& text);
+        [[nodiscard]] const std::string& getText() const;
+
         
     private:
         // Callback function from Text.
@@ -99,6 +103,9 @@ namespace pTK
         float m_cursorHeight{0.0f};
         std::size_t m_cursorLocation{0};
         bool m_drawCursor{false};
+
+        // Only supports UTF-8 for now.
+        std::string m_text{};
     };
 }
 

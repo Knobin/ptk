@@ -28,6 +28,22 @@ namespace pTK
     class Text
     {
     public:
+
+        // Encoding of the text.
+        enum class Encoding : byte
+        {
+            NONE = 0,
+            UTF8, UTF16, UTF32
+        };
+
+        struct StrData
+        {
+            const void* text;
+            uint32 size;
+            Encoding encoding;
+        };
+
+    public:
         /** Constructs Text with default values.
          
             @return    default initialized Text
@@ -69,18 +85,6 @@ namespace pTK
             @return  current font size
         */
         [[nodiscard]] uint getFontSize() const;
-        
-        /** Function for setting the text.
-         
-            @param text    string to set
-        */
-        void setText(const std::string& text);
-        
-        /** Function for retrieving the text.
-         
-            @return  current text
-        */
-        [[nodiscard]] const std::string& getText() const;
 
         /** Function for retrieving the distance between ascent and descent.
 
@@ -93,12 +97,6 @@ namespace pTK
             @return  cap height
          */
         [[nodiscard]] float capHeight() const;
-
-        /** Function for retrieving the bounds of the text.
-         
-            @return  bounds of the text
-        */
-        [[nodiscard]] Vec2f getBounds() const;
 
         /** Function for retrieving the bounds of the text.
 
@@ -116,35 +114,35 @@ namespace pTK
         /** Function for drawing a line of text.
 
             @param canvas   pointer to SkCanvas
-            @param str      text to draw
+            @param data     str to draw, size of the ptr and encoding
             @param color    color of the text
             @param pos      draw text at
             @return         advance
          */
-        float drawTextLine(SkCanvas* canvas, const std::string& str, const Color& color, const Vec2f& pos);
+        float drawTextLine(SkCanvas* canvas, const StrData& data, const Color& color, const Vec2f& pos);
 
         /** Function for drawing a line of text.
 
             @param canvas       pointer to SkCanvas
-            @param str          text to draw
+            @param data         str to draw, size of the ptr and encoding
             @param color        color of the text
             @param pos          draw text at
             @param outlineSize  outline size
             @param outColor     outline color
             @return             advance
          */
-        float drawTextLine(SkCanvas* canvas, const std::string& str, const Color& color, const Vec2f& pos, float outlineSize, const Color& outColor);
+        float drawTextLine(SkCanvas* canvas, const StrData& data, const Color& color, const Vec2f& pos, float outlineSize, const Color& outColor);
 
         /** Function for drawing a line of text.
 
             @param canvas       pointer to SkCanvas
-            @param str          text to draw
+            @param data         str to draw, size of the ptr and encoding
             @param color        color of the text
             @param pos          draw text at
             @param paint        use custom SkPaint
             @return             advance
          */
-        float drawTextLineWithPaint(SkCanvas* canvas, const std::string& str, const Vec2f& pos, const SkPaint& paint);
+        float drawTextLineWithPaint(SkCanvas* canvas, const StrData& data, const Vec2f& pos, const SkPaint& paint);
 
     private:
         // Callback for when the text updates.
@@ -154,7 +152,6 @@ namespace pTK
         void updateFontInfo();
 
     private:
-        std::string m_text;
         SkFont m_font;
         float m_capHeight{0.0f};
         float m_ascentToDescent{0.0f};

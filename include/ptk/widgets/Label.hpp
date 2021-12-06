@@ -37,6 +37,9 @@ namespace pTK
             Derived from Drawable.
         */
         void onDraw(SkCanvas* canvas) override;
+
+        void setText(const std::string& str);
+        const std::string& getText() const;
         
     private:
         // Label should only change size on setFontSize!
@@ -45,6 +48,9 @@ namespace pTK
         using Widget::setMaxSize;
         
         void onTextUpdate() override;
+
+        // Only supports UTF-8 for now.
+        std::string m_text{};
     };
 }
 

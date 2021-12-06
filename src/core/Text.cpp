@@ -18,7 +18,7 @@ PTK_DISABLE_WARN_END()
 namespace pTK
 {
     Text::Text()
-        : m_text{}, m_font{}
+        : m_font{}
     {
         //m_font.setEdging(SkFont::Edging::kAntiAlias);
         m_font.setEdging(SkFont::Edging::kSubpixelAntiAlias);
@@ -91,17 +91,6 @@ namespace pTK
     {
         return static_cast<uint>(m_font.getSize());
     }
-    
-    void Text::setText(const std::string& text)
-    {
-        m_text = text;
-        onTextUpdate();
-    }
-    
-    const std::string& Text::getText() const
-    {
-        return m_text;
-    }
 
     float Text::ascentToDescent() const
     {
@@ -111,11 +100,6 @@ namespace pTK
     float Text::capHeight() const
     {
         return m_capHeight;
-    }
-    
-    Vec2f Text::getBounds() const
-    {
-        return getBoundsFromStr(getText());
     }
 
     Vec2f Text::getBoundsFromStr(const std::string& str) const
@@ -132,37 +116,90 @@ namespace pTK
         return m_font;
     }
 
-    static std::size_t SpaceCount(const std::string& str)
+    static constexpr std::size_t EncodingByteSize(Text::Encoding encoding)
+    {
+        if (encoding == Text::Encoding::UTF16)
+            return 2;
+        if (encoding == Text::Encoding::UTF32)
+            return 4;
+
+        return 1;
+    }
+
+    static std::size_t SpaceCount(const Text::StrData& data)
     {
         std::size_t count{0};
-        for (char it : str)
+
+        const void* ptr = data.text;
+
+        for (std::size_t i{ 0 }; i < data.size; ++i)
         {
-            if (it == ' ')
+            uint32 ch{ 0 };
+
+            if (data.encoding == Text::Encoding::UTF8)
+            {
+                const uint8 *c = static_cast<const uint8*>(ptr);
+                ch = static_cast<uint32>(c[i]);
+            }
+
+            if (data.encoding == Text::Encoding::UTF16)
+            {
+                const uint16* c = static_cast<const uint16*>(ptr);
+                ch = static_cast<uint32>(c[i]);
+            }
+
+            if (data.encoding == Text::Encoding::UTF32)
+            {
+                const uint32* c = static_cast<const uint32*>(ptr);
+                ch = static_cast<uint32>(c[i]);
+            }
+
+            if (ch == 0x20)
                 ++count;
             else
                 break;
         }
+            
+
+        
         return count;
     }
 
-    static float StartSpaceOffset(const SkFont& font, const std::string& str)
+    static SkTextEncoding EncodingToSkTextEncoding(Text::Encoding encoding)
     {
+        if (encoding == Text::Encoding::UTF16)
+            return SkTextEncoding::kUTF16;
+        if (encoding == Text::Encoding::UTF32)
+            return SkTextEncoding::kUTF32;
+
+        return SkTextEncoding::kUTF8;
+    }
+
+    static float StartSpaceOffset(const SkFont& font, const Text::StrData& data)
+    {
+        // This function only handles " " for now.
+        // TODO: Support for no-break space should be added.
+
         float offset{0.0f};
-        std::size_t spaceCount{SpaceCount(str)};
+        std::size_t spaceCount{SpaceCount(data)};
         
         if (spaceCount > 0)
         {
             SkRect tmp{};
-            offset = font.measureText(str.c_str(), spaceCount, SkTextEncoding::kUTF8, &tmp);
+            offset = font.measureText(data.text, spaceCount, EncodingToSkTextEncoding(data.encoding), &tmp);
         }
         
         return offset;
     }
 
-    float Text::drawTextLineWithPaint(SkCanvas* canvas, const std::string& str, const Vec2f& pos, const SkPaint& paint)
+    
+
+    float Text::drawTextLineWithPaint(SkCanvas* canvas, const StrData& data, const Vec2f& pos, const SkPaint& paint)
     {
         SkRect bounds{};
-        float advance = m_font.measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &bounds);
+
+        std::size_t byteLength = data.size * EncodingByteSize(data.encoding);
+        float advance = m_font.measureText(data.text, byteLength, EncodingToSkTextEncoding(data.encoding), &bounds);
 
 #ifdef PTK_DRAW_TEXT_RECT
         Rectangle rect{};
@@ -172,34 +209,37 @@ namespace pTK
         rect.onDraw(canvas);
 #endif
 
-        canvas->drawString(str.c_str(), pos.x + StartSpaceOffset(m_font, str) + (-1*bounds.x()), pos.y + m_capHeight, m_font, paint);
+        SkScalar x = pos.x + StartSpaceOffset(m_font, data) + (-1 * bounds.x());
+        SkScalar y = pos.y + m_capHeight;
+
+        canvas->drawSimpleText(data.text, byteLength, EncodingToSkTextEncoding(data.encoding), x, y, m_font, paint);
 
         return advance;
     }
 
-    float Text::drawTextLine(SkCanvas* canvas, const std::string& str, const Color& color, const Vec2f& pos)
+    float Text::drawTextLine(SkCanvas* canvas, const StrData& data, const Color& color, const Vec2f& pos)
     {
         SkPaint paint = GetSkPaintFromColor(color);
         paint.setStyle(SkPaint::kStrokeAndFill_Style);
 
-        return drawTextLineWithPaint(canvas, str, pos, paint);
+        return drawTextLineWithPaint(canvas, data, pos, paint);
     }
 
-    float Text::drawTextLine(SkCanvas* canvas, const std::string& str, const Color& color, const Vec2f& pos, float outlineSize, const Color& outColor)
+    float Text::drawTextLine(SkCanvas* canvas, const StrData& data, const Color& color, const Vec2f& pos, float outlineSize, const Color& outColor)
     {
         if (!(outlineSize > 0.0f))
-            return drawTextLine(canvas, str, color, pos);
+            return drawTextLine(canvas, data, color, pos);
         
         SkPaint paint = GetSkPaintFromColor(color);
         paint.setStrokeWidth(outlineSize);
         paint.setStyle(SkPaint::kFill_Style);
 
-        float advance = drawTextLineWithPaint(canvas, str, pos, paint);
+        float advance = drawTextLineWithPaint(canvas, data, pos, paint);
 
         paint.setARGB(outColor.a, outColor.r, outColor.g, outColor.b);
         paint.setStyle(SkPaint::kStroke_Style);
 
-        drawTextLineWithPaint(canvas, str, pos, paint);
+        drawTextLineWithPaint(canvas, data, pos, paint);
 
         return advance;
     }

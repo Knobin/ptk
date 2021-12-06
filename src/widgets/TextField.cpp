@@ -156,10 +156,14 @@ namespace pTK
         Rectangle::onDraw(canvas);
         const Size rectSize{getSize()};
         
-        float advance = (!getText().empty()) ? drawTextLine(canvas, getText(), m_textColor, m_textPos) : 0.0f;
+        const Text::StrData textData{ getText().c_str(), getText().size(), Text::Encoding::UTF8 };
+        float advance = (!getText().empty()) ? drawTextLine(canvas, textData, m_textColor, m_textPos) : 0.0f;
         
         if (getText().empty())
-            drawTextLine(canvas, m_placeholderText, m_placeholderColor, m_textPos);
+        {
+            const Text::StrData placeholderStrData{ m_placeholderText.c_str(), m_placeholderText.size(), Text::Encoding::UTF8 };
+            drawTextLine(canvas, placeholderStrData, m_placeholderColor, m_textPos);
+        }
 
         if (m_drawCursor)
         {
@@ -191,6 +195,17 @@ namespace pTK
         updateBounds();
     }
 
+    void TextField::setText(const std::string& text)
+    {
+        m_text = text;
+        onTextUpdate();
+    }
+
+    const std::string& TextField::getText() const
+    {
+        return m_text;
+    }
+
     void TextField::updateBounds()
     {
         const float capitalHeight{capHeight()};
@@ -204,7 +219,7 @@ namespace pTK
         
         m_cursorHeight = ascentToDescent();
         
-        Size minSize{Vec2ToSize(getBounds(), std::ceilf)};
+        Size minSize{Vec2ToSize(getBoundsFromStr(getText()), std::ceilf)};
         minSize.width += 1;
         auto ceilCursorHeight = static_cast<Size::value_type>(std::ceil(m_cursorHeight));
         minSize.height = (minSize.height > ceilCursorHeight) ? minSize.height : ceilCursorHeight;
