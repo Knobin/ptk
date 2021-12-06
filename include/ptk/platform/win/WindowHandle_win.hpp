@@ -12,6 +12,7 @@
 #include "ptk/platform/base/WindowHandle.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/events/MouseEvent.hpp"
+#include "ptk/platform/win/MenuBarUtil_win.hpp"
 
 // C++ Headers
 #include <map>
@@ -23,7 +24,6 @@
 namespace pTK
 {
     class Window;
-    struct WinBackendData;
 
     /** MainWindow_win class implementation.
 
@@ -198,19 +198,32 @@ namespace pTK
         */
         bool setScaleHint(const Vec2f& scale) override;
 
-        static LRESULT CALLBACK WndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+        static LRESULT CALLBACK WndPro(HWND hwnd, UINT msg, WPARAM wParam, ::LPARAM lParam);
 
         [[nodiscard]] HWND handle() const;
 
         [[nodiscard]] HACCEL accelTable() const;
+
+    public:
+        // Data struct that the static Win32 functions can manipulate freely.
+        struct Data
+        {
+            Window* window{ nullptr };
+            bool minimized{ false };
+            uint wait{ 0 };
+            MenuBarUtil_win::MenuMap menuItems{};
+            bool ignoreSize{ false };
+            bool hasMenu{ false };
+        };
 
     private:
         HWND m_hwnd;
         std::unique_ptr<ContextBase> m_context;
         PAINTSTRUCT m_ps{};
         [[maybe_unused]] HDC m_hdc{};
-
-        std::unique_ptr<WinBackendData> m_data;
+        Vec2f m_scale{};
+        HACCEL m_accelTable{ nullptr };
+        Data m_data{};
     };
 }
 

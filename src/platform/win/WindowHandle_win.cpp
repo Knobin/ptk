@@ -10,7 +10,6 @@
 #include "ptk/platform/win/ApplicationHandle_win.hpp"
 #include "ptk/platform/common/RasterContext.hpp"
 #include "ptk/platform/win/RasterPolicy_win.hpp"
-#include "ptk/platform/win/MenuBarUtil_win.hpp"
 
 // pTK Headers
 #include "ptk/Application.hpp"
@@ -80,33 +79,13 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    struct WinBackendData
-    {
-        Window* window{nullptr};
-        Vec2f scale{};
-        Size size{};
-        Point pos{};
-        DWORD style{};
-        bool minimized{ false };
-        uint wait{ 0 };
-        bool ignoreSize{ false };
-        bool hasMenu{ false };
-        MenuBarUtil_win::MenuMap menuItems{};
-        HACCEL accelTable{nullptr};
-    };
-
-    ///////////////////////////////////////////////////////////////////////////////
-
     WindowHandle_win::WindowHandle_win(Window *window, const std::string& name, const Size& size, const WindowInfo& flags)
         : WindowHandle(window)
     {
-        // Default window data.
-        m_data = std::make_unique<WinBackendData>();
-        m_data->window = window;
-        m_data->pos = flags.position;
+        m_data.window = window;
 
         // Menubar.
-        m_data->hasMenu = (static_cast<bool>(flags.menus) && !flags.menus->empty());
+        m_data.hasMenu = (static_cast<bool>(flags.menus) && !flags.menus->empty());
 
         // High DPI.
         HDC screen{GetDC(nullptr)};
@@ -121,19 +100,19 @@ namespace pTK
         ::ReleaseDC(nullptr, screen);
         PTK_INFO("System DPI {}x{}", dpiX, dpiY);
 
-        m_data->scale = {dpiX / 96.0f, dpiY / 96.0f};
-        m_data->size = ScaleSize(size, m_data->scale);
-        m_data->style = WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
-        const Size adjSize{CalcAdjustedWindowSize(m_data->size, m_data->style, m_data->hasMenu, dpiX)};
+        m_scale = {dpiX / 96.0f, dpiY / 96.0f};
+        Size scaledSize = ScaleSize(size, m_scale);
+        DWORD style = WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+        const Size adjSize{CalcAdjustedWindowSize(scaledSize, style, m_data.hasMenu, dpiX)};
         // Old position was set to CW_USEDEFAULT (replaced with flags.position).
-        m_hwnd = ::CreateWindowExW(0, L"PTK", ApplicationHandle_win::stringToUTF16(name).c_str(), m_data->style,
+        m_hwnd = ::CreateWindowExW(0, L"PTK", ApplicationHandle_win::stringToUTF16(name).c_str(), style,
                                     flags.position.x, flags.position.y, adjSize.width, adjSize.height,
                                      nullptr, nullptr, ::GetModuleHandleW(nullptr), nullptr);
         if (!m_hwnd)
             throw WindowError("Failed to create window!");
 
-        m_context = CreateContextForWin32(flags.backend, m_hwnd, m_data->size);
-        SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)m_data.get());
+        m_context = CreateContextForWin32(flags.backend, m_hwnd, scaledSize);
+        SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)&m_data);
 
         switch (flags.visibility)
         {
@@ -152,26 +131,26 @@ namespace pTK
                 break;
         }
 
-        if (m_data->hasMenu)
+        if (m_data.hasMenu)
         {
             HMENU menuBar = ::CreateMenu();
-            uint menuBarId = MenuBarUtil_win::InsertMenuItemToMap(m_data->menuItems, nullptr, 1, true, menuBar);
+            uint menuBarId = MenuBarUtil_win::InsertMenuItemToMap(m_data.menuItems, nullptr, 1, true, menuBar);
             std::vector<ACCEL> accelShortcuts{};
 
             for (auto menuIt{flags.menus->cbegin()}; menuIt != flags.menus->cend(); ++menuIt)
-                MenuBarUtil_win::CreateMenuStructure(menuBar, m_data->menuItems, (*menuIt), menuBarId, accelShortcuts);
+                MenuBarUtil_win::CreateMenuStructure(menuBar, m_data.menuItems, (*menuIt), menuBarId, accelShortcuts);
 
             ::SetMenu(m_hwnd, menuBar);
 
-            m_data->accelTable = ::CreateAcceleratorTableW(accelShortcuts.data(), static_cast<int>(accelShortcuts.size()));
+            m_accelTable = ::CreateAcceleratorTableW(accelShortcuts.data(), static_cast<int>(accelShortcuts.size()));
         }
 
-        PTK_INFO("Initialized WindowHandle_win {}x{} at {}x{}", m_data->size.width, m_data->size.height, flags.position.x, flags.position.y);
+        PTK_INFO("Initialized WindowHandle_win {}x{} at {}x{}", size.width, size.height, flags.position.x, flags.position.y);
     }
 
     WindowHandle_win::~WindowHandle_win()
     {
-        for (auto it = m_data->menuItems.rbegin(); it != m_data->menuItems.rend(); ++it)
+        for (auto it = m_data.menuItems.rbegin(); it != m_data.menuItems.rend(); ++it)
         {
             bool isMenu = std::get<2>(it->second);
             if (isMenu)
@@ -181,27 +160,19 @@ namespace pTK
             }
         }
 
-        ::DestroyAcceleratorTable(m_data->accelTable);
-        m_data->accelTable = nullptr;
+        ::DestroyAcceleratorTable(m_accelTable);
+        m_accelTable = nullptr;
 
         PTK_INFO("Destroyed WindowHandle_win");
     }
 
     bool WindowHandle_win::setPosHint(const Point& pos)
     {
-        if (m_data->pos != pos)
-        {
-            RECT rc{};
-            if (::GetWindowRect(m_hwnd, &rc))
-            {
-                if (::MoveWindow(m_hwnd, pos.x, pos.y, rc.right - rc.left, rc.bottom - rc.top, FALSE))
-                {
-                    m_data->pos = pos;
-                    return true;
-                }
-            }
+        RECT rc{};
+        if (::GetWindowRect(m_hwnd, &rc))
+            if (::MoveWindow(m_hwnd, pos.x, pos.y, rc.right - rc.left, rc.bottom - rc.top, FALSE))
+                return true;
 
-        }
         return false;
     }
 
@@ -299,7 +270,7 @@ namespace pTK
 
     DWORD WindowHandle_win::getWindowStyle() const
     {
-        return m_data->style;
+        return static_cast<DWORD>(GetWindowLong(m_hwnd, GWL_EXSTYLE));
     }
 
     void WindowHandle_win::swapBuffers()
@@ -310,19 +281,20 @@ namespace pTK
     bool WindowHandle_win::resize(const Size& size)
     {
         // Apply the DPI scaling.
-        const Size scaledSize{ScaleSize(size, m_data->scale)};
+        const Size scaledSize{ScaleSize(size, parent()->getDPIScale())};
 
         // Apply the new size to the context and window.
         if (scaledSize != m_context->getSize())
             m_context->resize(scaledSize);
 
-        if (!m_data->ignoreSize)
+        if (!m_data.ignoreSize)
         {
-            const Size adjSize{CalcAdjustedWindowSize(scaledSize, m_data->style, m_data->hasMenu, m_data->scale.x * 96.0f)};
+            const Vec2f scale = parent()->getDPIScale();
+            const Size adjSize{CalcAdjustedWindowSize(scaledSize, getWindowStyle(), m_data.hasMenu, scale.x * 96.0f)};
             ::SetWindowPos(m_hwnd, 0, 0, 0, adjSize.width, adjSize.height, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
         }
 
-        m_data->ignoreSize = false;
+        m_data.ignoreSize = false;
         return true;
     }
 
@@ -359,12 +331,15 @@ namespace pTK
 
     Vec2f WindowHandle_win::getDPIScale() const
     {
-        return m_data->scale;
+        return m_scale;
     }
 
     Point WindowHandle_win::getWinPos() const
     {
-        return m_data->pos;
+        RECT rect{};
+        ::GetWindowRect(m_hwnd, &rect);
+        return { static_cast<Point::value_type>(rect.left),
+                static_cast<Point::value_type>(rect.top) };
     }
 
     Size WindowHandle_win::getWinSize() const
@@ -408,9 +383,9 @@ namespace pTK
 
     bool WindowHandle_win::setScaleHint(const Vec2f& scale)
     {
-        if (m_data->scale != scale)
+        if (m_scale != scale)
         {
-            m_data->scale = scale;
+            m_scale = scale;
             resize(parent()->getSize());
             return true;
         }
@@ -424,24 +399,24 @@ namespace pTK
 
     HACCEL WindowHandle_win::accelTable() const
     {
-        return m_data->accelTable;
+        return m_accelTable;
     }
 
-    static void HandleMouseClick(WinBackendData* data, Event::Type type, Mouse::Button btn,
-                                 LPARAM lParam)
+    static void HandleMouseClick(WindowHandle_win::Data* data, const Vec2f& scale,  Event::Type type, 
+                                    Mouse::Button btn, LPARAM lParam)
     {
         if (data->window)
         {
             const Point pos{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
             ButtonEvent evt{type,
                             btn,
-                            {static_cast<Point::value_type>(pos.x * (1 / data->scale.x)),
-                             static_cast<Point::value_type>(pos.y * (1 / data->scale.y))}};
+                            {static_cast<Point::value_type>(pos.x * (1 / scale.x)),
+                             static_cast<Point::value_type>(pos.y * (1 / scale.y))}};
             data->window->sendEvent(&evt);
         }
     }
 
-    static void HandleDPIChange(WinBackendData* data, WPARAM wParam, LPARAM lParam)
+    static void HandleDPIChange(WindowHandle_win::Data* data, WPARAM wParam, LPARAM lParam)
     {
         // Change Window position.
         RECT* rect = reinterpret_cast<RECT*>(lParam);
@@ -458,21 +433,21 @@ namespace pTK
         data->window->sendEvent(&sEvt);
     }
 
-    static void HandleWindowLimits(WinBackendData* data, LPARAM lParam)
+    static void HandleWindowLimits(WindowHandle_win::Data* data, LPARAM lParam, const Vec2f& scale, bool hasMenu, DWORD style)
     {
         Window *window{data->window};
         LPMINMAXINFO lpMMI{reinterpret_cast<LPMINMAXINFO>(lParam)};
         const Size minSize{window->getMinSize()};
         WindowHandle_win* backend{static_cast<WindowHandle_win*>(window->getHandle())};
-        const Size adjMinSize{CalcAdjustedWindowSize(ScaleSize(minSize, data->scale),
-                                                     backend->getWindowStyle(), data->hasMenu, data->scale.x * 96.0f)};
+        const Size adjMinSize{CalcAdjustedWindowSize(ScaleSize(minSize, scale),
+                                                     backend->getWindowStyle(), hasMenu, scale.x * 96.0f)};
         lpMMI->ptMinTrackSize.x = adjMinSize.width;
         lpMMI->ptMinTrackSize.y = adjMinSize.height;
         const Size maxSize{window->getMaxSize()};
         if (maxSize != Size::Max)
         {
             const Size adjMaxSize{CalcAdjustedWindowSize(
-                ScaleSize(maxSize, data->scale), data->style, data->hasMenu, data->scale.x * 96.0f)};
+                ScaleSize(maxSize, scale), style, hasMenu, scale.x * 96.0f)};
             lpMMI->ptMaxTrackSize.x = adjMaxSize.width;
             lpMMI->ptMaxTrackSize.y = adjMaxSize.height;
         }
@@ -483,7 +458,7 @@ namespace pTK
         }
     }
 
-    static void HandleWindowMinimize(WinBackendData* data, bool minimize)
+    static void HandleWindowMinimize(WindowHandle_win::Data* data, bool minimize)
     {
         data->minimized = minimize;
         Event::Type type{(minimize) ? Event::Type::WindowMinimize : Event::Type::WindowRestore};
@@ -491,22 +466,24 @@ namespace pTK
         data->window->sendEvent(&evt);
     }
 
-    static void HandleWindowResize(WinBackendData* data, WindowHandle *backend, HWND hwnd)
+    static void HandleWindowResize(WindowHandle_win::Data* data, WindowHandle *backend, HWND hwnd)
     {
         Window *window{data->window};
         RECT rc{};
         if (::GetClientRect(hwnd, &rc) && (rc.right != 0 && rc.bottom != 0))
         {
-            if (static_cast<Size::value_type>(rc.right) != data->size.width ||
-                static_cast<Size::value_type>(rc.bottom) != data->size.height)
+            const Vec2f scale = backend->getDPIScale();
+            const Size size = backend->getWinSize();
+            if (static_cast<Size::value_type>(rc.right) != size.width ||
+                static_cast<Size::value_type>(rc.bottom) != size.height)
             {
                 if (backend)
                 {
-                    const Size size{static_cast<Size::value_type>(rc.right),
+                    const Size rsize{static_cast<Size::value_type>(rc.right),
                                     static_cast<Size::value_type>(rc.bottom)};
-                    ResizeEvent evt{ScaleSize(size,
-                                              Vec2f{1.0f / data->scale.x,
-                                                    1.0f / data->scale.y})};
+                    ResizeEvent evt{ScaleSize(rsize,
+                                              Vec2f{1.0f / scale.x,
+                                                    1.0f / scale.y})};
                     data->ignoreSize = true;
                     window->sendEvent(&evt);
                     window->forceDrawAll();
@@ -580,8 +557,7 @@ namespace pTK
 
     LRESULT WindowHandle_win::WndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
-        WinBackendData* data{
-            reinterpret_cast<WinBackendData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA))};
+        Data* data{reinterpret_cast<Data*>(GetWindowLongPtr(hwnd, GWLP_USERDATA))};
         if (!data)
             return ::DefWindowProcW(hwnd, msg, wParam, lParam);
         Window* window{data->window};
@@ -637,37 +613,46 @@ namespace pTK
             case WM_MOUSEMOVE:
             {
                 const Point pos{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
-                MotionEvent evt{{static_cast<Point::value_type>(pos.x * (1 / data->scale.x)),
-                                 static_cast<Point::value_type>(pos.y * (1 / data->scale.y))}};
+                const Vec2f scale = window->getHandle()->getDPIScale();
+                MotionEvent evt{{static_cast<Point::value_type>(pos.x * (1 / scale.x)),
+                                 static_cast<Point::value_type>(pos.y * (1 / scale.y))}};
                 window->sendEvent(&evt);
                 break;
             }
             case WM_LBUTTONDOWN:
-                HandleMouseClick(data, Event::Type::MouseButtonPressed, Mouse::Button::Left,
-                                 lParam);
+            {
+                const Vec2f scale = window->getHandle()->getDPIScale();
+                HandleMouseClick(data, scale, Event::Type::MouseButtonPressed, Mouse::Button::Left,
+                    lParam);
                 break;
+            }
             case WM_LBUTTONUP:
-                HandleMouseClick(data, Event::Type::MouseButtonReleased, Mouse::Button::Left,
-                                 lParam);
+            {
+                const Vec2f scale = window->getHandle()->getDPIScale();
+                HandleMouseClick(data, scale, Event::Type::MouseButtonReleased, Mouse::Button::Left,
+                    lParam);
                 break;
+            }
             case WM_SIZING:
             {
                 RECT* rect = reinterpret_cast<RECT*>(lParam);
                 const Size size = {static_cast<Size::value_type>(rect->right - rect->left),
                                    static_cast<Size::value_type>(rect->bottom - rect->top)};
-                ResizeEvent evt{ScaleSize(CalcAdjustedReverseWindowSize(size, data->style, data->hasMenu, data->scale.x * 96.0f),
-                                          Vec2f{1.0f / data->scale.x, 1.0f / data->scale.y})};
-                if (evt.size != data->size)
-                {
-                    data->ignoreSize = true;
-                    window->sendEvent(&evt);
-                    window->forceDrawAll();
-                }
+                const Vec2f scale = window->getHandle()->getDPIScale();
+                DWORD style = static_cast<WindowHandle_win*>(window->getHandle())->getWindowStyle();
+                ResizeEvent evt{ScaleSize(CalcAdjustedReverseWindowSize(size, style, data->hasMenu, scale.x * 96.0f),
+                                          Vec2f{1.0f / scale.x, 1.0f / scale.y})};
+
+                data->ignoreSize = true;
+                window->sendEvent(&evt);
+                window->forceDrawAll();
                 break;
             }
             case WM_GETMINMAXINFO:
             {
-                HandleWindowLimits(data, lParam);
+                const Vec2f scale = window->getHandle()->getDPIScale();
+                DWORD style = static_cast<WindowHandle_win*>(window->getHandle())->getWindowStyle();
+                HandleWindowLimits(data, lParam, scale, data->hasMenu, style);
                 break;
             }
             case WM_DPICHANGED:
@@ -683,11 +668,8 @@ namespace pTK
                 // Window was moved.
                 if (!(winData->flags & SWP_NOMOVE))
                 {
-                    if (winData->x != data->pos.x || winData->y != data->pos.y)
-                    {
-                        MoveEvent evt{{winData->x, winData->y}};
-                        window->sendEvent(&evt);
-                    }
+                    MoveEvent evt{{winData->x, winData->y}};
+                    window->sendEvent(&evt);
                 }
 
                 // Window was resized.

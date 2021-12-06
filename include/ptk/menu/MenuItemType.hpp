@@ -10,6 +10,7 @@
 
 // pTK Headers
 #include "ptk/core/Types.hpp"
+#include "ptk/Log.hpp"
 
 // C++ Headers
 #include <string_view>
@@ -51,6 +52,10 @@ namespace pTK
             case MenuItemType::Menu:
                return "Menu";
         }
+
+        // All paths are covered, but MSVC complains anyways.
+        PTK_ASSERT(false, "");
+        return "";
     }
 
     constexpr std::string_view MenuItemStatusToStr(MenuItemStatus status) noexcept
