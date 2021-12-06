@@ -36,6 +36,14 @@ namespace pTK
             @param KeyCode  Keycode
         */
         virtual void onKeyEvent(Event::Type, KeyCode, byte) {}
+
+        /** Function for handling key input.
+
+            @param keyCode  Keycode
+            @param char     display character
+            @param mod      modifier keys
+        */
+        virtual void onKeyInput(KeyCode, uint32, byte) {}
         
         /** Function for handling when mouse is hovering.
          

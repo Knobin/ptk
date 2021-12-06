@@ -31,7 +31,7 @@ namespace pTK
             NONE = 0,
             WindowClose, WindowLostFocus, WindowFocus, WindowPaint, WindowResize,
             WindowMove, WindowMinimize, WindowRestore, WindowScale,
-            KeyPressed, KeyReleased,
+            KeyPressed, KeyReleased, KeyInput,
             MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
         };
 

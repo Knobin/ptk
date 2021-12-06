@@ -24,12 +24,13 @@ namespace pTK
         events from the keyboard. Such as Key presses or
         releases.
     */
-    class KeyEvent final : public Event
+    class KeyEvent : public Event
     {
     public:
         // Objects for easier type management.
         inline static const Event::Type Pressed = Event::Type::KeyPressed;
         inline static const Event::Type Released = Event::Type::KeyReleased;
+        inline static const Event::Type Input = Event::Type::KeyInput;
         
         enum class Modifier : byte
         {
@@ -42,6 +43,12 @@ namespace pTK
             NumLock     = 32
         };
 
+        enum class Encoding : byte
+        {
+            NONE = 0,
+            UTF8, UTF16, UTF32
+        };
+
     public:
         /** Constructs KeyEvent with default values with type and code.
          
@@ -49,18 +56,33 @@ namespace pTK
             @param code     associated keycode
             @return         default initialized KeyEvent
         */
-        KeyEvent(Event::Type type, KeyCode code, std::underlying_type<KeyEvent::Modifier>::type mod = 0)
-            : Event(Event::Category::Key, type), keycode{code}, modifier{mod}
+        KeyEvent(Event::Type type, KeyCode code, uint32 ch, std::underlying_type<KeyEvent::Modifier>::type mod = 0)
+            : Event(Event::Category::Key, type), keycode{ code }, data{ ch }, modifier{ mod }
+        {}
+
+        /** Constructs KeyEvent with default values with type and code.
+
+            @param type     press or release
+            @param code     associated keycode
+            @return         default initialized KeyEvent
+        */
+        KeyEvent(Event::Type type, KeyCode code, uint32 ch, Encoding enc, std::underlying_type<KeyEvent::Modifier>::type mod = 0)
+            : Event(Event::Category::Key, type), keycode{ code }, data{ ch }, encoding{ enc }, modifier{ mod }
         {}
 
         // Key code.
         KeyCode keycode;
+
+        // Contains the char.
+        uint32 data;
+
+        // Contains the encoding of the char.
+        Encoding encoding{ Encoding::UTF8 };
         
         // Modifiers.
         std::underlying_type<Modifier>::type modifier;
         
         bool isModifierSet(KeyEvent::Modifier mod) const;
-        
     };
 
     constexpr bool IsKeyEventModifierSet(std::underlying_type<KeyEvent::Modifier>::type number, KeyEvent::Modifier mod)

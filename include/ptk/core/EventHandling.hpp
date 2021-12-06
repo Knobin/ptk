@@ -45,6 +45,18 @@ namespace pTK
             @param int     Keycode
         */
         void handleKeyEvent(Event::Type type, KeyCode keycode, byte modifier);
+
+        /** Function for handling when a key is pressed or released.
+
+            This function will call two other functions to handle the event.
+            One for the user to bind to and one for derived classes to handle
+            the event internally.
+
+            @param keyCode  Keycode
+            @param char     display character
+            @param mod      modifier keys
+        */
+        void handleKeyInput(KeyCode keycode, uint32 data, byte modifier);
         
         /** Function for handling when mouse is hovering.
          

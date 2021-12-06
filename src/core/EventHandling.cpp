@@ -15,7 +15,7 @@ namespace pTK
     {}
 
     template<typename Container, typename... Args>
-    void LoopAndConditionRemove(Container& cont, Args&&... args)
+    static void LoopAndConditionRemove(Container& cont, Args&&... args)
     {
         auto it = cont.begin();
         while (it != cont.end())
@@ -31,6 +31,12 @@ namespace pTK
     {
         onKeyEvent(type, keycode, modifier);
         LoopAndConditionRemove(getKeyCallbacks(), type, keycode, modifier);
+    }
+
+    void EventHandling::handleKeyInput(KeyCode keycode, uint32 data, byte modifier)
+    {
+        onKeyInput(keycode, data, modifier);
+        LoopAndConditionRemove(getKeyInputCallbacks(), keycode, data, modifier);
     }
 
     void EventHandling::handleHoverEvent(const Point& pos)

@@ -38,6 +38,7 @@ namespace pTK
         std::swap(m_clickCallbacks, other.m_clickCallbacks);
         std::swap(m_scrollCallback, other.m_scrollCallback);
         std::swap(m_keyCallback, other.m_keyCallback);
+        std::swap(m_keyInputCallback, other.m_keyInputCallback);
         std::swap(m_hoverCallback, other.m_hoverCallback);
     }
 
@@ -61,6 +62,7 @@ namespace pTK
         m_clickCallbacks    = std::move(other.m_clickCallbacks);
         m_scrollCallback    = std::move(other.m_scrollCallback);
         m_keyCallback       = std::move(other.m_keyCallback);
+        m_keyInputCallback  = std::move(other.m_keyInputCallback);
         m_hoverCallback     = std::move(other.m_hoverCallback);
 
         return *this;
@@ -69,6 +71,11 @@ namespace pTK
     void EventCallbacks::onKey(const std::function<bool(Event::Type, KeyCode, byte)>& callback)
     {
         m_keyCallback.push_back(callback);
+    }
+
+    void EventCallbacks::onInput(const std::function<bool(KeyCode, uint32, byte)>& callback)
+    {
+        m_keyInputCallback.push_back(callback);
     }
     
     void EventCallbacks::onHover(const std::function<bool(const Point&)>& callback)
@@ -144,6 +151,11 @@ namespace pTK
         return m_keyCallback;
     }
 
+    const std::vector<std::function<bool(KeyCode, uint32, byte)>>& EventCallbacks::getKeyInputCallbacks() const
+    {
+        return m_keyInputCallback;
+    }
+
     const std::vector<std::function<bool(const Point&)>>& EventCallbacks::getHoverCallbacks() const
     {
         return m_hoverCallback;
@@ -190,6 +202,11 @@ namespace pTK
     std::vector<std::function<bool(Event::Type, KeyCode, byte)>>& EventCallbacks::getKeyCallbacks()
     {
         return m_keyCallback;
+    }
+
+    std::vector<std::function<bool(KeyCode, uint32, byte)>>& EventCallbacks::getKeyInputCallbacks()
+    {
+        return m_keyInputCallback;
     }
 
     std::vector<std::function<bool(const Point&)>>& EventCallbacks::getHoverCallbacks()

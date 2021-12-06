@@ -551,7 +551,23 @@ namespace pTK
             key = KeyMap::KeyCodeToKey(static_cast<int32>(lrKey));
         }
 
-        KeyEvent evt{type, key, GetKeyModifiers()};
+        KeyEvent evt{type, key, static_cast<uint32>(KeyCodeToGraph(key)), GetKeyModifiers()};
+        window->sendEvent(&evt);
+    }
+
+    static void HandleCharInput(Window* window, WPARAM wParam, LPARAM UNUSED(lParam))
+    {
+        uint32 ch{ static_cast<uint32>(wParam) };
+        int32 lookup{ static_cast<int32>(ch) };
+
+        // a-z [97-123]
+        if ((96 < ch) && (ch < 123))
+            lookup = ch - 32;
+        
+        KeyCode key{ KeyMap::KeyCodeToKey(lookup) };
+
+        KeyEvent evt{ KeyEvent::Input, key, static_cast<uint32>(wParam),
+            KeyEvent::Encoding::UTF16, GetKeyModifiers() };
         window->sendEvent(&evt);
     }
 
@@ -596,6 +612,11 @@ namespace pTK
                 if (window->visible())
                     window->forceDrawAll();
 
+                break;
+            }
+            case WM_CHAR:
+            {
+                HandleCharInput(window, wParam, lParam);
                 break;
             }
             case WM_SYSKEYDOWN:

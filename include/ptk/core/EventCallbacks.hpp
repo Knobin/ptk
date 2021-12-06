@@ -72,6 +72,12 @@ namespace pTK
         */
         void onKey(const std::function<bool(Event::Type, KeyCode, byte)>& callback);
 
+        /** Function for handling when key input
+
+            @param callback    function to call on key input
+        */
+        void onInput(const std::function<bool(KeyCode, uint32, byte)>& callback);
+
         /** Function for handling when mouse is hovering.
 
             @param callback    function to call on hover event
@@ -119,6 +125,7 @@ namespace pTK
         [[nodiscard]] const std::vector<std::function<bool(Mouse::Button, const Point&)>>& getReleaseCallbacks() const;
         [[nodiscard]] const std::vector<std::function<bool(const Vec2f&)>>& getScrollCallbacks() const;
         [[nodiscard]] const std::vector<std::function<bool(Event::Type, KeyCode, byte)>>& getKeyCallbacks() const;
+        [[nodiscard]] const std::vector<std::function<bool(KeyCode, uint32, byte)>>& getKeyInputCallbacks() const;
         [[nodiscard]] const std::vector<std::function<bool(const Point&)>>& getHoverCallbacks() const;
         [[nodiscard]] const std::vector<std::function<bool()>>& getLeaveClickCallbacks() const;
 
@@ -128,6 +135,7 @@ namespace pTK
         [[nodiscard]] std::vector<std::function<bool(Mouse::Button, const Point&)>>& getReleaseCallbacks();
         [[nodiscard]] std::vector<std::function<bool(const Vec2f&)>>& getScrollCallbacks();
         [[nodiscard]] std::vector<std::function<bool(Event::Type, KeyCode, byte)>>& getKeyCallbacks();
+        [[nodiscard]] std::vector<std::function<bool(KeyCode, uint32, byte)>>& getKeyInputCallbacks();
         [[nodiscard]] std::vector<std::function<bool(const Point&)>>& getHoverCallbacks();
         [[nodiscard]] std::vector<std::function<bool()>>& getLeaveClickCallbacks();
 
@@ -140,6 +148,7 @@ namespace pTK
 
         std::vector<std::function<bool(const Vec2f&)>> m_scrollCallback;
         std::vector<std::function<bool(Event::Type, KeyCode, byte)>> m_keyCallback;
+        std::vector<std::function<bool(KeyCode, uint32, byte)>> m_keyInputCallback;
         std::vector<std::function<bool(const Point&)>> m_hoverCallback;
 
 
