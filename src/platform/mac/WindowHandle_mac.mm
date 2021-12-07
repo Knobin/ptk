@@ -214,8 +214,45 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 - (void)keyDown:(NSEvent *)event
 {
     std::underlying_type<pTK::KeyEvent::Modifier>::type mods{GetModifiers(event.modifierFlags)};
-    pTK::KeyEvent evt{pTK::Event::Type::KeyPressed, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode)), mods};
-    ptkwindow->parent()->sendEvent(&evt);
+    uint32 data{0};
+
+    if ([event.characters canBeConvertedToEncoding:NSUTF32StringEncoding])
+    {
+        NSData *utf32Data = [event.characters dataUsingEncoding:NSUTF32StringEncoding];
+        const uint32 *utf32 = static_cast<const uint32*>([utf32Data bytes]);
+        NSUInteger count = [utf32Data length] / 4;
+
+        if (count == 2)
+            data = utf32[1];
+
+        switch (data)
+        {
+            case 0x08: // Backspace
+            case 0x0A: // Linefeed
+            case 0x1B: // Escape
+            case 0x09: // Tab
+            case 0x0D: // Carriage return
+            case 0x7F: // Delete
+            case 0xF700: // Up arrow??
+            case 0xF701: // Down arrow??
+            case 0xF702: // Left arrow??
+            case 0xF703: // Right arrow??
+            {
+                data = 0;
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    pTK::KeyEvent press{pTK::Event::Type::KeyPressed, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode)),
+        data, pTK::Text::Encoding::UTF32, mods};
+    ptkwindow->parent()->sendEvent(&press);
+
+    pTK::KeyEvent input{pTK::KeyEvent::Input, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode)),
+        data, pTK::Text::Encoding::UTF32, mods};
+    ptkwindow->parent()->sendEvent(&input);
 
     // [self interpretKeyEvents:@[event]];
 }

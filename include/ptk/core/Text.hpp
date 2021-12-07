@@ -23,7 +23,7 @@ PTK_DISABLE_WARN_END()
 namespace pTK
 {
     /** Text class implementation.
-     
+
      */
     class Text
     {
@@ -39,13 +39,13 @@ namespace pTK
         struct StrData
         {
             const void* text;
-            uint32 size;
+            std::size_t size;
             Encoding encoding;
         };
 
     public:
         /** Constructs Text with default values.
-         
+
             @return    default initialized Text
         */
         Text();
@@ -54,34 +54,34 @@ namespace pTK
 
         */
         virtual ~Text() = default;
-        
+
         /** Function for setting the font from a given file.
-         
+
             @param path    font file to load
             @return        status
         */
         bool setFontFromFile(const std::string& path);
 
         /** Function for setting the font family.
-         
+
             @param font    font family to use.
         */
         bool setFontFamily(const std::string& fontFamily);
-        
+
         /** Function for retrieving the font family.
-         
+
             @return  current font family
         */
         [[nodiscard]] std::string getFontFamily() const;
-        
+
         /** Function for setting the font size.
-         
+
             @param fontSize    size of the font
         */
         void setFontSize(uint fontSize);
-        
+
         /** Function for retrieving the font size.
-         
+
             @return  current font size
         */
         [[nodiscard]] uint getFontSize() const;
@@ -104,9 +104,9 @@ namespace pTK
             @return         bounds of the str
         */
         [[nodiscard]] Vec2f getBoundsFromStr(const std::string& str) const;
-        
+
         /** Function for retrieving the raw SkFont.
-         
+
             @return  raw SkFont
          */
         [[nodiscard]] const SkFont& skFont() const;
@@ -159,4 +159,3 @@ namespace pTK
 }
 
 #endif // PTK_CORE_TEXT_HPP
-

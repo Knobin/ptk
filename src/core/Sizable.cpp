@@ -11,11 +11,11 @@
 namespace pTK
 {
     Sizable::Sizable()
-        : m_minSize{pTK::Size::Min}, m_size{pTK::Size::Min}, m_maxSize{pTK::Size::Min}
+        : m_minSize{pTK::Size::Min}, m_size{pTK::Size::Min}, m_maxSize{pTK::Size::Max}
     {}
 
     Sizable::Sizable(const Size& size)
-        : m_minSize{size}, m_size{size}, m_maxSize{size}
+        : m_minSize{pTK::Size::Min}, m_size{size}, m_maxSize{pTK::Size::Max}
     {}
 
     Sizable::Sizable(const Size& min, const Size& size, const Size& max)
@@ -34,7 +34,7 @@ namespace pTK
     {
         if (size == getMinSize())
             return;
-        
+
         // Update minimal sizes.
         byte status{updateMinWidth(size.width)};
         status |= updateMinHeight(size.height);
@@ -79,7 +79,7 @@ namespace pTK
     {
         if (size == getMaxSize())
             return;
-        
+
         // Update maximum sizes.
         byte status{updateMaxWidth(size.width)};
         status |= updateMaxHeight(size.height);
