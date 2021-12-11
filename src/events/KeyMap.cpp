@@ -13,6 +13,7 @@
 
 // C++ Headers
 #include <map>
+#include <algorithm>
 
 namespace pTK
 {

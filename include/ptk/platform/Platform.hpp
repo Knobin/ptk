@@ -17,10 +17,10 @@
     #include "win/KeyMap_win.hpp"
     #define PTK_KEYMAP_INIT_FUNC pTK::KeyCodeMapInit_win
 #elif defined(PTK_PLATFORM_UNIX)
-    #include "unix/Application_unix.hpp"
-    using PTK_APPLICATION_TYPE = pTK::Application_unix;
-    #include "unix/MainWindow_unix.hpp"
-    using PTK_MAINWINDOW_TYPE = pTK::MainWindow_unix;
+    #include "unix/ApplicationHandle_unix.hpp"
+    using PTK_APPLICATION_HANDLE_T = pTK::ApplicationHandle_unix;
+    #include "unix/WindowHandle_unix.hpp"
+    using PTK_WINDOW_HANDLE_T = pTK::WindowHandle_unix;
     #define PTK_PLATFORM_STR "Unix"
     #include "unix/KeyMap_unix.hpp"
     #define PTK_KEYMAP_INIT_FUNC pTK::KeyCodeMapInit_unix

@@ -17,9 +17,9 @@ set(PLATFORM_FILES_WIN platform/win/ApplicationHandle_win.cpp
 set(PLATFORM_FILES_WIN_OPENGL platform/win/GLContext_win.cpp)
 
 # Unix files
-set(PLATFORM_FILES_UNIX platform/unix/Application_unix.cpp
+set(PLATFORM_FILES_UNIX platform/unix/ApplicationHandle_unix.cpp
     platform/unix/KeyMap_unix.cpp
-    platform/unix/MainWindow_unix.cpp
+    platform/unix/WindowHandle_unix.cpp
     platform/unix/RasterPolicy_unix.cpp)
 set(PLATFORM_FILES_UNIX_OPENGL platform/unix/GLContext_unix.cpp)
 

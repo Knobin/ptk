@@ -5,11 +5,9 @@
 //  Created by Robin Gustafsson on 2020-04-20.
 //
 
-// Local Headers
-#include "ptk/platform/unix/GLContext_unix.hpp"
-#include "ptk/platform/unix/Application_unix.hpp"
-
 // pTK Headers
+#include "ptk/platform/unix/GLContext_unix.hpp"
+#include "ptk/platform/unix/ApplicationHandle_unix.hpp"
 #include "ptk/Log.hpp"
 #include "ptk/core/Exception.hpp"
 
@@ -24,7 +22,7 @@ PTK_DISABLE_WARN_BEGIN()
 #include "src/gpu/gl/GrGLUtil.h"
 PTK_DISABLE_WARN_END()
 
-using App = pTK::Application_unix;
+using App = pTK::ApplicationHandle_unix;
 typedef GLXContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

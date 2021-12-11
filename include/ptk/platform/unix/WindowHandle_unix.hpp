@@ -1,18 +1,18 @@
 //
-//  platform/unix/MainWindow_unix.hpp
+//  platform/unix/WindowHandle_unix.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-10-10.
 //
 
-#ifndef PTK_PLATFORM_UNIX_MAINWINDOW_HPP
-#define PTK_PLATFORM_UNIX_MAINWINDOW_HPP
+#ifndef PTK_PLATFORM_UNIX_WINDOWHANDLE_HPP
+#define PTK_PLATFORM_UNIX_WINDOWHANDLE_HPP
 
 // Local Headers
 #include "ptk/platform/unix/x11.hpp"
 
 // pTK Headers
-#include "ptk/platform/base/MainWindowBase.hpp"
+#include "ptk/platform/base/WindowHandle.hpp"
 
 // C++ Headers
 #include <map>
@@ -25,7 +25,7 @@ namespace pTK
 
         This class handles the Windows Window.
     */
-    class MainWindow_unix : public MainWindowBase
+    class WindowHandle_unix : public WindowHandle
     {
     public:
         /** Constructs MainWindow_unix with default values.
@@ -36,12 +36,12 @@ namespace pTK
             @param backend  type of backend
             @return         default initialized MainWindow_unix
         */
-        MainWindow_unix(Window *window, const std::string& name, const Size& size, WindowInfo info);
+        WindowHandle_unix(Window *window, const std::string& name, const Size& size, WindowInfo info);
 
         /** Destructor for MainWindow_unix.
 
         */
-        virtual ~MainWindow_unix();
+        virtual ~WindowHandle_unix();
 
         /** Function for closing the window.
 
@@ -201,4 +201,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_PLATFORM_UNIX_MAINWINDOW_HPP
+#endif // PTK_PLATFORM_UNIX_WINDOWHANDLE_HPP

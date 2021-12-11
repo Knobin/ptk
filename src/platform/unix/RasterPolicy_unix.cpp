@@ -5,11 +5,9 @@
 //  Created by Robin Gustafsson on 2020-10-17.
 //
 
-// Local Headers
-#include "ptk/platform/unix/RasterPolicy_unix.hpp"
-#include "ptk/platform/unix/Application_unix.hpp"
-
 // pTK Headers
+#include "ptk/platform/unix/RasterPolicy_unix.hpp"
+#include "ptk/platform/unix/ApplicationHandle_unix.hpp"
 #include "ptk/Log.hpp"
 
 // Skia Headers
@@ -17,7 +15,7 @@ PTK_DISABLE_WARN_BEGIN()
 #include "include/core/SkSurface.h"
 PTK_DISABLE_WARN_END()
 
-using App = pTK::Application_unix;
+using App = pTK::ApplicationHandle_unix;
 
 namespace pTK
 {

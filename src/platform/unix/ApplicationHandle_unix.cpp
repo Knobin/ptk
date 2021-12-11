@@ -5,11 +5,9 @@
 //  Created by Robin Gustafsson on 2020-10-10.
 //
 
-// Local Headers
-#include "ptk/platform/unix/Application_unix.hpp"
-#include "ptk/platform/unix/MainWindow_unix.hpp"
-
 // pTK Headers
+#include "ptk/platform/unix/ApplicationHandle_unix.hpp"
+#include "ptk/platform/unix/WindowHandle_unix.hpp"
 #include "ptk/Application.hpp"
 #include "ptk/core/Exception.hpp"
 #include "ptk/core/Event.hpp"
@@ -31,12 +29,12 @@ namespace pTK
 
     static AppUnixData s_appData{};
 
-    // Application_unix class static definitions.
-    Application_unix Application_unix::s_Instance{};
+    // ApplicationHandle_unix class static definitions.
+    ApplicationHandle_unix ApplicationHandle_unix::s_Instance{};
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Application_unix::Init(const std::string&)
+    void ApplicationHandle_unix::Init(const std::string&)
     {
         if (s_appData.initialized)
         {
@@ -52,23 +50,23 @@ namespace pTK
         s_appData.root = RootWindow(s_appData.display, s_appData.screen);
 
         s_appData.initialized = true;
-        PTK_INFO("Initialized Application_unix");
+        PTK_INFO("Initialized ApplicationHandle_unix");
     }
 
-    void Application_unix::Destroy()
+    void ApplicationHandle_unix::Destroy()
     {
         XCloseDisplay(s_appData.display);
-        PTK_INFO("Destroyed Application_unix");
+        PTK_INFO("Destroyed ApplicationHandle_unix");
     }
 
-    Application_unix *Application_unix::Instance()
+    ApplicationHandle_unix *ApplicationHandle_unix::Instance()
     {
         return &s_Instance;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Application_unix::pollEvents()
+    void ApplicationHandle_unix::pollEvents()
     {
         XPending(s_appData.display);
 
@@ -82,7 +80,7 @@ namespace pTK
         XFlush(s_appData.display);
     }
 
-    void Application_unix::waitEvents()
+    void ApplicationHandle_unix::waitEvents()
     {
         XEvent event = {};
         XNextEvent(s_appData.display, &event);
@@ -90,7 +88,7 @@ namespace pTK
         pollEvents();
     }
 
-    void Application_unix::waitEventsTimeout(uint ms)
+    void ApplicationHandle_unix::waitEventsTimeout(uint ms)
     {
         ::Display *display{s_appData.display};
         XEvent event = {};
@@ -127,22 +125,22 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Display *Application_unix::Display()
+    Display *ApplicationHandle_unix::Display()
     {
         return s_appData.display;
     }
 
-    XContext Application_unix::Context()
+    XContext ApplicationHandle_unix::Context()
     {
         return s_appData.xcontext;
     }
 
-    ::Window Application_unix::Root()
+    ::Window ApplicationHandle_unix::Root()
     {
         return s_appData.root;
     }
 
-    int Application_unix::Screen()
+    int ApplicationHandle_unix::Screen()
     {
         return s_appData.screen;
     }
@@ -175,7 +173,7 @@ namespace pTK
         return mods;
     }
 
-    void Application_unix::handleEvent(XEvent *event)
+    void ApplicationHandle_unix::handleEvent(XEvent *event)
     {
         PTK_ASSERT(event, "Undefined XEvent!");
 
@@ -198,7 +196,7 @@ namespace pTK
             }
             case ClientMessage:
             {
-                if (auto uWindow = dynamic_cast<MainWindow_unix*>(window->getBackend()))
+                if (auto uWindow = dynamic_cast<WindowHandle_unix*>(window->getHandle()))
                 {
                     XClientMessageEvent *cEvent = reinterpret_cast<XClientMessageEvent*>(event);
                     if (cEvent && static_cast<Atom>(cEvent->data.l[0]) == uWindow->deleteAtom())
@@ -281,7 +279,7 @@ namespace pTK
             }
             case ConfigureNotify:
             {
-                MainWindow_unix *backend{static_cast<MainWindow_unix*>(window->getBackend())};
+                WindowHandle_unix *backend{static_cast<WindowHandle_unix*>(window->getHandle())};
 
                 // Size change
                 Size& wSize{backend->lastSize()};
