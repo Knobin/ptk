@@ -7,6 +7,7 @@
 
 // pTK Headers
 #include "ptk/widgets/TextField.hpp"
+#include "ptk/util/Math.hpp"
 
 // C++ Headers
 #include <cctype>
@@ -96,7 +97,7 @@ namespace pTK
     {
         // This currently ignores the encoding.
         // TODO: Fix encoding for the data.
-        
+
         if (data != 0)
         {
             m_text += static_cast<char>(data);
@@ -141,10 +142,10 @@ namespace pTK
     {
         Rectangle::onDraw(canvas);
         const Size rectSize{getSize()};
-        
+
         const Text::StrData textData{ getText().c_str(), getText().size(), Text::Encoding::UTF8 };
         float advance = (!getText().empty()) ? drawTextLine(canvas, textData, m_textColor, m_textPos) : 0.0f;
-        
+
         if (getText().empty())
         {
             const Text::StrData placeholderStrData{ m_placeholderText.c_str(), m_placeholderText.size(), Text::Encoding::UTF8 };
@@ -202,20 +203,20 @@ namespace pTK
         float center{(fHeight - capitalHeight) / 2};
         m_textPos.x = static_cast<float>(pos.x) + center;
         m_textPos.y = static_cast<float>(pos.y) + center;
-        
+
         m_cursorHeight = ascentToDescent();
-        
-        Size minSize{Vec2ToSize(getBoundsFromStr(getText()), std::ceilf)};
+
+        Size minSize{Vec2ToSize(getBoundsFromStr(getText()), Math::ceilf)};
         minSize.width += 1;
         auto ceilCursorHeight = static_cast<Size::value_type>(std::ceil(m_cursorHeight));
         minSize.height = (minSize.height > ceilCursorHeight) ? minSize.height : ceilCursorHeight;
-        
+
         Vec2f placeholderBounds{ getBoundsFromStr(m_placeholderText) };
-        Size placeholderSize{ Vec2ToSize(placeholderBounds, std::ceilf) };
-        
+        Size placeholderSize{ Vec2ToSize(placeholderBounds, Math::ceilf) };
+
         minSize.width = (minSize.width > placeholderSize.width) ? minSize.width : placeholderSize.width;
         minSize.height = (minSize.height > placeholderSize.height) ? minSize.height : placeholderSize.height;
-        
+
         setMinSize(minSize);
         update();
     }

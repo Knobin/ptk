@@ -8,13 +8,14 @@
 // pTK Headers
 #include "ptk/widgets/Button.hpp"
 #include "ptk/Core.hpp"
+#include "ptk/util/Math.hpp"
 
 namespace pTK
 {
     const Button::Style Button::Style::Default{Color(0x007BFFFF), Color(0x0071E6FF), Color(0x0068D9FF), Color(0xFFFFFFFF), 5};
     const Button::Style Button::Style::Success{Color(0x28A745FF), Color(0x24963CFF), Color(0x218838FF), Color(0xFFFFFFFF), 5};
     const Button::Style Button::Style::Danger{Color(0xDC3545FF), Color(0xce2331FF), Color(0xBC202DFF), Color(0xFFFFFFFF), 5};
-    
+
     Button::Button()
         : Rectangle(), m_text{Create<Label>()}, m_labelPos{}, m_borderSize{14},
             m_hoverColor{}, m_clickColor{}, m_colorCopy{}, m_hover{false}, m_click{false}
@@ -23,7 +24,7 @@ namespace pTK
         m_text->setParent(this);
         m_text->setFontSize(14);
     }
-    
+
     Button::Button(const Style& style)
         : Rectangle(), m_text{Create<Label>()}, m_labelPos{}, m_borderSize{14},
             m_hoverColor{}, m_clickColor{}, m_colorCopy{}, m_hover{false}, m_click{false}
@@ -32,7 +33,7 @@ namespace pTK
         m_text->setParent(this);
         m_text->setFontSize(14);
     }
-    
+
     void Button::setPosHint(const Point& pos)
     {
         // TODO: Possibly wrong
@@ -50,13 +51,13 @@ namespace pTK
     {
         setBounds();
     }
-    
+
     void Button::onDraw(SkCanvas* canvas)
     {
         Rectangle::onDraw(canvas);
         m_text->onDraw(canvas);
     }
-    
+
     bool Button::drawChild(Widget* widget)
     {
         if (m_text.get() == widget)
@@ -74,7 +75,7 @@ namespace pTK
                 wSize.height = ((wSize.height > bSize.height) ? wSize.height : bSize.height) + (hMargin);
                 setSize(wSize);
             }
-            
+
             if (m_labelPos != textPos)
             {
                 Point pos{getPosition()};
@@ -84,14 +85,14 @@ namespace pTK
                 m_labelPos = pos;
                 m_text->setPosHint(pos);
             }
-            
+
             draw();
             return true;
         }
-        
+
         return false;
     }
-    
+
     void Button::setText(const std::string& text)
     {
         // This will call draw in Label.
@@ -99,12 +100,12 @@ namespace pTK
         m_text->setText(text);
         setBounds();
     }
-    
+
     const std::string& Button::getText() const
     {
         return m_text->getText();
     }
-    
+
     void Button::setFontFamily(const std::string& fontFamily)
     {
         // This will call draw in Label.
@@ -112,12 +113,12 @@ namespace pTK
         m_text->setFontFamily(fontFamily);
         setBounds();
     }
-    
+
     std::string Button::getFontFamily() const
     {
         return m_text->getFontFamily();
     }
-    
+
     void Button::setFontSize(uint fontSize)
     {
         // This will call draw in Label.
@@ -125,24 +126,24 @@ namespace pTK
         m_text->setFontSize(fontSize);
         setBounds();
     }
-    
+
     uint Button::getFontSize() const
     {
         return m_text->getFontSize();
     }
-    
+
     void Button::setTextColor(const Color& textColor)
     {
         // This will call draw in Label.
         // So we handle it in drawChild.
         m_text->setColor(textColor);
     }
-    
+
     const Color& Button::getTextColor() const
     {
         return m_text->getColor();
     }
-    
+
     void Button::setLabel(const Ref<Label>& label)
     {
         PTK_ASSERT(label, "Label is nullptr");
@@ -152,43 +153,43 @@ namespace pTK
         setBounds();
         draw();
     }
-    
+
     Ref<Label> Button::getLabel() const
     {
         return m_text;
     }
-    
+
     void Button::setHoverColor(const Color& hoverColor)
     {
         m_hoverColor = hoverColor;
     }
-    
+
     const Color& Button::getHoverColor() const
     {
         return m_hoverColor;
     }
-    
+
     void Button::setClickColor(const Color& clickColor)
     {
         m_clickColor = clickColor;
     }
-    
+
     const Color& Button::getClickColor() const
     {
         return m_clickColor;
     }
-    
+
     void Button::setBorderSize(uint size)
     {
         m_borderSize = size;
         setBounds();
     }
-    
+
     uint Button::getBorderSize() const
     {
         return m_borderSize;
     }
-    
+
     void Button::setStyle(const Style& style)
     {
         m_hoverColor = style.hoverColor;
@@ -242,14 +243,14 @@ namespace pTK
 
         m_click = false;
     }
-    
+
     void Button::setBounds()
     {
         Vec2f textBounds{m_text->getBoundsFromStr(getText())};
         textBounds.y += 2*m_borderSize;
         textBounds.x += 2*m_borderSize;
 
-        const Size sizeBounds = Vec2ToSize(textBounds, std::ceilf);
+        const Size sizeBounds = Vec2ToSize(textBounds, Math::ceilf);
         setMinSize(sizeBounds);
 
         Size cSize{getSize()};

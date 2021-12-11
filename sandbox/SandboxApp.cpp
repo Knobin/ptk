@@ -70,7 +70,7 @@ public:
         textBounds.x += 20;
         textBounds.y += 20;
 
-        setMinSize(Vec2ToSize(textBounds, std::ceilf));
+        setMinSize(Vec2ToSize(textBounds, pTK::Math::ceilf));
     }
 
     pTK::Color colorCopy{0x00000000};

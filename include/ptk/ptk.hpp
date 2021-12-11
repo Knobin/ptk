@@ -46,6 +46,7 @@
 #include "ptk/util/Alignment.hpp"
 #include "ptk/util/Color.hpp"
 #include "ptk/util/IterableContainer.hpp"
+#include "ptk/util/Math.hpp"
 #include "ptk/util/NonCopyable.hpp"
 #include "ptk/util/NonMovable.hpp"
 #include "ptk/util/Point.hpp"

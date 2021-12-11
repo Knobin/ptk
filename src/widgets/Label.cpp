@@ -7,15 +7,13 @@
 
 // pTK Headers
 #include "ptk/widgets/Label.hpp"
+#include "ptk/util/Math.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
 #include "include/core/SkFont.h"
 #include "include/core/SkTypeface.h"
 PTK_DISABLE_WARN_END()
-
-// C++ Headers
-#include <cmath>
 
 namespace pTK
 {
@@ -24,7 +22,7 @@ namespace pTK
     {
 
     }
-    
+
     void Label::onDraw(SkCanvas* canvas)
     {
         const Vec2f pos{static_cast<float>(getPosition().x), static_cast<float>(getPosition().y)};
@@ -34,7 +32,7 @@ namespace pTK
 
     void Label::onTextUpdate()
     {
-        const Size bounds = Vec2ToSize(getBoundsFromStr(m_text), std::ceilf);
+        const Size bounds = Vec2ToSize(getBoundsFromStr(m_text), Math::ceilf);
         setMinSize(bounds);
         setSize(bounds);
         setMaxSize(bounds);

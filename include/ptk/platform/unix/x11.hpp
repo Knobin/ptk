@@ -16,6 +16,7 @@ extern "C" {
 
 #undef None
 #undef Status
+#undef Success
 }
 
 namespace x11 {
