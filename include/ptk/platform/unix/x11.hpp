@@ -21,6 +21,7 @@ extern "C" {
 
 namespace x11 {
     static constexpr long None = 0L;
+    using Status = int;
 }
 
 #endif // PTK_PlATFORM_UNIX_X11_HPP

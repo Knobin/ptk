@@ -25,6 +25,8 @@ namespace pTK
         int screen{-1};
         ::Window root;
         bool initialized{false};
+        XIM xim;
+        XIC xic;
     };
 
     static AppUnixData s_appData{};
@@ -48,6 +50,8 @@ namespace pTK
         s_appData.xcontext = XUniqueContext();
         s_appData.screen = DefaultScreen(s_appData.display);
         s_appData.root = RootWindow(s_appData.display, s_appData.screen);
+        s_appData.xim = XOpenIM(s_appData.display, 0, 0, 0);
+        s_appData.xic = XCreateIC(s_appData.xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, NULL);
 
         s_appData.initialized = true;
         PTK_INFO("Initialized ApplicationHandle_unix");
@@ -253,10 +257,31 @@ namespace pTK
             case KeyRelease:
             {
                 auto mods = GetKeyModifiers(event->xkey.state);
-                pTK::Key key{KeyMap::KeyCodeToKey(XLookupKeysym(&event->xkey, 0))};
+                auto keysym = XLookupKeysym(&event->xkey, 0);
+                pTK::Key key{KeyMap::KeyCodeToKey(keysym)};
                 Event::Type type = (event->type == KeyPress) ? KeyEvent::Pressed : KeyEvent::Released;
                 KeyEvent kEvt{type, key, mods};
                 window->sendEvent(&kEvt);
+
+                // Send Input event.
+                if ((type == KeyEvent::Pressed) &&
+                    (key != Key::Delete) && // Quick fix for now.
+                    (key != Key::Backspace))
+                {
+                    char buffer[32];
+                    KeySym ignore;
+                    x11::Status return_status;
+                    int count = {0};
+                    count = Xutf8LookupString(s_appData.xic, &event->xkey, buffer, 32, &ignore, &return_status);
+                    if (count)
+                    {
+                        PTK_INFO("INPUT EVENT: {} {}", buffer, count);
+                        // Only returns first value in string for now.
+                        pTK::KeyEvent input{pTK::KeyEvent::Input, key, static_cast<uint32>(buffer[0]), pTK::Text::Encoding::UTF8, mods};
+                        window->sendEvent(&input);
+                    }
+                }
+
                 break;
             }
             case FocusIn:
