@@ -4,6 +4,7 @@
 
 set(CORE_FILES core/EventCallbacks.cpp
         core/EventHandling.cpp
+        core/EventManager.cpp
         core/Shape.cpp
         core/Sizable.cpp
         core/Text.cpp

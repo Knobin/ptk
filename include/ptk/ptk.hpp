@@ -19,6 +19,7 @@
 #include "ptk/core/EventCallbacks.hpp"
 #include "ptk/core/EventFunctions.hpp"
 #include "ptk/core/EventHandling.hpp"
+#include "ptk/core/EventManager.hpp"
 #include "ptk/core/Exception.hpp"
 #include "ptk/core/Shape.hpp"
 #include "ptk/core/Sizable.hpp"
