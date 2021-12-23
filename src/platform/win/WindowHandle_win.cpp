@@ -402,7 +402,7 @@ namespace pTK
         return m_accelTable;
     }
 
-    static void HandleMouseClick(WindowHandle_win::Data* data, const Vec2f& scale,  Event::Type type, 
+    static void HandleMouseClick(WindowHandle_win::Data* data, const Vec2f& scale,  Event::Type type,
                                     Mouse::Button btn, LPARAM lParam)
     {
         if (data->window)
@@ -563,7 +563,7 @@ namespace pTK
         // a-z [97-123]
         if ((96 < ch) && (ch < 123))
             lookup = ch - 32;
-        
+
         KeyCode key{ KeyMap::KeyCodeToKey(lookup) };
 
         uint32 data{ 0 };
@@ -585,10 +585,13 @@ namespace pTK
                 // Displayable character.
                 data = static_cast<uint32>(wParam);
                 break;
-            } 
+            }
         }
 
-        KeyEvent evt{ KeyEvent::Input, key, data, Text::Encoding::UTF16, GetKeyModifiers() };
+        pTK::InputEvent::data_cont arr(new pTK::InputEvent::data_type[1]);
+        arr[0] = data;
+
+        InputEvent evt{arr, 1, Text::Encoding::UTF16};
         window->sendEvent(&evt);
     }
 

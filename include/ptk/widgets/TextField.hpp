@@ -16,21 +16,21 @@
 namespace pTK
 {
     /** TextField class implementation.
-     
+
     */
     class TextField : public Rectangle, public Text
     {
     public:
         /** Constructs Label with default values.
-         
+
             @return    default initialized Label
         */
         TextField();
         virtual ~TextField() = default;
-        
+
         /** Draw function.
             Function is called when it is time to draw.
-         
+
             Derived from Drawable.
         */
         void onDraw(SkCanvas* canvas) override;
@@ -80,7 +80,7 @@ namespace pTK
         void setText(const std::string& text);
         [[nodiscard]] const std::string& getText() const;
 
-        
+
     private:
         // Callback function from Text.
         void onTextUpdate() override;
@@ -94,7 +94,7 @@ namespace pTK
         void moveCursor(int direction, std::size_t strSize, bool shouldDraw = false);
         void moveCursorToPos(std::size_t pos, std::size_t strSize, bool shouldDraw = false);
 
-        void handleInput(KeyCode key, uint32 data, Text::Encoding encoding, byte modifier);
+        void handleInput(const std::unique_ptr<uint32[]>& data, std::size_t size, Text::Encoding encoding);
 
     private:
         std::string m_placeholderText{};
@@ -111,4 +111,3 @@ namespace pTK
 }
 
 #endif // PTK_WIDGETS_TEXTFIELD_HPP
-

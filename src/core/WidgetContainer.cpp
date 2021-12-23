@@ -61,7 +61,7 @@ namespace pTK
     void WidgetContainer::onDraw(SkCanvas* canvas)
     {
         PTK_ASSERT(canvas, "Canvas is undefined");
-        
+
         drawBackground(canvas);
         for (auto& item : *this)
             item->onDraw(canvas);
@@ -109,17 +109,17 @@ namespace pTK
 
     void WidgetContainer::onClickEvent(Mouse::Button btn, const Point& pos)
     {
-        
+
         Widget *lastClicked{m_lastClickedWidget};
         bool found{false};
-        
+
         for (auto& item : *this)
         {
             const Point startPos{item->getPosition()};
             const Size wSize{item->getSize()};
             const Point endPos{AddWithoutOverflow(startPos.x, static_cast<Point::value_type>(wSize.width)),
                                 AddWithoutOverflow(startPos.y, static_cast<Point::value_type>(wSize.height))};
-            
+
             if ((startPos.x <= pos.x) && (endPos.x >= pos.x))
             {
                 if ((startPos.y <= pos.y) && (endPos.y >= pos.y))
@@ -152,10 +152,10 @@ namespace pTK
             m_lastClickedWidget->handleKeyEvent(type, keycode, modifier);
     }
 
-    void WidgetContainer::onKeyInput(KeyCode keycode, uint32 data, Text::Encoding encoding, byte modifier)
+    void WidgetContainer::onKeyInput(const std::unique_ptr<uint32[]>& data, std::size_t size, Text::Encoding encoding)
     {
         if (m_lastClickedWidget != nullptr)
-            m_lastClickedWidget->handleKeyInput(keycode, data, encoding, modifier);
+            m_lastClickedWidget->handleKeyInput(data, size, encoding);
     }
 
     void WidgetContainer::onHoverEvent(const Point& pos)
@@ -166,7 +166,7 @@ namespace pTK
             const Size wSize{it->getSize()};
             const Point endPos{AddWithoutOverflow(startPos.x, static_cast<Point::value_type>(wSize.width)),
                                 AddWithoutOverflow(startPos.y, static_cast<Point::value_type>(wSize.height))};
-            
+
             if ((startPos.x <= pos.x) && (endPos.x >= pos.x))
             {
                 if ((startPos.y <= pos.y) && (endPos.y >= pos.y))
@@ -245,7 +245,7 @@ namespace pTK
     void WidgetContainer::drawBackground(SkCanvas *canvas) const
     {
         PTK_ASSERT(canvas, "Canvas is undefined");
-        
+
         // Set Size and Point
         const SkPoint pos{convertToSkPoint(getPosition())};
         SkPoint size{convertToSkPoint(getSize())};

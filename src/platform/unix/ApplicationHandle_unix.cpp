@@ -276,8 +276,12 @@ namespace pTK
                     if (count)
                     {
                         PTK_INFO("INPUT EVENT: {} {}", buffer, count);
-                        // Only returns first value in string for now.
-                        pTK::KeyEvent input{pTK::KeyEvent::Input, key, static_cast<uint32>(buffer[0]), pTK::Text::Encoding::UTF8, mods};
+                        pTK::InputEvent::data_cont arr(new pTK::InputEvent::data_type[static_cast<std::size_t>(count)]);
+
+                        for (std::size_t i{0}; i < count; ++i)
+                            arr[i] = static_cast<uint32>(buffer[i]);
+
+                        pTK::InputEvent input{arr, static_cast<std::size_t>(count), pTK::Text::Encoding::UTF32};
                         window->sendEvent(&input);
                     }
                 }

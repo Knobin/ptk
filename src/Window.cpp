@@ -173,12 +173,17 @@ namespace pTK
     void Window::handleKeyboardEvent(Event* event)
     {
         PTK_ASSERT(event, "Undefined Event");
-        KeyEvent* kEvent{static_cast<KeyEvent*>(event)};
 
-        if (kEvent->type == KeyEvent::Pressed || kEvent->type == KeyEvent::Released)
+        if (event->type == Event::Type::KeyPressed || event->type == Event::Type::KeyReleased)
+        {
+            KeyEvent* kEvent{static_cast<KeyEvent*>(event)};
             handleKeyEvent(kEvent->type, kEvent->keycode, kEvent->modifier);
-        else if (kEvent->type == KeyEvent::Input)
-            handleKeyInput(kEvent->keycode, kEvent->data, kEvent->encoding, kEvent->modifier);
+        }
+        else if (event->type == Event::Type::KeyInput)
+        {
+            InputEvent* iEvent{static_cast<InputEvent*>(event)};
+            handleKeyInput(iEvent->data, iEvent->size, iEvent->encoding);
+        }
     }
 
     void Window::handleMouseEvent(Event* event)

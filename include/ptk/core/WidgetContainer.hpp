@@ -36,10 +36,10 @@ namespace pTK
 
         */
         virtual ~WidgetContainer();
-        
+
         // TODO: Documentation.
         void add(const Ref<Widget>& widget);
-        
+
         // TODO: Documentation.
         void remove(const Ref<Widget>& widget);
 
@@ -78,11 +78,11 @@ namespace pTK
 
         /** Function for handling key input.
 
-            @param keyCode  Keycode
-            @param char     display character
-            @param mod      modifier keys
+            @param data         array of display characters
+            @param size         amount of characters
+            @param encoding     encoding of the characer data
         */
-        void onKeyInput(KeyCode, uint32, Text::Encoding, byte) override;
+        void onKeyInput(const std::unique_ptr<uint32[]>& data, std::size_t size, Text::Encoding encoding) override;
 
         /** Function for handling when mouse is hovering.
 
@@ -145,7 +145,7 @@ namespace pTK
             @return     status
         */
         [[nodiscard]] bool busy() const;
-        
+
         // TODO: Add doc.
         void drawBackground(SkCanvas *canvas) const;
 

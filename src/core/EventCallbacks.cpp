@@ -67,27 +67,27 @@ namespace pTK
 
         return *this;
     }
-    
+
     void EventCallbacks::onKey(const std::function<bool(Event::Type, KeyCode, byte)>& callback)
     {
         m_keyCallback.push_back(callback);
     }
 
-    void EventCallbacks::onInput(const std::function<bool(KeyCode, uint32, Text::Encoding, byte)>& callback)
+    void EventCallbacks::onInput(const std::function<bool(const std::unique_ptr<uint32[]>&, std::size_t, Text::Encoding)>& callback)
     {
         m_keyInputCallback.push_back(callback);
     }
-    
+
     void EventCallbacks::onHover(const std::function<bool(const Point&)>& callback)
     {
         m_hoverCallback.push_back(callback);
     }
-    
+
     void EventCallbacks::onEnter(const std::function<bool()>& callback)
     {
         m_noArgsCallbacks["Enter"].push_back(callback);
     }
-    
+
     void EventCallbacks::onLeave(const std::function<bool()>& callback)
     {
         m_noArgsCallbacks["Leave"].push_back(callback);
@@ -97,17 +97,17 @@ namespace pTK
     {
         m_noArgsCallbacks["LeaveClick"].push_back(callback);
     }
-    
+
     void EventCallbacks::onScroll(const std::function<bool(const Vec2f&)>& callback)
     {
         m_scrollCallback.push_back(callback);
     }
-    
+
     void EventCallbacks::onClick(const std::function<bool(Mouse::Button, const Point&)>& callback)
     {
         m_clickCallbacks["Click"].push_back(callback);
     }
-    
+
     void EventCallbacks::onRelease(const std::function<bool(Mouse::Button, const Point&)>& callback)
     {
         m_clickCallbacks["Release"].push_back(callback);
@@ -151,7 +151,7 @@ namespace pTK
         return m_keyCallback;
     }
 
-    const std::vector<std::function<bool(KeyCode, uint32, Text::Encoding, byte)>>& EventCallbacks::getKeyInputCallbacks() const
+    const std::vector<std::function<bool(const std::unique_ptr<uint32[]>&, std::size_t, Text::Encoding)>>& EventCallbacks::getKeyInputCallbacks() const
     {
         return m_keyInputCallback;
     }
@@ -204,7 +204,7 @@ namespace pTK
         return m_keyCallback;
     }
 
-    std::vector<std::function<bool(KeyCode, uint32, Text::Encoding, byte)>>& EventCallbacks::getKeyInputCallbacks()
+    std::vector<std::function<bool(const std::unique_ptr<uint32[]>&, std::size_t, Text::Encoding)>>& EventCallbacks::getKeyInputCallbacks()
     {
         return m_keyInputCallback;
     }

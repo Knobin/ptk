@@ -28,8 +28,8 @@ namespace pTK
             return false;
         });
 
-        onInput([this](KeyCode key, uint32 data, Text::Encoding encoding, byte modifier) {
-            handleInput(key, data, encoding, modifier);
+        onInput([this](const std::unique_ptr<uint32[]>& data, std::size_t size, Text::Encoding encoding) {
+            handleInput(data, size, encoding);
             return false;
         });
 
@@ -44,7 +44,7 @@ namespace pTK
         });
     }
 
-    void TextField::handleKeyPress(KeyCode keycode, byte modifier)
+    void TextField::handleKeyPress(KeyCode keycode, byte)
     {
         switch (keycode) {
             case Key::Backspace:
@@ -93,17 +93,22 @@ namespace pTK
         }
     }
 
-    void TextField::handleInput(KeyCode, uint32 data, Text::Encoding, byte)
+    void TextField::handleInput(const std::unique_ptr<uint32[]>& data, std::size_t size, Text::Encoding)
     {
         // This currently ignores the encoding.
         // TODO: Fix encoding for the data.
 
-        if (data != 0)
+        PTK_INFO("handleInput, size = {}", size);
+        for (std::size_t i{0}; i < size; ++i)
         {
-            m_text += static_cast<char>(data);
-            moveCursor(1, m_text.size());
-            onTextUpdate();
+            if (data[i] != 0)
+            {
+                m_text += static_cast<char>(data[i]);
+                moveCursor(1, m_text.size());
+            }
         }
+
+        onTextUpdate();
     }
 
     void TextField::moveCursor(int direction, std::size_t strSize, bool shouldDraw)

@@ -20,7 +20,7 @@
 namespace pTK
 {
     /** KeyEvent class implementation.
-     
+
         Derived from Event, this class if for creating
         events from the keyboard. Such as Key presses or
         releases.
@@ -31,8 +31,7 @@ namespace pTK
         // Objects for easier type management.
         inline static const Event::Type Pressed = Event::Type::KeyPressed;
         inline static const Event::Type Released = Event::Type::KeyReleased;
-        inline static const Event::Type Input = Event::Type::KeyInput;
-        
+
         enum class Modifier : byte
         {
             NONE        = 0,
@@ -46,7 +45,7 @@ namespace pTK
 
     public:
         /** Constructs KeyEvent with default values with type and code.
-         
+
             @param type     press or release
             @param code     associated keycode
             @return         default initialized KeyEvent
@@ -73,11 +72,42 @@ namespace pTK
 
         // Contains the encoding of the char.
         Text::Encoding encoding{ Text::Encoding::UTF8 };
-        
+
         // Modifiers.
         std::underlying_type<Modifier>::type modifier;
-        
+
         bool isModifierSet(KeyEvent::Modifier mod) const;
+    };
+
+    /** InputEvent class implementation.
+
+        Signals keyboard or text input.
+    */
+    class InputEvent : public Event
+    {
+    public:
+        using data_type = uint32;
+        using data_cont = std::unique_ptr<data_type[]>;
+
+    public:
+        /** Constructs KeyEvent with default values with type and code.
+
+            @param type     press or release
+            @param code     associated keycode
+            @return         default initialized KeyEvent
+        */
+        InputEvent(std::unique_ptr<uint32[]>& arr, std::size_t count, Text::Encoding enc = Text::Encoding::UTF8)
+            : Event(Event::Category::Key, Event::Type::KeyInput), data(std::move(arr)), size{count}, encoding(enc)
+        {}
+
+        // Contains array of characters.
+        std::unique_ptr<uint32[]> data;
+
+        // Number of characters.
+        std::size_t size;
+
+        // Contains the encoding of the array.
+        Text::Encoding encoding;
     };
 
     constexpr bool IsKeyEventModifierSet(std::underlying_type<KeyEvent::Modifier>::type number, KeyEvent::Modifier mod)
@@ -94,7 +124,7 @@ namespace pTK
     constexpr KeyEvent::Modifier KeyCodeToKeyEventModifier(const KeyCode code)
     {
         KeyEvent::Modifier mod = KeyEvent::Modifier::NONE;
-        
+
         switch (code) {
             case pTK::Key::LeftShift:
             case pTK::Key::RightShift:
@@ -115,7 +145,7 @@ namespace pTK
             default:
                 break;
         }
-        
+
         return mod;
     }
 }
