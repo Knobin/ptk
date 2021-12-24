@@ -557,16 +557,7 @@ namespace pTK
 
     static void HandleCharInput(Window* window, WPARAM wParam, LPARAM UNUSED(lParam))
     {
-        uint32 ch{ static_cast<uint32>(wParam) };
-        int32 lookup{ static_cast<int32>(ch) };
-
-        // a-z [97-123]
-        if ((96 < ch) && (ch < 123))
-            lookup = ch - 32;
-
-        KeyCode key{ KeyMap::KeyCodeToKey(lookup) };
-
-        uint32 data{ 0 };
+        uint32 data{0};
 
         switch (wParam)
         {
@@ -588,11 +579,14 @@ namespace pTK
             }
         }
 
-        pTK::InputEvent::data_cont arr(new pTK::InputEvent::data_type[1]);
-        arr[0] = data;
+        if (data > 0)
+        {
+            pTK::InputEvent::data_cont arr(new pTK::InputEvent::data_type[1]);
+            arr[0] = data;
 
-        InputEvent evt{arr, 1, Text::Encoding::UTF16};
-        window->sendEvent(&evt);
+            InputEvent evt{arr, 1, Text::Encoding::UTF16};
+            window->sendEvent(&evt);
+        }
     }
 
     LRESULT WindowHandle_win::WndPro(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
