@@ -98,39 +98,41 @@ namespace pTK
         // This currently ignores the encoding.
         // TODO: Fix encoding for the data.
 
-        PTK_INFO("handleInput, size = {}", size);
-        for (std::size_t i{0}; i < size; ++i)
-        {
-            if (data[i] != 0)
-            {
-                m_text += static_cast<char>(data[i]);
-                moveCursor(1, m_text.size());
-            }
-        }
+        std::string toAdd{};
 
+        for (std::size_t i{0}; i < size; ++i)
+            toAdd += static_cast<char>(data[i]);
+
+        m_text.insert(m_cursorLocation, toAdd);
+        moveCursor(static_cast<int>(size), m_text.size());
         onTextUpdate();
     }
 
     void TextField::moveCursor(int direction, std::size_t strSize, bool shouldDraw)
     {
+        bool sDraw{false};
+
         if (direction > 0)
         {
-            if (m_cursorLocation < strSize)
+            if ((m_cursorLocation + static_cast<std::size_t>(direction)) <= strSize)
             {
-                ++m_cursorLocation;
-                if (shouldDraw)
-                    draw();
+                m_cursorLocation += static_cast<std::size_t>(direction);
+                sDraw = true;
             }
         }
-        else
+        else if (direction < 0)
         {
-            if (m_cursorLocation > 0)
-            {
-                --m_cursorLocation;
-                if (shouldDraw)
-                    draw();
-            }
+            int cursorLoc = static_cast<int>(m_cursorLocation);
+            if (cursorLoc + direction > 0)
+                m_cursorLocation = static_cast<std::size_t>(cursorLoc + direction);
+            else
+                m_cursorLocation = 0;
+
+            sDraw = true;
         }
+
+        if (sDraw && shouldDraw)
+            draw();
     }
 
     void TextField::moveCursorToPos(std::size_t pos, std::size_t strSize, bool shouldDraw)
