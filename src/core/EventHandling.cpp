@@ -7,6 +7,7 @@
 
 // pTK Headers
 #include "ptk/core/EventHandling.hpp"
+#include "ptk/core/EventManager.hpp"
 
 namespace pTK
 {
@@ -14,70 +15,16 @@ namespace pTK
         : EventCallbacks(), EventFunctions()
     {}
 
-    template<typename Container, typename... Args>
-    static void LoopAndConditionRemove(Container& cont, Args&&... args)
+    void EventHandling::registerMemberCallbacks()
     {
-        auto it = cont.begin();
-        while (it != cont.end())
-        {
-            if ((*it)(std::forward<Args>(args)...))
-                it = cont.erase(it);
-            else
-                ++it;
-        }
-    }
-
-    void EventHandling::handleKeyEvent(Event::Type type, KeyCode keycode, byte modifier)
-    {
-        onKeyEvent(type, keycode, modifier);
-        LoopAndConditionRemove(getKeyCallbacks(), type, keycode, modifier);
-    }
-
-    void EventHandling::handleKeyInput(const std::unique_ptr<uint32[]>& data, std::size_t size, Text::Encoding encoding)
-    {
-        onKeyInput(data, size, encoding);
-        LoopAndConditionRemove(getKeyInputCallbacks(), data, size, encoding);
-    }
-
-    void EventHandling::handleHoverEvent(const Point& pos)
-    {
-        onHoverEvent(pos);
-        LoopAndConditionRemove(getHoverCallbacks(), pos);
-    }
-
-    void EventHandling::handleEnterEvent()
-    {
-        onEnterEvent();
-        LoopAndConditionRemove(getEnterCallbacks());
-    }
-
-    void EventHandling::handleLeaveEvent()
-    {
-        onLeaveEvent();
-        LoopAndConditionRemove(getLeaveCallbacks());
-    }
-
-    void EventHandling::handleLeaveClickEvent()
-    {
-        onLeaveClickEvent();
-        LoopAndConditionRemove(getLeaveClickCallbacks());
-    }
-
-    void EventHandling::handleScrollEvent(const Vec2f& offset)
-    {
-        onScrollEvent(offset);
-        LoopAndConditionRemove(getScrollCallbacks(), offset);
-    }
-
-    void EventHandling::handleClickEvent(Mouse::Button button, const Point& position)
-    {
-        onClickEvent(button, position);
-        LoopAndConditionRemove(getClickCallbacks(), button, position);
-    }
-
-    void EventHandling::handleReleaseEvent(Mouse::Button button, const Point& position)
-    {
-        onReleaseEvent(button, position);
-        LoopAndConditionRemove(getReleaseCallbacks(), button, position);
+        addListener<KeyEvent>([&](const KeyEvent& evt) { onKeyEvent(evt); return false; });
+        addListener<InputEvent>([&](const InputEvent& evt) { onKeyInput(evt); return false; });
+        addListener<MotionEvent>([&](const MotionEvent& evt) { onHoverEvent(evt); return false; });
+        addListener<EnterEvent>([&](const EnterEvent& evt) { onEnterEvent(evt); return false; });
+        addListener<LeaveEvent>([&](const LeaveEvent& evt) { onLeaveEvent(evt); return false; });
+        addListener<LeaveClickEvent>([&](const LeaveClickEvent& evt) { onLeaveClickEvent(evt); return false; });
+        addListener<ScrollEvent>([&](const ScrollEvent& evt) { onScrollEvent(evt); return false; });
+        addListener<ClickEvent>([&](const ClickEvent& evt) { onClickEvent(evt); return false; });
+        addListener<ReleaseEvent>([&](const ReleaseEvent& evt) { onReleaseEvent(evt); return false; });
     }
 }

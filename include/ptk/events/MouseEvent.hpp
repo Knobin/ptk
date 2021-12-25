@@ -18,7 +18,7 @@ namespace pTK
     namespace Mouse
     {
         /** Mouse::Button enum class implementation.
-        
+
             This enum class is to specify which button on the mouse
             if pressed or released.
         */
@@ -30,16 +30,16 @@ namespace pTK
             Right
         };
     }
-    
+
     /** MotionEvent class implementation.
-     
+
         Signal a mouse movement.
     */
     class MotionEvent : public Event
     {
     public:
         /** Constructs MotionEvent with default values with pos.
-         
+
             @param t_pos    associated x and y position
             @return         default initialized MotionEvent
         */
@@ -54,14 +54,14 @@ namespace pTK
     };
 
     /** ScrollEvent class implementation.
-     
+
         Signal a mouse scroll.
     */
     class ScrollEvent : public Event
     {
     public:
         /** Constructs ScrollEvent with default values with offset.
-         
+
             @param t_offset     associated x and y offset
             @return             default initialized ScrollEvent
         */
@@ -76,15 +76,15 @@ namespace pTK
     };
 
     /** ButtonEvent class implementation.
-     
+
         Signal a mouse press or release event.
     */
-    class ButtonEvent final : public Event
+    class ButtonEvent : public Event
     {
     public:
         /** Constructs ButtonEvent with default values with type,
             type, t_button and t_pos.
-         
+
             @param type         press or release
             @param t_button     which button
             @param t_pos        associated x and y
@@ -102,6 +102,39 @@ namespace pTK
 
         // Location.
         const Point pos;
+    };
+
+    class ClickEvent : public ButtonEvent
+    {
+    public:
+        /** Constructs ClickEvent.
+
+            @param t_button     which button
+            @param t_pos        associated x and y
+            @return             default initialized ButtonEvent
+        */
+        ClickEvent(Mouse::Button t_button, const Point& t_pos)
+            : ButtonEvent(Event::Type::MouseButtonPressed, t_button, t_pos)
+        {
+
+        }
+    };
+
+
+    class ReleaseEvent : public ButtonEvent
+    {
+    public:
+        /** Constructs ClickEvent.
+
+            @param t_button     which button
+            @param t_pos        associated x and y
+            @return             default initialized ButtonEvent
+        */
+        ReleaseEvent(Mouse::Button t_button, const Point& t_pos)
+            : ButtonEvent(Event::Type::MouseButtonReleased, t_button, t_pos)
+        {
+
+        }
     };
 }
 

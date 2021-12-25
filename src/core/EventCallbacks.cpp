@@ -10,212 +10,48 @@
 
 namespace pTK
 {
-    EventCallbacks::EventCallbacks()
-        : m_noArgsCallbacks{}, m_clickCallbacks{}, m_scrollCallback{}, m_keyCallback{}, m_hoverCallback{}
+    void EventCallbacks::onKey(const std::function<bool(const KeyEvent&)>& callback)
     {
-        initCallbacks();
+        addListener<KeyEvent>(callback);
     }
 
-    EventCallbacks::EventCallbacks(const EventCallbacks&)
-        : m_noArgsCallbacks{}, m_clickCallbacks{}, m_scrollCallback{}, m_keyCallback{}, m_hoverCallback{}
+    void EventCallbacks::onInput(const std::function<bool(const InputEvent&)>& callback)
     {
-        // Callbacks should not be copied!
-        initCallbacks();
+        addListener<InputEvent>(callback);
     }
 
-    void EventCallbacks::initCallbacks()
+    void EventCallbacks::onHover(const std::function<bool(const MotionEvent&)>& callback)
     {
-        m_noArgsCallbacks["Enter"]      = {};
-        m_noArgsCallbacks["Leave"]      = {};
-        m_clickCallbacks["Click"]       = {};
-        m_clickCallbacks["Release"]     = {};
-        m_noArgsCallbacks["LeaveClick"] = {};
+        addListener<MotionEvent>(callback);
     }
 
-    EventCallbacks::EventCallbacks(EventCallbacks&& other)
+    void EventCallbacks::onEnter(const std::function<bool(const EnterEvent&)>& callback)
     {
-        std::swap(m_noArgsCallbacks, other.m_noArgsCallbacks);
-        std::swap(m_clickCallbacks, other.m_clickCallbacks);
-        std::swap(m_scrollCallback, other.m_scrollCallback);
-        std::swap(m_keyCallback, other.m_keyCallback);
-        std::swap(m_keyInputCallback, other.m_keyInputCallback);
-        std::swap(m_hoverCallback, other.m_hoverCallback);
+        addListener<EnterEvent>(callback);
     }
 
-    EventCallbacks& EventCallbacks::operator=(const EventCallbacks& other)
+    void EventCallbacks::onLeave(const std::function<bool(const LeaveEvent&)>& callback)
     {
-        if (this == &other)
-            return *this;
-
-        // Do not copy the event callbacks!
-        initCallbacks();
-
-        return *this;
+        addListener<LeaveEvent>(callback);
     }
 
-    EventCallbacks& EventCallbacks::operator=(EventCallbacks&& other)
+    void EventCallbacks::onLeaveClick(const std::function<bool(const LeaveClickEvent&)>& callback)
     {
-        if (this == &other)
-            return *this;
-
-        m_noArgsCallbacks   = std::move(other.m_noArgsCallbacks);
-        m_clickCallbacks    = std::move(other.m_clickCallbacks);
-        m_scrollCallback    = std::move(other.m_scrollCallback);
-        m_keyCallback       = std::move(other.m_keyCallback);
-        m_keyInputCallback  = std::move(other.m_keyInputCallback);
-        m_hoverCallback     = std::move(other.m_hoverCallback);
-
-        return *this;
+        addListener<LeaveClickEvent>(callback);
     }
 
-    void EventCallbacks::onKey(const std::function<bool(Event::Type, KeyCode, byte)>& callback)
+    void EventCallbacks::onScroll(const std::function<bool(const ScrollEvent&)>& callback)
     {
-        m_keyCallback.push_back(callback);
+        addListener<ScrollEvent>(callback);
     }
 
-    void EventCallbacks::onInput(const std::function<bool(const std::unique_ptr<uint32[]>&, std::size_t, Text::Encoding)>& callback)
+    void EventCallbacks::onClick(const std::function<bool(const ClickEvent&)>& callback)
     {
-        m_keyInputCallback.push_back(callback);
+        addListener<ClickEvent>(callback);
     }
 
-    void EventCallbacks::onHover(const std::function<bool(const Point&)>& callback)
+    void EventCallbacks::onRelease(const std::function<bool(const ReleaseEvent&)>& callback)
     {
-        m_hoverCallback.push_back(callback);
-    }
-
-    void EventCallbacks::onEnter(const std::function<bool()>& callback)
-    {
-        m_noArgsCallbacks["Enter"].push_back(callback);
-    }
-
-    void EventCallbacks::onLeave(const std::function<bool()>& callback)
-    {
-        m_noArgsCallbacks["Leave"].push_back(callback);
-    }
-
-    void EventCallbacks::onLeaveClick(const std::function<bool()>& callback)
-    {
-        m_noArgsCallbacks["LeaveClick"].push_back(callback);
-    }
-
-    void EventCallbacks::onScroll(const std::function<bool(const Vec2f&)>& callback)
-    {
-        m_scrollCallback.push_back(callback);
-    }
-
-    void EventCallbacks::onClick(const std::function<bool(Mouse::Button, const Point&)>& callback)
-    {
-        m_clickCallbacks["Click"].push_back(callback);
-    }
-
-    void EventCallbacks::onRelease(const std::function<bool(Mouse::Button, const Point&)>& callback)
-    {
-        m_clickCallbacks["Release"].push_back(callback);
-    }
-
-    const std::vector<std::function<bool()>>& EventCallbacks::getEnterCallbacks() const
-    {
-        // Enter is guaranteed to be in the map.
-        // If not, its a bug.
-        return m_noArgsCallbacks.find("Enter")->second;
-    }
-
-    const std::vector<std::function<bool()>>& EventCallbacks::getLeaveCallbacks() const
-    {
-        // Leave is guaranteed to be in the map.
-        // If not, its a bug.
-        return m_noArgsCallbacks.find("Leave")->second;
-    }
-
-    const std::vector<std::function<bool(Mouse::Button, const Point&)>>& EventCallbacks::getClickCallbacks() const
-    {
-        // Click is guaranteed to be in the map.
-        // If not, its a bug.
-        return m_clickCallbacks.find("Click")->second;
-    }
-
-    const std::vector<std::function<bool(Mouse::Button, const Point&)>>& EventCallbacks::getReleaseCallbacks() const
-    {
-        // Release is guaranteed to be in the map.
-        // If not, its a bug.
-        return m_clickCallbacks.find("Release")->second;
-    }
-
-    const std::vector<std::function<bool(const Vec2f&)>>& EventCallbacks::getScrollCallbacks() const
-    {
-        return m_scrollCallback;
-    }
-
-    const std::vector<std::function<bool(Event::Type, KeyCode, byte)>>& EventCallbacks::getKeyCallbacks() const
-    {
-        return m_keyCallback;
-    }
-
-    const std::vector<std::function<bool(const std::unique_ptr<uint32[]>&, std::size_t, Text::Encoding)>>& EventCallbacks::getKeyInputCallbacks() const
-    {
-        return m_keyInputCallback;
-    }
-
-    const std::vector<std::function<bool(const Point&)>>& EventCallbacks::getHoverCallbacks() const
-    {
-        return m_hoverCallback;
-    }
-
-    const std::vector<std::function<bool()>>& EventCallbacks::getLeaveClickCallbacks() const
-    {
-        return m_noArgsCallbacks.find("LeaveClick")->second;
-    }
-
-    std::vector<std::function<bool()>>& EventCallbacks::getEnterCallbacks()
-    {
-        // Enter is guaranteed to be in the map.
-        // If not, its a bug.
-        return m_noArgsCallbacks.find("Enter")->second;
-    }
-
-    std::vector<std::function<bool()>>& EventCallbacks::getLeaveCallbacks()
-    {
-        // Leave is guaranteed to be in the map.
-        // If not, its a bug.
-        return m_noArgsCallbacks.find("Leave")->second;
-    }
-
-    std::vector<std::function<bool(Mouse::Button, const Point&)>>& EventCallbacks::getClickCallbacks()
-    {
-        // Click is guaranteed to be in the map.
-        // If not, its a bug.
-        return m_clickCallbacks.find("Click")->second;
-    }
-
-    std::vector<std::function<bool(Mouse::Button, const Point&)>>& EventCallbacks::getReleaseCallbacks()
-    {
-        // Release is guaranteed to be in the map.
-        // If not, its a bug.
-        return m_clickCallbacks.find("Release")->second;
-    }
-
-    std::vector<std::function<bool(const Vec2f&)>>& EventCallbacks::getScrollCallbacks()
-    {
-        return m_scrollCallback;
-    }
-
-    std::vector<std::function<bool(Event::Type, KeyCode, byte)>>& EventCallbacks::getKeyCallbacks()
-    {
-        return m_keyCallback;
-    }
-
-    std::vector<std::function<bool(const std::unique_ptr<uint32[]>&, std::size_t, Text::Encoding)>>& EventCallbacks::getKeyInputCallbacks()
-    {
-        return m_keyInputCallback;
-    }
-
-    std::vector<std::function<bool(const Point&)>>& EventCallbacks::getHoverCallbacks()
-    {
-        return m_hoverCallback;
-    }
-
-    std::vector<std::function<bool()>>& EventCallbacks::getLeaveClickCallbacks()
-    {
-        return m_noArgsCallbacks.find("LeaveClick")->second;
+        addListener<ReleaseEvent>(callback);
     }
 }

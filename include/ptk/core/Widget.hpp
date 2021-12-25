@@ -133,6 +133,8 @@ namespace pTK
         void onAlignChange(std::underlying_type<Align>::type) override;
         void onMarginChange(const Margin&) override;
 
+        Widget *getWidgetPtr() final { return this; }
+
     private:
         Widget* m_parent;
         Point m_pos;

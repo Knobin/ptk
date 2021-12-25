@@ -177,12 +177,12 @@ namespace pTK
         if (event->type == Event::Type::KeyPressed || event->type == Event::Type::KeyReleased)
         {
             KeyEvent* kEvent{static_cast<KeyEvent*>(event)};
-            handleKeyEvent(kEvent->type, kEvent->keycode, kEvent->modifier);
+            triggerEvent<KeyEvent>(*kEvent);
         }
         else if (event->type == Event::Type::KeyInput)
         {
             InputEvent* iEvent{static_cast<InputEvent*>(event)};
-            handleKeyInput(iEvent->data, iEvent->size, iEvent->encoding);
+            triggerEvent<InputEvent>(*iEvent);
         }
     }
 
@@ -193,7 +193,7 @@ namespace pTK
         if (type == Event::Type::MouseMoved)
         {
             MotionEvent* mEvent{static_cast<MotionEvent*>(event)};
-            handleHoverEvent(mEvent->pos);
+            triggerEvent<MotionEvent>(*mEvent);
         }
         else if (type == Event::Type::MouseButtonPressed ||
                  type == Event::Type::MouseButtonReleased)
@@ -202,14 +202,14 @@ namespace pTK
             Point pos{bEvent->pos};
             Mouse::Button btn{bEvent->button};
             if (type == Event::Type::MouseButtonPressed)
-                handleClickEvent(btn, pos);
+                triggerEvent<ClickEvent>({btn, pos});
             else if (type == Event::Type::MouseButtonReleased)
-                handleReleaseEvent(btn, pos);
+                triggerEvent<ReleaseEvent>({btn, pos});
         }
         else if (type == Event::Type::MouseScrolled)
         {
             ScrollEvent* sEvent{static_cast<ScrollEvent*>(event)};
-            handleScrollEvent(sEvent->offset);
+            triggerEvent<ScrollEvent>(*sEvent);
         }
     }
 
@@ -259,7 +259,8 @@ namespace pTK
             {
                 if (m_onLostFocus)
                     m_onLostFocus();
-                handleLeaveClickEvent();
+                //handleLeaveClickEvent();
+                // TODO: Fix handleLeaveClickEvent()
                 break;
             }
             case Event::Type::WindowMinimize:
