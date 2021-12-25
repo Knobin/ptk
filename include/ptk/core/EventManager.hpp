@@ -63,11 +63,29 @@ namespace pTK
         {
             if (widget != nullptr)
             {
+                auto& cont = getWidgetListeners<T>();
+                auto found = cont.find(widget);
+
+                if (found == cont.end())
+                {
+                    // Not found, insert new node.
+
+                    auto it = cont.insert({widget, {}});
+                    PTK_ASSERT(it.second, "EventManager: Error inserting new node");
+                    found = it.first;
+                }
+
+                // Insert new callback for widget with id.
+
+                auto& callbacks = found->second;
                 uint64 id = s_counter++;
-                getWidgetListeners<T>().insert({widget, {id, std::move(callback)}});
+                callbacks.push_back({id, std::move(callback)});
                 PTK_INFO("EventManager: Added [WIDGET] callback with id: {}", id);
                 return id;
             }
+
+            // id = 0, does not exist.
+            return 0;
         }
 
         /** Function to remove a listener with id.
