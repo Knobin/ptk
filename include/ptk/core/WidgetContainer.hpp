@@ -69,59 +69,6 @@ namespace pTK
         */
         bool drawChild(Widget* widget) override;
 
-        /** Function for handling when a key is pressed or released.
-
-            @param type     Key event (press or release)
-            @param KeyCode  Keycode
-        */
-        void onKeyEvent(Event::Type type, KeyCode keycode, byte modifier) override;
-
-        /** Function for handling key input.
-
-            @param data         array of display characters
-            @param size         amount of characters
-            @param encoding     encoding of the characer data
-        */
-        void onKeyInput(const std::unique_ptr<uint32[]>& data, std::size_t size, Text::Encoding encoding) override;
-
-        /** Function for handling when mouse is hovering.
-
-            @param pos     position
-        */
-        void onHoverEvent(const Point& pos) override;
-
-        /** Function for handling when mouse is entering.
-
-        */
-        void onEnterEvent() override;
-
-        /** Function for handling when mouse is leaving.
-
-        */
-        void onLeaveEvent() override;
-
-        /** Function for handling when mouse is scrolling.
-
-            @param offset     x and y offset
-        */
-        void onScrollEvent(const Vec2f& offset) override;
-
-        /** Function for handling when mouse is clicking.
-
-            @param button      which button on mouse triggered the event.
-            @param position    x and y position
-        */
-        void onClickEvent(Mouse::Button btn, const Point& pos) override;
-
-        /** Function for handling when mouse is released.
-
-            Derived from EventFunctions.
-
-            @param button      which button on mouse triggered the event.
-            @param position    x and y position
-        */
-        void onReleaseEvent(Mouse::Button btn, const Point& pos) override;
-
         /** Function for setting the background of the Container.
 
             @param color   background color
@@ -178,6 +125,61 @@ namespace pTK
             @param index   the index of the child
         */
         virtual void onChildDraw(size_type UNUSED(index)) {}
+
+    private:
+
+        /** Function for handling when a key is pressed or released.
+
+            @param type     Key event (press or release)
+            @param KeyCode  Keycode
+        */
+        void onKeyCallback(const KeyEvent& evt);
+
+        /** Function for handling key input.
+
+            @param data         array of display characters
+            @param size         amount of characters
+            @param encoding     encoding of the characer data
+        */
+        void onInputCallback(const InputEvent& evt);
+
+        /** Function for handling when mouse is hovering.
+
+            @param pos     position
+        */
+        void onHoverCallback(const MotionEvent& evt);
+
+        /** Function for handling when mouse is entering.
+
+        */
+        void onEnterCallback(const EnterEvent& evt);
+
+        /** Function for handling when mouse is leaving.
+
+        */
+        void onLeaveCallback(const LeaveEvent& evt);
+
+        /** Function for handling when mouse is scrolling.
+
+            @param offset     x and y offset
+        */
+        void onScrollCallback(const ScrollEvent& evt);
+
+        /** Function for handling when mouse is clicking.
+
+            @param button      which button on mouse triggered the event.
+            @param position    x and y position
+        */
+        void onClickCallback(const ClickEvent& evt);
+
+        /** Function for handling when mouse is released.
+
+            Derived from EventFunctions.
+
+            @param button      which button on mouse triggered the event.
+            @param position    x and y position
+        */
+        void onReleaseCallback(const ReleaseEvent& evt);
 
     private:
         // Variables

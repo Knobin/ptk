@@ -26,7 +26,6 @@ set(UTIL_FILES util/Alignment.cpp
         util/Size.cpp)
 
 set(WIDGET_FILES widgets/Button.cpp
-        widgets/Cell.cpp
         widgets/Checkbox.cpp
         widgets/HBox.cpp
         widgets/Image.cpp

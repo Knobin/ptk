@@ -12,15 +12,61 @@
 #include "ptk/events/KeyEvent.hpp"
 #include "ptk/events/MouseEvent.hpp"
 #include "ptk/events/WidgetEvents.hpp"
-#include "ptk/core/EventManager.hpp"
 
 // C++ Headers
 #include <functional>
+#include <map>
 #include <vector>
 
 namespace pTK
 {
-    class Widget;
+    template <typename T>
+    struct CallbackContainer
+    {
+        ~CallbackContainer()
+        {
+#ifdef PTK_DEBUG
+            for (auto it{callbacks.cbegin()}; it != callbacks.cend(); ++it)
+            {
+                PTK_INFO("Callback {} removed (destruction)", it->first);
+            }
+#endif
+        }
+
+        void addCallback(uint64 id, const std::function<bool(const T&)>& callback)
+        {
+            callbacks.insert({id, callback});
+            PTK_INFO("CallbackContainer: added [WIDGET] callback with id: {}", id);
+        }
+
+        void removeCallback(uint64 id)
+        {
+            auto found = callbacks.find(id);
+            if (found != callbacks.end())
+            {
+                PTK_INFO("CallbackContainer: removed [WIDGET] callback with id: {}", id);
+                callbacks.erase(found);
+            }
+        }
+
+        void triggerCallbacks(const T& evt)
+        {
+            for (auto it = callbacks.begin(); it != callbacks.end();)
+            {
+                if (it->second(evt))
+                {
+                    PTK_INFO("CallbackContainer: auto-removed [WIDGET] callback with id: {}", it->first);
+                    callbacks.erase(it++);
+                }
+                else
+                    ++it;
+            }
+        }
+
+        std::map<uint64, std::function<bool(const T&)>> callbacks;
+    };
+
+
 
     class EventCallbacks
     {
@@ -93,11 +139,19 @@ namespace pTK
             @param callback     function to call on event
         */
         template <typename T>
-        uint64 addListener(std::function<bool(const T&)> callback)
+        uint64 addListener(const std::function<bool(const T&)>& callback)
         {
-            PTK_ASSERT(getWidgetPtr(), "Widget ptr is nullptr");
-            uint64 id = EventManager::AddListener<T>(getWidgetPtr(), std::move(callback));
-            return id;
+            CallbackContainer<T> *storage = getListeners<T>();
+            PTK_ASSERT(storage, "getListeners<T>() not implementated");
+
+            if (storage)
+            {
+                uint64 id = s_id++;
+                storage->addCallback(id, callback);
+                return id;
+            }
+
+            return 0;
         }
 
         /** Function to trigger an event.
@@ -107,13 +161,79 @@ namespace pTK
         template <typename T>
         void triggerEvent(const T& event)
         {
-            PTK_ASSERT(getWidgetPtr(), "Widget ptr is nullptr");
-            EventManager::TriggerWidgetEvent<T>(getWidgetPtr(), event);
+            CallbackContainer<T> *storage = getListeners<T>();
+            PTK_ASSERT(storage, "getListeners<T>() not implementated");
+
+            if (storage)
+                storage->triggerCallbacks(event);
         }
 
     private:
-        virtual Widget *getWidgetPtr() { return nullptr; }
+
+        template <typename T>
+        CallbackContainer<T> *getListeners()
+        {
+            return nullptr;
+        }
+
+    private:
+        CallbackContainer<KeyEvent> m_keyEventStorage{};
+        CallbackContainer<InputEvent> m_inputEventStorage{};
+        CallbackContainer<MotionEvent> m_hoverEventStorage{};
+        CallbackContainer<EnterEvent> m_enterEventStorage{};
+        CallbackContainer<LeaveEvent> m_leaveEventStorage{};
+        CallbackContainer<LeaveClickEvent> m_leaveClickEventStorage{};
+        CallbackContainer<ScrollEvent> m_scrollEventStorage{};
+        CallbackContainer<ClickEvent> m_clickEventStorage{};
+        CallbackContainer<ReleaseEvent> m_releaseEventStorage{};
+
+        static uint64 s_id;
     };
+
+    template<>
+    inline CallbackContainer<KeyEvent> *EventCallbacks::getListeners<KeyEvent>() {
+        return &m_keyEventStorage;
+    }
+
+    template<>
+    inline CallbackContainer<InputEvent> *EventCallbacks::getListeners<InputEvent>() {
+        return &m_inputEventStorage;
+    }
+
+    template<>
+    inline CallbackContainer<MotionEvent> *EventCallbacks::getListeners<MotionEvent>() {
+        return &m_hoverEventStorage;
+    }
+
+    template<>
+    inline CallbackContainer<EnterEvent> *EventCallbacks::getListeners<EnterEvent>() {
+        return &m_enterEventStorage;
+    }
+
+    template<>
+    inline CallbackContainer<LeaveEvent> *EventCallbacks::getListeners<LeaveEvent>() {
+        return &m_leaveEventStorage;
+    }
+
+    template<>
+    inline CallbackContainer<LeaveClickEvent> *EventCallbacks::getListeners<LeaveClickEvent>() {
+        return &m_leaveClickEventStorage;
+    }
+
+    template<>
+    inline CallbackContainer<ScrollEvent> *EventCallbacks::getListeners<ScrollEvent>() {
+        return &m_scrollEventStorage;
+    }
+
+    template<>
+    inline CallbackContainer<ClickEvent> *EventCallbacks::getListeners<ClickEvent>() {
+        return &m_clickEventStorage;
+    }
+
+    template<>
+    inline CallbackContainer<ReleaseEvent> *EventCallbacks::getListeners<ReleaseEvent>() {
+        return &m_releaseEventStorage;
+    }
 }
 
 #endif // PTK_CORE_EVENTCALLBACKS_HPP

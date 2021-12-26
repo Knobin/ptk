@@ -58,7 +58,6 @@
 
 // --- Widgets -----------------------
 #include "ptk/widgets/Button.hpp"
-#include "ptk/widgets/Cell.hpp"
 #include "ptk/widgets/Checkbox.hpp"
 #include "ptk/widgets/HBox.hpp"
 #include "ptk/widgets/Image.hpp"

@@ -24,21 +24,23 @@
 namespace pTK
 {
 
-    struct EnterEvent
+    class EnterEvent : public MotionEvent
     {
+    public:
+        using MotionEvent::MotionEvent;
+    };
 
+    class LeaveEvent : public MotionEvent
+    {
+    public:
+        using MotionEvent::MotionEvent;
     };
 
 
-    struct LeaveEvent
+    struct LeaveClickEvent : public ClickEvent
     {
-
-    };
-
-
-    struct LeaveClickEvent
-    {
-
+    public:
+        using ClickEvent::ClickEvent;
     };
 
 } // namespace pTK

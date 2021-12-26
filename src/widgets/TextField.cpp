@@ -22,23 +22,23 @@ namespace pTK
     TextField::TextField()
         : Rectangle(), Text()
     {
-        onKey([this](Event::Type type, KeyCode keycode, byte modifier){
-            if (type == Event::Type::KeyPressed)
-                handleKeyPress(keycode, modifier);
+        onKey([this](const KeyEvent& evt){
+            if (evt.type == Event::Type::KeyPressed)
+                handleKeyPress(evt.keycode, evt.modifier);
             return false;
         });
 
-        onInput([this](const std::unique_ptr<uint32[]>& data, std::size_t size, Text::Encoding encoding) {
-            handleInput(data, size, encoding);
+        onInput([this](const InputEvent& evt) {
+            handleInput(evt.data, evt.size, evt.encoding);
             return false;
         });
 
-        onClick([this](Mouse::Button, const Point&){
+        onClick([this](const ClickEvent&){
             m_drawCursor = true;
             return false;
         });
 
-        onLeaveClick([this](){
+        onLeaveClick([this](const LeaveClickEvent&){
             m_drawCursor = false;
             return false;
         });

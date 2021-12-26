@@ -31,20 +31,20 @@ public:
         setColor(pTK::Color{0x00000000});
         onTextUpdate();
 
-        onEnter([this](){
+        onEnter([this](const pTK::EnterEvent&){
             setColor(hoverColor);
             return false;
         });
-        onLeave([this](){
+        onLeave([this](const pTK::LeaveEvent&){
             setColor(pTK::Color{colorCopy});
             return false;
         });
-        onClick([this](pTK::Mouse::Button, const pTK::Point&){
+        onClick([this](const pTK::ClickEvent&){
             colorCopy = clickColor;
             setColor(clickColor);
             return false;
         });
-        onRelease([this](pTK::Mouse::Button, const pTK::Point&){
+        onRelease([this](const pTK::ReleaseEvent&){
             setColor(hoverColor);
             return false;
         });
@@ -133,9 +133,9 @@ int main(int argc, char *argv[]) {
     pTK::Window window{"pTK Sandbox Window", {SCR_WIDTH, SCR_HEIGHT}, flags};
     window.setBackground(pTK::Color(0x1E1E1EFF));
 
-    window.onKey([](pTK::Event::Type type, pTK::Key key, byte){
-        std::string str = (type == pTK::KeyEvent::Pressed) ? "pressed" : "released";
-        std::cout << "Key " << str << ": " << static_cast<int32>(key) << std::endl;
+    window.onKey([](const pTK::KeyEvent& evt){
+        std::string str = (evt.type == pTK::KeyEvent::Pressed) ? "pressed" : "released";
+        std::cout << "Key " << str << ": " << static_cast<int32>(evt.data) << std::endl;
         return false;
     });
 
@@ -181,19 +181,19 @@ int main(int argc, char *argv[]) {
     btnManager.buttons.push_back(about);
     btnManager.buttons.push_back(contact);
 
-    home->onClick([&](pTK::Mouse::Button, const pTK::Point&){
+    home->onClick([&](const pTK::ClickEvent&){
         btnManager.setActive(home);
         return false;
     });
-    projects->onClick([&](pTK::Mouse::Button, const pTK::Point&){
+    projects->onClick([&](const pTK::ClickEvent&){
         btnManager.setActive(projects);
         return false;
     });
-    about->onClick([&](pTK::Mouse::Button, const pTK::Point&){
+    about->onClick([&](const pTK::ClickEvent&){
         btnManager.setActive(about);
         return false;
     });
-    contact->onClick([&](pTK::Mouse::Button, const pTK::Point&){
+    contact->onClick([&](const pTK::ClickEvent&){
         btnManager.setActive(contact);
         return false;
     });
@@ -203,7 +203,7 @@ int main(int argc, char *argv[]) {
     close->hoverColor = pTK::Color{0xDE2A33FF};
     close->clickColor = pTK::Color{0xB8232AFF};
     close->setAlign(pTK::Align::HCenter, pTK::Align::Bottom);
-    close->onRelease([&](pTK::Mouse::Button, const pTK::Point&) {
+    close->onRelease([&](const pTK::ReleaseEvent&) {
         app.close();
         return false;
     });
@@ -246,7 +246,7 @@ int main(int argc, char *argv[]) {
     btn->setAlign(pTK::Align::Left, pTK::Align::Top);
     btn->setText("Random Color!");
     btn->setMargin({ 18, 18, 18, 18 });
-    btn->onClick([&hline](pTK::Mouse::Button, const pTK::Point&) {
+    btn->onClick([&hline](const pTK::ClickEvent&) {
         hline->setColor(RandomColor());
         return false;
     });
@@ -263,11 +263,11 @@ int main(int argc, char *argv[]) {
     textField->setPlaceholderText("Add text here!");
     std::cout << "Deafult font family: " << textField->getFontFamily() << std::endl;
 
-    textField->onClick([&](pTK::Mouse::Button, const pTK::Point&){
+    textField->onClick([&](const pTK::ClickEvent&){
         textField->setOutlineColor(pTK::Color{0x007BFFFF});
         return false;
     });
-    textField->onLeaveClick([&](){
+    textField->onLeaveClick([&](const pTK::LeaveClickEvent&){
         textField->setOutlineColor(pTK::Color{0x181818FF});
         return false;
     });

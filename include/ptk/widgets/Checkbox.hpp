@@ -14,7 +14,7 @@
 namespace pTK
 {
     /** Checkbox class implementation.
-     
+
         This class implements a basic Checkbox.
         It includes all the necessary function for
         it to work.
@@ -31,81 +31,85 @@ namespace pTK
     {
     public:
         /** Checkbox Button with default values.
-         
+
             @return    default initialized Checkbox
         */
         Checkbox();
         virtual ~Checkbox() = default;
-        
+
         /** Draw function.
             Function is called when it is time to draw.
-         
+
             Derived from Drawable.
 
             @param canvas  Canvas to draw to
         */
         void onDraw(SkCanvas* canvas) override;
-        
+
         /** Function for retrieving the status.
-         
+
             @return    status
         */
         bool status() const;
 
         /** Function for setting the status.
-         
+
             @param status  he status toggled to.
         */
         void set(bool status);
 
         /** Function for toggling the status.
-         
+
             @return    the status toggled to.
         */
         bool toggle();
-        
+
         /** Function for handling when mouse is entering.
-         
+
             Derived from EventFunctions.
         */
-        void onEnterEvent() override;
-        
+        void onEnterCallback(const EnterEvent& evt);
+
         /** Function for handling when mouse is leaving.
-         
+
             Derived from EventFunctions.
         */
-        void onLeaveEvent() override;
-        
+        void onLeaveCallback(const LeaveEvent& evt);
+
         /** Function for handling when mouse is clicking.
-         
+
             Derived from EventFunctions.
-         
+
             @param button      which button on mouse triggered the event.
             @param position    x and y position
         */
-        void onClickEvent(Mouse::Button, const Point&) override;
-        
+        void onClickCallback(const ClickEvent& evt);
+
         /** Function for handling when mouse is released.
-         
+
             Derived from EventFunctions.
-         
+
             @param button      which button on mouse triggered the event.
             @param position    x and y position
         */
-        void onReleaseEvent(Mouse::Button, const Point&) override;
-        
+        void onReleaseCallback(const ReleaseEvent& evt);
+
         /** Function for handling when the checkbox is toggled.
-         
+
             @param status    status on toggle.
         */
         virtual void onToggleEvent(bool status);
-        
+
         /** Function for handling when the checkbox is toggled.
-         
+
             @param callback    function to call on toggle.
         */
         void onToggle(const std::function<bool(bool status)>& callback);
-        
+
+    private:
+
+        void initCallbacks();
+
     private:
         bool m_checked = false;
         bool m_hover = false;
@@ -113,13 +117,13 @@ namespace pTK
         byte m_state = 0;
         Color m_checkColor;
         std::function<bool(bool status)> m_toggleCallback;
-        
+
         void drawChecked(SkCanvas* canvas);
         void drawStates(SkCanvas* canvas);
-        
+
         void internalToggle();
     };
-    
+
 }
 
 #endif // PTK_WIDGETS_CHECKBOX_HPP

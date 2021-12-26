@@ -17,6 +17,11 @@ namespace pTK
 
     }
 
+    Widget::~Widget()
+    {
+        
+    }
+
     void Widget::setParent(Widget* parent)
     {
         m_parent = parent;

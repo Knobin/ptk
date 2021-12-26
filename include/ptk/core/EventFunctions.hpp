@@ -10,8 +10,10 @@
 
 // pTK Headers
 #include "ptk/events/KeyCodes.hpp"
+#include "ptk/events/KeyEvent.hpp"
 #include "ptk/events/MouseEvent.hpp"
 #include "ptk/core/Text.hpp"
+#include "ptk/events/WidgetEvents.hpp"
 
 namespace pTK
 {
@@ -40,7 +42,7 @@ namespace pTK
             @param type     Key event (press or release)
             @param KeyCode  Keycode
         */
-        virtual void onKeyEvent(Event::Type, KeyCode, byte) {}
+        virtual void onKeyEvent(const KeyEvent&) {}
 
         /** Function for handling key input.
 
@@ -48,45 +50,45 @@ namespace pTK
             @param size         amount of characters
             @param encoding     encoding of the characer data
         */
-        virtual void onKeyInput(const std::unique_ptr<uint32[]>&, std::size_t, Text::Encoding) {}
+        virtual void onKeyInput(const InputEvent&) {}
 
         /** Function for handling when mouse is hovering.
 
         */
-        virtual void onHoverEvent(const Point&) {}
+        virtual void onHoverEvent(const MotionEvent&) {}
 
         /** Function for handling when mouse is entering.
 
         */
-        virtual void onEnterEvent() {}
+        virtual void onEnterEvent(const EnterEvent&) {}
 
         /** Function for handling when mouse is leaving.
 
         */
-        virtual void onLeaveEvent() {}
+        virtual void onLeaveEvent(const LeaveEvent&) {}
 
         // TODO: Add documentation.
-        virtual void onLeaveClickEvent() {}
+        virtual void onLeaveClickEvent(const LeaveClickEvent&) {}
 
         /** Function for handling when mouse is scrolling.
 
          @param offset     x and y offset
         */
-        virtual void onScrollEvent(const Vec2f&) {}
+        virtual void onScrollEvent(const ScrollEvent&) {}
 
         /** Function for handling when mouse is clicking.
 
             @param button      which button on mouse triggered the event.
             @param position    x and y position
         */
-        virtual void onClickEvent(Mouse::Button, const Point&) {}
+        virtual void onClickEvent(const ClickEvent&) {}
 
         /** Function for handling when mouse is released.
 
             @param button      which button on mouse triggered the event.
             @param position    x and y position
         */
-        virtual void onReleaseEvent(Mouse::Button, const Point&) {}
+        virtual void onReleaseEvent(const ReleaseEvent&) {}
     };
 }
 

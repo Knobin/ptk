@@ -10,6 +10,8 @@
 
 namespace pTK
 {
+    uint64 EventCallbacks::s_id{1};
+
     void EventCallbacks::onKey(const std::function<bool(const KeyEvent&)>& callback)
     {
         addListener<KeyEvent>(callback);

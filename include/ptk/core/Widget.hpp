@@ -37,7 +37,7 @@ namespace pTK
         /** Destructor for Widget.
 
         */
-        virtual ~Widget() = default;
+        virtual ~Widget();
 
         /** Function sets the Container parent of the Widget.
 
@@ -132,8 +132,6 @@ namespace pTK
         // Alignment functions derived from Alignment.
         void onAlignChange(std::underlying_type<Align>::type) override;
         void onMarginChange(const Margin&) override;
-
-        Widget *getWidgetPtr() final { return this; }
 
     private:
         Widget* m_parent;

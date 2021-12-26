@@ -20,6 +20,8 @@ namespace pTK
         : Rectangle(), m_text{Create<Label>()}, m_labelPos{}, m_borderSize{14},
             m_hoverColor{}, m_clickColor{}, m_colorCopy{}, m_hover{false}, m_click{false}
     {
+        initCallbacks();
+
         setStyle(Style::Default);
         m_text->setParent(this);
         m_text->setFontSize(14);
@@ -29,9 +31,19 @@ namespace pTK
         : Rectangle(), m_text{Create<Label>()}, m_labelPos{}, m_borderSize{14},
             m_hoverColor{}, m_clickColor{}, m_colorCopy{}, m_hover{false}, m_click{false}
     {
+        initCallbacks();
+
         setStyle(style);
         m_text->setParent(this);
         m_text->setFontSize(14);
+    }
+
+    void Button::initCallbacks()
+    {
+        addListener<EnterEvent>([&](const EnterEvent& evt) { onEnterCallback(evt); return false; });
+        addListener<LeaveEvent>([&](const LeaveEvent& evt) { onLeaveCallback(evt); return false; });
+        addListener<ClickEvent>([&](const ClickEvent& evt) { onClickCallback(evt); return false; });
+        addListener<ReleaseEvent>([&](const ReleaseEvent& evt) { onReleaseCallback(evt); return false; });
     }
 
     void Button::setPosHint(const Point& pos)
@@ -211,27 +223,27 @@ namespace pTK
         return style;
     }
 
-    void Button::onEnterEvent()
+    void Button::onEnterCallback(const EnterEvent&)
     {
         m_colorCopy = getColor();
         setColor(m_hoverColor);
         m_hover = true;
     }
 
-    void Button::onLeaveEvent()
+    void Button::onLeaveCallback(const LeaveEvent&)
     {
         if (!m_click)
             setColor(m_colorCopy);
         m_hover = false;
     }
 
-    void Button::onClickEvent(Mouse::Button, const Point&)
+    void Button::onClickCallback(const ClickEvent&)
     {
         setColor(m_clickColor);
         m_click = true;
     }
 
-    void Button::onReleaseEvent(Mouse::Button, const Point&)
+    void Button::onReleaseCallback(const ReleaseEvent&)
     {
         if (m_click)
         {
