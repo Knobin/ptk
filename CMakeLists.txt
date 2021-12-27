@@ -20,6 +20,12 @@ option(ENABLE_METAL "Enable Metal backend" ON)
 set(PTK_OPENGL_PLATFORMS "Windows" "Unix")
 set(PTK_METAL_PLATFORMS "Apple")
 
+# Specific Debug Defines
+option(PTK_CB_STORAGE_DEBUG "Enable Callback Storage debug printing")
+IF(PTK_CB_STORAGE_DEBUG)
+    ADD_DEFINITIONS(-DPTK_CB_STORAGE_DEBUG)
+ENDIF(PTK_CB_STORAGE_DEBUG)
+
 # Compiler
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_definitions(-DPTK_COMPILER_CLANG)

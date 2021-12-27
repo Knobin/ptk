@@ -10,50 +10,48 @@
 
 namespace pTK
 {
-    uint64 EventCallbacks::s_id{1};
-
-    void EventCallbacks::onKey(const std::function<bool(const KeyEvent&)>& callback)
+    uint64 EventCallbacks::onKey(const std::function<bool(const KeyEvent&)>& callback)
     {
-        addListener<KeyEvent>(callback);
+        return addListener<KeyEvent>(callback);
     }
 
-    void EventCallbacks::onInput(const std::function<bool(const InputEvent&)>& callback)
+    uint64 EventCallbacks::onInput(const std::function<bool(const InputEvent&)>& callback)
     {
-        addListener<InputEvent>(callback);
+        return addListener<InputEvent>(callback);
     }
 
-    void EventCallbacks::onHover(const std::function<bool(const MotionEvent&)>& callback)
+    uint64 EventCallbacks::onHover(const std::function<bool(const MotionEvent&)>& callback)
     {
-        addListener<MotionEvent>(callback);
+        return addListener<MotionEvent>(callback);
     }
 
-    void EventCallbacks::onEnter(const std::function<bool(const EnterEvent&)>& callback)
+    uint64 EventCallbacks::onEnter(const std::function<bool(const EnterEvent&)>& callback)
     {
-        addListener<EnterEvent>(callback);
+        return addListener<EnterEvent>(callback);
     }
 
-    void EventCallbacks::onLeave(const std::function<bool(const LeaveEvent&)>& callback)
+    uint64 EventCallbacks::onLeave(const std::function<bool(const LeaveEvent&)>& callback)
     {
-        addListener<LeaveEvent>(callback);
+        return addListener<LeaveEvent>(callback);
     }
 
-    void EventCallbacks::onLeaveClick(const std::function<bool(const LeaveClickEvent&)>& callback)
+    uint64 EventCallbacks::onLeaveClick(const std::function<bool(const LeaveClickEvent&)>& callback)
     {
-        addListener<LeaveClickEvent>(callback);
+        return addListener<LeaveClickEvent>(callback);
     }
 
-    void EventCallbacks::onScroll(const std::function<bool(const ScrollEvent&)>& callback)
+    uint64 EventCallbacks::onScroll(const std::function<bool(const ScrollEvent&)>& callback)
     {
-        addListener<ScrollEvent>(callback);
+        return addListener<ScrollEvent>(callback);
     }
 
-    void EventCallbacks::onClick(const std::function<bool(const ClickEvent&)>& callback)
+    uint64 EventCallbacks::onClick(const std::function<bool(const ClickEvent&)>& callback)
     {
-        addListener<ClickEvent>(callback);
+        return addListener<ClickEvent>(callback);
     }
 
-    void EventCallbacks::onRelease(const std::function<bool(const ReleaseEvent&)>& callback)
+    uint64 EventCallbacks::onRelease(const std::function<bool(const ReleaseEvent&)>& callback)
     {
-        addListener<ReleaseEvent>(callback);
+        return addListener<ReleaseEvent>(callback);
     }
 }

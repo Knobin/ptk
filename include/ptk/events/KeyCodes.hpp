@@ -109,7 +109,8 @@ namespace pTK
 
     constexpr byte KeyCodeToDigit(const KeyCode code) noexcept
     {
-        return static_cast<byte>(static_cast<int32>(code));
+        constexpr byte zero = static_cast<byte>(Key::D0);
+        return static_cast<byte>(static_cast<int32>(code) - zero);
     }
 
     constexpr bool IsKeyCodeModifier(const KeyCode code) noexcept
@@ -123,7 +124,7 @@ namespace pTK
         // A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
         // 0 1 2 3 4 5 6 7 8 9
         return (IsKeyCodeAlpha(code) || IsKeyCodeDigit(code));
-        
+
         // Lowercase is not supported yet: a b c d e f g h i j k l m n o p q r s t u v w x y z
         // TODO: Add values below.
         // ! " # $ % & ' ( ) * + , - . /

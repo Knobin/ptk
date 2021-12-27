@@ -2,7 +2,8 @@
 # Source files
 #
 
-set(CORE_FILES core/EventCallbacks.cpp
+set(CORE_FILES core/CallbackStorage.cpp
+        core/EventCallbacks.cpp
         core/EventHandling.cpp
         core/EventManager.cpp
         core/Shape.cpp

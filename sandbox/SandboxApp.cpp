@@ -135,9 +135,29 @@ int main(int argc, char *argv[]) {
 
     window.onKey([](const pTK::KeyEvent& evt){
         std::string str = (evt.type == pTK::KeyEvent::Pressed) ? "pressed" : "released";
-        std::cout << "Key " << str << ": " << static_cast<int32>(evt.data) << std::endl;
+        std::cout << "Key " << str << ": " << static_cast<int32>(evt.keycode) << std::endl;
         return false;
     });
+
+    window.addListener<int>([](const int& val){
+        std::cout << "Integer callback 1: value = " << val << std::endl;
+        return false;
+    });
+
+    window.addListener<int>([](const int& val){
+        std::cout << "Integer callback 2: value = " << val << std::endl;
+        return false;
+    });
+
+    // Removes callback when R is pressed.
+    uint64 cb_id = window.onKey([&](const pTK::KeyEvent& evt){
+        if (pTK::IsKeyCodeDigit(evt.keycode))
+            window.triggerEvent<int>(pTK::KeyCodeToDigit(evt.keycode));
+
+        return (evt.keycode == pTK::Key::R);
+    });
+
+    std::cout << "Callback id to auto-remove: " << cb_id << std::endl;
 
     quitItem->onClick("test click", [&window]() {
         std::cout << "Closing window!" << std::endl;
