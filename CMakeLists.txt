@@ -21,7 +21,7 @@ set(PTK_OPENGL_PLATFORMS "Windows" "Unix")
 set(PTK_METAL_PLATFORMS "Apple")
 
 # Specific Debug Defines
-option(PTK_CB_STORAGE_DEBUG "Enable Callback Storage debug printing")
+option(PTK_CB_STORAGE_DEBUG "Enable Callback Storage debug printing" OFF)
 IF(PTK_CB_STORAGE_DEBUG)
     ADD_DEFINITIONS(-DPTK_CB_STORAGE_DEBUG)
 ENDIF(PTK_CB_STORAGE_DEBUG)
