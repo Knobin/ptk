@@ -27,11 +27,12 @@
 namespace pTK
 {
     // TODO: Add documentation for CallbackContainer.
-    template <typename T>
+    template <typename T, typename Callback>
     class CallbackContainer
     {
     public:
-        using container_type = std::map<uint64, std::function<bool(const T&)>>;
+        using callback_type = std::function<Callback>;
+        using container_type = std::map<uint64, callback_type>;
 
     public:
         CallbackContainer() = default;
@@ -45,27 +46,31 @@ namespace pTK
 #endif
         }
 
-        void addCallback(uint64 id, const std::function<bool(const T&)>& callback)
+        void addCallback(uint64 id, const callback_type& callback)
         {
             callbacks.insert({id, callback});
             PTK_CB_STORAGE_LOG("CallbackContainer: added callback with id: {}", id);
         }
 
-        void removeCallback(uint64 id)
+        bool removeCallback(uint64 id)
         {
             auto found = callbacks.find(id);
             if (found != callbacks.end())
             {
                 PTK_CB_STORAGE_LOG("CallbackContainer: removed callback with id: {}", id);
                 callbacks.erase(found);
+                return true;
             }
+
+            return false;
         }
 
-        void triggerCallbacks(const T& evt)
+        template<typename... Args>
+        void triggerCallbacks(Args&& ...args)
         {
             for (auto it = callbacks.begin(); it != callbacks.end();)
             {
-                if (it->second(evt))
+                if (it->second(std::forward<Args>(args)...))
                 {
                     PTK_CB_STORAGE_LOG("CallbackContainer: auto-removed callback with id: {}", it->first);
                     callbacks.erase(it++);
@@ -82,7 +87,7 @@ namespace pTK
     // TODO: Add documentation for CallbackIndexGen.
     struct CallbackIndexGen
     {
-        template <typename T>
+        template <typename T, typename Callback>
         static std::size_t GetIndex()
         {
             static std::size_t index{s_counter++};
@@ -108,17 +113,17 @@ namespace pTK
                     it->second(it->first);
         }
 
-        template <typename T>
-        uint64 addCallback(const std::function<bool(const T&)>& callback)
+        template <typename T, typename Callback>
+        uint64 addCallback(const std::function<Callback>& callback)
         {
             // Get index based on type T.
-            std::size_t index = CallbackIndexGen::GetIndex<T>();
+            std::size_t index = CallbackIndexGen::GetIndex<T, Callback>();
 
             // Create node (and / or) get iterator to node.
-            auto it = createNode<T>(index);
+            auto it = createNode<T, Callback>(index);
 
             // Cast data pointer.
-            auto callbacks = static_cast<CallbackContainer<T>*>(it->first);
+            auto callbacks = static_cast<CallbackContainer<T, Callback>*>(it->first);
 
             // Finally insert the callback.
             uint64 id = s_idCounter++;
@@ -127,47 +132,50 @@ namespace pTK
             return id;
         }
 
-        template <typename T>
-        void removeCallback(uint64 id)
+        template <typename T, typename Callback>
+        bool removeCallback(uint64 id)
         {
             // Get callbacks based on type of T.
-            CallbackContainer<T> *cont = getCallbacks<T>();
+            CallbackContainer<T, Callback>* cont = getCallbacks<T, Callback>();
 
             // Is container valid?
             if (cont != nullptr)
-                cont->removeCallback(id);
+                return cont->removeCallback(id);
+
+            // Not removed.
+            return false;
         }
 
-        template <typename T>
-        CallbackContainer<T> *getCallbacks()
+        template <typename T, typename Callback>
+        CallbackContainer<T, Callback>* getCallbacks()
         {
             // Get index based on type T.
-            std::size_t index = CallbackIndexGen::GetIndex<T>();
+            const std::size_t index = CallbackIndexGen::GetIndex<T, Callback>();
 
             // Does node exist?
             if (validIndex(index))
             {
                 // Iterator to data at index.
-                container_type::iterator it{iteratorFromIndex(index)};
+                container_type::iterator it{ iteratorFromIndex(index) };
 
                 // is node initialized?
                 if (it->first != nullptr)
-                    return static_cast<CallbackContainer<T>*>(it->first);
+                    return static_cast<CallbackContainer<T, Callback>*>(it->first);
             }
 
             // Node not found or not initialized.
             return nullptr;
         }
 
-        template <typename T>
-        void triggerCallbacks(const T& data)
+        template <typename T, typename Callback, typename... Args>
+        void triggerCallbacks(Args&& ...args)
         {
             // Get callbacks based on type of T.
-            CallbackContainer<T> *cont = getCallbacks<T>();
+            CallbackContainer<T, Callback>* cont = getCallbacks<T, Callback>();
 
             // Is container valid?
             if (cont != nullptr)
-                cont->triggerCallbacks(data);
+                cont->triggerCallbacks(std::forward<Args>(args)...);
         }
 
     private:
@@ -183,7 +191,7 @@ namespace pTK
             return std::next(m_storage.begin(), offset);
         }
 
-        template <typename T>
+        template <typename T, typename Callback>
         container_type::iterator createNode(std::size_t index)
         {
             // Resize if needed.
@@ -196,11 +204,11 @@ namespace pTK
             // Check if container is created, if not, create it and set delete function.
             if (it->first == nullptr)
             {
-                CallbackContainer<T> *container = new CallbackContainer<T>();
+                CallbackContainer<T, Callback> *container = new CallbackContainer<T, Callback>();
                 it->first = static_cast<void*>(container);
                 it->second = [](void *ptr) {
                     // Pointer is assumed to be valid here.
-                    auto *cptr = static_cast<CallbackContainer<T>*>(ptr);
+                    auto *cptr = static_cast<CallbackContainer<T, Callback>*>(ptr);
                     delete cptr;
                 };
             }

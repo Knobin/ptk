@@ -107,7 +107,38 @@ pTK::Ref<CustomBtn> CreateCustomBtn(const std::string& text, const pTK::Margin& 
     return btn;
 }
 
-int main(int argc, char *argv[]) {
+#include <type_traits>
+
+//template <typename T>
+//struct test_type<T, T::callback_type> : std::true_type {};
+
+/*template <typename T, typename T::callback_type>
+struct test_type
+{
+    static constexpr bool value = true;
+};*/
+
+template <typename T, typename = void>
+struct callback_type_exists : std::false_type {};
+
+template <typename T>
+struct callback_type_exists<T, std::void_t<typename T::callback_type>> : std::true_type {};
+
+struct TotallyUniqueClass
+{
+    using callback_type = void(int);
+};
+
+struct TotallyUniqueClass2
+{
+
+};
+
+int main(int argc, char *argv[]) 
+{
+    std::cout << "callback_type_exists<int> : " << callback_type_exists<int>::value << std::endl;
+    std::cout << "callback_type_exists<TotallyUniqueClass> : " << callback_type_exists<TotallyUniqueClass>::value << std::endl;
+    std::cout << "callback_type_exists<TotallyUniqueClass2> : " << callback_type_exists<TotallyUniqueClass2>::value << std::endl;
 
     // App.
     pTK::Application app{"SandboxApp", argc, argv};
@@ -139,13 +170,13 @@ int main(int argc, char *argv[]) {
         return false;
     });
 
-    window.addListener<int>([](const int& val){
-        std::cout << "Integer callback 1: value = " << val << std::endl;
+    window.addListener<int>([]() {
+        std::cout << "Integer callback 1"<< std::endl;
         return false;
     });
 
     window.addListener<int>([](const int& val){
-        std::cout << "Integer callback 2: value = " << val << std::endl;
+        std::cout << "Integer callback 2 with value = " << val << std::endl;
         return false;
     });
 

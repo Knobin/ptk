@@ -411,9 +411,9 @@ namespace pTK
             const Point scaledPos{static_cast<Point::value_type>(pos.x * (1 / scale.x)),
                                 static_cast<Point::value_type>(pos.y * (1 / scale.y))};
 
-            // ClickEvent evt{btn, scaledPos};
-            data->window->triggerEvent<ClickEvent>({btn, scaledPos});
-            // data->window->handleClickEvent(evt);
+            ClickEvent evt{btn, scaledPos};
+            // data->window->triggerEvent<ClickEvent>({btn, scaledPos});
+            data->window->sendEvent(&evt);
         }
     }
 
@@ -423,7 +423,7 @@ namespace pTK
         RECT* rect = reinterpret_cast<RECT*>(lParam);
         MoveEvent mEvt{{static_cast<Point::value_type>(rect->left),
                            static_cast<Point::value_type>(rect->top)}};
-        data->window->sendEvent(mEvt);
+        data->window->sendEvent(&mEvt);
 
         // Scale Window.
         const uint32 dpiX{static_cast<uint32>(GET_X_LPARAM(wParam))};

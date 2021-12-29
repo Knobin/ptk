@@ -98,7 +98,19 @@ namespace pTK
         template <typename T>
         uint64 addListener(const std::function<bool(const T&)>& callback)
         {
-            return m_callbackStorage.addCallback<T>(callback);
+            return m_callbackStorage.addCallback<T, bool(const T&)>(callback);
+        }
+
+        /** Function to add callback.
+
+            @param callback     function to call on event
+            @return             callback id
+        */
+        template <typename T>
+        uint64 addListener(const std::function<bool()>& callback)
+        {
+            auto helper_func = [callback](const T&) { return callback(); };
+            return m_callbackStorage.addCallback<T, bool(const T&)>(helper_func);
         }
 
         /** Function to remove callback.
@@ -106,19 +118,19 @@ namespace pTK
             @param id   callback id to remove
         */
         template <typename T>
-        void removeListener(uint64 id)
+        bool removeListener(uint64 id)
         {
-            return m_callbackStorage.removeCallback<T>(id);
+            return m_callbackStorage.removeCallback<T, bool(const T&)>(id);
         }
 
         /** Function to trigger an event.
 
             @param event    triggered event
         */
-        template <typename T>
-        void triggerEvent(const T& event)
+        template <typename T, typename... Args>
+        void triggerEvent(Args&& ...args)
         {
-            return m_callbackStorage.triggerCallbacks<T>(event);
+            m_callbackStorage.triggerCallbacks<T, bool(const T&)>(std::forward<Args>(args)...);
         }
 
     private:

@@ -202,9 +202,15 @@ namespace pTK
             Point pos{bEvent->pos};
             Mouse::Button btn{bEvent->button};
             if (type == Event::Type::MouseButtonPressed)
-                triggerEvent<ClickEvent>({btn, pos});
+            {
+                ClickEvent cEvt{btn, pos};
+                triggerEvent<ClickEvent>(cEvt);
+            }
             else if (type == Event::Type::MouseButtonReleased)
-                triggerEvent<ReleaseEvent>({btn, pos});
+            {
+                ReleaseEvent rEvt{ btn, pos };
+                triggerEvent<ReleaseEvent>(rEvt);
+            }
         }
         else if (type == Event::Type::MouseScrolled)
         {
