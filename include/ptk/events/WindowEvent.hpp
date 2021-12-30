@@ -104,6 +104,72 @@ namespace pTK
         // Area.
         const Size size;
     };
+
+    /** CloseEvent class implementation.
+
+        Signal to that window should close.
+    */
+    class CloseEvent final : public Event
+    {
+    public:
+        CloseEvent()
+            : Event(Event::Category::Window, Event::Type::WindowClose)
+        {
+        }
+    };
+
+    /** MinimizeEvent class implementation.
+
+        Signal to that window has been minimized.
+    */
+    class MinimizeEvent final : public Event
+    {
+    public:
+        MinimizeEvent()
+            : Event(Event::Category::Window, Event::Type::WindowMinimize)
+        {
+        }
+    };
+
+    /** RestoreEvent class implementation.
+
+        Signal to that window has been restored
+        from a minimized state.
+    */
+    class RestoreEvent final : public Event
+    {
+    public:
+        RestoreEvent()
+            : Event(Event::Category::Window, Event::Type::WindowRestore)
+        {
+        }
+    };
+
+    /** FocusEvent class implementation.
+
+        Signal to that window is in focus.
+    */
+    class FocusEvent final : public Event
+    {
+    public:
+        FocusEvent()
+            : Event(Event::Category::Window, Event::Type::WindowFocus)
+        {
+        }
+    };
+
+    /** LostFocusEvent class implementation.
+
+        Signal to that window is out of focus.
+    */
+    class LostFocusEvent final : public Event
+    {
+    public:
+        LostFocusEvent()
+            : Event(Event::Category::Window, Event::Type::WindowLostFocus)
+        {
+        }
+    };
 }
 
 #endif // PTK_EVENTS_WINDOWEVENT_HPP
