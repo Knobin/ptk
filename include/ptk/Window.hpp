@@ -196,11 +196,14 @@ namespace pTK
         void onRestore(const std::function<bool()>& callback);
 
     private:
-        // Event processing
+        // Event processing (for pointer based event).
         void handleEvent(Event *event);
         void handleKeyboardEvent(Event* event);
         void handleMouseEvent(Event* event);
         void handleWindowEvent(Event* event);
+
+        // Event processing (callbacks).
+        void registerCallbacks();
 
         void onChildDraw(size_type) override;
         void onSizeChange(const Size& size) override;

@@ -134,7 +134,7 @@ struct TotallyUniqueClass2
 
 };
 
-int main(int argc, char *argv[]) 
+int main(int argc, char *argv[])
 {
     std::cout << "callback_type_exists<int> : " << callback_type_exists<int>::value << std::endl;
     std::cout << "callback_type_exists<TotallyUniqueClass> : " << callback_type_exists<TotallyUniqueClass>::value << std::endl;
@@ -167,6 +167,26 @@ int main(int argc, char *argv[])
     window.onKey([](const pTK::KeyEvent& evt){
         std::string str = (evt.type == pTK::KeyEvent::Pressed) ? "pressed" : "released";
         std::cout << "Key " << str << ": " << static_cast<int32>(evt.keycode) << std::endl;
+        return false;
+    });
+
+    window.addListener<pTK::MinimizeEvent>([](){
+        std::cout << "Window minimized!" << std::endl;
+        return false;
+    });
+
+    window.addListener<pTK::RestoreEvent>([](){
+        std::cout << "Window restored!" << std::endl;
+        return false;
+    });
+
+    window.addListener<pTK::FocusEvent>([](){
+        std::cout << "Window focused!" << std::endl;
+        return false;
+    });
+
+    window.addListener<pTK::LostFocusEvent>([](){
+        std::cout << "Window lost focus!" << std::endl;
         return false;
     });
 

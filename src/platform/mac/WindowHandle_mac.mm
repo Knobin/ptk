@@ -56,9 +56,8 @@
 
 - (BOOL)windowShouldClose:(NSWindow*) __unused sender
 {
-    pTK::Event evt{pTK::Event::Category::Window, pTK::Event::Type::WindowClose};
-    ptkWindow->parent()->handleEvents(); // Handle all events before sending close event.
-    ptkWindow->parent()->sendEvent(&evt);
+    pTK::CloseEvent evt{};
+    ptkWindow->parent()->triggerEvent<pTK::CloseEvent>(evt);
 
     return NO;
 }
@@ -71,40 +70,38 @@
                          static_cast<pTK::Size::value_type>(rect.size.height)};
 
     pTK::ResizeEvent evt{size};
-    ptkWindow->parent()->sendEvent(&evt);
-    ptkWindow->parent()->forceDrawAll();
+    ptkWindow->parent()->triggerEvent<pTK::ResizeEvent>(evt);
 
 }
 
 - (void)windowDidMove:(NSNotification*) __unused notification
 {
-    pTK::Point pos{ptkWindow->getWinPos()};
-    pTK::MoveEvent evt{pos};
-    ptkWindow->parent()->sendEvent(&evt);
+    pTK::MoveEvent evt{ptkWindow->getWinPos()};
+    ptkWindow->parent()->triggerEvent<pTK::MoveEvent>(evt);
 }
 
 - (void)windowDidMiniaturize:(NSNotification*) __unused notification
 {
-    pTK::Event evt{pTK::Event::Category::Window, pTK::Event::Type::WindowMinimize};
-    ptkWindow->parent()->sendEvent(&evt);
+    pTK::MinimizeEvent evt{};
+    ptkWindow->parent()->triggerEvent<pTK::MinimizeEvent>(evt);
 }
 
 - (void)windowDidDeminiaturize:(NSNotification*) __unused notification
 {
-    pTK::Event evt{pTK::Event::Category::Window, pTK::Event::Type::WindowRestore};
-    ptkWindow->parent()->sendEvent(&evt);
+    pTK::RestoreEvent evt{};
+    ptkWindow->parent()->triggerEvent<pTK::RestoreEvent>(evt);
 }
 
 - (void)windowDidBecomeKey:(NSNotification*) __unused notification
 {
-    pTK::Event evt{pTK::Event::Category::Window, pTK::Event::Type::WindowFocus};
-    ptkWindow->parent()->sendEvent(&evt);
+    pTK::FocusEvent evt{};
+    ptkWindow->parent()->triggerEvent<pTK::FocusEvent>(evt);
 }
 
 - (void)windowDidResignKey:(NSNotification*) __unused notification
 {
-    pTK::Event evt{pTK::Event::Category::Window, pTK::Event::Type::WindowLostFocus};
-    ptkWindow->parent()->sendEvent(&evt);
+    pTK::LostFocusEvent evt{};
+    ptkWindow->parent()->triggerEvent<pTK::LostFocusEvent>(evt);
 }
 
 @end
@@ -201,13 +198,13 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 - (void)updateLayer
 {
     pTK::PaintEvent evt{pTK::Point{0,0}, ptkwindow->parent()->getSize()};
-    ptkwindow->parent()->sendEvent(&evt);
+    ptkwindow->parent()->triggerEvent<pTK::PaintEvent>(evt);
 }
 
 - (void)drawRect:(NSRect) __unused rect
 {
     pTK::PaintEvent evt{pTK::Point{0,0}, ptkwindow->parent()->getSize()};
-    ptkwindow->parent()->sendEvent(&evt);
+    ptkwindow->parent()->triggerEvent<pTK::PaintEvent>(evt);
 }
 
 static bool IsValid(uint32 data)
@@ -244,7 +241,7 @@ static bool IsValid(uint32 data)
 
     pTK::KeyEvent press{pTK::Event::Type::KeyPressed, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode)),
         data, pTK::Text::Encoding::UTF32, mods};
-    ptkwindow->parent()->sendEvent(&press);
+    ptkwindow->parent()->triggerEvent<pTK::KeyEvent>(press);
 
     if ([event.characters canBeConvertedToEncoding:NSUTF32StringEncoding])
     {
@@ -269,7 +266,7 @@ static bool IsValid(uint32 data)
 
                 // Trigger event.
                 pTK::InputEvent input{arr, validCount, pTK::Text::Encoding::UTF32};
-                ptkwindow->parent()->sendEvent(&input);
+                ptkwindow->parent()->triggerEvent<pTK::InputEvent>(input);
             }
         }
     }
@@ -281,7 +278,8 @@ static bool IsValid(uint32 data)
 {
     std::underlying_type<pTK::KeyEvent::Modifier>::type mods{GetModifiers(event.modifierFlags)};
     pTK::KeyEvent evt{pTK::Event::Type::KeyReleased, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode)), mods};
-    ptkwindow->parent()->sendEvent(&evt);
+    ptkwindow->parent()->triggerEvent<pTK::KeyEvent>(evt);
+    // ptkwindow->parent()->sendEvent(&evt);
 }
 
 - (void)flagsChanged:(NSEvent *)event
@@ -307,7 +305,7 @@ static bool IsValid(uint32 data)
     }
 
     pTK::KeyEvent evt{type, key, mods};
-    ptkwindow->parent()->sendEvent(&evt);
+    ptkwindow->parent()->triggerEvent<pTK::KeyEvent>(evt);
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent*) __unused event
@@ -320,11 +318,10 @@ static bool IsValid(uint32 data)
     NSWindow *nswindow = static_cast<NSWindow*>(ptkwindow->handle());
     const NSPoint pos = [nswindow mouseLocationOutsideOfEventStream];
     const NSRect content = [nswindow.contentView frame];
-    pTK::ButtonEvent evt{pTK::Event::Type::MouseButtonPressed,
-                         pTK::Mouse::Button::Left,
+    pTK::ClickEvent evt{pTK::Mouse::Button::Left,
                          {static_cast<pTK::Point::value_type>(pos.x),
                           static_cast<pTK::Point::value_type>(content.size.height - pos.y)}};
-    ptkwindow->parent()->sendEvent(&evt);
+    ptkwindow->parent()->triggerEvent<pTK::ClickEvent>(evt);
 }
 
 - (void)mouseUp:(NSEvent*) __unused event
@@ -332,11 +329,10 @@ static bool IsValid(uint32 data)
     NSWindow *nswindow = static_cast<NSWindow*>(ptkwindow->handle());
     const NSPoint pos = [nswindow mouseLocationOutsideOfEventStream];
     const NSRect content = [nswindow.contentView frame];
-    pTK::ButtonEvent evt{pTK::Event::Type::MouseButtonReleased,
-                         pTK::Mouse::Button::Left,
+    pTK::ReleaseEvent evt{pTK::Mouse::Button::Left,
                          {static_cast<pTK::Point::value_type>(pos.x),
                           static_cast<pTK::Point::value_type>(content.size.height - pos.y)}};
-    ptkwindow->parent()->sendEvent(&evt);
+    ptkwindow->parent()->triggerEvent<pTK::ReleaseEvent>(evt);
 }
 
 - (void)mouseMoved:(NSEvent*) event
@@ -346,7 +342,7 @@ static bool IsValid(uint32 data)
     const NSRect content = [nswindow.contentView frame];
     pTK::MotionEvent evt{{static_cast<pTK::Point::value_type>(pos.x),
                           static_cast<pTK::Point::value_type>(content.size.height - pos.y)}};
-    ptkwindow->parent()->sendEvent(&evt);
+    ptkwindow->parent()->triggerEvent<pTK::MotionEvent>(evt);
 }
 
 @end
@@ -370,6 +366,7 @@ namespace pTK
 
         // Software backend is always available.
         // Altough, it is slow on macOS and should be avoided.
+        PTK_WARN("Software rendering on macOS is slow and should not be used");
         RasterPolicy_mac policy(nswindow);
         return std::make_unique<RasterContext<RasterPolicy_mac>>(scaledSize, policy);
     }

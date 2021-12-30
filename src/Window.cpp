@@ -15,6 +15,8 @@ namespace pTK
         : VBox(), SingleObject(), m_handle{this, name, size, flags},
           m_threadID{std::this_thread::get_id()}
     {
+        registerCallbacks();
+
         // Set Widget properties.
         Sizable::setSize(size);
         setName(name);
@@ -442,6 +444,59 @@ namespace pTK
     bool Window::isFocused() const
     {
         return m_handle.isFocused();
+    }
+
+    void Window::registerCallbacks()
+    {
+        addListener<ResizeEvent>([&](const ResizeEvent& evt) {
+            setSize(evt.size);
+            PaintEvent pEvt{{0,0}, getSize()};
+            triggerEvent<PaintEvent>(pEvt);
+            return false;
+        });
+
+        addListener<MoveEvent>([&](const MoveEvent& evt) {
+            setPosHint(evt.pos);
+            return false;
+        });
+
+        addListener<ScaleEvent>([&](const ScaleEvent& evt) {
+            m_handle.setScaleHint(evt.scale);
+            return false;
+        });
+
+        addListener<PaintEvent>([&](const PaintEvent&) {
+            forceDrawAll();
+            return false;
+        });
+
+        addListener<CloseEvent>([&](const CloseEvent&) {
+            handleEvents(); // Handle events in queue before sending closing.
+            close();
+            return false;
+        });
+
+        addListener<MinimizeEvent>([&](const MinimizeEvent&) {
+            minimize();
+            return false;
+        });
+
+        addListener<RestoreEvent>([&](const RestoreEvent&) {
+            restore();
+            return false;
+        });
+
+        addListener<FocusEvent>([&](const FocusEvent&) {
+            if (m_onFocus)
+                m_onFocus();
+            return false;
+        });
+
+        addListener<LostFocusEvent>([&](const LostFocusEvent&) {
+            if (m_onLostFocus)
+                m_onLostFocus();
+            return false;
+        });
     }
 
 } // namespace pTK
