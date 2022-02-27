@@ -15,30 +15,18 @@
 #include "ptk/Core.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/core/WindowInfo.hpp"
+#include "ptk/widgets/VBox.hpp"
 
 namespace pTK
 {
-    class Window;
-
     /** WindowHandle class implementation
 
         Specifies the backend API that the platform must implement.
     */
-    class WindowHandle
+    class WindowHandle : public VBox
     {
     public:
-        WindowHandle() = delete;
-
-        /** Constructs WindowHandle with default values.
-
-            @param backend  type of backend
-            @return         default initialized MainWindowBase
-        */
-        WindowHandle(Window *window)
-            : m_parent{window}
-        {
-
-        }
+        WindowHandle() = default;
 
         /** Destructor for WindowHandle.
 
@@ -47,9 +35,8 @@ namespace pTK
 
         /** Function for showing the window.
 
-            @return     true if operation is successful, otherwise false
         */
-        virtual bool show() = 0;
+        virtual void show() {}
 
         /** Function for closing the window.
 
@@ -58,10 +45,15 @@ namespace pTK
         virtual bool close() = 0;
 
         /** Function for hiding the window.
-
-            @return     true if operation is successful, otherwise false
+        
         */
-        virtual bool hide() = 0;
+        virtual void hide() {}
+
+        /** Function for checking if it is visible.
+
+            @return    status
+        */
+        virtual bool visible() const { return false; };
 
         /** Function for retrieving if the window is hidden.
 
@@ -74,7 +66,8 @@ namespace pTK
             @param pos  position to set
             @return     true if operation is successful, otherwise false
         */
-        virtual bool setPosHint(const Point& UNUSED(pos)) = 0;
+        // virtual bool setPosHint(const Point& UNUSED(pos)) = 0;
+        void setPosHint(const Point& pos) override {};
 
         /** Function for resizing the window.
 
@@ -89,7 +82,7 @@ namespace pTK
             @param max  maximum size of the window
             @return     true if operation is successful, otherwise false
         */
-        virtual bool setLimits(const Size& UNUSED(min), const Size& UNUSED(max)) = 0;
+        // virtual bool setLimits(const Size& UNUSED(min), const Size& UNUSED(max)) = 0;
 
         /** Function for swapping the buffers.
 
@@ -194,14 +187,6 @@ namespace pTK
         virtual bool setScaleHint(const Vec2f& UNUSED(scale)) {
             return true;}
 
-        /** Function for retrieving the parent Window.
-
-            @return     parent Window
-        */
-        [[nodiscard]] Window *parent() const { return m_parent; }
-
-    private:
-        Window *m_parent;
     };
 }
 

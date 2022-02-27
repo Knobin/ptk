@@ -12,8 +12,8 @@
 namespace pTK
 {
     Window::Window(const std::string& name, const Size& size, const WindowInfo& flags)
-        : VBox(), SingleObject(), m_handle{this, name, size, flags},
-          m_threadID{std::this_thread::get_id()}
+        : PTK_WINDOW_HANDLE_T(name, size, flags), SingleObject(), 
+            m_threadID{std::this_thread::get_id()}
     {
         registerCallbacks();
 
@@ -77,16 +77,19 @@ namespace pTK
         handleEvent(event);
     }
 
+    /*
     Vec2f Window::getDPIScale() const
     {
         return m_handle.getDPIScale();
     }
+    */
 
     bool Window::shouldClose() const
     {
         return m_close;
     }
 
+    /*
     void Window::show()
     {
         Drawable::show();
@@ -105,11 +108,12 @@ namespace pTK
     {
         return m_handle.isHidden();
     }
+    */
 
     void Window::onSizeChange(const Size& size)
     {
         refitContent(size);
-        m_handle.resize(size);
+        // m_handle.resize(size);
         m_draw = true;
         if (m_onResize)
             m_onResize(size);
@@ -117,7 +121,7 @@ namespace pTK
 
     void Window::onLimitChange(const Size& min, const Size& max)
     {
-        m_handle.setLimits(min, max);
+        // m_handle.setLimits(min, max);
     }
 
     // Window specific callbacks.
@@ -248,7 +252,8 @@ namespace pTK
             case Event::Type::WindowScale:
             {
                 ScaleEvent* sEvent{static_cast<ScaleEvent*>(event)};
-                m_handle.setScaleHint(sEvent->scale);
+                // m_handle.setScaleHint(sEvent->scale);
+                setScaleHint(sEvent->scale);
                 m_draw = true;
                 break;
             }
@@ -259,8 +264,8 @@ namespace pTK
             }
             case Event::Type::WindowFocus:
             {
-                if (m_onFocus)
-                    m_onFocus();
+                //if (m_onFocus) // Nullptr for some reason.
+                    //m_onFocus();
                 break;
             }
             case Event::Type::WindowLostFocus:
@@ -289,6 +294,7 @@ namespace pTK
         }
     }
 
+    /*
     void Window::close()
     {
         if (!m_close)
@@ -299,17 +305,21 @@ namespace pTK
                 m_onClose();
         }
     }
+    */
 
     void Window::forceDrawAll()
     {
-        m_handle.beginPaint();
-        ContextBase* context{m_handle.getContext()};
+        // m_handle.beginPaint();
+        beginPaint();
+        // ContextBase* context{m_handle.getContext()};
+        ContextBase* context{ getContext() };
         sk_sp<SkSurface> surface = context->surface();
         SkCanvas* canvas{surface->getCanvas()};
 
         // Apply monitor scale.
         SkMatrix matrix{};
-        Vec2f scale{m_handle.getDPIScale()};
+        // Vec2f scale{m_handle.getDPIScale()};
+        Vec2f scale{ getDPIScale() };
         matrix.setScale(scale.x, scale.y);
         canvas->setMatrix(matrix);
 
@@ -325,10 +335,13 @@ namespace pTK
             widget->onDraw(canvas);
 
         surface->flushAndSubmit();
-        m_handle.swapBuffers();
-        m_handle.endPaint();
+        //m_handle.swapBuffers();
+        //m_handle.endPaint();
+        swapBuffers();
+        endPaint();
     }
 
+    /*
     void Window::setPosHint(const Point& pos)
     {
         if (m_handle.setPosHint(pos))
@@ -350,6 +363,7 @@ namespace pTK
     {
         m_handle.setTitle(name);
     }
+    */
 
     bool Window::setIcon(const std::string& path)
     {
@@ -368,8 +382,9 @@ namespace pTK
                 std::unique_ptr<byte[]> pixelData{std::make_unique<byte[]>(storageSize)};
 
                 if (image->readPixels(imageInfo, pixelData.get(), imageInfo.minRowBytes(), 0, 0))
-                    return m_handle.setIcon(static_cast<int32>(image->width()),
-                                          static_cast<int32>(image->height()), pixelData.get());
+                    return false; // TODO: Fix this error...
+                    //return setIcon(static_cast<int32>(image->width()), 
+                                   // static_cast<int32>(image->height()), pixelData.get());
 #ifdef PTK_DEBUG
                 else
                 {
@@ -393,6 +408,7 @@ namespace pTK
         return false;
     }
 
+    /*
     const WindowHandle* Window::getHandle() const
     {
         return &m_handle;
@@ -445,6 +461,7 @@ namespace pTK
     {
         return m_handle.isFocused();
     }
+    */
 
     void Window::registerCallbacks()
     {
@@ -461,7 +478,8 @@ namespace pTK
         });
 
         addListener<ScaleEvent>([&](const ScaleEvent& evt) {
-            m_handle.setScaleHint(evt.scale);
+            // m_handle.setScaleHint(evt.scale);
+            setScaleHint(evt.scale);
             return false;
         });
 

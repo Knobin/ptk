@@ -27,16 +27,13 @@ namespace pTK
 {
     /** Window class implementation.
 
-        This class is not responsible for handling the Window, it is only supposed to bridge
-        the backend and connect the events with the widgets.
-
         Window creation is handled in the Backend and this class is sort of an API for the
         backend.
 
         Currently, it will default to a hardware based backend if no one is specified.
         If that backend is not available, it will fall back to a software based backend.
     */
-    class Window : public VBox, public SingleObject
+    class Window : public PTK_WINDOW_HANDLE_T, public SingleObject
     {
     public:
         /** Constructs Window with default values.
@@ -49,34 +46,6 @@ namespace pTK
 
         */
         virtual ~Window();
-
-        /** Function for retrieving the DPI Scale of the window.
-
-            @return    DPI scale
-        */
-        Vec2f getDPIScale() const;
-
-        /** Function to show the Window.
-
-        */
-        void show() override;
-
-        /** Function to hide the Window.
-
-        */
-        void hide() override;
-
-        /** Function for retrieving if the window is hidden.
-
-        */
-        bool isHidden() const;
-
-        /** Function for closing the window.
-
-            This function will set a close flag and return instantly.
-            Window will close when the current loop is finished.
-        */
-        void close();
 
         /** Function for checking if the window should close.
 
@@ -113,77 +82,11 @@ namespace pTK
         */
         void forceDrawAll();
 
-        /** Function for setting the window position.
-
-            @param pos  requested position of the Window.
-        */
-        void setPosHint(const Point& pos) override;
-
-        /** Function for retrieving the window position.
-
-            Note: getPosition should not be used due to being internally used by either children or VBox.
-            getPosition always return {0, 0}.
-            Use this function for retrieving the Window Coordinates.
-
-            @return window position
-        */
-        Point getWinPos() const;
-
-        /** Function for retrieving the window size.
-
-            Note: getSize returns the content size of the window.
-            If the DPI is {1.0f, 1.0f} this function will return the same value as getSize.
-            Use this function for retrieving the window size.
-
-            @return window size
-        */
-        Size getWinSize() const;
-
-        /** Function for setting the window title.
-
-            @param name     title to set
-        */
-        void setTitle(const std::string& name);
-
         /** Function for setting the window icon.
 
             @param path     path to image
         */
         bool setIcon(const std::string& path);
-
-        /** Function for retrieving the platform handle.
-
-            @return    backend
-        */
-        const WindowHandle* getHandle() const;
-
-        /** Function for retrieving the platform handle.
-
-            @return    backend
-        */
-        WindowHandle* getHandle();
-
-        /** Function for minimizing the window.
-
-        */
-        void minimize();
-
-        /** Function for restoring a window from the minimized state.
-
-        */
-        void restore();
-
-        /** Function for retrieving the minimizing status of the window.
-
-            @return     status
-        */
-        bool isMinimized() const;
-
-        /** Function for retrieving the focus status of the window.
-
-            @return     status
-        */
-        bool isFocused() const;
 
     public:
         // Window specific callbacks.
@@ -224,7 +127,7 @@ namespace pTK
 
     private:
         EventQueue<std::deque> m_eventQueue{};
-        PTK_WINDOW_HANDLE_T m_handle;
+        // PTK_WINDOW_HANDLE_T m_handle;
         std::thread::id m_threadID;
         bool m_draw{false};
         bool m_close{false};
@@ -239,7 +142,8 @@ namespace pTK
         {
             if (std::this_thread::get_id() != m_threadID)
             {
-                m_handle.notifyEvent();
+                // m_handle.notifyEvent();
+                notifyEvent();
             }
         }
         m_eventQueue.unlock();

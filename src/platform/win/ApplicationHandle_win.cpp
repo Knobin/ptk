@@ -131,7 +131,7 @@ namespace pTK
 
     void ApplicationHandle_win::onWindowAdd(const std::pair<int32, Window*> item)
     {
-        if (auto wWin = dynamic_cast<WindowHandle_win*>(item.second->getHandle()))
+        if (auto wWin = dynamic_cast<WindowHandle_win*>(item.second))
             s_windows.emplace_back(item.first, wWin);
     }
 

@@ -23,7 +23,7 @@
 
 namespace pTK
 {
-    class Window;
+    class Window; 
 
     /** MainWindow_win class implementation.
 
@@ -34,13 +34,12 @@ namespace pTK
     public:
         /** Constructs MainWindow_win with default values.
 
-            @param window   parent Window class
             @param name     name of the window
             @param size     size of the window
             @param backend  type of backend
             @return         default initialized MainWindow_win
         */
-        WindowHandle_win(Window *window, const std::string& name, const Size& size, const WindowInfo& flags);
+        WindowHandle_win(const std::string& name, const Size& size, const WindowInfo& flags);
 
         /** Destructor for MainWindow_win.
 
@@ -57,13 +56,13 @@ namespace pTK
 
             @return     true if operation is successful, otherwise false
         */
-        bool show() override;
+        void show() override;
 
         /** Function for hiding the window.
 
             @return     true if operation is successful, otherwise false
         */
-        bool hide() override;
+        void hide() override;
 
         /** Function for retrieving if the window is hidden.
 
@@ -74,9 +73,8 @@ namespace pTK
         /** Function for setting the position of the window.
 
             @param pos  position to set
-            @return     true if operation is successful, otherwise false
         */
-        bool setPosHint(const Point& pos) override;
+        void setPosHint(const Point& pos) override;
 
         /** Function for retrieving the Context.
 
@@ -108,7 +106,7 @@ namespace pTK
             @param max  maximum size of the window
             @return     true if operation is successful, otherwise false
         */
-        bool setLimits(const Size&, const Size&) override;
+        // bool setLimits(const Size&, const Size&) override;
 
         /** Function for initiating the drawing.
 

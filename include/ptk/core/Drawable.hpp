@@ -30,10 +30,7 @@ namespace pTK
 
             @return    default initialized Drawable
         */
-        Drawable()
-            : m_visible{true}
-        {
-        }
+        Drawable() = default;
 
         /** Destructor for Drawable.
 
@@ -51,30 +48,18 @@ namespace pTK
         /** Function to enable drawing.
 
         */
-        virtual void show()
-        {
-            m_visible = true;
-        }
+        virtual void show() {}
 
         /** Function to disable drawing and hide it.
 
         */
-        virtual void hide()
-        {
-            m_visible = false;
-        }
+        virtual void hide() {};
 
         /** Function for checking if it is visible.
 
             @return    status
         */
-        bool visible() const
-        {
-            return m_visible;
-        }
-
-    private:
-        bool m_visible;
+        virtual bool visible() const { return false; };
     };
 }
 
