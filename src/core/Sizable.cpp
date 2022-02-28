@@ -130,10 +130,13 @@ namespace pTK
                 m_size.width = width;
                 status = 1;
             }
-
-            // Update minimal width.
-            m_minSize.width = width;
-            status |= 2;
+            
+            if (width != m_minSize.width)
+            {
+                // Update minimal width.
+                m_minSize.width = width;
+                status |= 2;
+            }
         }
         else if (width >= Size::Limits::Min)
         {
@@ -162,10 +165,13 @@ namespace pTK
                 m_size.height = height;
                 status = 1;
             }
-
-            // Update minimal height.
-            m_minSize.height = height;
-            status |= 2;
+            
+            if (height != m_minSize.height)
+            {
+                // Update minimal height.
+                m_minSize.height = height;
+                status |= 2;
+            }
         }
         else if (height >= Size::Limits::Min)
         {
@@ -295,9 +301,12 @@ namespace pTK
                 status = 1;
             }
 
-            // Update maximum width.
-            m_maxSize.width = width;
-            status |= 2;
+            if (width != m_maxSize.width)
+            {
+                // Update maximum width.
+                m_maxSize.width = width;
+                status |= 2;
+            }
         }
         else if (width <= Size::Limits::Max)
         {
@@ -326,10 +335,13 @@ namespace pTK
                 m_size.height = height;
                 status = 1;
             }
-
-            // Update maximum height.
-            m_maxSize.height = height;
-            status |= 2;
+            
+            if (height != m_maxSize.height)
+            {
+                // Update maximum height.
+                m_maxSize.height = height;
+                status |= 2;
+            }
         }
         else if (height <= Size::Limits::Max)
         {
