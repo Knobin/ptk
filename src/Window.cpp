@@ -12,11 +12,9 @@
 namespace pTK
 {
     Window::Window(const std::string& name, const Size& size, const WindowInfo& flags)
-        : PTK_WINDOW_HANDLE_T(name, size, flags), SingleObject(), 
+        : PTK_WINDOW_HANDLE_T(name, size, flags), SingleObject(),
             m_threadID{std::this_thread::get_id()}
     {
-        registerCallbacks();
-
         // Set Widget properties.
         Sizable::setSize(size);
         setName(name);
@@ -77,87 +75,65 @@ namespace pTK
         handleEvent(event);
     }
 
-    /*
-    Vec2f Window::getDPIScale() const
-    {
-        return m_handle.getDPIScale();
-    }
-    */
-
     bool Window::shouldClose() const
     {
         return m_close;
     }
 
-    /*
-    void Window::show()
-    {
-        Drawable::show();
-        m_handle.show();
-
-        postEvent<PaintEvent>(Point{0, 0}, getSize());
-    }
-
-    void Window::hide()
-    {
-        Drawable::hide();
-        m_handle.hide();
-    }
-
-    bool Window::isHidden() const
-    {
-        return m_handle.isHidden();
-    }
-    */
-
     void Window::onSizeChange(const Size& size)
     {
+        resize(size);
         refitContent(size);
-        // m_handle.resize(size);
-        m_draw = true;
-        if (m_onResize)
-            m_onResize(size);
+        forceDrawAll();
     }
 
-    void Window::onLimitChange(const Size& min, const Size& max)
+    /*void Window::onLimitChange(const Size& min, const Size& max)
     {
+        setLimits(min, max);
         // m_handle.setLimits(min, max);
-    }
+        // setLimits(min, max);
+    }*/
 
     // Window specific callbacks.
     void Window::onClose(const std::function<bool()>& callback)
     {
-        m_onClose = callback;
+        addListener<CloseEvent>(callback);
     }
 
     void Window::onMove(const std::function<bool(const Point& pos)>& callback)
     {
-        m_onMove = callback;
+        addListener<MoveEvent>([&](const MoveEvent& evt){
+            callback(evt.pos);
+            return false;
+        });
     }
 
     void Window::onResize(const std::function<bool(const Size& pos)>& callback)
     {
-        m_onResize = callback;
+        addListener<ResizeEvent>([&](const ResizeEvent& evt){
+            callback(evt.size);
+            return false;
+        });
     }
 
     void Window::onFocus(const std::function<bool()>& callback)
     {
-        m_onFocus = callback;
+        addListener<FocusEvent>(callback);
     }
 
     void Window::onLostFocus(const std::function<bool()>& callback)
     {
-        m_onLostFocus = callback;
+        addListener<LostFocusEvent>(callback);
     }
 
     void Window::onMinimize(const std::function<bool()>& callback)
     {
-        m_onMinimize = callback;
+        addListener<MinimizeEvent>(callback);
     }
 
     void Window::onRestore(const std::function<bool()>& callback)
     {
-        m_onRestore = callback;
+        addListener<RestoreEvent>(callback);
     }
 
     void Window::handleEvent(Event* event)
@@ -270,8 +246,8 @@ namespace pTK
             }
             case Event::Type::WindowLostFocus:
             {
-                if (m_onLostFocus)
-                    m_onLostFocus();
+                //if (m_onLostFocus)
+                    //m_onLostFocus();
                 //handleLeaveClickEvent();
                 // TODO: Fix handleLeaveClickEvent()
                 break;
@@ -341,31 +317,7 @@ namespace pTK
         endPaint();
     }
 
-    /*
-    void Window::setPosHint(const Point& pos)
-    {
-        if (m_handle.setPosHint(pos))
-            if (m_onMove)
-                m_onMove(pos);
-    }
-
-    Point Window::getWinPos() const
-    {
-        return m_handle.getWinPos();
-    }
-
-    Size Window::getWinSize() const
-    {
-        return m_handle.getWinSize();
-    }
-
-    void Window::setTitle(const std::string& name)
-    {
-        m_handle.setTitle(name);
-    }
-    */
-
-    bool Window::setIcon(const std::string& path)
+    bool Window::setIconFromFile(const std::string& path)
     {
         // Load file.
         sk_sp<SkData> imageData{SkData::MakeFromFileName(path.c_str())};
@@ -382,9 +334,8 @@ namespace pTK
                 std::unique_ptr<byte[]> pixelData{std::make_unique<byte[]>(storageSize)};
 
                 if (image->readPixels(imageInfo, pixelData.get(), imageInfo.minRowBytes(), 0, 0))
-                    return false; // TODO: Fix this error...
-                    //return setIcon(static_cast<int32>(image->width()), 
-                                   // static_cast<int32>(image->height()), pixelData.get());
+                    return setIcon(static_cast<int32>(image->width()),
+                                   static_cast<int32>(image->height()), pixelData.get());
 #ifdef PTK_DEBUG
                 else
                 {
@@ -406,115 +357,6 @@ namespace pTK
         }
 #endif
         return false;
-    }
-
-    /*
-    const WindowHandle* Window::getHandle() const
-    {
-        return &m_handle;
-    }
-
-    WindowHandle* Window::getHandle()
-    {
-        return &m_handle;
-    }
-
-    void Window::minimize()
-    {
-        if (!m_minimized)
-        {
-            m_minimized = true;
-
-            // Window might not be minimized when handling the event.
-            // Minimize it if so.
-            if (!m_handle.isMinimized())
-                m_handle.minimize();
-
-            Drawable::hide();
-            if (m_onMinimize)
-                m_onMinimize();
-        }
-    }
-
-    void Window::restore()
-    {
-        if (m_minimized)
-        {
-            // Window might be minimized when handling the event.
-            // Restore it if so.
-            if (m_handle.isMinimized())
-                m_handle.restore();
-
-            m_minimized = false;
-            Drawable::show();
-            if (m_onRestore)
-                m_onRestore();
-        }
-    }
-
-    bool Window::isMinimized() const
-    {
-        return m_minimized;
-    }
-
-    bool Window::isFocused() const
-    {
-        return m_handle.isFocused();
-    }
-    */
-
-    void Window::registerCallbacks()
-    {
-        addListener<ResizeEvent>([&](const ResizeEvent& evt) {
-            setSize(evt.size);
-            PaintEvent pEvt{{0,0}, getSize()};
-            triggerEvent<PaintEvent>(pEvt);
-            return false;
-        });
-
-        addListener<MoveEvent>([&](const MoveEvent& evt) {
-            setPosHint(evt.pos);
-            return false;
-        });
-
-        addListener<ScaleEvent>([&](const ScaleEvent& evt) {
-            // m_handle.setScaleHint(evt.scale);
-            setScaleHint(evt.scale);
-            return false;
-        });
-
-        addListener<PaintEvent>([&](const PaintEvent&) {
-            forceDrawAll();
-            return false;
-        });
-
-        addListener<CloseEvent>([&](const CloseEvent&) {
-            handleEvents(); // Handle events in queue before sending closing.
-            close();
-            return false;
-        });
-
-        addListener<MinimizeEvent>([&](const MinimizeEvent&) {
-            minimize();
-            return false;
-        });
-
-        addListener<RestoreEvent>([&](const RestoreEvent&) {
-            restore();
-            return false;
-        });
-
-        addListener<FocusEvent>([&](const FocusEvent&) {
-            if (m_onFocus)
-                m_onFocus();
-            return false;
-        });
-
-        addListener<LostFocusEvent>([&](const LostFocusEvent&) {
-            if (m_onLostFocus)
-                m_onLostFocus();
-            return false;
-        });
     }
 
 } // namespace pTK

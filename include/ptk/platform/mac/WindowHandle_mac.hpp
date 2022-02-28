@@ -35,7 +35,7 @@ namespace pTK
             @param flags    setup flags for the window
             @return         default initialized MainWindow_mac
         */
-        WindowHandle_mac(Window *window, const std::string& name, const Size& size, const WindowInfo& flags);
+        WindowHandle_mac(const std::string& name, const Size& size, const WindowInfo& flags);
 
         /** Destructor for MainWindow_win.
 
@@ -52,13 +52,13 @@ namespace pTK
 
             @return     true if operation is successful, otherwise false
         */
-        bool show() override;
+        void show() override;
 
         /** Function for hiding the window.
 
             @return     true if operation is successful, otherwise false
         */
-        bool hide() override;
+        void hide() override;
 
         /** Function for retrieving if the window is hidden.
 
@@ -71,7 +71,7 @@ namespace pTK
             @param pos  position to set
             @return     true if operation is successful, otherwise false
         */
-        bool setPosHint(const Point& pos) override;
+        void setPosHint(const Point& pos) override;
 
         /** Function for retrieving the Context.
 
@@ -103,7 +103,8 @@ namespace pTK
             @param max  maximum size of the window
             @return     true if operation is successful, otherwise false
         */
-        bool setLimits(const Size&, const Size&) override;
+        // bool setLimits(const Size&, const Size&) override;
+        void onLimitChange(const Size& min, const Size& max) override;
 
         /** Function for setting the title of the window.
 
@@ -123,7 +124,7 @@ namespace pTK
             @param pixels   image pixels in a RGBA format.
             @return         true if operation is successful, otherwise false
         */
-        bool setIcon(int32 width, int32 height, byte* pixels)  override;
+        bool setIcon(int32 width, int32 height, byte* pixels) override;
 
         /** Function for notifying the backend that an event has been pushed from
             a different thread.

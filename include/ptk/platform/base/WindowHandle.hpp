@@ -36,7 +36,7 @@ namespace pTK
         /** Function for showing the window.
 
         */
-        virtual void show() {}
+        void show() override {}
 
         /** Function for closing the window.
 
@@ -45,15 +45,15 @@ namespace pTK
         virtual bool close() = 0;
 
         /** Function for hiding the window.
-        
+
         */
-        virtual void hide() {}
+        void hide() override {}
 
         /** Function for checking if it is visible.
 
             @return    status
         */
-        virtual bool visible() const { return false; };
+        bool visible() const override { return false; }
 
         /** Function for retrieving if the window is hidden.
 
@@ -67,7 +67,7 @@ namespace pTK
             @return     true if operation is successful, otherwise false
         */
         // virtual bool setPosHint(const Point& UNUSED(pos)) = 0;
-        void setPosHint(const Point& pos) override {};
+        void setPosHint(const Point& UNUSED(pos)) override {};
 
         /** Function for resizing the window.
 
@@ -83,6 +83,7 @@ namespace pTK
             @return     true if operation is successful, otherwise false
         */
         // virtual bool setLimits(const Size& UNUSED(min), const Size& UNUSED(max)) = 0;
+        void onLimitChange(const Size& UNUSED(min), const Size& UNUSED(max)) override {}
 
         /** Function for swapping the buffers.
 
@@ -186,7 +187,6 @@ namespace pTK
         */
         virtual bool setScaleHint(const Vec2f& UNUSED(scale)) {
             return true;}
-
     };
 }
 

@@ -86,7 +86,7 @@ namespace pTK
 
             @param path     path to image
         */
-        bool setIcon(const std::string& path);
+        bool setIconFromFile(const std::string& path);
 
     public:
         // Window specific callbacks.
@@ -105,25 +105,12 @@ namespace pTK
         void handleMouseEvent(Event* event);
         void handleWindowEvent(Event* event);
 
-        // Event processing (callbacks).
-        void registerCallbacks();
-
         void onChildDraw(size_type) override;
         void onSizeChange(const Size& size) override;
-        void onLimitChange(const Size& min, const Size& max) override;
+        // void onLimitChange(const Size& min, const Size& max) override;
 
         // getPosition should not be used outside this class.
         using VBox::getPosition;
-
-    private:
-        // Window specific callbacks.
-        std::function<bool()> m_onClose{nullptr};
-        std::function<bool(const Point& pos)> m_onMove{nullptr};
-        std::function<bool(const Size& pos)> m_onResize{nullptr};
-        std::function<bool()> m_onFocus{nullptr};
-        std::function<bool()> m_onLostFocus{nullptr};
-        std::function<bool()> m_onMinimize{nullptr};
-        std::function<bool()> m_onRestore{nullptr};
 
     private:
         EventQueue<std::deque> m_eventQueue{};
@@ -131,7 +118,6 @@ namespace pTK
         std::thread::id m_threadID;
         bool m_draw{false};
         bool m_close{false};
-        bool m_minimized{false};
     };
 
     template<typename T, typename... Args>
