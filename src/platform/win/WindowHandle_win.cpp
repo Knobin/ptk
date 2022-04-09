@@ -406,9 +406,16 @@ namespace pTK
             const Point scaledPos{static_cast<Point::value_type>(pos.x * (1 / scale.x)),
                                 static_cast<Point::value_type>(pos.y * (1 / scale.y))};
 
-            ClickEvent evt{btn, scaledPos};
-            // data->window->triggerEvent<ClickEvent>({btn, scaledPos});
-            data->window->sendEvent(&evt);
+            if (type == Event::Type::MouseButtonPressed)
+            {
+                ClickEvent evt{ btn, scaledPos };
+                data->window->sendEvent(&evt);
+            }
+            else if (type == Event::Type::MouseButtonReleased)
+            {
+                ReleaseEvent evt{ btn, scaledPos };
+                data->window->sendEvent(&evt);
+            }
         }
     }
 
