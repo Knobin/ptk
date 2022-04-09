@@ -12,6 +12,9 @@
 #include "ptk/platform/base/ApplicationHandle.hpp"
 #include "ptk/events/KeyCodes.hpp"
 
+// C++ Headers
+#include <string>
+
 namespace pTK
 {
     std::map<int32, KeyCode> KeyMapInit();
