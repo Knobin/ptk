@@ -193,6 +193,9 @@ namespace pTK
     private:
         void init(const std::string& name, const Size& size, const WindowInfo& flags);
 
+        template<typename Event>
+        friend void EventSendHelper(Window*, const Event&);
+
     private:
         std::unique_ptr<ContextBase> m_context{nullptr};
         Vec2f m_scale;

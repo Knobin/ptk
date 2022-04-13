@@ -187,7 +187,52 @@ namespace pTK
         */
         virtual bool setScaleHint(const Vec2f& UNUSED(scale)) {
             return true;}
+
+    protected:
+        // Use this function to send events.
+        template<typename Event>
+        void iHandleEvent(const Event& evt);
+
+    private:
+        // Gets called when drawing the window is needed (only from a window backend).
+        virtual void draw(const PaintEvent&) = 0;
+
     };
+
+    // Default event that is not handled by the window.
+    template<typename Event>
+    void WindowHandle::iHandleEvent(const Event& evt)
+    {
+        triggerEvent<Event>(evt);
+    }
+
+    template<>
+    inline void WindowHandle::iHandleEvent<CloseEvent>(const CloseEvent& evt)
+    {
+        close();
+        triggerEvent<CloseEvent>(evt);
+    }
+
+    template<>
+    inline void WindowHandle::iHandleEvent<ResizeEvent>(const ResizeEvent& evt)
+    {
+        setSize(evt.size);
+        triggerEvent<ResizeEvent>(evt);
+    }
+
+    template<>
+    inline void WindowHandle::iHandleEvent<MoveEvent>(const MoveEvent& evt)
+    {
+        setPosHint(evt.pos);
+        triggerEvent<MoveEvent>(evt);
+    }
+
+    template<>
+    inline void WindowHandle::iHandleEvent<PaintEvent>(const PaintEvent& evt)
+    {
+        triggerEvent<PaintEvent>(evt);
+        draw(evt);
+    }
 }
 
 #endif // PTK_PLATFORM_BASE_WINDOWHANDLE_HPP

@@ -32,6 +32,20 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+namespace pTK
+{
+    // Since the iHandleEvent function is protected in WindowHandle, this is a friend function
+    // to get around that issue. Maybe another way is better in the future, but this works
+    // for now. This must be done since all macOS callbacks must be in a Objective-C interface.
+    template<typename Event>
+    void EventSendHelper(Window *window, const Event& evt)
+    {
+        window->iHandleEvent<Event>(evt);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 @interface WindowDelegate : NSObject<NSWindowDelegate>
 {
     pTK::Window *ptkWindow;
@@ -57,11 +71,8 @@
 - (BOOL)windowShouldClose:(NSWindow*) __unused sender
 {
     PTK_INFO("- (BOOL)windowShouldClose:(NSWindow*) __unused sender");
-    ptkWindow->handleEvents(); // Handle events in queue before sending closing.
-    ptkWindow->close();
-
     pTK::CloseEvent evt{};
-    ptkWindow->triggerEvent<pTK::CloseEvent>(evt);
+    pTK::EventSendHelper<pTK::CloseEvent>(ptkWindow, evt);
 
     return NO;
 }
@@ -74,42 +85,38 @@
     const pTK::Size size{static_cast<pTK::Size::value_type>(rect.size.width),
                          static_cast<pTK::Size::value_type>(rect.size.height)};
 
-    ptkWindow->setSize(size);
     pTK::ResizeEvent evt{size};
-    ptkWindow->triggerEvent<pTK::ResizeEvent>(evt);
-
+    pTK::EventSendHelper<pTK::ResizeEvent>(ptkWindow, evt);
 }
 
 - (void)windowDidMove:(NSNotification*) __unused notification
 {
-    pTK::Point pos{ptkWindow->getWinPos()};
-    ptkWindow->setPosHint(pos);
-    pTK::MoveEvent evt{pos};
-    ptkWindow->triggerEvent<pTK::MoveEvent>(evt);
+    pTK::MoveEvent evt{ptkWindow->getWinPos()};
+    pTK::EventSendHelper<pTK::MoveEvent>(ptkWindow, evt);
 }
 
 - (void)windowDidMiniaturize:(NSNotification*) __unused notification
 {
     pTK::MinimizeEvent evt{};
-    ptkWindow->triggerEvent<pTK::MinimizeEvent>(evt);
+    pTK::EventSendHelper<pTK::MinimizeEvent>(ptkWindow, evt);
 }
 
 - (void)windowDidDeminiaturize:(NSNotification*) __unused notification
 {
     pTK::RestoreEvent evt{};
-    ptkWindow->triggerEvent<pTK::RestoreEvent>(evt);
+    pTK::EventSendHelper<pTK::RestoreEvent>(ptkWindow, evt);
 }
 
 - (void)windowDidBecomeKey:(NSNotification*) __unused notification
 {
     pTK::FocusEvent evt{};
-    ptkWindow->triggerEvent<pTK::FocusEvent>(evt);
+    pTK::EventSendHelper<pTK::FocusEvent>(ptkWindow, evt);
 }
 
 - (void)windowDidResignKey:(NSNotification*) __unused notification
 {
     pTK::LostFocusEvent evt{};
-    ptkWindow->triggerEvent<pTK::LostFocusEvent>(evt);
+    pTK::EventSendHelper<pTK::LostFocusEvent>(ptkWindow, evt);
 }
 
 @end
@@ -118,7 +125,7 @@
 
 @interface MainView : NSView
 {
-    pTK::Window *ptkwindow;
+    pTK::Window *ptkWindow;
     std::underlying_type<pTK::KeyEvent::Modifier>::type modsPressed;
     NSTrackingArea *trackingArea;
 }
@@ -161,7 +168,7 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 {
     self = [super init];
     if (self != nil) {
-        ptkwindow = initWindow;
+        ptkWindow = initWindow;
         modsPressed = 0;
 
         const NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow |
@@ -205,16 +212,14 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 
 - (void)updateLayer
 {
-    ptkwindow->forceDrawAll();
-    pTK::PaintEvent evt{pTK::Point{0,0}, ptkwindow->getSize()};
-    ptkwindow->triggerEvent<pTK::PaintEvent>(evt);
+    pTK::PaintEvent evt{pTK::Point{0,0}, ptkWindow->getSize()};
+    pTK::EventSendHelper<pTK::PaintEvent>(ptkWindow, evt);
 }
 
 - (void)drawRect:(NSRect) __unused rect
 {
-    ptkwindow->forceDrawAll();
-    pTK::PaintEvent evt{pTK::Point{0,0}, ptkwindow->getSize()};
-    ptkwindow->triggerEvent<pTK::PaintEvent>(evt);
+    pTK::PaintEvent evt{pTK::Point{0,0}, ptkWindow->getSize()};
+    pTK::EventSendHelper<pTK::PaintEvent>(ptkWindow, evt);
 }
 
 static bool IsValid(uint32 data)
@@ -251,7 +256,7 @@ static bool IsValid(uint32 data)
 
     pTK::KeyEvent press{pTK::Event::Type::KeyPressed, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode)),
         data, pTK::Text::Encoding::UTF32, mods};
-    ptkwindow->triggerEvent<pTK::KeyEvent>(press);
+    pTK::EventSendHelper<pTK::KeyEvent>(ptkWindow, press);
 
     if ([event.characters canBeConvertedToEncoding:NSUTF32StringEncoding])
     {
@@ -276,7 +281,7 @@ static bool IsValid(uint32 data)
 
                 // Trigger event.
                 pTK::InputEvent input{arr, validCount, pTK::Text::Encoding::UTF32};
-                ptkwindow->triggerEvent<pTK::InputEvent>(input);
+                pTK::EventSendHelper<pTK::InputEvent>(ptkWindow, input);
             }
         }
     }
@@ -288,8 +293,8 @@ static bool IsValid(uint32 data)
 {
     std::underlying_type<pTK::KeyEvent::Modifier>::type mods{GetModifiers(event.modifierFlags)};
     pTK::KeyEvent evt{pTK::Event::Type::KeyReleased, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode)), mods};
-    ptkwindow->triggerEvent<pTK::KeyEvent>(evt);
-    // ptkwindow->parent()->sendEvent(&evt);
+    pTK::EventSendHelper<pTK::KeyEvent>(ptkWindow, evt);
+    // ptkWindow->parent()->sendEvent(&evt);
 }
 
 - (void)flagsChanged:(NSEvent *)event
@@ -315,7 +320,7 @@ static bool IsValid(uint32 data)
     }
 
     pTK::KeyEvent evt{type, key, mods};
-    ptkwindow->triggerEvent<pTK::KeyEvent>(evt);
+    pTK::EventSendHelper<pTK::KeyEvent>(ptkWindow, evt);
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent*) __unused event
@@ -325,34 +330,34 @@ static bool IsValid(uint32 data)
 
 - (void)mouseDown:(NSEvent*) __unused event
 {
-    NSWindow *nswindow = static_cast<NSWindow*>(ptkwindow->handle());
+    NSWindow *nswindow = static_cast<NSWindow*>(ptkWindow->handle());
     const NSPoint pos = [nswindow mouseLocationOutsideOfEventStream];
     const NSRect content = [nswindow.contentView frame];
     pTK::ClickEvent evt{pTK::Mouse::Button::Left,
                          {static_cast<pTK::Point::value_type>(pos.x),
                           static_cast<pTK::Point::value_type>(content.size.height - pos.y)}};
-    ptkwindow->triggerEvent<pTK::ClickEvent>(evt);
+    pTK::EventSendHelper<pTK::ClickEvent>(ptkWindow, evt);
 }
 
 - (void)mouseUp:(NSEvent*) __unused event
 {
-    NSWindow *nswindow = static_cast<NSWindow*>(ptkwindow->handle());
+    NSWindow *nswindow = static_cast<NSWindow*>(ptkWindow->handle());
     const NSPoint pos = [nswindow mouseLocationOutsideOfEventStream];
     const NSRect content = [nswindow.contentView frame];
     pTK::ReleaseEvent evt{pTK::Mouse::Button::Left,
                          {static_cast<pTK::Point::value_type>(pos.x),
                           static_cast<pTK::Point::value_type>(content.size.height - pos.y)}};
-    ptkwindow->triggerEvent<pTK::ReleaseEvent>(evt);
+    pTK::EventSendHelper<pTK::ReleaseEvent>(ptkWindow, evt);
 }
 
 - (void)mouseMoved:(NSEvent*) event
 {
-    NSWindow *nswindow = static_cast<NSWindow*>(ptkwindow->handle());
+    NSWindow *nswindow = static_cast<NSWindow*>(ptkWindow->handle());
     const NSPoint pos = [event locationInWindow];
     const NSRect content = [nswindow.contentView frame];
     pTK::MotionEvent evt{{static_cast<pTK::Point::value_type>(pos.x),
                           static_cast<pTK::Point::value_type>(content.size.height - pos.y)}};
-    ptkwindow->triggerEvent<pTK::MotionEvent>(evt);
+    pTK::EventSendHelper<pTK::MotionEvent>(ptkWindow, evt);
 }
 
 @end
@@ -503,7 +508,7 @@ namespace pTK
     {
         @autoreleasepool {
             bool ret{false};
-            
+
             if (size != getWinSize())
             {
                 PTK_INFO("bool WindowHandle_mac::resize(const Size& size)");
@@ -522,7 +527,7 @@ namespace pTK
                 m_context->resize(scaledSize);
                 ret = true;
             }
-            
+
             return ret;
         }
     }
@@ -605,7 +610,7 @@ namespace pTK
         }
     }
 
-    
+
     void WindowHandle_mac::onLimitChange(const Size& min, const Size& max)
     {
         @autoreleasepool {
@@ -620,7 +625,7 @@ namespace pTK
             PTK_INFO("Updated window limits to {}x{} and {}x{}", min.width, min.height, max.width, max.height);
         }
     }
-    
+
 
     bool WindowHandle_mac::minimize()
     {

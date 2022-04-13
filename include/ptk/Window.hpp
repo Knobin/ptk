@@ -113,6 +113,13 @@ namespace pTK
         using VBox::getPosition;
 
     private:
+        // This draw function gets called from the backend.
+        void draw(const PaintEvent&) override
+        {
+            forceDrawAll();
+        }
+
+    private:
         EventQueue<std::deque> m_eventQueue{};
         // PTK_WINDOW_HANDLE_T m_handle;
         std::thread::id m_threadID;
