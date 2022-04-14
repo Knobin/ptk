@@ -26,16 +26,31 @@
 
 namespace pTK
 {
-    // TODO: Add documentation for CallbackContainer.
+    /** CallbackContainer class implementation.
+
+        This class stores function of type Callback for the type T.
+
+        Different Callback types will therefore be stored separately for
+        the same type T.
+    */
     template <typename T, typename Callback>
     class CallbackContainer
     {
     public:
         using callback_type = std::function<Callback>;
         using container_type = std::map<uint64, callback_type>;
+        // Maybe use unordered_map? Depends if it needs to be sorted or not.
+        // Should probably look at this in the future.
 
     public:
+        /** Constructs CallbackContainer with default values.
+
+        */
         CallbackContainer() = default;
+
+        /** Destructor for CallbackContainer.
+
+        */
         ~CallbackContainer()
         {
 #ifdef PTK_CB_STORAGE_DEBUG
@@ -46,12 +61,22 @@ namespace pTK
 #endif
         }
 
+        /** Function for adding a callback.
+
+            @param id           unique identifier
+            @param callback     function callback
+        */
         void addCallback(uint64 id, const callback_type& callback)
         {
             callbacks.insert({id, callback});
             PTK_CB_STORAGE_LOG("CallbackContainer: added callback with id: {}", id);
         }
 
+        /** Function for removing a callback.
+
+            @param id           unique identifier
+            @return             true if removed, otherwise false
+        */
         bool removeCallback(uint64 id)
         {
             auto found = callbacks.find(id);
@@ -65,6 +90,9 @@ namespace pTK
             return false;
         }
 
+        /** Function for triggering all the callbacks.
+
+        */
         template<typename... Args>
         void triggerCallbacks(Args&& ...args)
         {
@@ -84,9 +112,20 @@ namespace pTK
         container_type callbacks;
     };
 
-    // TODO: Add documentation for CallbackIndexGen.
+    /** CallbackIndexGen class implementation.
+
+        This class generates unique identifiers for every type T and
+        type Callback.
+
+        The identifier starts at 0 and counts up for every new specialization
+        generated of the GetIndex function.
+    */
     struct CallbackIndexGen
     {
+        /** Function for generating a unique identifier.
+
+            @return     unique identifier
+        */
         template <typename T, typename Callback>
         static std::size_t GetIndex()
         {
@@ -94,10 +133,16 @@ namespace pTK
             return index;
         }
 
+        // Counter variable used for counting.
         static std::size_t s_counter;
     };
 
-    // TODO: Add documentation for CallbackStorage.
+    /** CallbackStorage class implementation.
+
+        This class stores and handles all callbacks for specific types.
+
+        It can store callbacks for any combination of T and Callback.
+    */
     class CallbackStorage
     {
     public:
@@ -105,7 +150,16 @@ namespace pTK
         using container_type = std::vector<node_type>;
 
     public:
+        /** Constructs CallbackStorage with default values.
+
+        */
         CallbackStorage() = default;
+
+        /** Destructor for CallbackStorage.
+
+            Calls the destructor paired with every CallbackContainer in
+            the storage.
+        */
         ~CallbackStorage()
         {
             for (auto it{m_storage.begin()}; it != m_storage.end(); ++it)
@@ -113,6 +167,11 @@ namespace pTK
                     it->second(it->first);
         }
 
+        /** Function for adding a callback of type Callback for type T.
+
+            @param callback     function callback
+            @return             unique identifier
+        */
         template <typename T, typename Callback>
         uint64 addCallback(const std::function<Callback>& callback)
         {
@@ -132,6 +191,11 @@ namespace pTK
             return id;
         }
 
+        /** Function for removing a callback of type Callback with type T.
+
+            @param id   unique identifier
+            @return     true if removed, otherwise false
+        */
         template <typename T, typename Callback>
         bool removeCallback(uint64 id)
         {
@@ -146,6 +210,10 @@ namespace pTK
             return false;
         }
 
+        /** Function for retrieving callbacks of type Callback with type T.
+
+            @return     CallbackContainer if found, otherwise nullptr
+        */
         template <typename T, typename Callback>
         CallbackContainer<T, Callback>* getCallbacks()
         {
@@ -167,6 +235,9 @@ namespace pTK
             return nullptr;
         }
 
+        /** Function for triggering / handle callbacks.
+
+        */
         template <typename T, typename Callback, typename... Args>
         void triggerCallbacks(Args&& ...args)
         {
@@ -179,18 +250,32 @@ namespace pTK
         }
 
     private:
+        /** Check if the index is valid.
 
+            @param index    index to check
+            @return         true if valid, otherwise false
+        */
         bool validIndex(std::size_t index)
         {
             return (index < m_storage.size());
         }
 
+        /** Get iterator from index.
+
+            @param index    index to use
+            @return         iterator
+        */
         container_type::iterator iteratorFromIndex(std::size_t index)
         {
             auto offset = static_cast<container_type::difference_type>(index);
             return std::next(m_storage.begin(), offset);
         }
 
+        /** Create a new node (CallbackContainer).
+
+            @param index    index to use
+            @return         iterator
+        */
         template <typename T, typename Callback>
         container_type::iterator createNode(std::size_t index)
         {

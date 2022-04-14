@@ -12,17 +12,16 @@
 #include "ptk/events/KeyCodes.hpp"
 #include "ptk/events/KeyEvent.hpp"
 #include "ptk/events/MouseEvent.hpp"
-#include "ptk/core/Text.hpp"
 #include "ptk/events/WidgetEvents.hpp"
 
 namespace pTK
 {
     /** EventFunctions class implementation.
 
-        This class is to handle the incoming events.
+        This class contains functions that are called when some common events
+        are triggered / handled.
 
-        Depending on the event category and type, one of
-        the defined functions below will be called.
+        Override any of the functions if you want to handle that event.
     */
     class EventFunctions
     {
@@ -37,23 +36,27 @@ namespace pTK
         */
         virtual ~EventFunctions() = default;
 
-        /** Function for handling when a key is pressed or released.
+        /** Function callback for KeyEvent.
 
-            @param type     Key event (press or release)
-            @param KeyCode  Keycode
+            Override this function if you want to handle KeyEvent.
+
+            @param evt     KeyEvent
         */
-        virtual void onKeyEvent(const KeyEvent&) {}
+        virtual void onKeyEvent(const KeyEvent& UNUSED(evt)) {}
 
-        /** Function for handling key input.
+        /** Function callback for InputEvent.
 
-            @param data         array of display characters
-            @param size         amount of characters
-            @param encoding     encoding of the characer data
+            Override this function if you want to handle InputEvent.
+
+            @param evt     InputEvent
         */
         virtual void onKeyInput(const InputEvent&) {}
 
-        /** Function for handling when mouse is hovering.
+        /** Function callback for MotionEvent.
 
+            Override this function if you want to handle MotionEvent.
+
+            @param evt     MotionEvent
         */
         virtual void onHoverEvent(const MotionEvent&) {}
 
@@ -62,31 +65,43 @@ namespace pTK
         */
         virtual void onEnterEvent(const EnterEvent&) {}
 
-        /** Function for handling when mouse is leaving.
+        /** Function callback for LeaveEvent.
 
+            Override this function if you want to handle LeaveEvent.
+
+            @param evt     LeaveEvent
         */
         virtual void onLeaveEvent(const LeaveEvent&) {}
 
-        // TODO: Add documentation.
+        /** Function callback for LeaveClickEvent.
+
+            Override this function if you want to handle LeaveClickEvent.
+
+            @param evt     LeaveClickEvent
+        */
         virtual void onLeaveClickEvent(const LeaveClickEvent&) {}
 
-        /** Function for handling when mouse is scrolling.
+        /** Function callback for ScrollEvent.
 
-         @param offset     x and y offset
+            Override this function if you want to handle ScrollEvent.
+
+            @param evt     ScrollEvent
         */
         virtual void onScrollEvent(const ScrollEvent&) {}
 
-        /** Function for handling when mouse is clicking.
+        /** Function callback for ClickEvent.
 
-            @param button      which button on mouse triggered the event.
-            @param position    x and y position
+            Override this function if you want to handle ClickEvent.
+
+            @param evt     ClickEvent
         */
         virtual void onClickEvent(const ClickEvent&) {}
 
-        /** Function for handling when mouse is released.
+        /** Function callback for ReleaseEvent.
 
-            @param button      which button on mouse triggered the event.
-            @param position    x and y position
+            Override this function if you want to handle ReleaseEvent.
+
+            @param evt     ReleaseEvent
         */
         virtual void onReleaseEvent(const ReleaseEvent&) {}
     };

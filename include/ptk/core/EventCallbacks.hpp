@@ -16,6 +16,22 @@
 
 namespace pTK
 {
+    /** EventCallbacks class implementation.
+
+        This class contains functions that are used to add callbacks to common
+        events that are triggered / handled.
+
+        The addListener function can be used to add a callback to any type.
+
+        When a callback has been added a unique identifier will be returned.
+
+        If you want to remove that callback in the future you need to save
+        that identifier and use it when calling removeListener.
+
+        Callbacks can also be removed by returning true when the function is
+        called (hence the bool return value). If you do not want to remove the
+        function after it has been called, simply return false in the callback.
+    */
     class EventCallbacks
     {
     public:
@@ -64,28 +80,30 @@ namespace pTK
         */
         uint64 onLeave(const std::function<bool(const LeaveEvent&)>& callback);
 
-        // TODO: Add documentation.
+        /** Function for handling when mouse has left and a previous click has happened.
+
+            @param callback    function to call
+            @return            callback id
+        */
         uint64 onLeaveClick(const std::function<bool(const LeaveClickEvent&)>& callback);
 
         /** Function for handling when mouse is scrolling.
 
-            @param offset     x and y offset
+            @param callback    function to call
             @return            callback id
         */
         uint64 onScroll(const std::function<bool(const ScrollEvent&)>& callback);
 
         /** Function for handling when mouse is clicking.
 
-            @param button      which button on mouse triggered the event.
-            @param position    x and y position
+            @param callback    function to call
             @return            callback id
         */
         uint64 onClick(const std::function<bool(const ClickEvent&)>& callback);
 
         /** Function for handling when mouse is released.
 
-            @param button      which button on mouse triggered the event.
-            @param position    x and y position
+            @param callback    function to call
             @return            callback id
         */
         uint64 onRelease(const std::function<bool(const ReleaseEvent&)>& callback);

@@ -17,10 +17,12 @@ namespace pTK
 {
     /** EventHandling class implementation.
 
-        This class is to handle the incoming events.
+        This class is to handle all the incoming events.
 
-        Depending on the event category and type, one of
-        the defined functions below will be called.
+        To send an event use the template function handleEvent.
+
+        Depending if a template specialization exists for the event, it will
+        also call the corresponing event function in EventFunctions.
     */
     class EventHandling : public EventCallbacks, public EventFunctions
     {
@@ -35,19 +37,28 @@ namespace pTK
         */
         virtual ~EventHandling() = default;
 
+        /** Templated function for handling all events.
+
+            @param evt    event of type Event
+        */
         template<typename Event>
         void handleEvent(const Event& evt);
-
-    private:
-        // void registerMemberCallbacks();
     };
 
+    /** Standard version of the function
+
+        @param evt    event of type Event
+    */
     template<typename Event>
     void EventHandling::handleEvent(const Event& evt)
     {
         triggerEvent<Event>(evt);
     }
 
+    /** handleEvent specialization for KeyEvent.
+
+        @param evt    KeyEvent
+    */
     template<>
     inline void EventHandling::handleEvent(const KeyEvent& evt)
     {
@@ -55,6 +66,10 @@ namespace pTK
         triggerEvent<KeyEvent>(evt);
     }
 
+    /** handleEvent specialization for InputEvent.
+
+        @param evt    InputEvent
+    */
     template<>
     inline void EventHandling::handleEvent(const InputEvent& evt)
     {
@@ -62,6 +77,10 @@ namespace pTK
         triggerEvent<InputEvent>(evt);
     }
 
+    /** handleEvent specialization for MotionEvent.
+
+        @param evt    MotionEvent
+    */
     template<>
     inline void EventHandling::handleEvent(const MotionEvent& evt)
     {
@@ -69,6 +88,10 @@ namespace pTK
         triggerEvent<MotionEvent>(evt);
     }
 
+    /** handleEvent specialization for EnterEvent.
+
+        @param evt    EnterEvent
+    */
     template<>
     inline void EventHandling::handleEvent(const EnterEvent& evt)
     {
@@ -76,6 +99,10 @@ namespace pTK
         triggerEvent<EnterEvent>(evt);
     }
 
+    /** handleEvent specialization for LeaveEvent.
+
+        @param evt    LeaveEvent
+    */
     template<>
     inline void EventHandling::handleEvent(const LeaveEvent& evt)
     {
@@ -83,6 +110,10 @@ namespace pTK
         triggerEvent<LeaveEvent>(evt);
     }
 
+    /** handleEvent specialization for LeaveClickEvent.
+
+        @param evt    LeaveClickEvent
+    */
     template<>
     inline void EventHandling::handleEvent(const LeaveClickEvent& evt)
     {
@@ -90,6 +121,10 @@ namespace pTK
         triggerEvent<LeaveClickEvent>(evt);
     }
 
+    /** handleEvent specialization for ScrollEvent.
+
+        @param evt    ScrollEvent
+    */
     template<>
     inline void EventHandling::handleEvent(const ScrollEvent& evt)
     {
@@ -97,6 +132,10 @@ namespace pTK
         triggerEvent<ScrollEvent>(evt);
     }
 
+    /** handleEvent specialization for ClickEvent.
+
+        @param evt    ClickEvent
+    */
     template<>
     inline void EventHandling::handleEvent(const ClickEvent& evt)
     {
@@ -104,6 +143,10 @@ namespace pTK
         triggerEvent<ClickEvent>(evt);
     }
 
+    /** handleEvent specialization for ReleaseEvent.
+
+        @param evt    ReleaseEvent
+    */
     template<>
     inline void EventHandling::handleEvent(const ReleaseEvent& evt)
     {
