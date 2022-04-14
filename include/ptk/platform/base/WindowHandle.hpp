@@ -203,34 +203,34 @@ namespace pTK
     template<typename Event>
     void WindowHandle::iHandleEvent(const Event& evt)
     {
-        triggerEvent<Event>(evt);
+        handleEvent<Event>(evt);
     }
 
     template<>
     inline void WindowHandle::iHandleEvent<CloseEvent>(const CloseEvent& evt)
     {
         close();
-        triggerEvent<CloseEvent>(evt);
+        handleEvent<CloseEvent>(evt);
     }
 
     template<>
     inline void WindowHandle::iHandleEvent<ResizeEvent>(const ResizeEvent& evt)
     {
         setSize(evt.size);
-        triggerEvent<ResizeEvent>(evt);
+        handleEvent<ResizeEvent>(evt);
     }
 
     template<>
     inline void WindowHandle::iHandleEvent<MoveEvent>(const MoveEvent& evt)
     {
         setPosHint(evt.pos);
-        triggerEvent<MoveEvent>(evt);
+        handleEvent<MoveEvent>(evt);
     }
 
     template<>
     inline void WindowHandle::iHandleEvent<PaintEvent>(const PaintEvent& evt)
     {
-        triggerEvent<PaintEvent>(evt);
+        handleEvent<PaintEvent>(evt);
         draw(evt);
     }
 }
