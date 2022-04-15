@@ -33,6 +33,16 @@
 
 namespace pTK
 {
+    // Since the iHandleEvent function is protected in WindowHandle, this is a friend function
+    // to get around that issue. Maybe another way is better in the future, but this works
+    // for now. This must be done since the win32 WndPro is a static function and only a 
+    // pointer to window can be used (in this implementation anyway).
+    template<typename Event>
+    void EventSendHelper(Window* window, const Event& evt)
+    {
+        window->iHandleEvent<Event>(evt);
+    }
+
     static std::unique_ptr<ContextBase> CreateContextForWin32([[maybe_unused]] WindowInfo::Backend type, HWND hwnd,
                                                            const Size& size)
     {
@@ -409,12 +419,12 @@ namespace pTK
             if (type == Event::Type::MouseButtonPressed)
             {
                 ClickEvent evt{ btn, scaledPos };
-                data->window->sendEvent(&evt);
+                EventSendHelper<ClickEvent>(data->window, evt);
             }
             else if (type == Event::Type::MouseButtonReleased)
             {
                 ReleaseEvent evt{ btn, scaledPos };
-                data->window->sendEvent(&evt);
+                EventSendHelper<ReleaseEvent>(data->window, evt);
             }
         }
     }
@@ -425,7 +435,7 @@ namespace pTK
         RECT* rect = reinterpret_cast<RECT*>(lParam);
         MoveEvent mEvt{{static_cast<Point::value_type>(rect->left),
                            static_cast<Point::value_type>(rect->top)}};
-        data->window->sendEvent(&mEvt);
+        EventSendHelper<MoveEvent>(data->window, mEvt);
 
         // Scale Window.
         const uint32 dpiX{static_cast<uint32>(GET_X_LPARAM(wParam))};
@@ -433,7 +443,7 @@ namespace pTK
         const Vec2f scale{dpiX / 96.0f, dpiY / 96.0f};
         PTK_INFO("DPI CHANGED {0}x{1} SCALING {2:0.2f}x{3:0.2f}", dpiX, dpiY, scale.x, scale.y);
         ScaleEvent sEvt{scale};
-        data->window->sendEvent(&sEvt);
+        EventSendHelper<ScaleEvent>(data->window, sEvt);
     }
 
     static void HandleWindowLimits(WindowHandle_win::Data* data, LPARAM lParam, const Vec2f& scale, bool hasMenu, DWORD style)
@@ -465,9 +475,11 @@ namespace pTK
     static void HandleWindowMinimize(WindowHandle_win::Data* data, bool minimize)
     {
         data->minimized = minimize;
-        Event::Type type{(minimize) ? Event::Type::WindowMinimize : Event::Type::WindowRestore};
-        Event evt{Event::Category::Window, type};
-        data->window->sendEvent(&evt);
+
+        if (minimize)
+            EventSendHelper<MinimizeEvent>(data->window, {});
+        else
+            EventSendHelper<RestoreEvent>(data->window, {});
     }
 
     static void HandleWindowResize(WindowHandle_win::Data* data, WindowHandle *backend, HWND hwnd)
@@ -489,8 +501,7 @@ namespace pTK
                                               Vec2f{1.0f / scale.x,
                                                     1.0f / scale.y})};
                     data->ignoreSize = true;
-                    window->sendEvent(&evt);
-                    window->forceDrawAll();
+                    EventSendHelper<ResizeEvent>(data->window, evt);
                 }
             }
         }
@@ -556,7 +567,7 @@ namespace pTK
         }
 
         KeyEvent evt{type, key, static_cast<uint32>(KeyCodeToGraph(key)), GetKeyModifiers()};
-        window->sendEvent(&evt);
+        EventSendHelper<KeyEvent>(window, evt);
     }
 
     static void HandleCharInput(Window* window, WPARAM wParam, LPARAM UNUSED(lParam))
@@ -589,7 +600,7 @@ namespace pTK
             arr[0] = data;
 
             InputEvent evt{arr, 1, Text::Encoding::UTF16};
-            window->sendEvent(&evt);
+            EventSendHelper<InputEvent>(window, evt);
         }
     }
 
@@ -606,9 +617,8 @@ namespace pTK
                 break;
             case WM_CLOSE:
             {
-                Event evt{Event::Category::Window, Event::Type::WindowClose};
-                window->handleEvents(); // Handle all events before sending close event.
-                window->sendEvent(&evt); // Calls the ::DestroyWindow function.
+                // window->handleEvents(); // Handle all events before sending close event.
+                EventSendHelper<CloseEvent>(window, {});
                 break;
             }
             case WM_DESTROY:
@@ -619,14 +629,12 @@ namespace pTK
             }
             case WM_SETFOCUS:
             {
-                Event evt{Event::Category::Window, Event::Type::WindowFocus};
-                window->sendEvent(&evt);
+                EventSendHelper<FocusEvent>(window, {});
                 break;
             }
             case WM_KILLFOCUS:
             {
-                Event evt{Event::Category::Window, Event::Type::WindowLostFocus};
-                window->sendEvent(&evt);
+                EventSendHelper<LostFocusEvent>(window, {});
                 break;
             }
             case WM_PAINT:
@@ -659,7 +667,7 @@ namespace pTK
                 const Vec2f scale = window->getDPIScale();
                 MotionEvent evt{{static_cast<Point::value_type>(pos.x * (1 / scale.x)),
                                  static_cast<Point::value_type>(pos.y * (1 / scale.y))}};
-                window->sendEvent(&evt);
+                EventSendHelper<MotionEvent>(window, evt);
                 break;
             }
             case WM_LBUTTONDOWN:
@@ -688,8 +696,7 @@ namespace pTK
                                           Vec2f{1.0f / scale.x, 1.0f / scale.y})};
 
                 data->ignoreSize = true;
-                window->sendEvent(&evt);
-                window->forceDrawAll();
+                EventSendHelper<ResizeEvent>(window, evt);
                 break;
             }
             case WM_GETMINMAXINFO:
@@ -715,7 +722,7 @@ namespace pTK
                 if (!(winData->flags & SWP_NOMOVE))
                 {
                     MoveEvent evt{{winData->x, winData->y}};
-                    window->sendEvent(&evt);
+                    EventSendHelper<MoveEvent>(window, evt);
                 }
 
                 // Window was resized.

@@ -215,6 +215,11 @@ namespace pTK
         };
 
     private:
+
+        template<typename Event>
+        friend void EventSendHelper(Window*, const Event&);
+
+    private:
         HWND m_hwnd;
         std::unique_ptr<ContextBase> m_context;
         PAINTSTRUCT m_ps{};
