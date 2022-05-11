@@ -202,6 +202,8 @@ namespace pTK
 
         [[nodiscard]] HACCEL accelTable() const;
 
+        bool visible() const override;
+
     public:
         // Data struct that the static Win32 functions can manipulate freely.
         struct Data
@@ -212,6 +214,7 @@ namespace pTK
             MenuBarUtil_win::MenuMap menuItems{};
             bool ignoreSize{ false };
             bool hasMenu{ false };
+            DWORD style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX};
         };
 
     private:

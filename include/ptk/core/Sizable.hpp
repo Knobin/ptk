@@ -110,6 +110,28 @@ namespace pTK
         */
         virtual void onLimitChange(const Size&, const Size&) {}
 
+    protected: 
+        /** Function for setting minimal size.
+            Does not trigger callbacks.
+
+            @param size    minimal size
+        */
+        void updateMinSize(const Size& size);
+
+        /** Function for setting size.
+            Does not trigger callbacks.
+
+            @param size    size
+        */
+        void updateSize(const Size& size);
+
+        /** Function for setting maximal size.
+            Does not trigger callbacks.
+
+            @param size    maximal size
+        */
+        void updateMaxSize(const Size& size);
+
     private:
         // Helper functions for updating minimal size.
         byte updateMinWidth(Size::value_type width);

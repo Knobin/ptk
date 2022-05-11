@@ -90,7 +90,7 @@ namespace pTK
     ///////////////////////////////////////////////////////////////////////////////
 
     WindowHandle_win::WindowHandle_win(const std::string& name, const Size& size, const WindowInfo& flags)
-        : WindowHandle()
+        : WindowHandle(size)
     {
         m_data.window = static_cast<Window*>(this);
 
@@ -112,10 +112,9 @@ namespace pTK
 
         m_scale = {dpiX / 96.0f, dpiY / 96.0f};
         Size scaledSize = ScaleSize(size, m_scale);
-        DWORD style = WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
-        const Size adjSize{CalcAdjustedWindowSize(scaledSize, style, m_data.hasMenu, dpiX)};
+        const Size adjSize{CalcAdjustedWindowSize(scaledSize, m_data.style, m_data.hasMenu, dpiX)};
         // Old position was set to CW_USEDEFAULT (replaced with flags.position).
-        m_hwnd = ::CreateWindowExW(0, L"PTK", ApplicationHandle_win::stringToUTF16(name).c_str(), style,
+        m_hwnd = ::CreateWindowExW(0, L"PTK", ApplicationHandle_win::stringToUTF16(name).c_str(), m_data.style,
                                     flags.position.x, flags.position.y, adjSize.width, adjSize.height,
                                      nullptr, nullptr, ::GetModuleHandleW(nullptr), nullptr);
         if (!m_hwnd)
@@ -278,7 +277,7 @@ namespace pTK
 
     DWORD WindowHandle_win::getWindowStyle() const
     {
-        return static_cast<DWORD>(GetWindowLong(m_hwnd, GWL_EXSTYLE));
+        return m_data.style;
     }
 
     void WindowHandle_win::swapBuffers()
@@ -289,19 +288,19 @@ namespace pTK
     bool WindowHandle_win::resize(const Size& size)
     {
         // Apply the DPI scaling.
+        const Vec2f scale{ getDPIScale() };
         const Size scaledSize{ScaleSize(size, getDPIScale())};
+        const Size adjSize{CalcAdjustedWindowSize(scaledSize, getWindowStyle(), m_data.hasMenu, scale.x * 96.0f)};
 
         // Apply the new size to the context and window.
         if (scaledSize != m_context->getSize())
+        {
             m_context->resize(scaledSize);
 
-        if (!m_data.ignoreSize)
-        {
-            const Vec2f scale = getDPIScale();
-            const Size adjSize{CalcAdjustedWindowSize(scaledSize, getWindowStyle(), m_data.hasMenu, scale.x * 96.0f)};
-            ::SetWindowPos(m_hwnd, 0, 0, 0, adjSize.width, adjSize.height, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
+            if (!m_data.ignoreSize)
+                ::SetWindowPos(m_hwnd, 0, 0, 0, adjSize.width, adjSize.height, SWP_NOSENDCHANGING | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
         }
-
+            
         m_data.ignoreSize = false;
         return true;
     }
@@ -322,9 +321,14 @@ namespace pTK
         ::ShowWindow(m_hwnd, SW_HIDE);
     }
 
+    bool WindowHandle_win::visible() const
+    {
+        return static_cast<bool>(::IsWindowVisible(m_hwnd));
+    }
+
     bool WindowHandle_win::isHidden() const
     {
-        return !static_cast<bool>(::IsWindowVisible(m_hwnd));
+        return !visible();
     }
 
     ContextBase* WindowHandle_win::getContext() const
@@ -484,7 +488,6 @@ namespace pTK
 
     static void HandleWindowResize(WindowHandle_win::Data* data, WindowHandle *backend, HWND hwnd)
     {
-        Window *window{data->window};
         RECT rc{};
         if (::GetClientRect(hwnd, &rc) && (rc.right != 0 && rc.bottom != 0))
         {
@@ -715,7 +718,6 @@ namespace pTK
             case WM_WINDOWPOSCHANGED:
             {
                 WINDOWPOS* winData{reinterpret_cast<WINDOWPOS*>(lParam)};
-                // WindowHandle* backend{window->getHandle
                 Window* backend{ window };
 
                 // Window was moved.

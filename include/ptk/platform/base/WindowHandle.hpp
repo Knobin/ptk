@@ -26,7 +26,12 @@ namespace pTK
     class WindowHandle : public VBox
     {
     public:
-        WindowHandle() = default;
+        WindowHandle() = delete;
+
+        WindowHandle(const Size& size)
+        {
+            updateSize(size);
+        }
 
         /** Destructor for WindowHandle.
 

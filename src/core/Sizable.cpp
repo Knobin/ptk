@@ -117,6 +117,24 @@ namespace pTK
             onLimitChange(getMinSize(), getMaxSize());
     }
 
+    void Sizable::updateMinSize(const Size& size)
+    {
+        updateMinWidth(size.width);
+        updateMinHeight(size.height);
+    }
+
+    void Sizable::updateSize(const Size& size)
+    {
+        updateWidth(size.width);
+        updateHeight(size.height);
+    }
+
+    void Sizable::updateMaxSize(const Size& size)
+    {
+        updateMaxWidth(size.width);
+        updateMaxHeight(size.height);
+    }
+
     byte Sizable::updateMinWidth(const Size::value_type width)
     {
         byte status{0};

@@ -16,9 +16,7 @@ namespace pTK
             m_threadID{std::this_thread::get_id()}
     {
         // Set Widget properties.
-        Sizable::setSize(size);
         setName(name);
-        Drawable::hide();
 
         // m_handle = std::make_unique<PTK_WINDOW_HANDLE_T>(this, name, size, flags);
         PTK_INFO("Initialized Window");
