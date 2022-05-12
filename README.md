@@ -66,13 +66,13 @@ It is recommended to use Clang to build skia due to it being optimized for it an
 However, it is more complicated to do and this project is not really need the added performance for now.
 
 Below are instructions on compiling Skia with **MSVC** using the **Command Prompt**.
-Be sure to install **Visual Studio 2019 Community Edition** as it is needed.
+Be sure to install **Visual Studio 2022 Community Edition** as it is needed. If it is installed with a custom path, be sure to update **win_vc** with the custom path.
 
 ```shell
 $ git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
 $ cd skia
-$ python2 tools/git-sync-deps
-$ ..\depot_tools\gn gen out/Release --args="is_debug=false is_official_build=true skia_use_system_expat=false skia_use_system_icu=false skia_use_system_libjpeg_turbo=false skia_use_system_libpng=false skia_use_system_libwebp=false skia_use_system_zlib=false skia_use_sfntly=false skia_use_freetype=true skia_use_harfbuzz=true skia_pdf_subset_harfbuzz=true skia_use_system_freetype2=false skia_use_system_harfbuzz=false target_cpu=""x64"" win_vc=""C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC"" extra_cflags=[""-MT""]"
+$ python3 tools/git-sync-deps
+$ ..\depot_tools\gn gen out/Release --args="is_debug=false is_official_build=true skia_use_system_expat=false skia_use_system_icu=false skia_use_system_libjpeg_turbo=false skia_use_system_libpng=false skia_use_system_libwebp=false skia_use_system_zlib=false skia_use_sfntly=false skia_use_freetype=true skia_use_harfbuzz=true skia_pdf_subset_harfbuzz=true skia_use_system_freetype2=false skia_use_system_harfbuzz=false target_cpu=""x64"" win_vc=""C:\Program Files\Microsoft Visual Studio\2022\Community\VC"" extra_cflags=[""-MT""]"
 $ ..\depot_tools\ninja -C out/Release skia
 ```
 
