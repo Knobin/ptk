@@ -15,10 +15,10 @@
 #define NOMINMAX
 #include <windows.h>
 
-
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
-#include "include/gpu/GrContext.h"
+#include "include/core/SkColorSpace.h"
+#include "include/gpu/GrDirectContext.h"
 PTK_DISABLE_WARN_END()
 
 namespace pTK
@@ -64,9 +64,9 @@ namespace pTK
         HWND m_hwnd;
         HGLRC m_hglrc;
         sk_sp<SkSurface> m_surface;
-        sk_sp<GrContext> m_context;
-        GrGLFramebufferInfo m_info;
-        SkColorType m_colorType;
+        sk_sp<const GrGLInterface> m_backendContext;
+        sk_sp<GrDirectContext> m_context;
+        GrContextOptions m_GrContextOptions;
         SkSurfaceProps m_props;
     };
 }

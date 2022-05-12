@@ -8,6 +8,11 @@
 // pTK Headers
 #include "ptk/widgets/Image.hpp"
 
+// Skia Headers
+PTK_DISABLE_WARN_BEGIN()
+#include "include/core/SkData.h"
+PTK_DISABLE_WARN_END()
+
 namespace pTK
 {
     Image::Image()
@@ -61,7 +66,7 @@ namespace pTK
             
             SkRect dst{};
             dst.set(pos, size);
-            canvas->drawImageRect(m_image, dst, nullptr);
+            canvas->drawImageRect(m_image, dst, SkSamplingOptions(), nullptr);
         } 
     }
 

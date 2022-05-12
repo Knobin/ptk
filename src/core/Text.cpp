@@ -20,8 +20,9 @@ namespace pTK
     Text::Text()
         : m_font{}
     {
-        //m_font.setEdging(SkFont::Edging::kAntiAlias);
-        m_font.setEdging(SkFont::Edging::kSubpixelAntiAlias);
+        m_font.setEdging(SkFont::Edging::kAntiAlias);
+        //m_font.setEdging(SkFont::Edging::kAlias);
+        //m_font.setEdging(SkFont::Edging::kSubpixelAntiAlias);
         updateFontInfo();
     }
 

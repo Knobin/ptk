@@ -9,6 +9,11 @@
 #include "ptk/Window.hpp"
 #include "ptk/Application.hpp"
 
+// Skia Headers
+PTK_DISABLE_WARN_BEGIN()
+#include "include/core/SkData.h"
+PTK_DISABLE_WARN_END()
+
 namespace pTK
 {
     Window::Window(const std::string& name, const Size& size, const WindowInfo& flags)
