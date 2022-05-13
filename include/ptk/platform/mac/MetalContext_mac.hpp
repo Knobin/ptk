@@ -13,7 +13,8 @@
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
-#include "include/gpu/GrContext.h"
+#include "include/ports/SkCFObject.h"
+#include "include/gpu/GrDirectContext.h"
 PTK_DISABLE_WARN_END()
 
 #import <Metal/Metal.h>
@@ -64,13 +65,14 @@ namespace pTK
         void init(void* mainView, const Size& size, const Vec2f& scale);
 
     private:
-        sk_sp<GrContext> m_context;
+        // sk_sp<GrContext> m_context;
         SkSurfaceProps m_props;
-
+        sk_sp<GrDirectContext> m_context;
         NSView* m_mainView;
-        id<MTLDevice> m_device;
-        id<MTLCommandQueue> m_queue;
+        sk_cfp<id<MTLDevice>> m_device;
+        sk_cfp<id<MTLCommandQueue>> m_queue;
         CAMetalLayer* m_metalLayer;
+        GrContextOptions m_GrContextOptions;
         mutable GrMTLHandle m_drawableHandle = nil;
     };
 }

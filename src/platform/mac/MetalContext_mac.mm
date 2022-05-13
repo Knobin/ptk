@@ -19,6 +19,7 @@
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
+#include "include/gpu/mtl/GrMtlBackendContext.h"
 #include "include/gpu/GrBackendSurface.h"
 #include "include/gpu/mtl/GrMtlTypes.h"
 #include "include/gpu/GrContextOptions.h"
@@ -28,7 +29,7 @@ namespace pTK
 {
     MetalContext_mac::MetalContext_mac(void* mainView, const Size& size, const Vec2f& scale)
         : ContextBase(size),
-            m_props{SkSurfaceProps::kUseDeviceIndependentFonts_Flag, SkSurfaceProps::kLegacyFontHost_InitType},
+            m_props{0, kRGB_H_SkPixelGeometry}, m_context{nullptr}, m_GrContextOptions{},
             m_drawableHandle{nullptr}
     {
         init(mainView, size, scale);
@@ -47,8 +48,9 @@ namespace pTK
             m_mainView.wantsLayer = NO;
 
             m_metalLayer = nil;
-            [m_queue release];
-            [m_device release];
+            
+            m_queue.reset(); // [m_queue release];
+            m_device.reset(); // [m_device release];
 
             PTK_INFO("Destroyed MetalContext_mac");
         } // autoreleasepool
@@ -59,15 +61,15 @@ namespace pTK
         @autoreleasepool {
             m_mainView = static_cast<NSView*>(mainView);
             CGDirectDisplayID viewDisplayID = static_cast<CGDirectDisplayID>( [m_mainView.window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntegerValue]);
-            m_device = CGDirectDisplayCopyCurrentMetalDevice(viewDisplayID);
+            m_device.reset(CGDirectDisplayCopyCurrentMetalDevice(viewDisplayID));
             // m_device = MTLCreateSystemDefaultDevice();
-            m_queue = [m_device newCommandQueue];
+            m_queue.reset([*m_device newCommandQueue]);
             if (!m_queue)
                 throw ContextError("Could not create command queue");
-            [m_queue setLabel:@"PTK Main Queue"];
+            [*m_queue setLabel:@"PTK Main Queue"];
 
             m_metalLayer = [CAMetalLayer layer];
-            m_metalLayer.device = m_device;
+            m_metalLayer.device = *m_device;
             m_metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
 
             NSRect rect;
@@ -89,8 +91,13 @@ namespace pTK
             m_metalLayer.contentsScale = static_cast<double>(scale.x);
             m_mainView.wantsLayer = YES;
             m_mainView.layer = m_metalLayer;
+            
+            GrMtlBackendContext backendContext = {};
+            backendContext.fDevice.retain(static_cast<GrMTLHandle>(m_device.get()));
+            backendContext.fQueue.retain(static_cast<GrMTLHandle>(m_queue.get()));
 
-            m_context = GrContext::MakeMetal([m_device retain], [m_queue retain]);
+            // m_context = GrContext::MakeMetal([m_device retain], [m_queue retain]);
+            m_context = GrDirectContext::MakeMetal(backendContext, m_GrContextOptions);
             if (!m_context)
                 throw ContextError("Could not create GrContext");
 
@@ -139,7 +146,7 @@ namespace pTK
               return;
             }
 
-            id<MTLCommandBuffer> commandBuffer = [m_queue commandBuffer];
+            id<MTLCommandBuffer> commandBuffer = [*m_queue commandBuffer];
             id<CAMetalDrawable> drawable = reinterpret_cast<id<CAMetalDrawable>>(m_drawableHandle);
             CFRelease(m_drawableHandle);
             m_drawableHandle = nullptr;

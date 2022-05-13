@@ -389,7 +389,7 @@ namespace pTK
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     WindowHandle_mac::WindowHandle_mac(const std::string& name, const Size& size, const WindowInfo& flags)
-        : WindowHandle()
+        : WindowHandle(size)
     {
         init(name, size, flags);
     }

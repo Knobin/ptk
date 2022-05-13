@@ -55,8 +55,8 @@ $ ninja -C out/Release skia
 $ git clone 'https://chromium.googlesource.com/chromium/tools/depot_tools.git'
 $ export PATH="${PWD}/depot_tools:${PATH}"
 $ cd skia
-$ python2 tools/git-sync-deps
-$ gn gen out/Release --args="is_debug=false is_official_build=true skia_use_system_expat=false skia_use_system_icu=false skia_use_system_libjpeg_turbo=false skia_use_system_libpng=false skia_use_system_libwebp=false skia_use_system_zlib=false skia_use_sfntly=false skia_use_freetype=true skia_use_harfbuzz=true skia_pdf_subset_harfbuzz=true skia_use_system_freetype2=false skia_use_system_harfbuzz=false skia_use_metal=true target_cpu=\"x64\" extra_cflags=[\"-stdlib=libc++\", \"-mmacosx-version-min=10.13\"] extra_cflags_cc=[\"-frtti\"]"
+$ python3 tools/git-sync-deps
+$ gn gen out/Release --args="is_debug=false is_official_build=true skia_use_system_expat=false skia_use_system_icu=false skia_use_system_libjpeg_turbo=false skia_use_system_libpng=false skia_use_system_libwebp=false skia_use_system_zlib=false skia_use_sfntly=false skia_use_freetype=true skia_use_harfbuzz=true skia_pdf_subset_harfbuzz=true skia_use_system_freetype2=false skia_use_system_harfbuzz=false skia_use_metal=true target_cpu=\"x64\" extra_cflags=[\"-stdlib=libc++\", \"-mmacosx-version-min=10.14\"] extra_cflags_cc=[\"-frtti\"]"
 $ ninja -C out/Release skia
 ```
 

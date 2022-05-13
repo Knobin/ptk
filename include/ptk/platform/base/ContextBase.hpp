@@ -23,6 +23,7 @@
 PTK_DISABLE_WARN_BEGIN()
 #include "include/core/SkCanvas.h"
 #include "include/core/SkSurface.h"
+#include "include/core/SkColorSpace.h"
 PTK_DISABLE_WARN_END()
 
 namespace pTK
