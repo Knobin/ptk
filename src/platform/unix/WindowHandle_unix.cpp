@@ -83,8 +83,8 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    WindowHandle_unix::WindowHandle_unix(Window *window, const std::string& name, const Size& size, WindowInfo info)
-        : WindowHandle(window), m_lastSize{size}
+    WindowHandle_unix::WindowHandle_unix(const std::string& name, const Size& size, const WindowInfo& flags)
+        : WindowHandle(size) //, m_lastSize{size}
     {
         ::Window root{App::Root()};
         Display *display{App::Display()};
@@ -113,7 +113,7 @@ namespace pTK
         setTitle(name);
 
         XMapWindow(display, m_window);
-        XSaveContext(display, m_window, App::Context(), reinterpret_cast<XPointer>(window));
+        XSaveContext(display, m_window, App::Context(), reinterpret_cast<XPointer>(this));
         XFlush(display);
 
         m_atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", False);
@@ -127,9 +127,9 @@ namespace pTK
         m_scale = Vec2f{scale / 96.0f, scale / 96.0f};
         const Size scaledSize{ScaleSize(size, m_scale)};
 
-        m_context = CreateContext(info.backend, &m_window, scaledSize, m_info);
+        m_context = CreateContext(flags.backend, &m_window, scaledSize, m_info);
 
-        m_lastPos = getWinPos();
+        // m_lastPos = getWinPos();
         PTK_INFO("Initialized WindowHandle_unix");
     }
 
@@ -145,16 +145,14 @@ namespace pTK
         return true;
     }
 
-    bool WindowHandle_unix::show()
+    void WindowHandle_unix::show()
     {
         XMapWindow(App::Display(), m_window);
-        return true;
     }
 
-    bool WindowHandle_unix::hide()
+    void WindowHandle_unix::hide()
     {
         XUnmapWindow(App::Display(), m_window);
-        return true;
     }
 
     bool WindowHandle_unix::isHidden() const
@@ -164,16 +162,14 @@ namespace pTK
         return !(xwa.map_state == IsViewable);
     }
 
-    bool WindowHandle_unix::setPosHint(const Point& pos)
+    void WindowHandle_unix::setPosHint(const Point& pos)
     {
-        if (pos != m_lastPos)
+        if (pos != getWinPos())
         {
             Display *display{App::Display()};
             XMoveWindow(display, m_window, pos.x, pos.y);
             XFlush(display);
         }
-
-        return true;
     }
 
     ContextBase *WindowHandle_unix::getContext() const
@@ -202,7 +198,7 @@ namespace pTK
             status = true;
         }
 
-        if (size != m_lastSize)
+        if (size != getWinSize())
         {
             const unsigned int width{static_cast<unsigned int>(size.width)};
             const unsigned int height{static_cast<unsigned int>(size.height)};
@@ -214,7 +210,7 @@ namespace pTK
         return status;
     }
 
-    bool WindowHandle_unix::setLimits(const Size& min, const Size& max)
+    /* bool WindowHandle_unix::setLimits(const Size& min, const Size& max)
     {
         XSizeHints *hints{XAllocSizeHints()};
         PTK_ASSERT(hints, "Unable to allocate memory for XSizeHints");
@@ -232,7 +228,7 @@ namespace pTK
 
         XFlush(App::Display());
         return true;
-    }
+    }*/
 
     bool WindowHandle_unix::setTitle(const std::string& name)
     {
@@ -359,7 +355,7 @@ namespace pTK
         if (m_scale != scale)
         {
             m_scale = scale;
-            resize(parent()->getSize());
+            resize(getSize());
         }
 
         return true;
@@ -385,7 +381,7 @@ namespace pTK
         return m_atomWmDeleteWindow;
     }
 
-    Size& WindowHandle_unix::lastSize()
+    /*Size& WindowHandle_unix::lastSize()
     {
         return m_lastSize;
     }
@@ -393,5 +389,5 @@ namespace pTK
     Point& WindowHandle_unix::lastPos()
     {
         return m_lastPos;
-    }
+    }*/
 }

@@ -18,8 +18,11 @@
 PTK_DISABLE_WARN_BEGIN()
 #include "include/gpu/GrBackendSurface.h"
 #include "include/gpu/gl/GrGLInterface.h"
-#include "include/gpu/GrContext.h"
-#include "src/gpu/gl/GrGLUtil.h"
+#include "src/gpu/ganesh/GrCaps.h"
+#include "src/gpu/ganesh/GrDirectContextPriv.h"
+#include "src/gpu/ganesh/gl/GrGLDefines_impl.h"
+#include "src/gpu/ganesh/gl/GrGLUtil.h"
+#include "src/gpu/gl/GrGLDefines.h"
 PTK_DISABLE_WARN_END()
 
 using App = pTK::ApplicationHandle_unix;
@@ -146,8 +149,8 @@ namespace pTK
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     GLContext_unix::GLContext_unix(::Window *window, const Size& size)
-        : ContextBase(size), m_window{window}, m_context{nullptr}, m_info{}, m_colorType{},
-            m_props{SkSurfaceProps::kUseDeviceIndependentFonts_Flag, SkSurfaceProps::kLegacyFontHost_InitType}
+        : ContextBase(size), m_window{window}, m_context{nullptr},
+            m_GrContextOptions{}, m_props{0, kRGB_H_SkPixelGeometry}
     {
         Display *display{App::Display()};
         int screenID{App::Screen()};
@@ -201,19 +204,14 @@ namespace pTK
 
         auto glInterface = GrGLMakeNativeInterface();
 		PTK_ASSERT(glInterface, "Failed to create interface!");
-		m_context.reset(GrContext::MakeGL(glInterface).release());
-
-		GrGLint buffer;
-		GR_GL_GetIntegerv(glInterface.get(), GR_GL_FRAMEBUFFER_BINDING, &buffer);
-		GrGLFramebufferInfo info;
-		info.fFBOID = static_cast<GrGLuint>(buffer);
-		m_info.fFormat = GL_RGBA8;
-        m_colorType = kRGBA_8888_SkColorType;
+		m_backendContext.reset(glInterface.release());
 
         PTK_INFO("GL Vendor: {}", glGetString(GL_VENDOR));
         PTK_INFO("GL Renderer: {}", glGetString(GL_RENDERER));
         PTK_INFO("GL Version: {}", glGetString(GL_VERSION));
         PTK_INFO("GL Shading Language: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+        m_context = GrDirectContext::MakeGL(m_backendContext, m_GrContextOptions);
 
         resize(size);
     }
@@ -230,18 +228,31 @@ namespace pTK
 
     void GLContext_unix::resize(const Size& size)
     {
-        glViewport(0, 0, size.width, size.height);
+        if (m_context)
+        {
+            GrGLint buffer;
+            GR_GL_CALL(m_backendContext.get(), GetIntegerv(GR_GL_FRAMEBUFFER_BINDING, &buffer));
 
-        GrBackendRenderTarget backendRenderTarget(size.width, size.height, 1, 8, m_info);
+            GrGLFramebufferInfo fbInfo;
+            fbInfo.fFBOID = static_cast<GrGLuint>(buffer);
+            fbInfo.fFormat = GR_GL_RGBA8;
 
-        SkSurface *surface{SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget,
-                kBottomLeft_GrSurfaceOrigin, m_colorType, nullptr, &m_props).release()};
-        PTK_ASSERT(surface, "Failed to create surface!");
-        m_surface.reset(surface);
+            int width{static_cast<int>(size.width)};
+            int height{static_cast<int>(size.height)};
 
-        //clear(Color{0xFFFFFFFF});
-        PTK_INFO("Constructed GLContext_unix: {}x{}", size.width, size.height);
-        setSize(size);
+            glViewport(0, 0, width, height);
+
+            GrBackendRenderTarget backendRenderTarget(width, height, 1, 8, fbInfo);
+
+            SkSurface* surface{ SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget,
+                    kBottomLeft_GrSurfaceOrigin, kRGBA_8888_SkColorType, nullptr, &m_props).release() };
+            PTK_ASSERT(surface, "Failed to create surface!");
+            m_surface.reset(surface);
+
+            //clear(Color{0xFFFFFFFF});
+            PTK_INFO("Sized GLContext_unix to {}x{}", size.width, size.height);
+            setSize(size);
+        }
     }
 
     sk_sp<SkSurface> GLContext_unix::surface() const

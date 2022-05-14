@@ -200,15 +200,13 @@ namespace pTK
             }
             case ClientMessage:
             {
-                if (auto uWindow = dynamic_cast<WindowHandle_unix*>(window->getHandle()))
+                WindowHandle_unix *uWindow = static_cast<WindowHandle_unix*>(window);
+                XClientMessageEvent *cEvent = reinterpret_cast<XClientMessageEvent*>(event);
+                if (cEvent && static_cast<Atom>(cEvent->data.l[0]) == uWindow->deleteAtom())
                 {
-                    XClientMessageEvent *cEvent = reinterpret_cast<XClientMessageEvent*>(event);
-                    if (cEvent && static_cast<Atom>(cEvent->data.l[0]) == uWindow->deleteAtom())
-                    {
-                        Event evt{Event::Category::Window, Event::Type::WindowClose};
-                        window->handleEvents(); // Handle all events before sending close event.
-                        window->sendEvent(&evt);
-                    }
+                    Event evt{Event::Category::Window, Event::Type::WindowClose};
+                    window->handleEvents(); // Handle all events before sending close event.
+                    window->sendEvent(&evt);
                 }
                 break;
             }
@@ -256,7 +254,7 @@ namespace pTK
             case KeyPress:
             case KeyRelease:
             {
-                auto mods = GetKeyModifiers(event->xkey.state);
+                auto mods = GetKeyModifiers(static_cast<int>(event->xkey.state));
                 auto keysym = XLookupKeysym(&event->xkey, 0);
                 pTK::Key key{KeyMap::KeyCodeToKey(keysym)};
                 Event::Type type = (event->type == KeyPress) ? KeyEvent::Pressed : KeyEvent::Released;
@@ -308,12 +306,13 @@ namespace pTK
             }
             case ConfigureNotify:
             {
-                WindowHandle_unix *backend{static_cast<WindowHandle_unix*>(window->getHandle())};
+                // WindowHandle_unix *uWindow = static_cast<WindowHandle_unix*>(window);
 
                 // Size change
-                Size& wSize{backend->lastSize()};
-                if (event->xconfigure.width != wSize.width || event->xconfigure.height != wSize.height)
+                // Size& wSize{uWindow->lastSize()};
+                // if (event->xconfigure.width != wSize.width || event->xconfigure.height != wSize.height)
                 {
+                    Size wSize{};
                     wSize.width = static_cast<Size::value_type>(event->xconfigure.width);
                     wSize.height = static_cast<Size::value_type>(event->xconfigure.height);
 
@@ -324,9 +323,10 @@ namespace pTK
                 }
 
                 // Position change
-                Point& wPos{backend->lastPos()};
-                if (event->xconfigure.x != wPos.x || event->xconfigure.y != wPos.y)
+                // Point& wPos{backend->lastPos()};
+                // if (event->xconfigure.x != wPos.x || event->xconfigure.y != wPos.y)
                 {
+                    Point wPos{};
                     wPos.x = static_cast<Point::value_type>(event->xconfigure.x);
                     wPos.y = static_cast<Point::value_type>(event->xconfigure.y);
 

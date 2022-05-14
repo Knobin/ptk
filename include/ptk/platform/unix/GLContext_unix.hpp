@@ -24,7 +24,9 @@ extern "C" {
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
-#include "include/gpu/GrContext.h"
+//#include "include/gpu/GrContext.h"
+#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/gl/GrGLInterface.h"
 PTK_DISABLE_WARN_END()
 
 namespace pTK
@@ -70,11 +72,10 @@ namespace pTK
         ::Window *m_window;
         XVisualInfo* m_visual;
         GLXContext m_GLContext;
-
         sk_sp<SkSurface> m_surface;
-        sk_sp<GrContext> m_context;
-        GrGLFramebufferInfo m_info;
-        SkColorType m_colorType;
+        sk_sp<GrDirectContext> m_context;
+        sk_sp<const GrGLInterface> m_backendContext;
+        GrContextOptions m_GrContextOptions;
         SkSurfaceProps m_props;
     };
 }
