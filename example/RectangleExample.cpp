@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     rect->setOutlineColor(pTK::Color(0xF4A950FF));
 
     // Callback for when the rectangle is clicked.
-    rect->onClick([&rect](pTK::Mouse::Button, const pTK::Point&){
+    rect->onClick([&rect](const pTK::ClickEvent&){
         std::cout << rect->getName() << " clicked!\n";
         return true;
     });
