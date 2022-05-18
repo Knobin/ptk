@@ -88,7 +88,7 @@ namespace pTK
             @return     true if operation is successful, otherwise false
         */
         // virtual bool setLimits(const Size& UNUSED(min), const Size& UNUSED(max)) = 0;
-        void onLimitChange(const Size& UNUSED(min), const Size& UNUSED(max)) override {}
+        // void onLimitChange(const Size& UNUSED(min), const Size& UNUSED(max)) override {}
 
         /** Function for swapping the buffers.
 

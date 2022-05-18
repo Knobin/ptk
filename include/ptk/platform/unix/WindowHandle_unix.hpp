@@ -178,11 +178,17 @@ namespace pTK
         ::Window xWindow() const;
         Atom deleteAtom() const;
 
-        // Size& lastSize();
-        // Point& lastPos();
+    private:
+        void onLimitChange(const Size& min, const Size& max) override;
 
     private:
         std::pair<unsigned long, unsigned char*> getWindowProperty(Atom property, Atom type) const;
+
+        template<typename Event>
+        friend void EventSendHelper(Window*, const Event&);
+
+        friend Size& WindowLastSize(Window*);
+        friend Point& WindowLastPos(Window*);
 
     private:
         std::unique_ptr<ContextBase> m_context;
@@ -190,8 +196,8 @@ namespace pTK
         sk_sp<SkSurface> m_surface;
         // GC m_gc;
 
-        // Size m_lastSize;
-        // Point m_lastPos{};
+        Size m_lastSize;
+        Point m_lastPos{};
 
         Vec2f m_scale{1.0f, 1.0f};
 

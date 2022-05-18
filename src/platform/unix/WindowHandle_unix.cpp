@@ -17,6 +17,9 @@
     #include "ptk/platform/unix/GLContext_unix.hpp"
 #endif // PTK_OPENGL
 
+// C++ Headers
+#include <limits>
+
 using App = pTK::ApplicationHandle_unix;
 
 namespace pTK
@@ -129,7 +132,7 @@ namespace pTK
 
         m_context = CreateContext(flags.backend, &m_window, scaledSize, m_info);
 
-        // m_lastPos = getWinPos();
+        m_lastPos = getWinPos();
         PTK_INFO("Initialized WindowHandle_unix");
     }
 
@@ -191,15 +194,16 @@ namespace pTK
     {
         bool status{false};
 
-        if (size != m_context->getSize())
+        const Size scaledSize{ScaleSize(size, m_scale)};
+        if (scaledSize != m_context->getSize())
         {
-            const Size scaledSize{ScaleSize(size, m_scale)};
             m_context->resize(scaledSize);
             status = true;
         }
 
         if (size != getWinSize())
         {
+            PTK_INFO("bool WindowHandle_unix::resize(const Size& size)");
             const unsigned int width{static_cast<unsigned int>(size.width)};
             const unsigned int height{static_cast<unsigned int>(size.height)};
 
@@ -210,25 +214,48 @@ namespace pTK
         return status;
     }
 
-    /* bool WindowHandle_unix::setLimits(const Size& min, const Size& max)
+    void WindowHandle_unix::onLimitChange(const Size& min, const Size& max)
     {
         XSizeHints *hints{XAllocSizeHints()};
         PTK_ASSERT(hints, "Unable to allocate memory for XSizeHints");
+        long err;
+        XGetWMNormalHints(App::Display(), m_window, hints, &err);
+        PTK_INFO("WindowHandle_unix: Trying to set new Window Limits, min: {}x{} & max: {}x{}", min.width, min.height, max.width, max.height);
+        PTK_INFO("WindowHandle_unix: Current Window Limits: min: {}x{} & max: {}x{}", hints->min_width, hints->min_height, hints->max_width, hints->max_height);
 
-        hints->flags |= PMinSize | PMaxSize | PWinGravity;
+        constexpr int int_max = std::numeric_limits<int>::max();
+
+        const int min_width = (min.width > static_cast<Size::value_type>(int_max)) ? int_max : static_cast<int>(min.width);
+        const int min_height = (min.height > static_cast<Size::value_type>(int_max)) ? int_max : static_cast<int>(min.height);
+
+        if (hints->min_width != min_width || hints->min_height != min_height)
+        {
+            PTK_INFO("WindowHandle_unix: Setting Min Size: {}x{}", min_width, min_height);
+            hints->flags |= PMinSize;
+            hints->min_width = min_width;
+            hints->min_height = min_height;
+
+        }
+
+        const int max_width = (max.width > static_cast<Size::value_type>(int_max)) ? int_max : static_cast<int>(max.width);
+        const int max_height = (max.height > static_cast<Size::value_type>(int_max)) ? int_max : static_cast<int>(max.height);
+
+        if (hints->max_width != max_width || hints->max_height != max_height)
+        {
+            PTK_INFO("WindowHandle_unix: Setting Max Size: {}x{}", max_width, max_height);
+            hints->flags |= PMaxSize;
+            hints->max_width = max_width;
+            hints->max_height = max_height;
+        }
+
+        hints->flags |= PWinGravity;
         hints->win_gravity = StaticGravity;
-
-        hints->min_width = min.width;
-        hints->min_height = min.height;
-        hints->max_width = max.width;
-        hints->max_height = max.height;
 
         XSetWMNormalHints(App::Display(), m_window, hints);
         XFree(hints);
 
         XFlush(App::Display());
-        return true;
-    }*/
+    }
 
     bool WindowHandle_unix::setTitle(const std::string& name)
     {
@@ -380,14 +407,4 @@ namespace pTK
     {
         return m_atomWmDeleteWindow;
     }
-
-    /*Size& WindowHandle_unix::lastSize()
-    {
-        return m_lastSize;
-    }
-
-    Point& WindowHandle_unix::lastPos()
-    {
-        return m_lastPos;
-    }*/
 }
