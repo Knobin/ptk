@@ -32,6 +32,9 @@ int main(int argc, char *argv[])
     // Add the label to the window.
     window.add(rect);
 
+    // Enables rendering and shows the window.
+    window.show();
+
     // Run the application.
     return app.exec(&window);
 }

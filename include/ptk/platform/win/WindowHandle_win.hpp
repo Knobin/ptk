@@ -23,7 +23,7 @@
 
 namespace pTK
 {
-    class Window; 
+    class Window;
 
     /** MainWindow_win class implementation.
 
@@ -99,14 +99,6 @@ namespace pTK
             @return     true if operation is successful, otherwise false
         */
         bool resize(const Size& size) override;
-
-        /** Function for setting the size limits the window.
-
-            @param min  minimal size of the window
-            @param max  maximum size of the window
-            @return     true if operation is successful, otherwise false
-        */
-        // bool setLimits(const Size&, const Size&) override;
 
         /** Function for initiating the drawing.
 
@@ -203,6 +195,15 @@ namespace pTK
         [[nodiscard]] HACCEL accelTable() const;
 
         bool visible() const override;
+
+    private:
+        /** Function for setting the size limits the window.
+
+            @param min  minimal size of the window
+            @param max  maximum size of the window
+            @return     true if operation is successful, otherwise false
+        */
+        void onLimitChange(const Size& min, const Size& max) override;
 
     public:
         // Data struct that the static Win32 functions can manipulate freely.

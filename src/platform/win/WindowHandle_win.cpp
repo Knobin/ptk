@@ -35,7 +35,7 @@ namespace pTK
 {
     // Since the iHandleEvent function is protected in WindowHandle, this is a friend function
     // to get around that issue. Maybe another way is better in the future, but this works
-    // for now. This must be done since the win32 WndPro is a static function and only a 
+    // for now. This must be done since the win32 WndPro is a static function and only a
     // pointer to window can be used (in this implementation anyway).
     template<typename Event>
     void EventSendHelper(Window* window, const Event& evt)
@@ -300,7 +300,7 @@ namespace pTK
             if (!m_data.ignoreSize)
                 ::SetWindowPos(m_hwnd, 0, 0, 0, adjSize.width, adjSize.height, SWP_NOSENDCHANGING | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
         }
-            
+
         m_data.ignoreSize = false;
         return true;
     }
@@ -315,7 +315,7 @@ namespace pTK
         if (!::ShowWindow(m_hwnd, SW_SHOW))
             ; // Send a draw event here? PainEvent?  forceDrawAll();
     }
-    
+
     void WindowHandle_win::hide()
     {
         ::ShowWindow(m_hwnd, SW_HIDE);
@@ -357,8 +357,7 @@ namespace pTK
                 static_cast<Size::value_type>(rect.bottom - rect.top)};
     }
 
-    /*
-    bool WindowHandle_win::setLimits(const Size&, const Size&)
+    bool WindowHandle_win::onLimitChange(const Size&, const Size&)
     {
         RECT rect{};
         ::GetWindowRect(m_hwnd, &rect);
@@ -366,7 +365,6 @@ namespace pTK
                      TRUE);
         return true;
     }
-    */
 
     bool WindowHandle_win::minimize()
     {

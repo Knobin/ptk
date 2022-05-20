@@ -81,15 +81,6 @@ namespace pTK
         */
         virtual bool resize(const Size& UNUSED(size)) = 0;
 
-        /** Function for setting the size limits the window.
-
-            @param min  minimal size of the window
-            @param max  maximum size of the window
-            @return     true if operation is successful, otherwise false
-        */
-        // virtual bool setLimits(const Size& UNUSED(min), const Size& UNUSED(max)) = 0;
-        // void onLimitChange(const Size& UNUSED(min), const Size& UNUSED(max)) override {}
-
         /** Function for swapping the buffers.
 
         */
@@ -202,6 +193,13 @@ namespace pTK
         // Gets called when drawing the window is needed (only from a window backend).
         virtual void draw(const PaintEvent&) = 0;
 
+        /** Callback for setting the size limits the window.
+
+            @param min  minimal size of the window
+            @param max  maximum size of the window
+            @return     true if operation is successful, otherwise false
+        */
+        void onLimitChange(const Size& UNUSED(min), const Size& UNUSED(max)) override {}
     };
 
     // Default event that is not handled by the window.

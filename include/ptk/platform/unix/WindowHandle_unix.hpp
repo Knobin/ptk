@@ -97,14 +97,6 @@ namespace pTK
         */
         bool resize(const Size& size) override;
 
-        /** Function for setting the size limits the window.
-
-            @param min  minimal size of the window
-            @param max  maximum size of the window
-            @return     true if operation is successful, otherwise false
-        */
-        // bool setLimits(const Size&, const Size&) override;
-
         /** Function for setting the title of the window.
 
             @param name     title to show
@@ -179,6 +171,12 @@ namespace pTK
         Atom deleteAtom() const;
 
     private:
+        /** Callback for setting the size limits the window.
+
+            @param min  minimal size of the window
+            @param max  maximum size of the window
+            @return     true if operation is successful, otherwise false
+        */
         void onLimitChange(const Size& min, const Size& max) override;
 
     private:

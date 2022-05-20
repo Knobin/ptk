@@ -103,7 +103,6 @@ namespace pTK
             @param max  maximum size of the window
             @return     true if operation is successful, otherwise false
         */
-        // bool setLimits(const Size&, const Size&) override;
         void onLimitChange(const Size& min, const Size& max) override;
 
         /** Function for setting the title of the window.
@@ -189,6 +188,8 @@ namespace pTK
             @return     pointer to NSWindow
         */
         [[nodiscard]] void *handle() const;
+
+        bool visible() const override;
 
     private:
         void init(const std::string& name, const Size& size, const WindowInfo& flags);
