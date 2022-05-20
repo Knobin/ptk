@@ -46,6 +46,7 @@ namespace pTK
 
     void HBox::onChildUpdate(size_type)
     {
+        /*
         const Size cMaxSize{calcMaxSize()};
         Size maxSize{getMaxSize()};
         if (cMaxSize > maxSize)
@@ -57,6 +58,7 @@ namespace pTK
             minSize = cMinSize;
 
         setLimits(minSize, maxSize);
+        */
     }
 
     void HBox::expandOnAdd(const Size& newSize)

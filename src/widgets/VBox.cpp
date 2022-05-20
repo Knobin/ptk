@@ -51,6 +51,7 @@ namespace pTK
 
     void VBox::onChildUpdate(size_type)
     {
+        /*
         const Size cMaxSize{calcMaxSize()};
         Size maxSize{getMaxSize()};
         if (cMaxSize > maxSize)
@@ -62,6 +63,7 @@ namespace pTK
             minSize = cMinSize;
 
         setLimits(minSize, maxSize);
+        */
     }
 
     void VBox::expandOnAdd(const Size& newSize)
