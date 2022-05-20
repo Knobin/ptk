@@ -357,13 +357,12 @@ namespace pTK
                 static_cast<Size::value_type>(rect.bottom - rect.top)};
     }
 
-    bool WindowHandle_win::onLimitChange(const Size&, const Size&)
+    void WindowHandle_win::onLimitChange(const Size& min, const Size& max)
     {
+        PTK_INFO("Updating Window limits to: min: {}x{} max: {}x{}", min.width, min.height, max.width, max.height);
         RECT rect{};
         ::GetWindowRect(m_hwnd, &rect);
-        ::MoveWindow(m_hwnd, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
-                     TRUE);
-        return true;
+        ::MoveWindow(m_hwnd, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, FALSE);
     }
 
     bool WindowHandle_win::minimize()
