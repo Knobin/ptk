@@ -150,7 +150,7 @@ namespace pTK
 
             @return     Window Size
         */
-        Size getWinSize() const override;
+        [[nodiscard]] Size getWinSize() const override;
 
         /** Function for retrieving the current Windows style of the Window.
 
@@ -188,13 +188,26 @@ namespace pTK
         */
         bool setScaleHint(const Vec2f& scale) override;
 
-        static LRESULT CALLBACK WndPro(HWND hwnd, UINT msg, WPARAM wParam, ::LPARAM lParam);
+        /** Function for checking if the window is visible.
 
+            @return    status
+        */
+        [[nodiscard]] bool visible() const override;
+
+        /** Function for retrieving HWND from the window.
+
+            @return    HWND
+        */
         [[nodiscard]] HWND handle() const;
 
+        /** Function for retrieving HACCEL from the window.
+
+            @return    HACCEL
+        */
         [[nodiscard]] HACCEL accelTable() const;
 
-        bool visible() const override;
+        // WndPro callback.
+        static LRESULT CALLBACK WndPro(HWND hwnd, UINT msg, WPARAM wParam, ::LPARAM lParam);
 
     private:
         /** Function for setting the size limits the window.
@@ -219,7 +232,6 @@ namespace pTK
         };
 
     private:
-
         template<typename Event>
         friend void EventSendHelper(Window*, const Event&);
 

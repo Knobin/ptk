@@ -97,14 +97,6 @@ namespace pTK
         */
         bool resize(const Size& size) override;
 
-        /** Function for setting the size limits the window.
-
-            @param min  minimal size of the window
-            @param max  maximum size of the window
-            @return     true if operation is successful, otherwise false
-        */
-        void onLimitChange(const Size& min, const Size& max) override;
-
         /** Function for setting the title of the window.
 
             @param name     title to show
@@ -143,7 +135,7 @@ namespace pTK
 
             @return     Window Size
         */
-        Size getWinSize() const override;
+        [[nodiscard]] Size getWinSize() const override;
 
         /** Function for minimizing the window.
 
@@ -189,7 +181,20 @@ namespace pTK
         */
         [[nodiscard]] void *handle() const;
 
+        /** Function for checking if the window is visible.
+
+            @return    status
+        */
         bool visible() const override;
+
+    private:
+        /** Function for setting the size limits the window.
+
+            @param min  minimal size of the window
+            @param max  maximum size of the window
+            @return     true if operation is successful, otherwise false
+        */
+        void onLimitChange(const Size& min, const Size& max) override;
 
     private:
         void init(const std::string& name, const Size& size, const WindowInfo& flags);

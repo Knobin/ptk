@@ -54,7 +54,7 @@ namespace pTK
         */
         void hide() override {}
 
-        /** Function for checking if it is visible.
+        /** Function for checking if the window is visible.
 
             @return    status
         */

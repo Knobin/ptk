@@ -135,7 +135,7 @@ namespace pTK
 
             @return     Window Size
         */
-        Size getWinSize() const override;
+        [[nodiscard]] Size getWinSize() const override;
 
         /** Function for minimizing the window.
 
@@ -167,7 +167,16 @@ namespace pTK
         */
         bool setScaleHint(const Vec2f& scale) override;
 
+        /** Function for retrieving the XWindow struct of the window.
+
+            @return     XWindow struct
+        */
         ::Window xWindow() const;
+
+        /** Function for retrieving the delelte Atom of the window.
+
+            @return     XWindow struct
+        */
         Atom deleteAtom() const;
 
     private:
