@@ -145,7 +145,7 @@ namespace pTK
 
         if (event->category == Event::Category::Window)
             handleWindowEvent(event);
-        else if (event->category == Event::Category::Key)
+        else if (event->category == Event::Category::Keyboard)
             handleKeyboardEvent(event);
         else if (event->category == Event::Category::Mouse)
             handleMouseEvent(event);

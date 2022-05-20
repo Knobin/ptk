@@ -43,7 +43,7 @@ namespace pTK
         {
             NONE = 0,
             Window,
-            Key,
+            Keyboard,
             Mouse
         };
 

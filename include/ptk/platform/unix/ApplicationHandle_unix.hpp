@@ -42,10 +42,10 @@ namespace pTK
 
     public:
         // TODO: Add documentation.
-        static Display *Display();
+        static ::Display *Display();
 
         // TODO: Add documentation.
-        static XContext Context();
+        static ::XContext Context();
 
         // TODO: Add documentation.
         static ::Window Root();

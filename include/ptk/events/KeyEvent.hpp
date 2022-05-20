@@ -50,8 +50,8 @@ namespace pTK
             @param code     associated keycode
             @return         default initialized KeyEvent
         */
-        KeyEvent(Event::Type type, KeyCode code, uint32 ch, std::underlying_type<KeyEvent::Modifier>::type mod = 0)
-            : Event(Event::Category::Key, type), keycode{ code }, data{ ch }, modifier{ mod }
+        KeyEvent(Event::Type t_type, KeyCode code, uint32 ch, std::underlying_type<KeyEvent::Modifier>::type mod = 0)
+            : Event(Event::Category::Keyboard, t_type), keycode{code}, data{ch}, modifier{mod}
         {}
 
         /** Constructs KeyEvent with default values with type and code.
@@ -60,8 +60,8 @@ namespace pTK
             @param code     associated keycode
             @return         default initialized KeyEvent
         */
-        KeyEvent(Event::Type type, KeyCode code, uint32 ch, Text::Encoding enc, std::underlying_type<KeyEvent::Modifier>::type mod = 0)
-            : Event(Event::Category::Key, type), keycode{ code }, data{ ch }, encoding{ enc }, modifier{ mod }
+        KeyEvent(Event::Type t_type, KeyCode code, uint32 ch, Text::Encoding enc, std::underlying_type<KeyEvent::Modifier>::type mod = 0)
+            : Event(Event::Category::Keyboard, t_type), keycode{code}, data{ch}, encoding{enc}, modifier{mod}
         {}
 
         // Key code.
@@ -97,7 +97,7 @@ namespace pTK
             @return         default initialized KeyEvent
         */
         InputEvent(std::unique_ptr<uint32[]>& arr, std::size_t count, Text::Encoding enc = Text::Encoding::UTF8)
-            : Event(Event::Category::Key, Event::Type::KeyInput), data(std::move(arr)), size{count}, encoding(enc)
+            : Event(Event::Category::Keyboard, Event::Type::KeyInput), data(std::move(arr)), size{count}, encoding(enc)
         {}
 
         // Contains array of characters.

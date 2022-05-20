@@ -8,6 +8,9 @@
 // pTK Headers
 #include "ptk/widgets/HBox.hpp"
 
+// C++ Headers
+#include <limits>
+
 namespace pTK
 {
     HBox::HBox()
@@ -72,6 +75,7 @@ namespace pTK
 
         setSize(layoutSize); // this will generate a Resize event.
         const size_type children{container().size()};
+        constexpr int int_max = std::numeric_limits<int>::max();
         for (size_type i{0}; i < children; ++i)
         {
             auto child = at(i);
@@ -85,9 +89,12 @@ namespace pTK
             if (child->getSize() != cSize)
                 child->setSize(cSize);
             Margin cMargin{child->getMargin()};
-            vbPos.x += cMargin.left;
+            cMargin.left = (cMargin.left > static_cast<Margin::value_type>(int_max)) ? int_max : cMargin.left;
+            cMargin.right = (cMargin.right > static_cast<Margin::value_type>(int_max)) ? int_max : cMargin.right;
+
+            vbPos.x += static_cast<Point::value_type>(cMargin.left);
             child->setPosHint(Point(vbPos.x, vbPos.y + alignChildV(i, vbSize, cSize)));
-            vbPos.x += cSize.width + cMargin.right;
+            vbPos.x += static_cast<Point::value_type>(cSize.width) + static_cast<Point::value_type>(cMargin.right);
         }
     }
 
@@ -160,18 +167,21 @@ namespace pTK
 
         // Set sizes to children.
         Point vbPos{getPosition()};
+        constexpr int int_max = std::numeric_limits<int>::max();
         for (size_type i{0}; i != children; i++)
         {
             auto child{at(i)};
             Size cSize{sizes.at(i)};
-            const Margin cMargin{child->getMargin()};
+            Margin cMargin{child->getMargin()};
+            cMargin.left = (cMargin.left > static_cast<Margin::value_type>(int_max)) ? int_max : cMargin.left;
+            cMargin.right = (cMargin.right > static_cast<Margin::value_type>(int_max)) ? int_max : cMargin.right;
             cSize.height -= static_cast<Size::value_type>(cMargin.top + cMargin.bottom);
             cSize.width -= static_cast<Size::value_type>(cMargin.left + cMargin.right);
-            vbPos.x += cMargin.left + spaces.at(i);
+            vbPos.x += static_cast<Point::value_type>(cMargin.left) + static_cast<Point::value_type>(spaces.at(i));
             if (child->getSize() != cSize)
                 child->setSize(cSize);
             child->setPosHint(Point(vbPos.x, vbPos.y + alignChildV(i, vbSize, cSize)));
-            vbPos.x += cSize.width + cMargin.right;
+            vbPos.x += static_cast<Point::value_type>(cSize.width) + static_cast<Point::value_type>(cMargin.right);
         }
     }
 

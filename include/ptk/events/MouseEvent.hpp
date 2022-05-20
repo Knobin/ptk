@@ -90,8 +90,8 @@ namespace pTK
             @param t_pos        associated x and y
             @return             default initialized ButtonEvent
         */
-        ButtonEvent(Event::Type type, Mouse::Button t_button, const Point& t_pos)
-            : Event(Event::Category::Mouse, type),
+        ButtonEvent(Event::Type t_type, Mouse::Button t_button, const Point& t_pos)
+            : Event(Event::Category::Mouse, t_type),
                 button{t_button}, pos{t_pos}
         {
 

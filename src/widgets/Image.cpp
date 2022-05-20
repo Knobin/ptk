@@ -38,8 +38,9 @@ namespace pTK
             {
                 PTK_INFO("Created image from \"{}\" successfully.", path);
                 m_path = path;
-                setSize(Size(static_cast<Size::value_type>(m_image->width()*m_scale.x),
-                            static_cast<Size::value_type>(m_image->height()*m_scale.y)));
+                const float w = static_cast<float>(m_image->width()) * m_scale.x;
+                const float h = static_cast<float>(m_image->height()) * m_scale.y;
+                setSize(Size(static_cast<Size::value_type>(w), static_cast<Size::value_type>(h)));
                 return true;
             }
         }
@@ -92,14 +93,11 @@ namespace pTK
         if (y > 0.0f)
             m_scale.y = y;
 
-        m_scale = {x, y};
-
         if (m_image)
         {
-            Size size;
-            size.width  = static_cast<Size::value_type>(m_image->width()*x);
-            size.height = static_cast<Size::value_type>(m_image->height()*y);
-            setSize(size);
+            const float w = static_cast<float>(m_image->width()) * m_scale.x;
+            const float h = static_cast<float>(m_image->height()) * m_scale.y;
+            setSize(Size{static_cast<Size::value_type>(w), static_cast<Size::value_type>(h)});
         }
     }
 }

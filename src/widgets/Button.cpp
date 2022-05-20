@@ -52,8 +52,10 @@ namespace pTK
         const Size textSize{m_text->getSize()};
         const Size rectSize{getSize()};
         Point textPos{pos};
-        textPos.x += ((rectSize.width - textSize.width) / 2);
-        textPos.y += ((rectSize.height - textSize.height) / 2);
+        const float x = static_cast<float>(rectSize.width - textSize.width) / 2.0f;
+        const float y = static_cast<float>(rectSize.height - textSize.height) / 2.0f;
+        textPos.x += static_cast<Point::value_type>(x);
+        textPos.y += static_cast<Point::value_type>(y);
         m_labelPos = textPos;
         Widget::setPosHint(pos);
         m_text->setPosHint(textPos);
@@ -80,7 +82,7 @@ namespace pTK
             if ((wSize.width > bSize.width) || (wSize.height > bSize.height))
             {
                 // Apparently, this looks good.
-                const Size::value_type dMargin{static_cast<Size::value_type>(static_cast<float>(m_borderSize*2.0f))};
+                const Size::value_type dMargin{static_cast<Size::value_type>(static_cast<float>(m_borderSize)*2.0f)};
                 const Size::value_type hMargin{((bSize.height - wSize.height) > dMargin) ? 0 : dMargin};
                 const Size::value_type wMargin{((bSize.width - wSize.width) > dMargin) ? 0 : dMargin};
                 wSize.width = ((wSize.width > bSize.width) ? wSize.width : bSize.width) + (wMargin);
@@ -92,8 +94,12 @@ namespace pTK
             {
                 Point pos{getPosition()};
                 const Size textSize{m_text->getSize()};
-                pos.x += ((bSize.width - textSize.width) / 2);
-                pos.y += ((bSize.height - textSize.height) / 2);
+
+                const float x = static_cast<float>(bSize.width - textSize.width) / 2.0f;
+                const float y = static_cast<float>(bSize.height - textSize.height) / 2.0f;
+                pos.x += static_cast<Point::value_type>(x);
+                pos.y += static_cast<Point::value_type>(y);
+
                 m_labelPos = pos;
                 m_text->setPosHint(pos);
             }
@@ -259,8 +265,8 @@ namespace pTK
     void Button::setBounds()
     {
         Vec2f textBounds{m_text->getBoundsFromStr(getText())};
-        textBounds.y += 2*m_borderSize;
-        textBounds.x += 2*m_borderSize;
+        textBounds.y += 2.0f * static_cast<float>(m_borderSize);
+        textBounds.x += 2.0f * static_cast<float>(m_borderSize);
 
         const Size sizeBounds = Vec2ToSize(textBounds, Math::ceilf);
         setMinSize(sizeBounds);
