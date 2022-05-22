@@ -18,8 +18,6 @@
 
 namespace pTK
 {
-    class Window;
-
     /** WindowHandle_mac class implementation.
 
         This class handles the macOS Cocoa Window.
@@ -194,7 +192,7 @@ namespace pTK
         void init(const std::string& name, const Size& size, const WindowInfo& flags);
 
         template<typename Event>
-        friend void EventSendHelper(Window*, const Event&);
+        friend void EventSendHelper(WindowHandle_mac*, const Event&);
 
     private:
         std::unique_ptr<ContextBase> m_context{nullptr};

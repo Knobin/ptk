@@ -38,7 +38,7 @@ namespace pTK
     // to get around that issue. Maybe another way is better in the future, but this works
     // for now. This must be done since all macOS callbacks must be in a Objective-C interface.
     template<typename Event>
-    void EventSendHelper(Window *window, const Event& evt)
+    void EventSendHelper(WindowHandle_mac* window, const Event& evt)
     {
         window->iHandleEvent<Event>(evt);
     }
@@ -48,16 +48,16 @@ namespace pTK
 
 @interface WindowDelegate : NSObject<NSWindowDelegate>
 {
-    pTK::Window *ptkWindow;
+    pTK::WindowHandle_mac *ptkWindow;
 }
 
-- (WindowDelegate*)initWithWindow:(pTK::Window*)pWindow;
+- (WindowDelegate*)initWithWindow:(pTK::WindowHandle_mac*)pWindow;
 
 @end
 
 @implementation WindowDelegate
 
-- (WindowDelegate*)initWithWindow:(pTK::Window*)pWindow
+- (WindowDelegate*)initWithWindow:(pTK::WindowHandle_mac*)pWindow
 {
     self = [super init];
     if (self != nil)
@@ -70,7 +70,6 @@ namespace pTK
 
 - (BOOL)windowShouldClose:(NSWindow*) __unused sender
 {
-    PTK_INFO("- (BOOL)windowShouldClose:(NSWindow*) __unused sender");
     pTK::CloseEvent evt{};
     pTK::EventSendHelper<pTK::CloseEvent>(ptkWindow, evt);
 
@@ -79,7 +78,6 @@ namespace pTK
 
 - (void)windowDidResize:(NSNotification*) __unused notification
 {
-    PTK_INFO("- (void)windowDidResize:(NSNotification*) __unused notification");
     NSWindow *window = static_cast<NSWindow*>(ptkWindow->handle());
     const NSRect rect = [window.contentView bounds];
     const pTK::Size size{static_cast<pTK::Size::value_type>(rect.size.width),
@@ -125,12 +123,12 @@ namespace pTK
 
 @interface MainView : NSView
 {
-    pTK::Window *ptkWindow;
+    pTK::WindowHandle_mac *ptkWindow;
     std::underlying_type<pTK::KeyEvent::Modifier>::type modsPressed;
     NSTrackingArea *trackingArea;
 }
 
-- (MainView*)initWithWindow:(pTK::Window*)initWindow;
+- (MainView*)initWithWindow:(pTK::WindowHandle_mac*)initWindow;
 
 @end
 
@@ -164,7 +162,7 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 
 @implementation MainView
 
-- (MainView*)initWithWindow:(pTK::Window*)initWindow
+- (MainView*)initWithWindow:(pTK::WindowHandle_mac*)initWindow
 {
     self = [super init];
     if (self != nil) {
@@ -294,7 +292,6 @@ static bool IsValid(uint32 data)
     std::underlying_type<pTK::KeyEvent::Modifier>::type mods{GetModifiers(event.modifierFlags)};
     pTK::KeyEvent evt{pTK::Event::Type::KeyReleased, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode)), mods};
     pTK::EventSendHelper<pTK::KeyEvent>(ptkWindow, evt);
-    // ptkWindow->parent()->sendEvent(&evt);
 }
 
 - (void)flagsChanged:(NSEvent *)event
@@ -403,7 +400,7 @@ namespace pTK
     void WindowHandle_mac::init(const std::string& name, const Size& size, const WindowInfo& flags)
     {
         @autoreleasepool {
-            WindowDelegate *winDelegate = [[WindowDelegate alloc] initWithWindow:static_cast<Window*>(this)];
+            WindowDelegate *winDelegate = [[WindowDelegate alloc] initWithWindow:this];
 
             // Default is currently MainDisplay (where 0,0 is), could cause some headaches later on.
             // Same with setPosHint, don't have a secondary monitor to test on right now.
@@ -415,7 +412,7 @@ namespace pTK
             NSWindow *nswindow = [[NSWindow alloc] initWithContentRect:rect styleMask:style backing:NSBackingStoreBuffered defer:NO];
             m_NSWindow = static_cast<void*>(nswindow);
 
-            MainView *view = [[MainView alloc] initWithWindow:static_cast<Window*>(this)];
+            MainView *view = [[MainView alloc] initWithWindow:this];
             if (view == nil)
                 throw WindowError("Failed to allocate Mainview");
 
@@ -541,7 +538,8 @@ namespace pTK
                 [nswindow close];
                 nswindow = nil;
                 m_NSWindow = nullptr;
-                Application::Get()->removeWindow(static_cast<Window*>(this));
+                if (auto win = dynamic_cast<Window*>(this))
+                    Application::Get()->removeWindow(win);
             }
 
             PTK_INFO("bool WindowHandle_mac::close()");
