@@ -22,17 +22,17 @@ namespace pTK
     // to get around that issue. Maybe another way is better in the future, but this works
     // for now.
     template<typename Event>
-    void EventSendHelper(Window* window, const Event& evt)
+    void EventSendHelper(WindowHandle_unix* window, const Event& evt)
     {
         window->iHandleEvent<Event>(evt);
     }
 
-    Size& WindowLastSize(Window* window)
+    Size& WindowLastSize(WindowHandle_unix* window)
     {
         return window->m_lastSize;
     }
 
-    Point& WindowLastPos(Window* window)
+    Point& WindowLastPos(WindowHandle_unix* window)
     {
         return window->m_lastPos;
     }
@@ -200,7 +200,7 @@ namespace pTK
     {
         PTK_ASSERT(event, "Undefined XEvent!");
 
-        Window *window{nullptr};
+        WindowHandle_unix *window{nullptr};
         if (XFindContext(s_appData.display, event->xany.window, s_appData.xcontext, reinterpret_cast<XPointer*>(&window)) != 0)
             return;
 
@@ -215,7 +215,8 @@ namespace pTK
             case DestroyNotify:
             {
                 window->handleEvents(); // Handle all events before sending close event.
-                Application::Get()->removeWindow(window); // Remove window from Application.
+                if (auto win = dynamic_cast<Window*>(window))
+                    Application::Get()->removeWindow(win); // Remove window from Application.
                 break;
             }
             case ClientMessage:
@@ -316,8 +317,6 @@ namespace pTK
             }
             case ConfigureNotify:
             {
-                // WindowHandle_unix *uWindow = static_cast<WindowHandle_unix*>(window);
-
                 // Size change
                 Size& wSize{WindowLastSize(window)};
                 if (static_cast<Size::value_type>(event->xconfigure.width) != wSize.width
@@ -325,9 +324,7 @@ namespace pTK
                 {
                     wSize.width = static_cast<Size::value_type>(event->xconfigure.width);
                     wSize.height = static_cast<Size::value_type>(event->xconfigure.height);
-
                     EventSendHelper<ResizeEvent>(window, ResizeEvent{wSize});
-                    // window->forceDrawAll();
 
                 }
 
@@ -337,8 +334,7 @@ namespace pTK
                 {
                     wPos.x = static_cast<Point::value_type>(event->xconfigure.x);
                     wPos.y = static_cast<Point::value_type>(event->xconfigure.y);
-
-                    // EventSendHelper<MoveEvent>(window, MoveEvent{wPos});
+                    EventSendHelper<MoveEvent>(window, MoveEvent{wPos});
                 }
 
                 break;

@@ -19,8 +19,6 @@
 
 namespace pTK
 {
-    class Window;
-
     /** MainWindow_unix class implementation.
 
         This class handles the Windows Window.
@@ -192,10 +190,10 @@ namespace pTK
         std::pair<unsigned long, unsigned char*> getWindowProperty(Atom property, Atom type) const;
 
         template<typename Event>
-        friend void EventSendHelper(Window*, const Event&);
+        friend void EventSendHelper(WindowHandle_unix*, const Event&);
 
-        friend Size& WindowLastSize(Window*);
-        friend Point& WindowLastPos(Window*);
+        friend Size& WindowLastSize(WindowHandle_unix*);
+        friend Point& WindowLastPos(WindowHandle_unix*);
 
     private:
         std::unique_ptr<ContextBase> m_context;
