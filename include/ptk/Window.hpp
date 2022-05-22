@@ -56,7 +56,7 @@ namespace pTK
         /** Function for handling the window events.
 
         */
-        void handleEvents();
+        void handleEvents() override;
 
         /** Function for sending events to the window to
             be handled directly.

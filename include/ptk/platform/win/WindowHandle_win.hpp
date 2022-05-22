@@ -23,8 +23,6 @@
 
 namespace pTK
 {
-    class Window;
-
     /** MainWindow_win class implementation.
 
         This class handles the Windows Window.
@@ -216,7 +214,7 @@ namespace pTK
         // Data struct that the static Win32 functions can manipulate freely.
         struct Data
         {
-            Window* window{ nullptr };
+            WindowHandle_win* window{nullptr};
             bool minimized{ false };
             uint wait{ 0 };
             MenuBarUtil_win::MenuMap menuItems{};
@@ -227,7 +225,7 @@ namespace pTK
 
     private:
         template<typename Event>
-        friend void EventSendHelper(Window*, const Event&);
+        friend void EventSendHelper(WindowHandle_win*, const Event&);
 
     private:
         HWND m_hwnd;

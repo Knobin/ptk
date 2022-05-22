@@ -183,6 +183,9 @@ namespace pTK
         */
         virtual bool setScaleHint(const Vec2f& UNUSED(scale)) { return true; }
 
+        // Gets called when the window needs to handle (if any) posted events.
+        virtual void handleEvents() = 0;
+
     protected:
         // Use this function to send events.
         template<typename Event>

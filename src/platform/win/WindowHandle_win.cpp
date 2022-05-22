@@ -38,7 +38,7 @@ namespace pTK
     // for now. This must be done since the win32 WndPro is a static function and only a
     // pointer to window can be used (in this implementation anyway).
     template<typename Event>
-    void EventSendHelper(Window* window, const Event& evt)
+    void EventSendHelper(WindowHandle_win* window, const Event& evt)
     {
         window->iHandleEvent<Event>(evt);
     }
@@ -92,7 +92,7 @@ namespace pTK
     WindowHandle_win::WindowHandle_win(const std::string& name, const Size& size, const WindowInfo& flags)
         : WindowHandle(size)
     {
-        m_data.window = static_cast<Window*>(this);
+        m_data.window = this;
 
         // Menubar.
         m_data.hasMenu = (static_cast<bool>(flags.menus) && !flags.menus->empty());
@@ -128,7 +128,6 @@ namespace pTK
             case WindowInfo::Visibility::Windowed:
             {
                 ::ShowWindow(m_hwnd, SW_SHOW);
-                ::UpdateWindow(m_hwnd);
                 break;
             }
             case WindowInfo::Visibility::Hidden:
@@ -179,8 +178,7 @@ namespace pTK
     {
         RECT rc{};
         if (::GetWindowRect(m_hwnd, &rc))
-            if (::MoveWindow(m_hwnd, pos.x, pos.y, rc.right - rc.left, rc.bottom - rc.top, FALSE))
-                ; // Maybe send an event here? MoveEvent?
+            ::MoveWindow(m_hwnd, pos.x, pos.y, rc.right - rc.left, rc.bottom - rc.top, FALSE);
     }
 
     void WindowHandle_win::beginPaint()
@@ -312,8 +310,8 @@ namespace pTK
 
     void WindowHandle_win::show()
     {
-        if (!::ShowWindow(m_hwnd, SW_SHOW))
-            ; // Send a draw event here? PainEvent?  forceDrawAll();
+        ::ShowWindow(m_hwnd, SW_SHOW);
+        EventSendHelper<PaintEvent>(this, {{0,0}, getSize()});
     }
 
     void WindowHandle_win::hide()
@@ -403,35 +401,36 @@ namespace pTK
         return m_accelTable;
     }
 
-    static void HandleMouseClick(WindowHandle_win::Data* data, const Vec2f& scale,  Event::Type type,
+    static void HandleMouseClick(WindowHandle_win* window, const Vec2f& scale,  Event::Type type,
                                     Mouse::Button btn, LPARAM lParam)
     {
-        if (data->window)
-        {
-            const Point pos{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
-            const Point scaledPos{static_cast<Point::value_type>(pos.x * (1 / scale.x)),
-                                static_cast<Point::value_type>(pos.y * (1 / scale.y))};
+        PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
 
-            if (type == Event::Type::MouseButtonPressed)
-            {
-                ClickEvent evt{ btn, scaledPos };
-                EventSendHelper<ClickEvent>(data->window, evt);
-            }
-            else if (type == Event::Type::MouseButtonReleased)
-            {
-                ReleaseEvent evt{ btn, scaledPos };
-                EventSendHelper<ReleaseEvent>(data->window, evt);
-            }
+        const Point pos{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+        const Point scaledPos{static_cast<Point::value_type>(pos.x * (1 / scale.x)),
+                            static_cast<Point::value_type>(pos.y * (1 / scale.y))};
+
+        if (type == Event::Type::MouseButtonPressed)
+        {
+            ClickEvent evt{ btn, scaledPos };
+            EventSendHelper<ClickEvent>(window, evt);
+        }
+        else if (type == Event::Type::MouseButtonReleased)
+        {
+            ReleaseEvent evt{ btn, scaledPos };
+            EventSendHelper<ReleaseEvent>(window, evt);
         }
     }
 
-    static void HandleDPIChange(WindowHandle_win::Data* data, WPARAM wParam, LPARAM lParam)
+    static void HandleDPIChange(WindowHandle_win* window, WPARAM wParam, LPARAM lParam)
     {
+        PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
+
         // Change Window position.
         RECT* rect = reinterpret_cast<RECT*>(lParam);
         MoveEvent mEvt{{static_cast<Point::value_type>(rect->left),
                            static_cast<Point::value_type>(rect->top)}};
-        EventSendHelper<MoveEvent>(data->window, mEvt);
+        EventSendHelper<MoveEvent>(window, mEvt);
 
         // Scale Window.
         const uint32 dpiX{static_cast<uint32>(GET_X_LPARAM(wParam))};
@@ -439,18 +438,17 @@ namespace pTK
         const Vec2f scale{dpiX / 96.0f, dpiY / 96.0f};
         PTK_INFO("DPI CHANGED {0}x{1} SCALING {2:0.2f}x{3:0.2f}", dpiX, dpiY, scale.x, scale.y);
         ScaleEvent sEvt{scale};
-        EventSendHelper<ScaleEvent>(data->window, sEvt);
+        EventSendHelper<ScaleEvent>(window, sEvt);
     }
 
-    static void HandleWindowLimits(WindowHandle_win::Data* data, LPARAM lParam, const Vec2f& scale, bool hasMenu, DWORD style)
+    static void HandleWindowLimits(WindowHandle_win* window, LPARAM lParam, const Vec2f& scale, bool hasMenu, DWORD style)
     {
-        Window *window{data->window};
+        PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
+
         LPMINMAXINFO lpMMI{reinterpret_cast<LPMINMAXINFO>(lParam)};
         const Size minSize{window->getMinSize()};
-        // WindowHandle_win* backend{static_cast<WindowHandle_win*>(window->getHandle())};
-        Window *backend{data->window};
         const Size adjMinSize{CalcAdjustedWindowSize(ScaleSize(minSize, scale),
-                                                     backend->getWindowStyle(), hasMenu, scale.x * 96.0f)};
+                                                     window->getWindowStyle(), hasMenu, scale.x * 96.0f)};
         lpMMI->ptMinTrackSize.x = adjMinSize.width;
         lpMMI->ptMinTrackSize.y = adjMinSize.height;
         const Size maxSize{window->getMaxSize()};
@@ -468,36 +466,39 @@ namespace pTK
         }
     }
 
-    static void HandleWindowMinimize(WindowHandle_win::Data* data, bool minimize)
+    static void HandleWindowMinimize(WindowHandle_win* window, WindowHandle_win::Data* data, bool minimize)
     {
+        PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
+        PTK_ASSERT(data, "WindowHandle_win data pointer is undefined");
+
         data->minimized = minimize;
 
         if (minimize)
-            EventSendHelper<MinimizeEvent>(data->window, {});
+            EventSendHelper<MinimizeEvent>(window, {});
         else
-            EventSendHelper<RestoreEvent>(data->window, {});
+            EventSendHelper<RestoreEvent>(window, {});
     }
 
-    static void HandleWindowResize(WindowHandle_win::Data* data, WindowHandle *backend, HWND hwnd)
+    static void HandleWindowResize(WindowHandle_win* window, WindowHandle_win::Data* data, HWND hwnd)
     {
+        PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
+        PTK_ASSERT(data, "WindowHandle_win data pointer is undefined");
+
         RECT rc{};
         if (::GetClientRect(hwnd, &rc) && (rc.right != 0 && rc.bottom != 0))
         {
-            const Vec2f scale = backend->getDPIScale();
-            const Size size = backend->getWinSize();
+            const Vec2f scale = window->getDPIScale();
+            const Size size = window->getWinSize();
             if (static_cast<Size::value_type>(rc.right) != size.width ||
                 static_cast<Size::value_type>(rc.bottom) != size.height)
             {
-                if (backend)
-                {
-                    const Size rsize{static_cast<Size::value_type>(rc.right),
-                                    static_cast<Size::value_type>(rc.bottom)};
-                    ResizeEvent evt{ScaleSize(rsize,
-                                              Vec2f{1.0f / scale.x,
-                                                    1.0f / scale.y})};
-                    data->ignoreSize = true;
-                    EventSendHelper<ResizeEvent>(data->window, evt);
-                }
+                const Size rsize{static_cast<Size::value_type>(rc.right),
+                                static_cast<Size::value_type>(rc.bottom)};
+                ResizeEvent evt{ScaleSize(rsize,
+                                            Vec2f{1.0f / scale.x,
+                                                1.0f / scale.y})};
+                data->ignoreSize = true;
+                EventSendHelper<ResizeEvent>(window, evt);
             }
         }
     }
@@ -552,8 +553,10 @@ namespace pTK
         return mods;
     }
 
-    static void HandleKeyEvent(Window *window, const Event::Type& type, WPARAM wParam, LPARAM lParam)
+    static void HandleKeyEvent(WindowHandle_win* window, const Event::Type& type, WPARAM wParam, LPARAM lParam)
     {
+        PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
+        
         KeyCode key{KeyMap::KeyCodeToKey(static_cast<int32>(wParam))};
         if (key == Key::Unknown)
         {
@@ -565,8 +568,10 @@ namespace pTK
         EventSendHelper<KeyEvent>(window, evt);
     }
 
-    static void HandleCharInput(Window* window, WPARAM wParam, LPARAM UNUSED(lParam))
+    static void HandleCharInput(WindowHandle_win* window, WPARAM wParam, LPARAM UNUSED(lParam))
     {
+        PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
+
         uint32 data{0};
 
         switch (wParam)
@@ -604,7 +609,9 @@ namespace pTK
         Data* data{reinterpret_cast<Data*>(GetWindowLongPtr(hwnd, GWLP_USERDATA))};
         if (!data)
             return ::DefWindowProcW(hwnd, msg, wParam, lParam);
-        Window* window{data->window};
+
+        WindowHandle_win* window = data->window;
+        PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
 
         switch (msg)
         {
@@ -618,7 +625,8 @@ namespace pTK
             }
             case WM_DESTROY:
             {
-                Application::Get()->removeWindow(window);
+                if (auto win = dynamic_cast<Window*>(window))
+                    Application::Get()->removeWindow(win);
                 ::PostQuitMessage(0);
                 break;
             }
@@ -634,9 +642,7 @@ namespace pTK
             }
             case WM_PAINT:
             {
-                if (window->visible())
-                    window->forceDrawAll();
-
+                EventSendHelper<PaintEvent>(window, {{0,0}, window->getSize()});
                 break;
             }
             case WM_CHAR:
@@ -668,15 +674,13 @@ namespace pTK
             case WM_LBUTTONDOWN:
             {
                 const Vec2f scale = window->getDPIScale();
-                HandleMouseClick(data, scale, Event::Type::MouseButtonPressed, Mouse::Button::Left,
-                    lParam);
+                HandleMouseClick(window, scale, Event::Type::MouseButtonPressed, Mouse::Button::Left, lParam);
                 break;
             }
             case WM_LBUTTONUP:
             {
                 const Vec2f scale = window->getDPIScale();
-                HandleMouseClick(data, scale, Event::Type::MouseButtonReleased, Mouse::Button::Left,
-                    lParam);
+                HandleMouseClick(window, scale, Event::Type::MouseButtonReleased, Mouse::Button::Left, lParam);
                 break;
             }
             case WM_SIZING:
@@ -685,7 +689,6 @@ namespace pTK
                 const Size size = {static_cast<Size::value_type>(rect->right - rect->left),
                                    static_cast<Size::value_type>(rect->bottom - rect->top)};
                 const Vec2f scale = window->getDPIScale();
-                // DWORD style = static_cast<WindowHandle_win*>(window->getHandle())->getWindowStyle();
                 DWORD style = window->getWindowStyle();
                 ResizeEvent evt{ScaleSize(CalcAdjustedReverseWindowSize(size, style, data->hasMenu, scale.x * 96.0f),
                                           Vec2f{1.0f / scale.x, 1.0f / scale.y})};
@@ -697,20 +700,18 @@ namespace pTK
             case WM_GETMINMAXINFO:
             {
                 const Vec2f scale = window->getDPIScale();
-                // DWORD style = static_cast<WindowHandle_win*>(window->getHandle())->getWindowStyle();
                 DWORD style = window->getWindowStyle();
-                HandleWindowLimits(data, lParam, scale, data->hasMenu, style);
+                HandleWindowLimits(window, lParam, scale, data->hasMenu, style);
                 break;
             }
             case WM_DPICHANGED:
             {
-                HandleDPIChange(data, wParam, lParam);
+                HandleDPIChange(window, wParam, lParam);
                 break;
             }
             case WM_WINDOWPOSCHANGED:
             {
                 WINDOWPOS* winData{reinterpret_cast<WINDOWPOS*>(lParam)};
-                Window* backend{ window };
 
                 // Window was moved.
                 if (!(winData->flags & SWP_NOMOVE))
@@ -721,17 +722,17 @@ namespace pTK
 
                 // Window was resized.
                 if (!(winData->flags & SWP_NOSIZE))
-                    HandleWindowResize(data, backend, hwnd);
+                    HandleWindowResize(window, data, hwnd);
 
                 // Window was shown.
-                if (!(winData->flags & SWP_SHOWWINDOW) && backend)
-                    if (!backend->isMinimized() && data->minimized)
-                        HandleWindowMinimize(data, false);
+                if (!(winData->flags & SWP_SHOWWINDOW))
+                    if (!window->isMinimized() && data->minimized)
+                        HandleWindowMinimize(window, data, false);
 
                 // Window was hidden.
-                if (!(winData->flags & SWP_HIDEWINDOW) && backend)
-                    if (backend->isMinimized() && !data->minimized)
-                        HandleWindowMinimize(data, true);
+                if (!(winData->flags & SWP_HIDEWINDOW))
+                    if (window->isMinimized() && !data->minimized)
+                        HandleWindowMinimize(window, data, true);
 
                 break;
             }
@@ -748,7 +749,7 @@ namespace pTK
             case WM_TIMER:
             {
                 if (wParam == 1)
-                    window->handleEvents();
+                  window->handleEvents();
                 break;
             }
             case WM_COMMAND:
