@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     // This is something optional to set, it can be used to identify the rectangle.
     rect->setName("My Rectangle");
 
-    // Set size, position amd corner radius.
+    // Set size, position and corner radius.
     rect->setSize(pTK::Size(250, 100));
     rect->setPosHint(pTK::Point(250, 250));
     rect->setCornerRadius(10);
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     // Callback for when the rectangle is clicked.
     rect->onClick([&rect](const pTK::ClickEvent&){
         std::cout << rect->getName() << " clicked!\n";
-        return true;
+        return false;
     });
 
     // Add the label to the window.

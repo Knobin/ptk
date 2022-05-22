@@ -29,12 +29,14 @@ int main(int argc, char *argv[])
     // Callback for when the label is clicked.
     label->onClick([&label](const pTK::ClickEvent&){
         std::cout << label->getName() << " clicked!\n";
-        return true;
+        return false;
     });
 
     // Add the label to the window.
     window.add(label);
 
+    // Enables rendering and shows the window.
+    window.show();
+
     return app.exec(&window);
 }
-
