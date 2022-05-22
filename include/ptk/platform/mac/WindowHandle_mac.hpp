@@ -181,12 +181,6 @@ namespace pTK
         */
         [[nodiscard]] void *handle() const;
 
-        /** Function for checking if the window is visible.
-
-            @return    status
-        */
-        bool visible() const override;
-
     private:
         /** Function for setting the size limits the window.
 

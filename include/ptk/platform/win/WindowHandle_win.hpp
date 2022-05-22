@@ -188,12 +188,6 @@ namespace pTK
         */
         bool setScaleHint(const Vec2f& scale) override;
 
-        /** Function for checking if the window is visible.
-
-            @return    status
-        */
-        [[nodiscard]] bool visible() const override;
-
         /** Function for retrieving HWND from the window.
 
             @return    HWND

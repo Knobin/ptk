@@ -320,15 +320,10 @@ namespace pTK
     {
         ::ShowWindow(m_hwnd, SW_HIDE);
     }
-
-    bool WindowHandle_win::visible() const
-    {
-        return static_cast<bool>(::IsWindowVisible(m_hwnd));
-    }
-
+    
     bool WindowHandle_win::isHidden() const
     {
-        return !visible();
+        return !static_cast<bool>(::IsWindowVisible(m_hwnd));
     }
 
     ContextBase* WindowHandle_win::getContext() const

@@ -575,7 +575,7 @@ namespace pTK
     {
         @autoreleasepool {
             NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
-            return [nswindow isVisible];;
+            return ![nswindow isVisible];
         }
     }
 
@@ -681,14 +681,6 @@ namespace pTK
     void *WindowHandle_mac::handle() const
     {
         return m_NSWindow;
-    }
-
-    bool WindowHandle_mac::visible() const
-    {
-        @autoreleasepool {
-            NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);
-            return [nswindow isVisible];
-        }
     }
 
 } // namespace pTK

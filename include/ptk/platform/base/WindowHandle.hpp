@@ -58,7 +58,7 @@ namespace pTK
 
             @return    status
         */
-        bool visible() const override { return false; }
+        [[nodiscard]] bool visible() const final { return !isHidden(); }
 
         /** Function for retrieving if the window is hidden.
 
@@ -181,8 +181,7 @@ namespace pTK
             @param scale    scale hint
             @return         true if operation is successful, otherwise false
         */
-        virtual bool setScaleHint(const Vec2f& UNUSED(scale)) {
-            return true;}
+        virtual bool setScaleHint(const Vec2f& UNUSED(scale)) { return true; }
 
     protected:
         // Use this function to send events.
