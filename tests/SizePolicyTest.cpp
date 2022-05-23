@@ -78,6 +78,23 @@ TEST_CASE ("Comparison")
     }
 }
 
+TEST_CASE("Predefined Types")
+{
+    SECTION("Fixed")
+    {
+        pTK::SizePolicy fixed{pTK::SizePolicy::Type::Fixed};
+        REQUIRE(fixed.horizontal == pTK::SizePolicy::Policy::Fixed);
+        REQUIRE(fixed.vertical == pTK::SizePolicy::Policy::Fixed);
+    }
+    
+    SECTION("Expanding")
+    {
+        pTK::SizePolicy expanding{ pTK::SizePolicy::Type::Expanding };
+        REQUIRE(expanding.horizontal == pTK::SizePolicy::Policy::Expanding);
+        REQUIRE(expanding.vertical == pTK::SizePolicy::Policy::Expanding);
+    }
+}
+
 TEST_CASE ("IsSizePolicyFlagSet")
 {
     using pTK::SizePolicy;
