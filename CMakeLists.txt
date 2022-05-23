@@ -138,6 +138,7 @@ endif (BUILD_EXAMPLES)
 
 # Tests
 if (BUILD_TESTS)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/Catch2)
     enable_testing()
     add_subdirectory(${CMAKE_SOURCE_DIR}/tests)
 endif (BUILD_TESTS)

@@ -1,6 +1,7 @@
-#define CATCH_CONFIG_MAIN
-#include "catch2/catch.hpp"
+// Catch2 Headers
+#include "catch2/catch_test_macros.hpp"
 
+// pTK Headers
 #include "ptk/util/Alignment.hpp"
 
 using align_utype = std::underlying_type<pTK::Align>::type;

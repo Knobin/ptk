@@ -1,6 +1,7 @@
-#define CATCH_CONFIG_MAIN
-#include "catch2/catch.hpp"
+// Catch2 Headers
+#include "catch2/catch_test_macros.hpp"
 
+// pTK Headers
 #include "ptk/core/Shape.hpp"
 
 TEST_CASE("Shape Constructors")
@@ -13,7 +14,7 @@ TEST_CASE("Shape Constructors")
         pTK::Color correctColors{0xf5f5f5ff};
         REQUIRE(s.getColor() == correctColors);
         REQUIRE(s.getOutlineColor() == correctColors);
-        REQUIRE(s.getOutlineThickness() == 0);
+        REQUIRE(s.getOutlineThickness() == 0.0f);
     }
 }
 
@@ -40,7 +41,7 @@ TEST_CASE("Shape Getters and Setters")
     {
         pTK::Shape s;
         s.setOutlineThickness(10.0f);
-        REQUIRE(s.getOutlineThickness() == 10);
+        REQUIRE(s.getOutlineThickness() == 10.0f);
     }
 }
 

@@ -1,8 +1,10 @@
-#define CATCH_CONFIG_MAIN
-#include "catch2/catch.hpp"
+// Catch2 Headers
+#include "catch2/catch_test_macros.hpp"
 
+// pTK Headers
 #include "ptk/util/Color.hpp"
 
+// C++ Headers
 #include <memory>
 #include <string>
 #include <vector>

@@ -1,6 +1,8 @@
-#define CATCH_CONFIG_MAIN
-#include "catch2/catch.hpp"
+// Catch2 Headers
+#include "catch2/catch_test_macros.hpp"
+#include "catch2/catch_template_test_macros.hpp"
 
+// pTK Headers
 #include "ptk/util/Vec2.hpp"
 
 TEMPLATE_TEST_CASE ("Vec2 Constructors", "[Vec2][template]", int, uint8_t, uint16_t, uint32_t, float, double)

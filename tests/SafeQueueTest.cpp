@@ -1,7 +1,7 @@
-#define CATCH_CONFIG_MAIN
-#include "catch2/catch.hpp"
+// Catch2 Headers
+#include "catch2/catch_test_macros.hpp"
 
-// Local Headers
+// pTK Headers
 #include "ptk/util/SafeQueue.hpp"
 
 TEST_CASE("Constructors")

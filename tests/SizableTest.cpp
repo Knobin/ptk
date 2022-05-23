@@ -7,9 +7,10 @@ std::ostream& operator<<(std::ostream& os, const pTK::Size& size) {
     return os;
 }
 
-#define CATCH_CONFIG_MAIN
-#include "catch2/catch.hpp"
+// Catch2 Headers
+#include "catch2/catch_test_macros.hpp"
 
+// pTK Headers
 #include "ptk/core/Sizable.hpp"
 
 /** Need to add more tests.
