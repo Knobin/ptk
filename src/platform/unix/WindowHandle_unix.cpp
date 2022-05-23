@@ -87,7 +87,7 @@ namespace pTK
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     WindowHandle_unix::WindowHandle_unix(const std::string& name, const Size& size, const WindowInfo& flags)
-        : WindowHandle(size) //, m_lastSize{size}
+        : WindowHandle(size, flags) //, m_lastSize{size}
     {
         ::Window root{App::Root()};
         Display *display{App::Display()};
@@ -214,7 +214,7 @@ namespace pTK
         return status;
     }
 
-    void WindowHandle_unix::onLimitChange(const Size& min, const Size& max)
+    void WindowHandle_unix::setWindowLimits(const Size& min, const Size& max)
     {
         XSizeHints *hints{XAllocSizeHints()};
         PTK_ASSERT(hints, "Unable to allocate memory for XSizeHints");

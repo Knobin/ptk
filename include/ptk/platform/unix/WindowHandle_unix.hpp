@@ -184,7 +184,7 @@ namespace pTK
             @param max  maximum size of the window
             @return     true if operation is successful, otherwise false
         */
-        void onLimitChange(const Size& min, const Size& max) override;
+        void setWindowLimits(const Size& min, const Size& max) override;
 
     private:
         std::pair<unsigned long, unsigned char*> getWindowProperty(Atom property, Atom type) const;
