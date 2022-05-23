@@ -11,6 +11,8 @@
 // pTK Headers
 #include "ptk/core/Types.hpp"
 #include "ptk/menu/MenuBar.hpp"
+#include "ptk/util/Point.hpp"
+#include "ptk/util/SizePolicy.hpp"
 
 namespace pTK
 {
@@ -53,6 +55,7 @@ namespace pTK
         Point position{100, 100};
         Visibility visibility{Visibility::Windowed};
         Ref<MenuBar> menus{nullptr};
+        SizePolicy sizePolicy{SizePolicy::Policy::Expanding, SizePolicy::Policy::Expanding};
     };
 }
 

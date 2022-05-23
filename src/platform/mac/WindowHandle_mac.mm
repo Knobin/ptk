@@ -386,7 +386,7 @@ namespace pTK
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     WindowHandle_mac::WindowHandle_mac(const std::string& name, const Size& size, const WindowInfo& flags)
-        : WindowHandle(size)
+        : WindowHandle(size, flags)
     {
         init(name, size, flags);
     }
@@ -609,7 +609,7 @@ namespace pTK
     }
 
 
-    void WindowHandle_mac::onLimitChange(const Size& min, const Size& max)
+    void WindowHandle_mac::setWindowLimits(const Size& min, const Size& max)
     {
         @autoreleasepool {
             NSWindow *nswindow = static_cast<NSWindow*>(m_NSWindow);

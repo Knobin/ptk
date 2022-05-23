@@ -184,9 +184,8 @@ namespace pTK
 
             @param min  minimal size of the window
             @param max  maximum size of the window
-            @return     true if operation is successful, otherwise false
         */
-        void onLimitChange(const Size& min, const Size& max) override;
+        void setWindowLimits(const Size& min, const Size& max) override;
 
     private:
         void init(const std::string& name, const Size& size, const WindowInfo& flags);

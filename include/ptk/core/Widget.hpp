@@ -14,6 +14,7 @@
 #include "ptk/core/Sizable.hpp"
 #include "ptk/util/Point.hpp"
 #include "ptk/util/Alignment.hpp"
+#include "ptk/util/SizePolicy.hpp"
 
 // C++ Headers
 #include <string>
@@ -98,6 +99,17 @@ namespace pTK
         [[nodiscard]] Size getOuterSize() const;
         [[nodiscard]] Size calcOuterFromSize(const Size& size) const;
 
+        /** Function for retrieving the SizePolicy of the Widget.
+
+        */
+        [[nodiscard]] SizePolicy getSizePolicy() const noexcept;
+
+        /** Function for setting the SizePolicy of the Widget.
+
+            @param  policy   policy to set
+        */
+        virtual void setSizePolicy(SizePolicy policy);
+
     protected:
         /** Function for updating the child.
 
@@ -137,6 +149,7 @@ namespace pTK
         Widget* m_parent;
         Point m_pos;
         std::string m_name;
+        SizePolicy m_sizePolicy{};
     };
 
     // Comparison operators.

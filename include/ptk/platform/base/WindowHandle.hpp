@@ -28,8 +28,9 @@ namespace pTK
     public:
         WindowHandle() = delete;
 
-        WindowHandle(const Size& size)
+        WindowHandle(const Size& size, const WindowInfo& flags)
         {
+            setSizePolicy(flags.sizePolicy);
             updateSize(size);
         }
 
@@ -186,6 +187,12 @@ namespace pTK
         // Gets called when the window needs to handle (if any) posted events.
         virtual void handleEvents() = 0;
 
+        void setSizePolicy(SizePolicy policy) final
+        {
+            Widget::setSizePolicy(policy);
+            setLimitsWithSizePolicy(getMinSize(), getMaxSize(), policy);
+        }
+
     protected:
         // Use this function to send events.
         template<typename Event>
@@ -195,13 +202,41 @@ namespace pTK
         // Gets called when drawing the window is needed (only from a window backend).
         virtual void draw(const PaintEvent&) = 0;
 
+        // Sets the new window limits based on the SizePolicy.
+        void setLimitsWithSizePolicy(const Size& min, const Size& max, SizePolicy policy)
+        {
+            Size nMin{min};
+            Size size{getSize()};
+            Size nMax{max};
+
+            if (policy.horizontal == SizePolicy::Policy::Fixed)
+            {
+                nMin.width = size.width;
+                nMax.width = size.width;
+            }
+
+            if (policy.vertical == SizePolicy::Policy::Fixed)
+            {
+                nMin.height = size.height;
+                nMax.height = size.height;
+            }
+
+            setWindowLimits(nMin, nMax);
+        }
+
         /** Callback for setting the size limits the window.
 
             @param min  minimal size of the window
             @param max  maximum size of the window
-            @return     true if operation is successful, otherwise false
         */
-        void onLimitChange(const Size& UNUSED(min), const Size& UNUSED(max)) override {}
+        void onLimitChange(const Size& min, const Size& max) final { setLimitsWithSizePolicy(min, max, getSizePolicy()); }
+
+        /** Function for setting the size limits the window.
+
+            @param min  minimal size of the window
+            @param max  maximum size of the window
+        */
+        virtual void setWindowLimits(const Size& UNUSED(min), const Size& UNUSED(max)) {}
     };
 
     // Default event that is not handled by the window.

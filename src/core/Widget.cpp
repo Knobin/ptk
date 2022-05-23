@@ -19,7 +19,7 @@ namespace pTK
 
     Widget::~Widget()
     {
-        
+
     }
 
     void Widget::setParent(Widget* parent)
@@ -114,6 +114,17 @@ namespace pTK
 
         return {AddWithoutOverflow(size.width, hMargin),
                 AddWithoutOverflow(size.height, vMargin)};
+    }
+
+    SizePolicy Widget::getSizePolicy() const noexcept
+    {
+        return m_sizePolicy;
+    }
+
+    void Widget::setSizePolicy(SizePolicy policy)
+    {
+        m_sizePolicy = policy;
+        update();
     }
 
     void Widget::onAlignChange(std::underlying_type<Align>::type)
