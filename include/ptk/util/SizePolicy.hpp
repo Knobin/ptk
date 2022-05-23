@@ -34,14 +34,14 @@ namespace pTK
     {
         enum PolicyFlag : byte
         {
-            NONE = 0,   // Size is fixed.
-            Grow = 1,   // Size can grow.
-            Shrink = 2  // Size can shrink.
+            Fixed = 1,  // Size is fixed.
+            Grow = 2,   // Size can grow.
+            Shrink = 4  // Size can shrink.
         };
 
         enum class Policy : std::underlying_type<PolicyFlag>::type
         {
-            Fixed = PolicyFlag::NONE, // Fixed size.
+            Fixed = PolicyFlag::Fixed, // Fixed size.
             Expanding = PolicyFlag::Grow | PolicyFlag::Shrink // Size can be altered (either shrink or grow).
         };
 
