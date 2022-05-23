@@ -49,6 +49,17 @@ namespace pTK
         Policy vertical{Policy::Fixed};
     };
 
+    // Comparison operators.
+    inline bool operator==(const SizePolicy& lhs, const SizePolicy& rhs) noexcept
+    {
+        return ((lhs.horizontal == rhs.horizontal) && (lhs.vertical == rhs.vertical));
+    }
+
+    inline bool operator!=(const SizePolicy& lhs, const SizePolicy& rhs) noexcept
+    {
+        return !(lhs == rhs);
+    }
+
     /** Function for checking if a specific PolicyFlag is set.
 
     */
