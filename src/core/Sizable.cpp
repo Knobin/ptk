@@ -48,7 +48,7 @@ namespace pTK
             onLimitChange(getMinSize(), getMaxSize());
     }
 
-    Size Sizable::getMinSize() const
+    Size Sizable::getMinSize() const noexcept
     {
         return m_minSize;
     }
@@ -70,7 +70,7 @@ namespace pTK
             onLimitChange(getMinSize(), getMaxSize());
     }
 
-    const Size& Sizable::getSize() const
+    const Size& Sizable::getSize() const noexcept
     {
         return m_size;
     }
@@ -93,9 +93,14 @@ namespace pTK
             onLimitChange(getMinSize(), getMaxSize());
     }
 
-    Size Sizable::getMaxSize() const
+    Size Sizable::getMaxSize() const noexcept
     {
         return m_maxSize;
+    }
+
+    void Sizable::setLimits(const Limits& limits)
+    {
+        setLimits(limits.min, limits.max);
     }
 
     void Sizable::setLimits(const Size& min, const Size& max)
@@ -115,6 +120,11 @@ namespace pTK
         // Signal a limit change.
         if ((s1 & 2) || ((s2 & 2)))
             onLimitChange(getMinSize(), getMaxSize());
+    }
+
+    Limits Sizable::getLimits() const noexcept
+    {
+        return {m_minSize, m_maxSize};
     }
 
     void Sizable::updateMinSize(const Size& size)

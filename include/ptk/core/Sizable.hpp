@@ -14,6 +14,17 @@
 
 namespace pTK
 {
+    /** Limits struct implementation.
+
+        Combines the limits (min and max) into 
+        an easy format to use.
+    */
+    struct Limits
+    {
+        Size min{Size::Min};
+        Size max{Size::Max};
+    };
+
     /** Sizable class implementation.
 
         Sizable class for handling size.
@@ -54,7 +65,7 @@ namespace pTK
 
             @return    minimal size
         */
-        [[nodiscard]] Size getMinSize() const;
+        [[nodiscard]] Size getMinSize() const noexcept;
 
         /** Function for setting size.
 
@@ -66,7 +77,7 @@ namespace pTK
 
             @return    size
         */
-        [[nodiscard]] const Size& getSize() const;
+        [[nodiscard]] const Size& getSize() const noexcept;
 
         /** Function for setting maximal size.
 
@@ -78,7 +89,13 @@ namespace pTK
 
             @return    maximal size
         */
-        [[nodiscard]] Size getMaxSize() const;
+        [[nodiscard]] Size getMaxSize() const noexcept;
+
+        /** Function for setting both minimal and maximal size.
+
+            @param limits    min size and max size
+        */
+        void setLimits(const Limits& limits);
 
         /** Function for setting both minimal and maximal size.
 
@@ -86,6 +103,12 @@ namespace pTK
             @param max    maximum size
         */
         void setLimits(const Size& min, const Size& max);
+
+        /** Function for getting the min and max size.
+
+            @return    min and max size
+        */
+        [[nodiscard]] Limits getLimits() const noexcept;
 
     private:
         /** Function for knowing when the size has been changed.
