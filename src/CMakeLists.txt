@@ -62,10 +62,6 @@ source_group(TREE "${CMAKE_SOURCE_DIR}/src" PREFIX "Source Files" FILES ${SOURCE
 add_library(${PROJECT_NAME} STATIC ${HEADER_FILES} ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/include")
 
-# Set runtime library to MT or MTd (Release / Debug)
-set_property(TARGET ${PROJECT_NAME} PROPERTY
-        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-
 # Compiler flags for ptk
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PUBLIC /permissive- /W4 /w14640)

@@ -20,8 +20,6 @@ function(define_test)
     if (TEST_PREFIX_NAME)
         if (TEST_PREFIX_FILES)
             add_executable(${TEST_PREFIX_NAME} ${TEST_PREFIX_FILES})
-            set_property(TARGET ${TEST_PREFIX_NAME} PROPERTY
-                    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
             if (TEST_PREFIX_LINKS)
                 target_link_libraries(${TEST_PREFIX_NAME} PRIVATE ${TEST_PREFIX_LINKS} Catch2::Catch2WithMain)
             else (TEST_PREFIX_LINKS)
