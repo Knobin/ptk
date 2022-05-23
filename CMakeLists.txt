@@ -139,6 +139,8 @@ endif (BUILD_EXAMPLES)
 # Tests
 if (BUILD_TESTS)
     add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/Catch2)
+    set_property(TARGET Catch2 Catch2WithMain PROPERTY
+            MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     enable_testing()
     add_subdirectory(${CMAKE_SOURCE_DIR}/tests)
 endif (BUILD_TESTS)
