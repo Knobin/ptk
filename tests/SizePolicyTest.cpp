@@ -77,3 +77,49 @@ TEST_CASE ("Comparison")
         REQUIRE_FALSE(p2 != p2);
     }
 }
+
+TEST_CASE ("IsSizePolicyFlagSet")
+{
+    using pTK::SizePolicy;
+    using policy_utype = std::underlying_type<SizePolicy::Policy>::type;
+
+    SECTION("Fixed")
+    {
+        SizePolicy::Policy fixed{SizePolicy::Policy::Fixed};
+
+        // (SizePolicy::Policy policy, Flags&&... flags)
+        REQUIRE(pTK::IsSizePolicyFlagSet(fixed, SizePolicy::PolicyFlag::Fixed));
+        REQUIRE_FALSE(pTK::IsSizePolicyFlagSet(fixed, SizePolicy::PolicyFlag::Fixed, SizePolicy::PolicyFlag::Grow));
+        REQUIRE_FALSE(pTK::IsSizePolicyFlagSet(fixed, SizePolicy::PolicyFlag::Grow));
+        REQUIRE_FALSE(pTK::IsSizePolicyFlagSet(fixed, SizePolicy::PolicyFlag::Shrink));
+        REQUIRE_FALSE(pTK::IsSizePolicyFlagSet(fixed, SizePolicy::PolicyFlag::Grow, SizePolicy::PolicyFlag::Shrink));
+
+        // (std::underlying_type<SizePolicy::Policy>::type policy, Flags&&... flags)
+        policy_utype f = static_cast<policy_utype>(fixed);
+        REQUIRE(pTK::IsSizePolicyFlagSet(f, SizePolicy::PolicyFlag::Fixed));
+        REQUIRE_FALSE(pTK::IsSizePolicyFlagSet(f, SizePolicy::PolicyFlag::Fixed, SizePolicy::PolicyFlag::Grow));
+        REQUIRE_FALSE(pTK::IsSizePolicyFlagSet(f, SizePolicy::PolicyFlag::Grow));
+        REQUIRE_FALSE(pTK::IsSizePolicyFlagSet(f, SizePolicy::PolicyFlag::Shrink));
+        REQUIRE_FALSE(pTK::IsSizePolicyFlagSet(f, SizePolicy::PolicyFlag::Grow, SizePolicy::PolicyFlag::Shrink));
+    }
+
+    SECTION("Expanding")
+    {
+        SizePolicy::Policy expanding{SizePolicy::Policy::Expanding};
+
+        // (SizePolicy::Policy policy, Flags&&... flags)
+        REQUIRE_FALSE(pTK::IsSizePolicyFlagSet(expanding, SizePolicy::PolicyFlag::Fixed));
+        REQUIRE_FALSE(pTK::IsSizePolicyFlagSet(expanding, SizePolicy::PolicyFlag::Fixed, SizePolicy::PolicyFlag::Grow));
+        REQUIRE(pTK::IsSizePolicyFlagSet(expanding, SizePolicy::PolicyFlag::Grow));
+        REQUIRE(pTK::IsSizePolicyFlagSet(expanding, SizePolicy::PolicyFlag::Shrink));
+        REQUIRE(pTK::IsSizePolicyFlagSet(expanding, SizePolicy::PolicyFlag::Grow, SizePolicy::PolicyFlag::Shrink));
+
+        // (std::underlying_type<SizePolicy::Policy>::type policy, Flags&&... flags)
+        policy_utype e = static_cast<policy_utype>(expanding);
+        REQUIRE_FALSE(pTK::IsSizePolicyFlagSet(e, SizePolicy::PolicyFlag::Fixed));
+        REQUIRE_FALSE(pTK::IsSizePolicyFlagSet(e, SizePolicy::PolicyFlag::Fixed, SizePolicy::PolicyFlag::Grow));
+        REQUIRE(pTK::IsSizePolicyFlagSet(e, SizePolicy::PolicyFlag::Grow));
+        REQUIRE(pTK::IsSizePolicyFlagSet(e, SizePolicy::PolicyFlag::Shrink));
+        REQUIRE(pTK::IsSizePolicyFlagSet(e, SizePolicy::PolicyFlag::Grow, SizePolicy::PolicyFlag::Shrink));
+    }
+}
