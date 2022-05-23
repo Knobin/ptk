@@ -32,6 +32,17 @@ namespace pTK
     */
     struct SizePolicy
     {
+        // Defines some common types of SizePolicy.
+        // For example, defining a fixed SizePolicy is done this way:
+        // SizePolicy p = {SizePolicy::Policy::Fixed, SizePolicy::Policy::Fixed};
+        // With these type this can instead be written as:
+        // SizePolicy p = SizePolicy::Type::Fixed;
+        struct Type
+        {
+            static const SizePolicy Fixed;
+            static const SizePolicy Expanding;
+        };
+
         enum PolicyFlag : byte
         {
             Fixed = 1,  // Size is fixed.
@@ -48,6 +59,9 @@ namespace pTK
         Policy horizontal{Policy::Fixed};
         Policy vertical{Policy::Fixed};
     };
+
+    inline const SizePolicy SizePolicy::Type::Fixed = { SizePolicy::Policy::Fixed , SizePolicy::Policy::Fixed };
+    inline const SizePolicy SizePolicy::Type::Expanding = { SizePolicy::Policy::Expanding , SizePolicy::Policy::Expanding };
 
     // Comparison operators.
     inline bool operator==(const SizePolicy& lhs, const SizePolicy& rhs) noexcept
