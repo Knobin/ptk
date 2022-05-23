@@ -43,6 +43,13 @@ namespace pTK
         window->iHandleEvent<Event>(evt);
     }
 
+    Limits GetWindowLimits(WindowHandle_win* window)
+    {
+        return window->getLimitsWithSizePolicy();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+
     static std::unique_ptr<ContextBase> CreateContextForWin32([[maybe_unused]] WindowInfo::Backend type, HWND hwnd,
                                                            const Size& size)
     {
@@ -90,7 +97,7 @@ namespace pTK
     ///////////////////////////////////////////////////////////////////////////////
 
     WindowHandle_win::WindowHandle_win(const std::string& name, const Size& size, const WindowInfo& flags)
-        : WindowHandle(size)
+        : WindowHandle(size, flags)
     {
         m_data.window = this;
 
@@ -350,7 +357,7 @@ namespace pTK
                 static_cast<Size::value_type>(rect.bottom - rect.top)};
     }
 
-    void WindowHandle_win::onLimitChange(const Size& min, const Size& max)
+    void WindowHandle_win::setWindowLimits(const Size& min, const Size& max)
     {
         PTK_INFO("Updating Window limits to: min: {}x{} max: {}x{}", min.width, min.height, max.width, max.height);
         RECT rect{};
@@ -446,16 +453,17 @@ namespace pTK
         PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
 
         LPMINMAXINFO lpMMI{reinterpret_cast<LPMINMAXINFO>(lParam)};
-        const Size minSize{window->getMinSize()};
-        const Size adjMinSize{CalcAdjustedWindowSize(ScaleSize(minSize, scale),
+        const Limits limits{GetWindowLimits(window)};
+
+        const Size adjMinSize{CalcAdjustedWindowSize(ScaleSize(limits.min, scale),
                                                      window->getWindowStyle(), hasMenu, scale.x * 96.0f)};
         lpMMI->ptMinTrackSize.x = adjMinSize.width;
         lpMMI->ptMinTrackSize.y = adjMinSize.height;
-        const Size maxSize{window->getMaxSize()};
-        if (maxSize != Size::Max)
+        
+        if (limits.max != Size::Max)
         {
             const Size adjMaxSize{CalcAdjustedWindowSize(
-                ScaleSize(maxSize, scale), style, hasMenu, scale.x * 96.0f)};
+                ScaleSize(limits.max, scale), style, hasMenu, scale.x * 96.0f)};
             lpMMI->ptMaxTrackSize.x = adjMaxSize.width;
             lpMMI->ptMaxTrackSize.y = adjMaxSize.height;
         }
@@ -464,6 +472,11 @@ namespace pTK
             lpMMI->ptMaxTrackSize.x = ::GetSystemMetrics(SM_CXMAXTRACK);
             lpMMI->ptMaxTrackSize.y = ::GetSystemMetrics(SM_CYMAXTRACK);
         }
+
+        if (limits.min == limits.max)
+            ::SetWindowLong(window->handle(), GWL_STYLE, GetWindowLong(window->handle(), GWL_STYLE) & ~WS_SIZEBOX);
+        else
+            ::SetWindowLong(window->handle(), GWL_STYLE, GetWindowLong(window->handle(), GWL_STYLE) | WS_SIZEBOX);
     }
 
     static void HandleWindowMinimize(WindowHandle_win* window, WindowHandle_win::Data* data, bool minimize)

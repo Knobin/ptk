@@ -206,9 +206,8 @@ namespace pTK
 
             @param min  minimal size of the window
             @param max  maximum size of the window
-            @return     true if operation is successful, otherwise false
         */
-        void onLimitChange(const Size& min, const Size& max) override;
+        void setWindowLimits(const Size& min, const Size& max) override;
 
     public:
         // Data struct that the static Win32 functions can manipulate freely.
@@ -226,6 +225,8 @@ namespace pTK
     private:
         template<typename Event>
         friend void EventSendHelper(WindowHandle_win*, const Event&);
+
+        friend Limits GetWindowLimits(WindowHandle_win*);
 
     private:
         HWND m_hwnd;

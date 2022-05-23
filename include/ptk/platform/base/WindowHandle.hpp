@@ -198,6 +198,16 @@ namespace pTK
         template<typename Event>
         void iHandleEvent(const Event& evt);
 
+        /** Function for retrieving the Limits of the WindowHandle based
+            on the SizePolicy.
+
+            @return     Limits based on SizePolicy
+        */
+        [[nodiscard]] Limits getLimitsWithSizePolicy() const noexcept
+        {
+            return getLimitsFromSP(getMinSize(), getMaxSize(), getSizePolicy());
+        }
+
     private:
         // Gets called when drawing the window is needed (only from a window backend).
         virtual void draw(const PaintEvent&) = 0;
@@ -205,23 +215,32 @@ namespace pTK
         // Sets the new window limits based on the SizePolicy.
         void setLimitsWithSizePolicy(const Size& min, const Size& max, SizePolicy policy)
         {
-            Size nMin{min};
+            Limits limits{getLimitsFromSP(min, max, policy)};
+            setWindowLimits(limits.min, limits.max);
+        }
+
+        // Gets the appropriate limits based on min, max size and the policy.
+        Limits getLimitsFromSP(const Size& min, const Size& max, SizePolicy policy) const noexcept
+        {
+            Limits limits{};
+            limits.min = min;
+            limits.max = max;
+
             Size size{getSize()};
-            Size nMax{max};
 
             if (policy.horizontal == SizePolicy::Policy::Fixed)
             {
-                nMin.width = size.width;
-                nMax.width = size.width;
+                limits.min.width = size.width;
+                limits.max.width = size.width;
             }
 
             if (policy.vertical == SizePolicy::Policy::Fixed)
             {
-                nMin.height = size.height;
-                nMax.height = size.height;
+                limits.min.height = size.height;
+                limits.max.height = size.height;
             }
 
-            setWindowLimits(nMin, nMax);
+            return limits;
         }
 
         /** Callback for setting the size limits the window.
