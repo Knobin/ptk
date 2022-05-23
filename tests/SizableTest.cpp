@@ -13,7 +13,7 @@ std::ostream& operator<<(std::ostream& os, const pTK::Size& size) {
 #include "ptk/core/Sizable.hpp"
 
 /** Need to add more tests.
- 
+
     Especially to the special cases section.
  */
 
@@ -22,22 +22,22 @@ std::ostream& operator<<(std::ostream& os, const pTK::Size& size) {
 TEST_CASE("Constructors")
 {
     // Testing Constructors with correct data.
-    
+
     SECTION("Sizable()")
     {
         pTK::Sizable sizable{};
         REQUIRE(sizable.getMinSize() == pTK::Size::Min);
         REQUIRE(sizable.getSize() == pTK::Size::Min);
-        REQUIRE(sizable.getMaxSize() == pTK::Size::Min);
+        REQUIRE(sizable.getMaxSize() == pTK::Size::Max);
     }
-    
+
     SECTION("Sizable(size)")
     {
         pTK::Size size(10, 20);
         pTK::Sizable sizable{size};
-        REQUIRE(sizable.getMinSize() == size);
+        REQUIRE(sizable.getMinSize() == pTK::Size::Min);
         REQUIRE(sizable.getSize() == size);
-        REQUIRE(sizable.getMaxSize() == size);
+        REQUIRE(sizable.getMaxSize() == pTK::Size::Max);
     }
 
     SECTION("Sizable(min, size, max)")
@@ -222,11 +222,11 @@ TEST_CASE("Copy and Assignment")
     size.setSize(s2);
     size.setMinSize(s1);
     size.setMaxSize(s3);
-    
+
     SECTION("Copy")
     {
         pTK::Sizable tmp = size;
-        
+
         REQUIRE(size.getMinSize() == s1);
         REQUIRE(size.getSize() == s2);
         REQUIRE(size.getMaxSize() == s3);
@@ -235,12 +235,12 @@ TEST_CASE("Copy and Assignment")
         REQUIRE(tmp.getSize() == s2);
         REQUIRE(tmp.getMaxSize() == s3);
     }
-    
+
     SECTION("Assignment")
     {
         pTK::Sizable tmp;
         tmp = size;
-        
+
         REQUIRE(size.getMinSize() == s1);
         REQUIRE(size.getSize() == s2);
         REQUIRE(size.getMaxSize() == s3);
@@ -261,7 +261,7 @@ TEST_CASE ("Comparison")
     size.setSize(s2);
     size.setMinSize(s1);
     size.setMaxSize(s3);
-    
+
     pTK::Sizable tmp = size;
     pTK::Sizable tmp2;
     pTK::Sizable tmp3;
@@ -282,7 +282,7 @@ TEST_CASE ("Comparison")
         REQUIRE_FALSE(size == tmp2);
         REQUIRE_FALSE(size == tmp3);
     }
-    
+
     SECTION("Not Equal")
     {
         REQUIRE(size != tmp2);
@@ -292,5 +292,3 @@ TEST_CASE ("Comparison")
         REQUIRE_FALSE(size != tmp5);
     }
 }
-
-
