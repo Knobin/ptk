@@ -13,6 +13,7 @@ namespace pTK
     WidgetContainer::WidgetContainer()
         : IterableSequence<Ref<Widget>>(), Widget()
     {
+        setSizePolicy(SizePolicy::Type::Expanding);
         initCallbacks();
     }
 
