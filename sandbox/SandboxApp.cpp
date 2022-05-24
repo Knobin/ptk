@@ -226,9 +226,9 @@ int main(int argc, char *argv[])
     sidebar->setAlign(pTK::Align::Left);
     sidebar->setBackground(pTK::Color(0x1B1B1BFF));
 
-    auto maxWidth = static_cast<pTK::Size::value_type>(sidebar->getMaxSize().width*0.85f);
-    auto marginLR = static_cast<pTK::Size::value_type>((sidebar->getMaxSize().width*0.15f) / 2.0f);
-    auto marginTB = static_cast<pTK::Size::value_type>(marginLR / 8.0f);
+    auto maxWidth = static_cast<pTK::Size::value_type>(static_cast<float>(sidebar->getMaxSize().width)*0.85f);
+    auto marginLR = static_cast<pTK::Size::value_type>((static_cast<float>(sidebar->getMaxSize().width)*0.15f) / 2.0f);
+    auto marginTB = static_cast<pTK::Size::value_type>(static_cast<float>(marginLR) / 8.0f);
     pTK::Margin marginF{marginLR + marginLR/2, marginTB*4, marginLR, marginLR};
     pTK::Margin margin{marginTB, marginTB, marginLR, marginLR};
 

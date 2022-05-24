@@ -14,7 +14,7 @@ TEST_CASE("Constructors")
         
         REQUIRE(rect.getColor() == pTK::Color(0xf5f5f5ff));
         REQUIRE(rect.getOutlineColor() == pTK::Color(0xf5f5f5ff));
-        REQUIRE(rect.getOutlineThickness() == 0);
+        REQUIRE(rect.getOutlineThickness() == 0.0f);
     }
 }
 
@@ -40,18 +40,18 @@ TEST_CASE("Getters and Setters")
     SECTION("outlineThickness")
     {
         pTK::Rectangle rect;
-        rect.setOutlineThickness(10);
-        REQUIRE(rect.getOutlineThickness() == 10);
+        rect.setOutlineThickness(10.0f);
+        REQUIRE(rect.getOutlineThickness() == 10.0f);
     }
     
     SECTION("cornerRadius")
     {
         pTK::Rectangle rect;
-        rect.setCornerRadius(10);
-        REQUIRE(rect.getCornerRadius() == 10);
+        rect.setCornerRadius(10.0f);
+        REQUIRE(rect.getCornerRadius() == 10.0f);
         
-        rect.setCornerRadius(-10);
-        REQUIRE(rect.getCornerRadius() == 10);
+        rect.setCornerRadius(-10.0f);
+        REQUIRE(rect.getCornerRadius() == 10.0f);
     }
 }
 
@@ -60,8 +60,8 @@ TEST_CASE("Copy and Assignment")
     // Testing Rectangle Copy and Assignment.
     pTK::Color  color{50, 100, 150, 200};
     pTK::Color  outlineColor{75, 125, 175, 225};
-    float       outlineThickness = 50;
-    float       cornerRadius = 10;
+    float       outlineThickness = 50.0f;
+    float       cornerRadius = 10.0f;
     
     pTK::Rectangle rect;
     rect.setColor(color);
@@ -94,8 +94,8 @@ TEST_CASE ("Comparison")
     // Testing Transformable Comparison.
     pTK::Color  color{50, 100, 150, 200};
     pTK::Color  outlineColor{75, 125, 175, 225};
-    float       outlineThickness = 50;
-    float       cornerRadius = 10;
+    float       outlineThickness = 50.0f;
+    float       cornerRadius = 10.0f;
     
     pTK::Rectangle rect;
     rect.setColor(color);
