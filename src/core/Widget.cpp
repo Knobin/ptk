@@ -127,6 +127,27 @@ namespace pTK
         update();
     }
 
+    Limits Widget::getLimitsWithSizePolicy() const noexcept
+    {
+        Limits limits{getLimits()};
+        const Size size{getSize()};
+        const SizePolicy policy{getSizePolicy()};
+
+        if (policy.horizontal == SizePolicy::Policy::Fixed)
+        {
+            limits.min.width = size.width;
+            limits.max.width = size.width;
+        }
+
+        if (policy.vertical == SizePolicy::Policy::Fixed)
+        {
+            limits.min.height = size.height;
+            limits.max.height = size.height;
+        }
+
+        return limits;
+    }
+
     void Widget::onAlignChange(std::underlying_type<Align>::type)
     {
         update();

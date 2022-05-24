@@ -187,10 +187,14 @@ namespace pTK
         // Gets called when the window needs to handle (if any) posted events.
         virtual void handleEvents() = 0;
 
+        /** Function for setting the SizePolicy of the Widget.
+
+            @param  policy   policy to set
+        */
         void setSizePolicy(SizePolicy policy) final
         {
             Widget::setSizePolicy(policy);
-            setLimitsWithSizePolicy(getMinSize(), getMaxSize(), policy);
+            setLimitsWithSizePolicy();
         }
 
     protected:
@@ -198,49 +202,15 @@ namespace pTK
         template<typename Event>
         void iHandleEvent(const Event& evt);
 
-        /** Function for retrieving the Limits of the WindowHandle based
-            on the SizePolicy.
-
-            @return     Limits based on SizePolicy
-        */
-        [[nodiscard]] Limits getLimitsWithSizePolicy() const noexcept
-        {
-            return getLimitsFromSP(getMinSize(), getMaxSize(), getSizePolicy());
-        }
-
     private:
         // Gets called when drawing the window is needed (only from a window backend).
         virtual void draw(const PaintEvent&) = 0;
 
         // Sets the new window limits based on the SizePolicy.
-        void setLimitsWithSizePolicy(const Size& min, const Size& max, SizePolicy policy)
+        void setLimitsWithSizePolicy()
         {
-            Limits limits{getLimitsFromSP(min, max, policy)};
+            Limits limits{getLimitsWithSizePolicy()};
             setWindowLimits(limits.min, limits.max);
-        }
-
-        // Gets the appropriate limits based on min, max size and the policy.
-        Limits getLimitsFromSP(const Size& min, const Size& max, SizePolicy policy) const noexcept
-        {
-            Limits limits{};
-            limits.min = min;
-            limits.max = max;
-
-            Size size{getSize()};
-
-            if (policy.horizontal == SizePolicy::Policy::Fixed)
-            {
-                limits.min.width = size.width;
-                limits.max.width = size.width;
-            }
-
-            if (policy.vertical == SizePolicy::Policy::Fixed)
-            {
-                limits.min.height = size.height;
-                limits.max.height = size.height;
-            }
-
-            return limits;
         }
 
         /** Callback for setting the size limits the window.
@@ -248,7 +218,7 @@ namespace pTK
             @param min  minimal size of the window
             @param max  maximum size of the window
         */
-        void onLimitChange(const Size& min, const Size& max) final { setLimitsWithSizePolicy(min, max, getSizePolicy()); }
+        void onLimitChange(const Size&, const Size&) final { setLimitsWithSizePolicy(); }
 
         /** Function for setting the size limits the window.
 

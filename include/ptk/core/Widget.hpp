@@ -110,6 +110,13 @@ namespace pTK
         */
         virtual void setSizePolicy(SizePolicy policy);
 
+        /** Function for retrieving the limits of the Widget with 
+            respect to the current set SizePolicy.
+
+            @return  limits based on current SizePolicy
+        */
+        [[nodiscard]] Limits getLimitsWithSizePolicy() const noexcept;
+
     protected:
         /** Function for updating the child.
 
