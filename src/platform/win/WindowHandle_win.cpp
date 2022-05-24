@@ -554,7 +554,7 @@ namespace pTK
         if (GetKeyState(VK_MENU) & 0x800)
             mods |= static_cast<utype>(KeyEvent::Modifier::Alt);
 
-        if ((GetKeyState(VK_LWIN) && GetKeyState(VK_RWIN)) & 0x800)
+        if ((GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) & 0x8000)
             mods |= static_cast<utype>(KeyEvent::Modifier::Super);
 
         if (GetKeyState(VK_CAPITAL) & 1)
