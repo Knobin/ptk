@@ -25,7 +25,6 @@ namespace pTK
         const Size minLayoutSize{calcMinSize()};
         setMinSize(minLayoutSize);
         const Size vbSize{getSize()};
-        //setLimits(minLayoutSize, calculateMaxSize());
 
         if ((minLayoutSize.width > vbSize.width) || (minLayoutSize.height > vbSize.height))
         {
@@ -111,9 +110,11 @@ namespace pTK
         // Initialize sizes.
         for (uint i{0}; i < children; ++i)
         {
-            sizes.at(i) = at(i)->calcOuterFromSize(at(i)->getMinSize());
+            Widget* widget = at(i).get();
+            const Limits limits = widget->getLimitsWithSizePolicy();
+            sizes.at(i) = widget->calcOuterFromSize(limits.min);
 
-            const Size::value_type maxWidth{ at(i)->calcOuterFromSize(at(i)->getMaxSize()).width };
+            const Size::value_type maxWidth{ widget->calcOuterFromSize(limits.max).width };
             sizes.at(i).width = (vbSize.width > maxWidth) ? maxWidth : vbSize.width;
         }
 
@@ -124,6 +125,7 @@ namespace pTK
         // Distribute heightLeft.
         // Need to fix this some time.
         // TODO: it takes many iteration before the height is distributed, especially if only 1 can grow.
+        Size::value_type lastEachLeft = totalEachLeft;
         while (totalEachLeft > 0)
         {
             Size::value_type eachAdd{static_cast<Size::value_type>(std::floor(static_cast<float>(totalEachLeft) / static_cast<float>(children)))};
@@ -131,8 +133,11 @@ namespace pTK
             bool done{true};
             for (size_type i{0}; i < children; ++i)
             {
+                Widget* widget = at(i).get();
+                const Limits limits = widget->getLimitsWithSizePolicy();
+
                 // Max - Min
-                const Size::value_type maxHeight = at(i)->calcOuterFromSize(at(i)->getMaxSize()).height;
+                const Size::value_type maxHeight = widget->calcOuterFromSize(limits.max).height;
                 const Size::value_type delta{maxHeight - sizes.at(i).height};
 
                 if (delta > 0)
@@ -156,6 +161,13 @@ namespace pTK
                     break;
                 }
             }
+
+            // Check if the total was reduced. 
+            // if not break as nothing was added (same will happen next iteration).
+            if (totalEachLeft == lastEachLeft)
+                break;
+
+            lastEachLeft = totalEachLeft;
 
             // We cannot add more to the widgets.
             if ((done) || (eachAdd == 0))
@@ -262,15 +274,14 @@ namespace pTK
         Size contMinSize{Size::Min};
         for (auto it{cbegin()}; it != cend(); ++it)
         {
-            const Size minSize{(*it)->calcOuterFromSize((*it)->getMinSize())};
+            const Limits limits{(*it)->getLimitsWithSizePolicy()};
+            const Size minSize{(*it)->calcOuterFromSize(limits.min)};
 
             contMinSize.height = AddWithoutOverflow(contMinSize.height, minSize.height);
             contMinSize.width = (minSize.width > contMinSize.width) ? minSize.width : contMinSize.width;
         }
 
-        contMinSize = calcOuterFromSize(contMinSize);
-
-        return contMinSize;
+        return calcOuterFromSize(contMinSize);
     }
 
     Size VBox::calcMaxSize() const
@@ -278,14 +289,13 @@ namespace pTK
         Size contMaxSize{Size::Max};
         for (auto it{ cbegin() }; it != cend(); ++it)
         {
-            const Size maxSize{ (*it)->calcOuterFromSize((*it)->getMaxSize()) };
+            const Limits limits{(*it)->getLimitsWithSizePolicy()};
+            const Size maxSize{(*it)->calcOuterFromSize(limits.max)};
 
             contMaxSize.height = AddWithoutOverflow(contMaxSize.height, maxSize.height);
             contMaxSize.width = (maxSize.width > contMaxSize.width) ? maxSize.width : contMaxSize.width;
         }
-
-        contMaxSize = calcOuterFromSize(contMaxSize);
-
-        return contMaxSize;
+        
+        return calcOuterFromSize(contMaxSize);
     }
 }

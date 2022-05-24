@@ -99,6 +99,7 @@ struct BtnManager
 pTK::Ref<CustomBtn> CreateCustomBtn(const std::string& text, const pTK::Margin& margin, pTK::Size::value_type maxWidth)
 {
     pTK::Ref<CustomBtn> btn = pTK::Create<CustomBtn>(text);
+    btn->setSizePolicy(pTK::SizePolicy::Type::Expanding);
     btn->setMargin(margin);
     btn->setCornerRadius(2.5f);
     btn->setMaxSize({maxWidth, btn->getSize().height});
@@ -309,6 +310,7 @@ int main(int argc, char *argv[])
     pTK::Ref<pTK::Rectangle> hline = pTK::Create<pTK::Rectangle>();
     //hline->setColor(pTK::Color{0xF0F0F0FF});
     hline->setColor(RandomColor());
+    hline->setSizePolicy(pTK::SizePolicy::Type::Expanding);
     hline->setMaxSize({pTK::Size::Limits::Max, 1});
     hline->setMargin({0, 0, 18, 18});
     hline->setAlign(pTK::Align::Left, pTK::Align::Top);
@@ -324,6 +326,9 @@ int main(int argc, char *argv[])
 
     pTK::Ref<pTK::TextField> textField = pTK::Create<pTK::TextField>();
     textField->setSize({400, 38});
+    pTK::SizePolicy policy{pTK::SizePolicy::Policy::Expanding, pTK::SizePolicy::Policy::Fixed};
+    textField->setSizePolicy(policy);
+    textField->setMargin({ 18, 18, 40, 40 });
     textField->setFontSize(20);
     textField->setCornerRadius(2.5f);
     textField->setOutlineColor(pTK::Color{0x181818FF});
