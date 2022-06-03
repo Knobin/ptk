@@ -52,8 +52,7 @@ message(STATUS "pTK build: ${PTK_BUILD_TYPE}")
 
 # OS
 if (UNIX AND NOT APPLE) # for Linux, BSD, Solaris, Minix.
-    add_definitions(-DPTK_PLATFORM_UNIX)
-	set(SKIA_FILENAME "libskia.a")
+    set(SKIA_FILENAME "libskia.a")
     set(PTK_PLATFORM "Unix")
     # X11 stuff
     find_package(X11 REQUIRED)
@@ -62,22 +61,16 @@ if (UNIX AND NOT APPLE) # for Linux, BSD, Solaris, Minix.
     set(PTK_DEPENDENCIES -ldl -lfreetype -lfontconfig ${X11_LIBRARIES} ${X11_Xrandr_LIB})
     SET(SOME_EXPAT_OPTION OFF CACHE BOOL "Use some expat option")
 elseif (WIN32)
-    add_definitions(-DPTK_PLATFORM_WINDOWS)
     set(PTK_PLATFORM "Windows")
     set(PTK_OPENGL_DEPENDENCIES "opengl32")
 	set(SKIA_FILENAME "skia.lib")
 elseif(APPLE)
-    add_definitions(-DPTK_PLATFORM_APPLE)
     set(PTK_PLATFORM "Apple")
     set(PTK_DEPENDENCIES "-framework CoreFoundation -framework CoreGraphics -framework CoreText -framework CoreServices -framework AppKit -framework QuartzCore")
     set(PTK_METAL_DEPENDENCIES "-framework Metal")
 	set(SKIA_FILENAME "libskia.a")
 else()
     message(FATAL_ERROR "Unsupported platform!")
-endif()
-message(STATUS "pTK platform: ${PTK_PLATFORM}")
-if (PTK_DEPENDENCIES)
-    message(STATUS "pTK dependencies: ${PTK_DEPENDENCIES}")
 endif()
 
 # HW Acceleration stuff.
@@ -100,6 +93,12 @@ if (ENABLE_OPENGL AND ${_index} GREATER -1)
 else()
     SET(ENABLE_OPENGL OFF CACHE BOOL "Enable OpenGL backend" OFF)
 endif ()
+
+# Print platform and dependencies.
+message(STATUS "pTK platform: ${PTK_PLATFORM}")
+if (PTK_DEPENDENCIES)
+    message(STATUS "pTK dependencies: ${PTK_DEPENDENCIES}")
+endif()
 
 # Skia properties
 set(SKIA_PATH "${CMAKE_SOURCE_DIR}/third_party/skia" CACHE STRING "Path to SKIA directory")

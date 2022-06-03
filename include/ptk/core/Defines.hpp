@@ -24,11 +24,23 @@
     #endif
 #endif
 
+// Check platform.
+#if !defined(PTK_PLATFORM_WINDOWS) && defined(_WIN32)
+    #define PTK_PLATFORM_WINDOWS
+#elif !defined(PTK_PLATFORM_APPLE) && defined(__APPLE__)
+    #include "TargetConditionals.h"
+    #if TARGET_OS_MAC
+        #define PTK_PLATFORM_APPLE
+    #endif
+#elif !defined(PTK_PLATFORM_UNIX) && defined(__unix__)
+    #define PTK_PLATFORM_UNIX
+#endif
+
 // Check compiler.
-#if !defined(PTK_COMPILER_GCC) && defined(__GNUC__)
-    #define PTK_COMPILER_GCC
-#elif !defined(PTK_COMPILER_CLANG) && defined(__clang__)
+#if !defined(PTK_COMPILER_CLANG) && defined(__clang__)
     #define PTK_COMPILER_CLANG
+#elif !defined(PTK_COMPILER_GCC) && defined(__GNUC__)
+    #define PTK_COMPILER_GCC
 #elif !defined(PTK_COMPILER_MSVC) && defined(_MSC_VER)
     #define PTK_COMPILER_MSVC
 #endif

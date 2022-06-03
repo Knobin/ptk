@@ -8,6 +8,9 @@
 #ifndef PTK_PLATFORM_HPP
 #define PTK_PLATFORM_HPP
 
+// pTK Headers
+#include "ptk/core/Defines.hpp"
+
 #if defined(PTK_PLATFORM_WINDOWS)
     #include "win/ApplicationHandle_win.hpp"
     using PTK_APPLICATION_HANDLE_T = pTK::ApplicationHandle_win;
