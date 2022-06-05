@@ -13,8 +13,8 @@
 #include "ptk/Log.hpp"
 
 // C++ Headers
+#include <algorithm>
 #include <functional>
-#include <map>
 #include <vector>
 
 // Defines for logging in this file.
@@ -37,10 +37,24 @@ namespace pTK
     class CallbackContainer
     {
     public:
+        // Type of callback that will be stored.
         using callback_type = std::function<Callback>;
-        using container_type = std::map<uint64, callback_type>;
-        // Maybe use unordered_map? Depends if it needs to be sorted or not.
-        // Should probably look at this in the future.
+
+        // Each callback will be stored in a node together with
+        // a unique identifer. Note: the uniqueness of the id will
+        // not be checked, it is assumed that the id is unique when 
+        // passed from adding the callback. 
+        struct Node
+        {
+            Node(uint64 identifier, callback_type func)
+                : id{identifier}, callback{func} 
+            {}
+            uint64 id;
+            callback_type callback;
+        };
+
+        // Storage container.
+        using container_type = std::vector<Node>;
 
     public:
         /** Constructs CallbackContainer with default values.
@@ -54,9 +68,9 @@ namespace pTK
         ~CallbackContainer()
         {
 #ifdef PTK_CB_STORAGE_DEBUG
-            for (auto it{callbacks.cbegin()}; it != callbacks.cend(); ++it)
+            for (const Node& node : m_storage)
             {
-                PTK_CB_STORAGE_LOG("Callback {} removed (destruction)", it->first);
+                PTK_CB_STORAGE_LOG("Callback {} removed (destruction)", node.id);
             }
 #endif
         }
@@ -68,7 +82,7 @@ namespace pTK
         */
         void addCallback(uint64 id, const callback_type& callback)
         {
-            callbacks.insert({id, callback});
+            m_storage.emplace_back(id, callback);
             PTK_CB_STORAGE_LOG("CallbackContainer: added callback with id: {}", id);
         }
 
@@ -79,11 +93,14 @@ namespace pTK
         */
         bool removeCallback(uint64 id)
         {
-            auto found = callbacks.find(id);
-            if (found != callbacks.end())
+            auto it = std::find_if(m_storage.cbegin(), m_storage.cend(), [id](const Node& node) {
+                return node.id == id;
+            });
+
+            if (it != m_storage.cend())
             {
                 PTK_CB_STORAGE_LOG("CallbackContainer: removed callback with id: {}", id);
-                callbacks.erase(found);
+                m_storage.erase(it);
                 return true;
             }
 
@@ -96,12 +113,12 @@ namespace pTK
         template<typename... Args>
         void triggerCallbacks(Args&& ...args)
         {
-            for (auto it = callbacks.begin(); it != callbacks.end();)
+            for (auto it = m_storage.begin(); it != m_storage.end();)
             {
-                if (it->second(std::forward<Args>(args)...))
+                if (it->callback(std::forward<Args>(args)...))
                 {
-                    PTK_CB_STORAGE_LOG("CallbackContainer: auto-removed callback with id: {}", it->first);
-                    callbacks.erase(it++);
+                    PTK_CB_STORAGE_LOG("CallbackContainer: auto-removed callback with id: {}", it->id);
+                    it = m_storage.erase(it);
                 }
                 else
                     ++it;
@@ -109,7 +126,7 @@ namespace pTK
         }
 
     private:
-        container_type callbacks;
+        container_type m_storage;
     };
 
     /** CallbackIndexGen class implementation.
@@ -185,6 +202,7 @@ namespace pTK
             auto callbacks = static_cast<CallbackContainer<T, Callback>*>(it->first);
 
             // Finally insert the callback.
+            // The id generated here must be unique (container assumes it is).
             uint64 id = s_idCounter++;
             callbacks->addCallback(id, callback);
 
