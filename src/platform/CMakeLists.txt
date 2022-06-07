@@ -2,67 +2,71 @@
 # File used to add the platform specific files to pTK.
 
 # MacOS files
-set(PLATFORM_FILES_MAC platform/mac/ApplicationHandle_mac.mm
-    platform/mac/WindowHandle_mac.mm
-    platform/mac/KeyMap_mac.cpp
-    platform/mac/RasterPolicy_mac.mm)
-set(PLATFORM_FILES_MAC_METAL platform/mac/MetalContext_mac.mm)
+set(PTK_PLATFORM_FILES_MAC mac/ApplicationHandle_mac.mm
+    mac/WindowHandle_mac.mm
+    mac/KeyMap_mac.cpp
+    mac/RasterPolicy_mac.mm)
+set(PTK_PLATFORM_FILES_MAC_METAL mac/MetalContext_mac.mm)
 
 # Windows files
-set(PLATFORM_FILES_WIN platform/win/ApplicationHandle_win.cpp
-    platform/win/KeyMap_win.cpp
-    platform/win/WindowHandle_win.cpp
-    platform/win/MenuBarUtil_win.cpp
-    platform/win/RasterPolicy_win.cpp)
-set(PLATFORM_FILES_WIN_OPENGL platform/win/GLContext_win.cpp)
+set(PTK_PLATFORM_FILES_WIN win/ApplicationHandle_win.cpp
+    win/KeyMap_win.cpp
+    win/WindowHandle_win.cpp
+    win/MenuBarUtil_win.cpp
+    win/RasterPolicy_win.cpp)
+set(PTK_PLATFORM_FILES_WIN_OPENGL win/GLContext_win.cpp)
 
 # Unix files
-set(PLATFORM_FILES_UNIX platform/unix/ApplicationHandle_unix.cpp
-    platform/unix/KeyMap_unix.cpp
-    platform/unix/WindowHandle_unix.cpp
-    platform/unix/RasterPolicy_unix.cpp)
-set(PLATFORM_FILES_UNIX_OPENGL platform/unix/GLContext_unix.cpp)
+set(PTK_PLATFORM_FILES_UNIX unix/ApplicationHandle_unix.cpp
+    unix/KeyMap_unix.cpp
+    unix/WindowHandle_unix.cpp
+    unix/RasterPolicy_unix.cpp)
+set(PTK_PLATFORM_FILES_UNIX_OPENGL unix/GLContext_unix.cpp)
 
 # Set platform files
-set(PLATFORM_FILES platform/PlatformInit.cpp platform/base/ContextBase.cpp)
+set(PTK_PLATFORM_FILES PlatformInit.cpp base/ContextBase.cpp)
 if (PTK_PLATFORM STREQUAL "Unix")
-    set(PLATFORM_FILES ${PLATFORM_FILES}
-        ${PLATFORM_FILES_UNIX})
-    set(PLATFORM_OPENGL_FILES ${PLATFORM_OPENGL_FILES}
-            ${PLATFORM_FILES_UNIX_OPENGL})
-    message(STATUS "Using X11 window")
+    set(PTK_PLATFORM_FILES ${PTK_PLATFORM_FILES} ${PTK_PLATFORM_FILES_UNIX})
+    set(PTK_PLATFORM_OPENGL_FILES ${PTK_PLATFORM_OPENGL_FILES} 
+        ${PTK_PLATFORM_FILES_UNIX_OPENGL})
+    message(STATUS "pTK Window: X11")
 elseif (PTK_PLATFORM STREQUAL "Windows")
-    set(PLATFORM_FILES ${PLATFORM_FILES}
-        ${PLATFORM_FILES_WIN})
-    set(PLATFORM_OPENGL_FILES ${PLATFORM_OPENGL_FILES}
-            ${PLATFORM_FILES_WIN_OPENGL})
-    message(STATUS "Using Windows API window")
+    set(PTK_PLATFORM_FILES ${PTK_PLATFORM_FILES}
+        ${PTK_PLATFORM_FILES_WIN})
+    set(PTK_PLATFORM_OPENGL_FILES ${PTK_PLATFORM_OPENGL_FILES}
+        ${PTK_PLATFORM_FILES_WIN_OPENGL})
+    message(STATUS "pTK Window: win32")
 elseif (PTK_PLATFORM STREQUAL "Apple")
-    set(PLATFORM_FILES ${PLATFORM_FILES}
-        ${PLATFORM_FILES_MAC})
-    set(PLATFORM_METAL_FILES ${PLATFORM_METAL_FILES}
-            ${PLATFORM_FILES_MAC_METAL})
-    message(STATUS "Using Cocoa window")
+    set(PTK_PLATFORM_FILES ${PTK_PLATFORM_FILES}
+        ${PTK_PLATFORM_FILES_MAC})
+    set(PTK_PLATFORM_METAL_FILES ${PTK_PLATFORM_METAL_FILES}
+        ${PTK_PLATFORM_FILES_MAC_METAL})
+    message(STATUS "pTK Window: Cocoa")
 else()
     message(FATAL_ERROR "Unsupported platform")
 endif()
 
-if (ENABLE_OPENGL)
-    set(PLATFORM_FILES ${PLATFORM_FILES}
-            ${PLATFORM_OPENGL_FILES})
-endif (ENABLE_OPENGL)
+if (PTK_ENABLE_OPENGL)
+    set(PTK_PLATFORM_FILES ${PTK_PLATFORM_FILES}
+        ${PTK_PLATFORM_OPENGL_FILES})
+endif (PTK_ENABLE_OPENGL)
 
-if (ENABLE_METAL)
-    set(PLATFORM_FILES ${PLATFORM_FILES}
-            ${PLATFORM_METAL_FILES})
-endif (ENABLE_METAL)
+if (PTK_ENABLE_METAL)
+    set(PTK_PLATFORM_FILES ${PTK_PLATFORM_FILES}
+        ${PTK_PLATFORM_METAL_FILES})
+endif (PTK_ENABLE_METAL)
 
-set(PLATFORM_FILES ${PLATFORM_FILES} PARENT_SCOPE)
+# Platform source files.
+list(TRANSFORM PTK_PLATFORM_FILES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
+set(PTK_PLATFORM_FILES ${PTK_PLATFORM_FILES} PARENT_SCOPE)
 
 # All platform files
-set(PLATFORM_FILES_ALL ${PLATFORM_FILES}
-    ${PLATFORM_FILES_MAC}
-    ${PLATFORM_FILES_MAC_HW}
-    ${PLATFORM_FILES_WIN}
-    ${PLATFORM_FILES_WIN_HW}
-    PARENT_SCOPE)
+set(PTK_PLATFORM_FILES_ALL
+    ${PTK_PLATFORM_FILES_MAC}
+    ${PTK_PLATFORM_FILES_MAC_METAL}
+    ${PTK_PLATFORM_FILES_WIN}
+    ${PTK_PLATFORM_FILES_WIN_OPENGL}
+    ${PTK_PLATFORM_FILES_UNIX}
+    ${PTK_PLATFORM_FILES_UNIX_OPENGL})
+list(TRANSFORM PTK_PLATFORM_FILES_ALL PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
+set(PTK_PLATFORM_FILES_ALL ${PTK_PLATFORM_FILES_ALL} PARENT_SCOPE)
