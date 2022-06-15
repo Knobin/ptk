@@ -24,7 +24,7 @@ namespace pTK
         Depending if a template specialization exists for the event, it will
         also call the corresponing event function in EventFunctions.
     */
-    class EventHandling : public EventCallbacks, public EventFunctions
+    class PTK_API EventHandling : public EventCallbacks, public EventFunctions
     {
     public:
         /** Constructs EventHandling with default values.

@@ -8,36 +8,39 @@
 #ifndef PTK_CORE_EXCEPTION_HPP
 #define PTK_CORE_EXCEPTION_HPP
 
+// pTK Headers
+#include "ptk/core/Defines.hpp"
+
 // C++ Headers
 #include <stdexcept>
 
 namespace pTK
 {
-    class Exception : public std::runtime_error
+    class PTK_API Exception : public std::runtime_error
     {
     public:
         using runtime_error::runtime_error;
     };
 
-    class ApplicationError : public Exception
+    class PTK_API ApplicationError : public Exception
     {
     public:
         using Exception::Exception;
     };
 
-    class PlatformError : public Exception
+    class PTK_API PlatformError : public Exception
     {
     public:
         using Exception::Exception;
     };
 
-    class WindowError : public Exception
+    class PTK_API WindowError : public Exception
     {
     public:
         using Exception::Exception;
     };
 
-    class ContextError : public Exception
+    class PTK_API ContextError : public Exception
     {
     public:
         using Exception::Exception;

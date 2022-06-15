@@ -23,7 +23,7 @@ namespace pTK
 
         Override any of the functions if you want to handle that event.
     */
-    class EventFunctions
+    class PTK_API EventFunctions
     {
     public:
         /** Constructs EventFunctions with default values.

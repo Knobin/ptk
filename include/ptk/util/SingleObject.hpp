@@ -18,7 +18,7 @@ namespace pTK
      
         Class for forbidding copying and moving.
     */
-    class SingleObject : public NonMovable, public NonCopyable
+    class PTK_API SingleObject : public NonMovable, public NonCopyable
     {
     public:
         virtual ~SingleObject() = default;

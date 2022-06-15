@@ -33,7 +33,7 @@ namespace pTK
         Currently, it will default to a hardware based backend if no one is specified.
         If that backend is not available, it will fall back to a software based backend.
     */
-    class Window : public PTK_WINDOW_HANDLE_T, public SingleObject
+    class PTK_API Window : public PTK_WINDOW_HANDLE_T, public SingleObject
     {
     public:
         /** Constructs Window with default values.

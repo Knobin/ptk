@@ -21,7 +21,7 @@ namespace pTK
 
         Regular menu item with text that can be clicked.
     */
-    class NamedMenuItem : public MenuItem
+    class PTK_API NamedMenuItem : public MenuItem
     {
     public:
         /** Constructs NamedMenuItem with name and shortcut.

@@ -25,7 +25,7 @@ namespace pTK
         events from the keyboard. Such as Key presses or
         releases.
     */
-    class KeyEvent : public Event
+    class PTK_API KeyEvent : public Event
     {
     public:
         // Objects for easier type management.
@@ -83,7 +83,7 @@ namespace pTK
 
         Signals keyboard or text input.
     */
-    class InputEvent : public Event
+    class PTK_API InputEvent : public Event
     {
     public:
         using data_type = uint32;

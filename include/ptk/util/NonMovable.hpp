@@ -8,13 +8,16 @@
 #ifndef PTK_UTIL_NONMOVABLE_HPP
 #define PTK_UTIL_NONMOVABLE_HPP
 
+// pTK Headers
+#include "ptk/core/Defines.hpp"
+
 namespace pTK
 {
     /** NonMovable class implementation.
      
         Class for forbidding moving.
     */
-    class NonMovable
+    class PTK_API NonMovable
     {
     public:
         /** Deleted Move Constructor.

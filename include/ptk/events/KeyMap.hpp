@@ -17,7 +17,7 @@
 
 namespace pTK
 {
-    class KeyMap : public SingleObject
+    class PTK_API KeyMap : public SingleObject
     {
     public:
         static KeyMap& Get();

@@ -20,7 +20,7 @@ namespace pTK
 
         Keyboard shortcut.
     */
-    class Shortcut
+    class PTK_API Shortcut
     {
     public:
         /** Constructs Shortcut with default values.

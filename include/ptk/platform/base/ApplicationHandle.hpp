@@ -24,7 +24,7 @@ namespace pTK
         This is the implementation for the Application backend.
         An implementation of this class must exist for the target platform.
     */
-    class ApplicationHandle : public SingleObject
+    class PTK_API ApplicationHandle : public SingleObject
     {
     public:
         /** Constructs ApplicationBase with default values.

@@ -32,7 +32,7 @@ namespace pTK
         called (hence the bool return value). If you do not want to remove the
         function after it has been called, simply return false in the callback.
     */
-    class EventCallbacks
+    class PTK_API EventCallbacks
     {
     public:
         /** Constructs EventCallbacks with default values.

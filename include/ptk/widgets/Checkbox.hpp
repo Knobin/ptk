@@ -27,7 +27,7 @@ namespace pTK
         An extra callback is also present for overriding when
         the checkbox is toggled.
     */
-    class Checkbox : public Rectangle
+    class PTK_API Checkbox : public Rectangle
     {
     public:
         /** Checkbox Button with default values.

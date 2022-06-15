@@ -22,7 +22,7 @@ namespace pTK
 
         This class handles the macOS Cocoa Window.
     */
-    class WindowHandle_mac : public WindowHandle
+    class PTK_API WindowHandle_mac : public WindowHandle
     {
     public:
         /** Constructs WindowHandle_win with default values.

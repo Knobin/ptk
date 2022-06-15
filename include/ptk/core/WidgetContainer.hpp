@@ -23,7 +23,7 @@ namespace pTK
         Derived from Container, this class for holding Widgets in
         order of displaying them.
     */
-    class WidgetContainer : public IterableSequence<Ref<Widget>>, public Widget
+    class PTK_API WidgetContainer : public IterableSequence<Ref<Widget>>, public Widget
     {
     public:
         /** Constructs Box with default values.

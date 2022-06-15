@@ -22,7 +22,7 @@ namespace pTK
 
         Collection of menus that forms a menu bar.
     */
-    class MenuBar : public IterableSequence<Ref<Menu>>
+    class PTK_API MenuBar : public IterableSequence<Ref<Menu>>
     {
     public:
         /** Constructs Menu with default values.

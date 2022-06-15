@@ -21,7 +21,7 @@ namespace pTK
         is for the unique properties that Shape has that Label
         can also use. Such as Color and outline.
     */
-    class Label : public Shape, public Text
+    class PTK_API Label : public Shape, public Text
     {
     public:
         /** Constructs Label with default values.

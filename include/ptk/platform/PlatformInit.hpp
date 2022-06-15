@@ -17,11 +17,11 @@
 
 namespace pTK
 {
-    std::map<int32, KeyCode> KeyMapInit();
+    PTK_API std::map<int32, KeyCode> KeyMapInit();
 
-    void AppInit(const std::string& name);
-    void AppDestroy();
-    ApplicationHandle *AppInstance();
+    PTK_API void AppInit(const std::string& name);
+    PTK_API void AppDestroy();
+    PTK_API ApplicationHandle *AppInstance();
 
 } // namespace pTK
 

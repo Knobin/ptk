@@ -26,7 +26,7 @@ namespace pTK
         This class is low level class for widget, that
         has the essential component for rendering.
     */
-    class Widget : public Alignment, public Drawable, public EventHandling, public Sizable
+    class PTK_API Widget : public Alignment, public Drawable, public EventHandling, public Sizable
     {
     public:
         /** Constructs Widget with default values.
@@ -160,8 +160,8 @@ namespace pTK
     };
 
     // Comparison operators.
-    bool operator==(const Widget& lhs, const Widget& rhs);
-    bool operator!=(const Widget& lhs, const Widget& rhs);
+    PTK_API bool operator==(const Widget& lhs, const Widget& rhs);
+    PTK_API bool operator!=(const Widget& lhs, const Widget& rhs);
 }
 
 #endif // PTK_CORE_WIDGET_HPP

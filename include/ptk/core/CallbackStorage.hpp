@@ -9,6 +9,7 @@
 #define PTK_CORE_CALLBACKSTORAGE_HPP
 
 // pTK Headers
+#include "ptk/core/Defines.hpp"
 #include "ptk/core/Types.hpp"
 #include "ptk/Log.hpp"
 
@@ -137,7 +138,7 @@ namespace pTK
         The identifier starts at 0 and counts up for every new specialization
         generated of the GetIndex function.
     */
-    struct CallbackIndexGen
+    struct PTK_API CallbackIndexGen
     {
         /** Function for generating a unique identifier.
 
@@ -160,7 +161,7 @@ namespace pTK
 
         It can store callbacks for any combination of T and Callback.
     */
-    class CallbackStorage
+    class PTK_API CallbackStorage
     {
     public:
         using node_type = std::pair<void*, std::function<void(void*)>>;

@@ -27,7 +27,7 @@ namespace pTK
             -   menus:              Ref to Menu Bar.
             -   ignoreGlobalMenu:   Ignore Application::menuBar() (if set).
     */
-    struct WindowInfo
+    struct PTK_API WindowInfo
     {
         /** Backend enum class implementation
 

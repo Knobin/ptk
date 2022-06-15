@@ -34,7 +34,7 @@ namespace pTK
             - colorType
         For more information see the RasterContext header file.
     */
-    class RasterPolicy_mac
+    class PTK_API RasterPolicy_mac
     {
     public:
         /** Deleted constructor for RasterPolicy_mac

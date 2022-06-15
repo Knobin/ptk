@@ -9,6 +9,7 @@
 #define PTK_UTIL_COLOR_HPP
 
 // pTK Headers
+#include "ptk/core/Defines.hpp"
 #include "ptk/core/Types.hpp"
 
 namespace pTK
@@ -26,7 +27,7 @@ namespace pTK
         aforementioned layout in order to be correct. If the
         function only sets r, g and b, unexpected behaviour will occur.
     */
-    class Color
+    class PTK_API Color
     {
     public:
         using value_type = byte;
@@ -121,14 +122,14 @@ namespace pTK
     };
     
     // Comparison operators.
-    bool operator==(const Color& lhs, const Color& rhs);
-    bool operator!=(const Color& lhs, const Color& rhs);
+    PTK_API bool operator==(const Color& lhs, const Color& rhs);
+    PTK_API bool operator!=(const Color& lhs, const Color& rhs);
     
     // Binary arithmetic operators.
-    Color operator+(const Color& lhs, const Color& rhs);
-    Color operator-(const Color& lhs, const Color& rhs);
-    Color& operator+=(Color& lhs, const Color& rhs);
-    Color& operator-=(Color& lhs, const Color& rhs);
+    PTK_API Color operator+(const Color& lhs, const Color& rhs);
+    PTK_API Color operator-(const Color& lhs, const Color& rhs);
+    PTK_API Color& operator+=(Color& lhs, const Color& rhs);
+    PTK_API Color& operator-=(Color& lhs, const Color& rhs);
 }
 
 #endif // PTK_UTIL_COLOR_HPP

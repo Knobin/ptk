@@ -14,7 +14,7 @@
 
 namespace pTK
 {
-    class Shape : public Widget
+    class PTK_API Shape : public Widget
     {
     public:
         /** Constructs Shape with default values.
@@ -71,8 +71,8 @@ namespace pTK
     };
     
     // Comparison operators.
-    bool operator==(const Shape& lhs, const Shape& rhs);
-    bool operator!=(const Shape& lhs, const Shape& rhs);
+    PTK_API bool operator==(const Shape& lhs, const Shape& rhs);
+    PTK_API bool operator!=(const Shape& lhs, const Shape& rhs);
 }
 
 #endif // PTK_CORE_SHAPE_HPP

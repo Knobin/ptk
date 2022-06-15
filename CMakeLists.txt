@@ -95,7 +95,8 @@ endif ()
 # Library build prints.
 message(STATUS "pTK build: ${PTK_BUILD_TYPE}")
 if (BUILD_SHARED_LIBS)
-    set(PTK_DEFINITIONS ${PTK_DEFINITIONS} PTK_SHARED PTK_EXPORTS)
+    set(PTK_DEFINITIONS ${PTK_DEFINITIONS} PTK_SHARED)
+    set(PTK_EXPORTS_DEFINE PTK_EXPORTS)
     message(STATUS "pTK library type: SHARED")
 else()
     message(STATUS "pTK library type: STATIC")
@@ -151,7 +152,7 @@ add_library(${PROJECT_NAME} ${PTK_HEADER_FILES} ${PTK_SOURCE_FILES})
 # includes and deps
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/include" ${PTK_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${PTK_DEPENDENCIES} skia Threads::Threads)
-target_compile_definitions(${PROJECT_NAME} PRIVATE ${PTK_DEFINITIONS} ${SKIA_DEFINITIONS})
+target_compile_definitions(${PROJECT_NAME} PRIVATE ${PTK_DEFINITIONS} ${PTK_EXPORTS_DEFINE} ${SKIA_DEFINITIONS})
 
 # OpenGL
 if (ENABLE_OPENGL)

@@ -26,7 +26,7 @@ namespace pTK
      
         This class is used for loading and displaying an image.
     */
-    class Image : public Widget
+    class PTK_API Image : public Widget
     {
     public:
         /** Constructs Image with default values.

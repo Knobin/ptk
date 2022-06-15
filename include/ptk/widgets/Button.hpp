@@ -21,7 +21,7 @@ namespace pTK
         Unique elements is different colors depending on event.
         Such as hover and click colors.
     */
-    class Button : public Rectangle
+    class PTK_API Button : public Rectangle
     {
     public:
 

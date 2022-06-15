@@ -25,7 +25,7 @@ namespace pTK
     /** Text class implementation.
 
      */
-    class Text
+    class PTK_API Text
     {
     public:
 

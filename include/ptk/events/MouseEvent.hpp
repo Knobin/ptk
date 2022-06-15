@@ -35,7 +35,7 @@ namespace pTK
 
         Signal a mouse movement.
     */
-    class MotionEvent : public Event
+    class PTK_API MotionEvent : public Event
     {
     public:
         /** Constructs MotionEvent with default values with pos.
@@ -57,7 +57,7 @@ namespace pTK
 
         Signal a mouse scroll.
     */
-    class ScrollEvent : public Event
+    class PTK_API ScrollEvent : public Event
     {
     public:
         /** Constructs ScrollEvent with default values with offset.
@@ -79,7 +79,7 @@ namespace pTK
 
         Signal a mouse press or release event.
     */
-    class ButtonEvent : public Event
+    class PTK_API ButtonEvent : public Event
     {
     public:
         /** Constructs ButtonEvent with default values with type,
@@ -104,7 +104,7 @@ namespace pTK
         const Point pos;
     };
 
-    class ClickEvent : public ButtonEvent
+    class PTK_API ClickEvent : public ButtonEvent
     {
     public:
         /** Constructs ClickEvent.
@@ -121,7 +121,7 @@ namespace pTK
     };
 
 
-    class ReleaseEvent : public ButtonEvent
+    class PTK_API ReleaseEvent : public ButtonEvent
     {
     public:
         /** Constructs ClickEvent.

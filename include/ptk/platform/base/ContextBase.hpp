@@ -33,7 +33,7 @@ namespace pTK
         This class handles the drawing.
         Kind of an API class that implements some common functions.
     */
-    class ContextBase : public SingleObject
+    class PTK_API ContextBase : public SingleObject
     {
     public:
         /** Constructs ContextBase with default values.
@@ -85,9 +85,9 @@ namespace pTK
     };
 
     // Functions for converting utility classes to SkPoint for drawing.
-    SkPoint convertToSkPoint(const Point& pos, const Vec2f& scale = {1.0f, 1.0f});
-    SkPoint convertToSkPoint(const Size& size, const Vec2f& scale = {1.0f, 1.0f});
-    SkPaint GetSkPaintFromColor(const Color& color);
+    PTK_API SkPoint convertToSkPoint(const Point& pos, const Vec2f& scale = {1.0f, 1.0f});
+    PTK_API SkPoint convertToSkPoint(const Size& size, const Vec2f& scale = {1.0f, 1.0f});
+    PTK_API SkPaint GetSkPaintFromColor(const Color& color);
 }
 
 #endif // PTK_CORE_PLATFORM_CONTEXTBASE_HPP

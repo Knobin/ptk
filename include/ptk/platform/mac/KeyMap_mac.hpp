@@ -16,7 +16,7 @@
 
 namespace pTK
 {
-    std::map<int32, KeyCode> KeyCodeMapInit_mac();
+    PTK_API std::map<int32, KeyCode> KeyCodeMapInit_mac();
 
 } // namespace pTK
 

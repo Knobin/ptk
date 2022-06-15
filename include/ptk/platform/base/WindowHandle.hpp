@@ -23,7 +23,7 @@ namespace pTK
 
         Specifies the backend API that the platform must implement.
     */
-    class WindowHandle : public VBox
+    class PTK_API WindowHandle : public VBox
     {
     public:
         WindowHandle() = delete;

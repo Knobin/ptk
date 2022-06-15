@@ -8,13 +8,16 @@
 #ifndef PTK_UTIL_NONCOPYABLE_HPP
 #define PTK_UTIL_NONCOPYABLE_HPP
 
+// pTK Headers
+#include "ptk/core/Defines.hpp"
+
 namespace pTK
 {
     /** NonMovable struct implementation.
      
         Struct for forbidding copying.
     */
-    struct NonCopyable
+    struct PTK_API NonCopyable
     {
         /** Constructs NonCopyable with default values.
 

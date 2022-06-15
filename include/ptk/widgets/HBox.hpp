@@ -21,7 +21,7 @@ namespace pTK
         Derived from Box, this class for holding Cells in
         order of displaying them in a vertical style.
     */
-    class HBox : public WidgetContainer
+    class PTK_API HBox : public WidgetContainer
     {
     public:
         /** Constructs HBox with default values.

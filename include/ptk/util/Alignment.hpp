@@ -9,6 +9,7 @@
 #define PTK_UTIL_ALIGNMENT_HPP
 
 // pTK Headers
+#include "ptk/core/Defines.hpp"
 #include "ptk/core/Types.hpp"
 
 // C++ Headers
@@ -66,7 +67,7 @@ namespace pTK
 
     using Margin = Directions<uint32>;
 
-    class Alignment
+    class PTK_API Alignment
     {
     public:
         /** Constructs Alignment with default values.

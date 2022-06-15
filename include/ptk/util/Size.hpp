@@ -9,6 +9,7 @@
 #define PTK_UTIL_SIZE_HPP
 
 // pTK Headers
+#include "ptk/core/Defines.hpp"
 #include "ptk/core/Types.hpp"
 
 // C++ Headers
@@ -20,7 +21,7 @@ namespace pTK
 
         This class is low level class handling size (width and height).
     */
-    class Size
+    class PTK_API Size
     {
     public:
         using value_type = uint32;
@@ -65,24 +66,22 @@ namespace pTK
     };
 
     // Comparison operators.
-    bool operator==(const Size& lhs, const Size& rhs);
-    bool operator!=(const Size& lhs, const Size& rhs);
-    bool operator<(const Size& lhs, const Size& rhs);
-    bool operator>(const Size& lhs, const Size& rhs);
-    bool operator<=(const Size& lhs, const Size& rhs);
-    bool operator>=(const Size& lhs, const Size& rhs);
+    PTK_API bool operator==(const Size& lhs, const Size& rhs);
+    PTK_API bool operator!=(const Size& lhs, const Size& rhs);
+    PTK_API bool operator<(const Size& lhs, const Size& rhs);
+    PTK_API bool operator>(const Size& lhs, const Size& rhs);
+    PTK_API bool operator<=(const Size& lhs, const Size& rhs);
+    PTK_API bool operator>=(const Size& lhs, const Size& rhs);
 
     // Binary arithmetic operators.
-    Size operator+(const Size& lhs, const Size& rhs);
-    Size operator-(const Size& lhs, const Size& rhs);
-    Size operator*(const Size& lhs, const Size& rhs);
-    Size operator/(const Size& lhs, const Size& rhs);
-    Size& operator+=(Size& lhs, const Size& rhs);
-    Size& operator-=(Size& lhs, const Size& rhs);
-    Size& operator*=(Size& lhs, const Size& rhs);
-    Size& operator/=(Size& lhs, const Size& rhs);
+    PTK_API Size operator+(const Size& lhs, const Size& rhs);
+    PTK_API Size operator-(const Size& lhs, const Size& rhs);
+    PTK_API Size operator*(const Size& lhs, const Size& rhs);
+    PTK_API Size operator/(const Size& lhs, const Size& rhs);
+    PTK_API Size& operator+=(Size& lhs, const Size& rhs);
+    PTK_API Size& operator-=(Size& lhs, const Size& rhs);
+    PTK_API Size& operator*=(Size& lhs, const Size& rhs);
+    PTK_API Size& operator/=(Size& lhs, const Size& rhs);
 }
-
-
 
 #endif // PTK_UTIL_SIZE_HPP

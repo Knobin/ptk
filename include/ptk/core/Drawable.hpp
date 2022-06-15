@@ -23,7 +23,7 @@ namespace pTK
         This class is the base class for drawable widget.
         Widgets without this class cannot be drawn.
     */
-    class Drawable
+    class PTK_API Drawable
     {
     public:
         /** Constructs Drawable with default values.

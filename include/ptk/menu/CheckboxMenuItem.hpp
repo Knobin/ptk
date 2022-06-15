@@ -17,7 +17,7 @@ namespace pTK
 
         Defines a menu item with a checkbox next to it.
     */
-    class CheckboxMenuItem : public NamedMenuItem
+    class PTK_API CheckboxMenuItem : public NamedMenuItem
     {
     public:
         /** Constructs CheckboxMenuItem with name and status.

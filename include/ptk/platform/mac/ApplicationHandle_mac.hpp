@@ -21,7 +21,7 @@ namespace pTK
         Base application implementation for macOS.
         This class will be instantiated when the Application is created.
     */
-    class ApplicationHandle_mac : public ApplicationHandle
+    class PTK_API ApplicationHandle_mac : public ApplicationHandle
     {
     public:
         static void Init(const std::string& name);

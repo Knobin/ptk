@@ -26,7 +26,7 @@ namespace pTK
         application.
 
     */
-    class Application : public IterableAssociative<int32, Window*>, public SingleObject
+    class PTK_API Application : public IterableAssociative<int32, Window*>, public SingleObject
     {
     public:
         /** Constructs Application with default values.

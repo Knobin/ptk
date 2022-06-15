@@ -8,6 +8,9 @@
 #ifndef PTK_CORE_EVENT_HPP
 #define PTK_CORE_EVENT_HPP
 
+// pTK Headers
+#include "ptk/core/Defines.hpp"
+
 namespace pTK
 {
     /** Event class implementation.
@@ -19,7 +22,7 @@ namespace pTK
         Event::Category and Event::Type cannot be changed after the
         event is created.
     */
-    class Event
+    class PTK_API Event
     {
     public:
         /** Event::Type enum class implementation.

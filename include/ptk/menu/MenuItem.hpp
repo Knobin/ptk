@@ -24,7 +24,7 @@ namespace pTK
 
         Basic menu item class that has common stuff.
     */
-    class MenuItem
+    class PTK_API MenuItem
     {
     public:
         /** Deleted default constructor.

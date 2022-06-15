@@ -9,6 +9,7 @@
 #define PTK_UTIL_SIZEPOLICY_HPP
 
 // pTK Headers
+#include "ptk/core/Defines.hpp"
 #include "ptk/core/Types.hpp"
 
 // C++ Headers
@@ -30,7 +31,7 @@ namespace pTK
         Policy then uses the Policy flag to define if it is fixed or can be
         expanded.
     */
-    struct SizePolicy
+    struct PTK_API SizePolicy
     {
         // Defines some common types of SizePolicy.
         // For example, defining a fixed SizePolicy is done this way:

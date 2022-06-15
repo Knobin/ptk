@@ -19,7 +19,7 @@ namespace pTK
 
         Signal a window resize.
     */
-    class ResizeEvent final : public Event
+    class PTK_API ResizeEvent final : public Event
     {
     public:
         /** Constructs ResizeEvent with default values with size.
@@ -41,7 +41,7 @@ namespace pTK
 
         Signal a window movement.
     */
-    class MoveEvent final : public Event
+    class PTK_API MoveEvent final : public Event
     {
     public:
         /** Constructs MoveEvent with default values with size.
@@ -62,7 +62,7 @@ namespace pTK
 
         Signal a window scale change.
     */
-    class ScaleEvent final : public Event
+    class PTK_API ScaleEvent final : public Event
     {
     public:
         /** ScaleEvent with default values with scale.
@@ -83,7 +83,7 @@ namespace pTK
 
         Signal to paint to the window.
     */
-    class PaintEvent final : public Event
+    class PTK_API PaintEvent final : public Event
     {
     public:
         /** PaintEvent with default values with pos and size.
@@ -109,7 +109,7 @@ namespace pTK
 
         Signal to that window should close.
     */
-    class CloseEvent final : public Event
+    class PTK_API CloseEvent final : public Event
     {
     public:
         CloseEvent()
@@ -122,7 +122,7 @@ namespace pTK
 
         Signal to that window has been minimized.
     */
-    class MinimizeEvent final : public Event
+    class PTK_API MinimizeEvent final : public Event
     {
     public:
         MinimizeEvent()
@@ -136,7 +136,7 @@ namespace pTK
         Signal to that window has been restored
         from a minimized state.
     */
-    class RestoreEvent final : public Event
+    class PTK_API RestoreEvent final : public Event
     {
     public:
         RestoreEvent()
@@ -149,7 +149,7 @@ namespace pTK
 
         Signal to that window is in focus.
     */
-    class FocusEvent final : public Event
+    class PTK_API FocusEvent final : public Event
     {
     public:
         FocusEvent()
@@ -162,7 +162,7 @@ namespace pTK
 
         Signal to that window is out of focus.
     */
-    class LostFocusEvent final : public Event
+    class PTK_API LostFocusEvent final : public Event
     {
     public:
         LostFocusEvent()

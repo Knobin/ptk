@@ -23,21 +23,19 @@
 
 namespace pTK
 {
-
-    class EnterEvent : public MotionEvent
+    class PTK_API EnterEvent : public MotionEvent
     {
     public:
         using MotionEvent::MotionEvent;
     };
 
-    class LeaveEvent : public MotionEvent
+    class PTK_API LeaveEvent : public MotionEvent
     {
     public:
         using MotionEvent::MotionEvent;
     };
 
-
-    struct LeaveClickEvent : public ClickEvent
+    struct PTK_API LeaveClickEvent : public ClickEvent
     {
     public:
         using ClickEvent::ClickEvent;

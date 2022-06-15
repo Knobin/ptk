@@ -19,7 +19,7 @@ namespace pTK
         Combines the limits (min and max) into 
         an easy format to use.
     */
-    struct Limits
+    struct PTK_API Limits
     {
         Size min{Size::Min};
         Size max{Size::Max};
@@ -29,7 +29,7 @@ namespace pTK
 
         Sizable class for handling size.
     */
-    class Sizable
+    class PTK_API Sizable
     {
     public:
         /** Constructs Sizable with default values.
@@ -175,8 +175,8 @@ namespace pTK
     };
 
     // Comparison operators.
-    bool operator==(const Sizable& lhs, const Sizable& rhs);
-    bool operator!=(const Sizable& lhs, const Sizable& rhs);
+    PTK_API bool operator==(const Sizable& lhs, const Sizable& rhs);
+    PTK_API bool operator!=(const Sizable& lhs, const Sizable& rhs);
 }
 
 

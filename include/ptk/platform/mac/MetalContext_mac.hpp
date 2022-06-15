@@ -29,7 +29,7 @@ namespace pTK
         Context for a hardware based OpenGL Windows backend.
         All drawings will be done using the GPU.
     */
-    class MetalContext_mac : public ContextBase
+    class PTK_API MetalContext_mac : public ContextBase
     {
     public:
         /** Constructs GLContext_win with default values.

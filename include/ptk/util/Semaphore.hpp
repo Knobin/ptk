@@ -22,7 +22,7 @@ namespace pTK
      
         A basic class for synchronizing threads.
     */
-    class Semaphore : public SingleObject
+    class PTK_API Semaphore : public SingleObject
     {
     public:
         /** Deleted Constructor for Semaphore.

@@ -18,7 +18,7 @@ namespace pTK
         Derived from Shape, this class if for creating a
         simple rectangle for drawing.
     */
-    class Rectangle : public Shape
+    class PTK_API Rectangle : public Shape
     {
     public:
         /** Constructs Rectangle with default values.
@@ -52,8 +52,8 @@ namespace pTK
     };
     
     // Comparison operators.
-    bool operator==(const Rectangle& lhs, const Rectangle& rhs);
-    bool operator!=(const Rectangle& lhs, const Rectangle& rhs);
+    PTK_API bool operator==(const Rectangle& lhs, const Rectangle& rhs);
+    PTK_API bool operator!=(const Rectangle& lhs, const Rectangle& rhs);
 }
 
 #endif // PTK_WIDGETS_RECTANGLE_HPP

@@ -18,7 +18,7 @@ namespace pTK
     /** TextField class implementation.
 
     */
-    class TextField : public Rectangle, public Text
+    class PTK_API TextField : public Rectangle, public Text
     {
     public:
         /** Constructs Label with default values.

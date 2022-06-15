@@ -9,6 +9,7 @@
 #define PTK_UTIL_POINT_HPP
 
 // pTK Headers
+#include "ptk/core/Defines.hpp"
 #include "ptk/core/Types.hpp"
 #include "ptk/util/Vec2.hpp"
 
@@ -18,7 +19,7 @@ namespace pTK
      
         This class is low level class handling position.
     */
-    class Point
+    class PTK_API Point
     {
     public:
         using value_type = int32;
@@ -79,18 +80,18 @@ namespace pTK
     };
     
     // Comparison operators.
-    bool operator==(const Point& lhs, const Point& rhs);
-    bool operator!=(const Point& lhs, const Point& rhs);
+    PTK_API bool operator==(const Point& lhs, const Point& rhs);
+    PTK_API bool operator!=(const Point& lhs, const Point& rhs);
     
     // Binary arithmetic operators.
-    Point operator+(const Point& lhs, const Point& rhs);
-    Point operator-(const Point& lhs, const Point& rhs);
-    Point operator*(const Point& lhs, const Point& rhs);
-    Point operator/(const Point& lhs, const Point& rhs);
-    Point& operator+=(Point& lhs, const Point& rhs);
-    Point& operator-=(Point& lhs, const Point& rhs);
-    Point& operator*=(Point& lhs, const Point& rhs);
-    Point& operator/=(Point& lhs, const Point& rhs);
+    PTK_API Point operator+(const Point& lhs, const Point& rhs);
+    PTK_API Point operator-(const Point& lhs, const Point& rhs);
+    PTK_API Point operator*(const Point& lhs, const Point& rhs);
+    PTK_API Point operator/(const Point& lhs, const Point& rhs);
+    PTK_API Point& operator+=(Point& lhs, const Point& rhs);
+    PTK_API Point& operator-=(Point& lhs, const Point& rhs);
+    PTK_API Point& operator*=(Point& lhs, const Point& rhs);
+    PTK_API Point& operator/=(Point& lhs, const Point& rhs);
 }
 
 #endif // PTK_UTIL_POSITION_HPP

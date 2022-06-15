@@ -24,7 +24,7 @@
 
     namespace pTK
     {
-        class Log
+        class PTK_API Log
         {
         public:
             static void init();

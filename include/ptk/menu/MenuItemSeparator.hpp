@@ -17,7 +17,7 @@ namespace pTK
 
         Usually a line.
     */
-    class MenuItemSeparator : public MenuItem
+    class PTK_API MenuItemSeparator : public MenuItem
     {
     public:
         /** Constructs MenuItemSeparator with type and status.

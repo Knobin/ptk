@@ -12,6 +12,7 @@
 #include "Types.hpp"
 
 // pTK Headers
+#include "ptk/core/Defines.hpp"
 #include "ptk/Log.hpp"
 
 // C++ Headers
@@ -35,7 +36,7 @@ namespace pTK
         here so if the widget / user wants to act in the event.
 
     */
-    class EventManager
+    class PTK_API EventManager
     {
     public:
         /** Function to add a listener.
