@@ -37,12 +37,14 @@
 #endif
 
 // Check compiler.
-#if !defined(PTK_COMPILER_CLANG) && defined(__clang__)
-    #define PTK_COMPILER_CLANG
-#elif !defined(PTK_COMPILER_GCC) && defined(__GNUC__)
-    #define PTK_COMPILER_GCC
-#elif !defined(PTK_COMPILER_MSVC) && defined(_MSC_VER)
-    #define PTK_COMPILER_MSVC
+#if !defined(PTK_COMPILER_CLANG) && !defined(PTK_COMPILER_GCC) && !defined(PTK_COMPILER_MSVC)
+    #if defined(__clang__)
+        #define PTK_COMPILER_CLANG
+    #elif defined(__GNUC__)
+        #define PTK_COMPILER_GCC
+    #elif defined(_MSC_VER)
+        #define PTK_COMPILER_MSVC
+    #endif
 #endif
 
 // Shared library defines.
