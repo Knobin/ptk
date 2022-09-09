@@ -50,7 +50,7 @@ namespace pTK
         Size calcMaxSize() const;
         
         std::vector<Size::value_type> calcSpaces(Size::value_type width);
-        Point::value_type alignChildV(size_type index, const Size& parentSize, const Size& childSize);
+        Point::value_type alignChildV(Widget *child, const Size& parentSize, const Size& childSize);
     };
 }
 

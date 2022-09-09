@@ -23,13 +23,13 @@ namespace pTK
     Application *Application::s_Instance{nullptr};
 
     Application::Application(const std::string& name)
-        : IterableAssociative<int32, Window*>(), SingleObject()
+        : SingleObject()
     {
         init(name);
     }
 
     Application::Application(const std::string& name, int, char* [])
-        : IterableAssociative<int32, Window*>(), SingleObject()
+        : SingleObject()
     {
         init(name);
         // TODO: Check arguments.
@@ -88,7 +88,7 @@ namespace pTK
         }
 
         try {
-            container().insert({id, window});
+            m_holder.insert({id, window});
             AppInstance()->onWindowAdd({id, window});
         } catch (const std::exception&) {
             return -1;
@@ -106,7 +106,7 @@ namespace pTK
         if (it != end())
         {
             AppInstance()->onWindowRemove(*it);
-            container().erase(it);
+            m_holder.erase(it);
             return true;
         }
 
@@ -115,11 +115,11 @@ namespace pTK
 
     bool Application::removeWindow(int32 key)
     {
-        auto it{container().find(key)};
-        if (it != container().end())
+        auto it{m_holder.find(key)};
+        if (it != m_holder.end())
         {
             AppInstance()->onWindowRemove(*it);
-            container().erase(it);
+            m_holder.erase(it);
             return true;
         }
 
@@ -129,7 +129,7 @@ namespace pTK
     int Application::run()
     {
         // Currently not supporting running the app without a window.
-        if (container().empty())
+        if (m_holder.empty())
         {
             PTK_FATAL("No Window added to Application");
             return -1;
@@ -146,7 +146,7 @@ namespace pTK
         // Maybe do some setup things here?
 
         // Standard message loop for now.
-        while (!container().empty())
+        while (!m_holder.empty())
         {
             AppInstance()->waitEvents();
             for (const auto& pair : *this)
@@ -170,12 +170,12 @@ namespace pTK
     void Application::removeAllWindows()
     {
         for (auto it = cbegin(); it != cend();)
-            container().erase(it++);
+            m_holder.erase(it++);
     }
 
     Window *Application::findByKey(int32 key) const
     {
-        auto it = container().find(key);
-        return (it != container().end()) ? it->second : nullptr;
+        auto it = m_holder.find(key);
+        return (it != m_holder.end()) ? it->second : nullptr;
     }
 }

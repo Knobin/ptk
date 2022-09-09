@@ -11,7 +11,7 @@
 namespace pTK
 {
     WidgetContainer::WidgetContainer()
-        : IterableSequence<Ref<Widget>>(), Widget()
+        : Widget()
     {
         setSizePolicy(SizePolicy::Type::Expanding);
         initCallbacks();
@@ -27,7 +27,7 @@ namespace pTK
     {
         if (std::find(cbegin(), cend(), widget) == cend())
         {
-            container().push_back(widget);
+            m_holder.push_back(widget);
             widget->setParent(this);
             onAdd(widget);
             draw();
@@ -41,7 +41,7 @@ namespace pTK
         {
             widget->setParent(nullptr);
             onRemove(widget);
-            container().erase(it);
+            m_holder.erase(it);
             draw();
         }
     }

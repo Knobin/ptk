@@ -367,7 +367,7 @@ namespace pTK
     {
 #ifdef PTK_DEBUG
       if (scale.x != scale.y)
-          PTK_WARN("Window scale is not the same, x: {}, y: {}", scale.x, scale.y);
+          PTK_WARN("Window scale is not the same, x: {}, y: {}", static_cast<double>(scale.x), static_cast<double>(scale.y));
 #endif
         const Size scaledSize{static_cast<Size::value_type>(size.width * scale.x),
                             static_cast<Size::value_type>(size.height * scale.y)};
