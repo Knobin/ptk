@@ -25,15 +25,23 @@
 #endif
 
 // Check platform.
-#if !defined(PTK_PLATFORM_WINDOWS) && defined(_WIN32)
-    #define PTK_PLATFORM_WINDOWS
-#elif !defined(PTK_PLATFORM_APPLE) && defined(__APPLE__)
-    #include "TargetConditionals.h"
-    #if TARGET_OS_MAC
-        #define PTK_PLATFORM_APPLE
+#if !defined(PTK_PLATFORM_WINDOWS) && !defined(PTK_PLATFORM_APPLE) && !defined(PTK_PLATFORM_UNIX)
+    #if defined(_WIN32)
+        #define PTK_PLATFORM_WINDOWS
+    #elif defined(__APPLE__)
+        #include "TargetConditionals.h"
+        #if TARGET_OS_MAC
+            #define PTK_PLATFORM_APPLE
+        #else
+            #error "Unsupported Apple Target!"
+        #endif
+    #elif defined(__unix__)
+        #define PTK_PLATFORM_UNIX
+    #else
+        #if !defined(PTK_SUPPRESS_PLATFORM_ERROR)
+            #error "Unsupported platform!"
+        #endif
     #endif
-#elif !defined(PTK_PLATFORM_UNIX) && defined(__unix__)
-    #define PTK_PLATFORM_UNIX
 #endif
 
 // Check compiler.
@@ -44,6 +52,8 @@
         #define PTK_COMPILER_GCC
     #elif defined(_MSC_VER)
         #define PTK_COMPILER_MSVC
+    #else
+        #warning "Unknown compiler!"
     #endif
 #endif
 
