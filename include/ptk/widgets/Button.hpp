@@ -34,7 +34,7 @@ namespace pTK
             It also includes 3 pre-assigned styles (Default,
             Success, Danger).
         */
-        struct Style
+        struct PTK_API Style
         {
             Color color;
             Color hoverColor;

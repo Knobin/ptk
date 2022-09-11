@@ -30,11 +30,6 @@ namespace pTK
         return s_Instance;
     }
 
-    const std::map<int32, Key>& KeyMap::Map()
-    {
-        return Get().m_keyMap;
-    }
-
     bool KeyMap::KeyExists(Key key)
     {
         const std::map<int32, Key>& keyMap{Get().m_keyMap};
@@ -43,6 +38,12 @@ namespace pTK
         });
 
         return it != keyMap.cend();
+    }
+
+    bool KeyMap::KeyCodeExists(int32 keycode)
+    {
+        const std::map<int32, Key>& keyMap{ Get().m_keyMap };
+        return static_cast<bool>(keyMap.count(keycode)); // 0 or 1 => false, true.
     }
 
     Key KeyMap::KeyCodeToKey(int32 code)

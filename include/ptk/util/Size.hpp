@@ -26,7 +26,7 @@ namespace pTK
     public:
         using value_type = uint32;
 
-        struct Limits
+        struct PTK_API Limits
         {
             static const value_type Min;
             static const value_type Max;

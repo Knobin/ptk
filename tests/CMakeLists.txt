@@ -21,6 +21,11 @@ function(define_test)
         if (TEST_PREFIX_FILES)
             add_executable(${TEST_PREFIX_NAME} ${TEST_PREFIX_FILES})
             target_compile_definitions(${TEST_PREFIX_NAME} PRIVATE ${PTK_DEFINITIONS})
+             set_target_properties(${TEST_PREFIX_NAME}
+                PROPERTIES
+                    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/lib
+                    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/bin
+            )
             if (TEST_PREFIX_LINKS)
                 target_link_libraries(${TEST_PREFIX_NAME} PRIVATE ${TEST_PREFIX_LINKS} Catch2::Catch2WithMain)
             else (TEST_PREFIX_LINKS)

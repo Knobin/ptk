@@ -21,8 +21,8 @@ namespace pTK
     {
     public:
         static KeyMap& Get();
-        static const std::map<int32, Key>& Map();
         static bool KeyExists(Key key);
+        static bool KeyCodeExists(int32 keycode);
         static Key KeyCodeToKey(int32 keycode);
         static int32 KeyToKeyCode(Key key);
 

@@ -38,7 +38,7 @@ namespace pTK
 
         @return Ref of MenuItemSeparator
     */
-    Ref<MenuItemSeparator> CreateSeparator()
+    inline Ref<MenuItemSeparator> CreateSeparator()
     {
         return Create<MenuItemSeparator>();
     }

@@ -27,7 +27,7 @@ namespace pTK
 
         This class handles the Windows Window.
     */
-    class WindowHandle_win : public WindowHandle
+    class PTK_API WindowHandle_win : public WindowHandle
     {
     public:
         /** Constructs MainWindow_win with default values.

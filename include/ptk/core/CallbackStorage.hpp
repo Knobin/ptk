@@ -274,7 +274,7 @@ namespace pTK
             @param index    index to check
             @return         true if valid, otherwise false
         */
-        bool validIndex(std::size_t index)
+        bool validIndex(std::size_t index) const noexcept
         {
             return (index < m_storage.size());
         }

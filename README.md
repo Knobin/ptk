@@ -3,6 +3,28 @@ C++ library for building user interfaces.
 
 **Very early work in progress project.**
 
+## Usage
+Small sample application:
+
+```cpp
+#include "ptk/ptk.hpp"
+
+int main(int argc, char *argv[]) {
+    pTK::Application app{"Sample Application", argc, argv};
+    pTK::Window window{"Sample Window", {960, 540}};
+
+    pTK::Ref<pTK::Label> label = pTK::Create<pTK::Label>();
+    label->setText("Sample Label");
+    window.add(label);
+    
+    return app.exec(&window);
+}
+```
+
+For more sample applications see:
+* [Examples](example)
+* [SandboxApp](sandbox)
+
 ## Build
 Start by cloning the repository:
 
@@ -75,28 +97,6 @@ $ python3 tools/git-sync-deps
 $ ..\depot_tools\gn gen out/Release --args="is_debug=false is_official_build=true skia_use_system_expat=false skia_use_system_icu=false skia_use_system_libjpeg_turbo=false skia_use_system_libpng=false skia_use_system_libwebp=false skia_use_system_zlib=false skia_use_sfntly=false skia_use_freetype=true skia_use_harfbuzz=true skia_pdf_subset_harfbuzz=true skia_use_system_freetype2=false skia_use_system_harfbuzz=false target_cpu=""x64"" win_vc=""C:\Program Files\Microsoft Visual Studio\2022\Community\VC"" extra_cflags=[""-MD""]"
 $ ..\depot_tools\ninja -C out/Release skia
 ```
-
-## Usage
-Small sample application:
-
-```cpp
-#include "ptk/ptk.hpp"
-
-int main(int argc, char *argv[]) {
-    pTK::Application app{"Sample Application", argc, argv};
-    pTK::Window window{"Sample Window", {960, 540}};
-
-    pTK::Ref<pTK::Label> label = pTK::Create<pTK::Label>();
-    label->setText("Sample Label");
-    window.add(label);
-    
-    return app.exec(&window);
-}
-```
-
-For more sample applications see:
-* [Examples](example)
-* [SandboxApp](sandbox)
 
 ## License
 See [MIT License](LICENSE).

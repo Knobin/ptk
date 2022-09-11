@@ -98,6 +98,7 @@ if (BUILD_SHARED_LIBS)
     set(PTK_DEFINITIONS ${PTK_DEFINITIONS} PTK_SHARED)
     set(PTK_EXPORTS_DEFINE PTK_EXPORTS)
     message(STATUS "pTK library type: SHARED")
+    message(WARNING "Building pTK as shared library is experimental")
 else()
     message(STATUS "pTK library type: STATIC")
 endif()
@@ -148,6 +149,12 @@ source_group(TREE "${CMAKE_SOURCE_DIR}/src" PREFIX "pTK Source Files" FILES ${PT
 
 # Define library
 add_library(${PROJECT_NAME} ${PTK_HEADER_FILES} ${PTK_SOURCE_FILES})
+
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/lib
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/bin
+)
 
 # includes and deps
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/include" ${PTK_INCLUDE_DIRS})

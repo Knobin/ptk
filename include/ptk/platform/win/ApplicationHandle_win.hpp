@@ -21,7 +21,7 @@ namespace pTK
         Base application implementation for Windows.
         This class will be instantiated when the Application is created.
     */
-    class ApplicationHandle_win : public ApplicationHandle
+    class PTK_API ApplicationHandle_win : public ApplicationHandle
     {
     public:
         static void Init(const std::string& name);
