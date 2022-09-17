@@ -60,6 +60,7 @@ if (UNIX AND NOT APPLE) # for Linux, BSD, Solaris, Minix.
     set(PTK_INCLUDE_DIRS ${X11_INCLUDE_DIR})
     link_directories(${X11_LIBRARIES} ${X11_Xrandr_LIB})
     set(PTK_DEPENDENCIES -ldl -lfreetype -lfontconfig ${X11_LIBRARIES} ${X11_Xrandr_LIB})
+    set(PTK_OPENGL_DEPENDENCIES "OpenGL::GL")
 elseif (WIN32)
     set(PTK_PLATFORM "Windows")
     set(PTK_OPENGL_DEPENDENCIES "opengl32")

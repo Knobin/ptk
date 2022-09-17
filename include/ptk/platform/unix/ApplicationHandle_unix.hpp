@@ -23,7 +23,7 @@ namespace pTK
         Base application implementation for Unix.
         This class will be instantiated when the Application is created.
     */
-    class ApplicationHandle_unix : public ApplicationHandle
+    class PTK_API ApplicationHandle_unix : public ApplicationHandle
     {
     public:
         static void Init(const std::string& name);

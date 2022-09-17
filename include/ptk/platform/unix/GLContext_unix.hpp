@@ -36,7 +36,7 @@ namespace pTK
         Context for a hardware based OpenGL Unix backend.
         All drawings will be done using the GPU.
     */
-    class GLContext_unix : public ContextBase
+    class PTK_API GLContext_unix : public ContextBase
     {
     public:
         /** Constructs GLContext_unix with default values.
