@@ -216,8 +216,11 @@ namespace pTK
         if (height != 0)
         {
             std::size_t i{0};
+            spaces.back() = 0;
+
             for (const auto& child : *this)
             {
+                spaces.at(i) = 0;
                 const std::underlying_type<Align>::type cAlign{child->getAlign()};
 
                 if (IsAlignSet(cAlign, Align::Top))
@@ -227,7 +230,11 @@ namespace pTK
                 }
                 else if (IsAlignSet(cAlign, Align::Bottom))
                 {
-                    spaces.at(i) = 1;
+                    if (i == 0)
+                        spaces.at(i) = 1;
+                    else
+                        spaces.at(i) = (spaces.at(i) == 0) ? 0 : 1;
+
                     spaces.at(i+1) = 0;
                 }
                 else if (IsAlignSet(cAlign, Align::Center) || IsAlignSet(cAlign, Align::VCenter))
@@ -245,7 +252,7 @@ namespace pTK
                     ++spacesToUse;
 
             Size::value_type spaceHeight{(spacesToUse != 0) ? height / spacesToUse : 0};
-            for (auto value : spaces)
+            for (auto& value : spaces)
                 if (value == 1)
                     value = spaceHeight;
 

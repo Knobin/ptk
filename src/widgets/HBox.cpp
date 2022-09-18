@@ -215,24 +215,32 @@ namespace pTK
         if (width != 0)
         {
             std::size_t i{0};
+            spaces.back() = 0;
+
             for (const auto& child : *this)
             {
-                const std::underlying_type<Align>::type cAlign{child->getAlign()};
+                spaces.at(i) = 0;
+                const std::underlying_type<Align>::type cAlign{ child->getAlign() };
 
                 if (IsAlignSet(cAlign, Align::Left))
                 {
                     spaces.at(i) = 0;
-                    spaces.at(i+1) = 1;
+                    spaces.at(i + 1) = 1;
                 }
                 else if (IsAlignSet(cAlign, Align::Right))
                 {
-                    spaces.at(i) = 1;
-                    spaces.at(i+1) = 0;
+                    if (i == 0)
+                        spaces.at(i) = 1;
+                    else
+                        spaces.at(i) = (spaces.at(i) == 0) ? 0 : 1;
+                    
+                    spaces.at(i + 1) = 0;
                 }
-                else if (IsAlignSet(cAlign, Align::Center) || IsAlignSet(cAlign, Align::HCenter))
+
+                if (IsAlignSet(cAlign, Align::Center) || IsAlignSet(cAlign, Align::HCenter))
                 {
                     spaces.at(i) = 1;
-                    spaces.at(i+1) = 1;
+                    spaces.at(i + 1) = 1;
                 }
 
                 ++i;
@@ -244,7 +252,7 @@ namespace pTK
                     ++spacesToUse;
 
             Size::value_type spaceWidth{(spacesToUse != 0) ? static_cast<Size::value_type>(width) / spacesToUse : 0};
-            for (auto value : spaces)
+            for (auto& value : spaces)
                 if (value == 1)
                     value = spaceWidth;
         }
