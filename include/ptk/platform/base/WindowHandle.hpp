@@ -197,12 +197,12 @@ namespace pTK
             setLimitsWithSizePolicy();
         }
 
+    protected:
         /** Function for invalidating the window.
             
         */
-        virtual void inval() = 0;
+        virtual void inval() {}
 
-    protected:
         // Use this function to send events.
         template<typename Event>
         void iHandleEvent(const Event& evt);

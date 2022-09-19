@@ -400,7 +400,9 @@ namespace pTK
 
     void WindowHandle_win::inval()
     {
-        InvalidateRect(m_hwnd, nullptr, false);
+        if (!m_data.invalidated)
+            InvalidateRect(m_hwnd, nullptr, false);
+        m_data.invalidated = false;
     }
 
     HWND WindowHandle_win::handle() const
@@ -660,6 +662,7 @@ namespace pTK
             }
             case WM_PAINT:
             {
+                data->invalidated = true;
                 EventSendHelper<PaintEvent>(window, {{0,0}, window->getSize()});
                 break;
             }

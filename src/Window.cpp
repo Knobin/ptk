@@ -39,8 +39,7 @@ namespace pTK
     void Window::onChildDraw(size_type)
     {
         // onChildDraw is not a thread safe function...
-        // postEvent<PaintEvent>(Point{0, 0}, getSize());
-        inval();
+        postEvent<PaintEvent>(Point{0, 0}, getSize());
     }
 
     void Window::handleEvents()
@@ -89,8 +88,8 @@ namespace pTK
         resize(size);
         refitContent(size);
 
-        // forceDrawAll();
-        inval();
+        forceDrawAll();
+        // postEvent<PaintEvent>(Point{0, 0}, getSize());
     }
 
     /*void Window::onLimitChange(const Size& min, const Size& max)
@@ -299,6 +298,8 @@ namespace pTK
         ContextBase* context{ getContext() };
         sk_sp<SkSurface> surface = context->surface();
         SkCanvas* canvas{surface->getCanvas()};
+
+        inval();
 
         // Apply monitor scale.
         SkMatrix matrix{};

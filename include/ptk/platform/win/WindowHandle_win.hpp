@@ -185,11 +185,6 @@ namespace pTK
             @return         true if operation is successful, otherwise false
         */
         bool setScaleHint(const Vec2f& scale) override;
-        
-        /** Function for invalidating the window.
-
-        */
-        void inval() override;
 
         /** Function for retrieving HWND from the window.
 
@@ -205,6 +200,12 @@ namespace pTK
 
         // WndPro callback.
         static LRESULT CALLBACK WndPro(HWND hwnd, UINT msg, WPARAM wParam, ::LPARAM lParam);
+
+    protected:
+        /** Function for invalidating the window.
+
+        */
+        void inval() override;
 
     private:
         /** Function for setting the size limits the window.
@@ -224,6 +225,7 @@ namespace pTK
             MenuBarUtil_win::MenuMap menuItems{};
             bool ignoreSize{ false };
             bool hasMenu{ false };
+            bool invalidated{false};
             DWORD style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX};
         };
 
