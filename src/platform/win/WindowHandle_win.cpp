@@ -635,16 +635,6 @@ namespace pTK
         {
             case WM_CREATE:
                 break;
-            case WM_SIZE:
-            {
-                Size size{ LOWORD(lParam), HIWORD(lParam) };
-                const Vec2f scale = window->getDPIScale();
-                DWORD style = window->getWindowStyle();
-                ResizeEvent evt{ ScaleSize(CalcAdjustedWindowSize(size, style, data->hasMenu, scale.x * 96.0f),
-                                          Vec2f{1.0f / scale.x, 1.0f / scale.y}) };
-                EventSendHelper<ResizeEvent>(window, evt);
-                break;
-            }
             case WM_CLOSE:
             {
                 // window->handleEvents(); // Handle all events before sending close event.
