@@ -77,11 +77,6 @@ namespace pTK
         template<typename T, typename... Args>
         void postEvent(Args&& ...args);
 
-        /** Function for forcing the window to redraw everything.
-
-        */
-        void forceDrawAll();
-
         /** Function for setting the window icon.
 
             @param path     path to image
@@ -113,6 +108,11 @@ namespace pTK
         using VBox::getPosition;
 
     private:
+        /** Function for forcing the window to redraw everything.
+
+        */
+        void forceDrawAll();
+
         // This draw function gets called from the backend.
         void draw(const PaintEvent&) override
         {

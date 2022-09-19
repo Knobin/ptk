@@ -61,6 +61,10 @@ namespace pTK
         void swapBuffers() override;
 
     private:
+        void createContext(const Size& size);
+        void destroyContext();
+        
+    private:
         HWND m_hwnd;
         HGLRC m_hglrc;
         sk_sp<SkSurface> m_surface;
@@ -68,6 +72,8 @@ namespace pTK
         sk_sp<GrDirectContext> m_context;
         GrContextOptions m_GrContextOptions;
         SkSurfaceProps m_props;
+        int m_stencilBits{8};
+        int m_sampleCount{1};
     };
 }
 

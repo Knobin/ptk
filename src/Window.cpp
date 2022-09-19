@@ -39,7 +39,8 @@ namespace pTK
     void Window::onChildDraw(size_type)
     {
         // onChildDraw is not a thread safe function...
-        postEvent<PaintEvent>(Point{0, 0}, getSize());
+        // postEvent<PaintEvent>(Point{0, 0}, getSize());
+        inval();
     }
 
     void Window::handleEvents()
@@ -87,7 +88,9 @@ namespace pTK
     {
         resize(size);
         refitContent(size);
-        forceDrawAll();
+
+        // forceDrawAll();
+        inval();
     }
 
     /*void Window::onLimitChange(const Size& min, const Size& max)
@@ -288,6 +291,8 @@ namespace pTK
 
     void Window::forceDrawAll()
     {
+        PTK_INFO("Painting window.");
+
         // m_handle.beginPaint();
         beginPaint();
         // ContextBase* context{m_handle.getContext()};

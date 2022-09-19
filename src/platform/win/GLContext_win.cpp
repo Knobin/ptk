@@ -25,12 +25,72 @@ PTK_DISABLE_WARN_END()
 namespace pTK
 {
     GLContext_win::GLContext_win(HWND hwnd, const Size& size)
-        : ContextBase(size), m_hwnd{ hwnd }, m_hglrc{}, m_backendContext{nullptr}, m_context{nullptr}, 
+        : ContextBase(size), m_hwnd{hwnd}, m_hglrc{}, m_backendContext{nullptr}, m_context{nullptr}, 
             m_GrContextOptions{}, m_props{0, kRGB_H_SkPixelGeometry}
     {
-        HDC dc{GetDC(hwnd)};
-        m_hglrc = SkCreateWGLContext(dc, 1, false, kGLPreferCompatibilityProfile_SkWGLContextRequest);
+        createContext(size);
+    }
+
+    GLContext_win::~GLContext_win()
+    {
+        destroyContext();
+        PTK_INFO("Destroyed GLContext_win");
+    }
+
+    void GLContext_win::resize(const Size& size)
+    {
+        if (m_context && m_backendContext)
+        {
+            GrGLint buffer;
+            GR_GL_CALL(m_backendContext.get(), GetIntegerv(GR_GL_FRAMEBUFFER_BINDING, &buffer));
+
+            GrGLFramebufferInfo fbInfo;
+            fbInfo.fFBOID = buffer;
+            fbInfo.fFormat = GR_GL_RGBA8;
+
+            GrBackendRenderTarget backendRenderTarget(size.width, size.height, m_sampleCount, m_stencilBits, fbInfo);
+
+            m_surface = SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget,
+                    kBottomLeft_GrSurfaceOrigin, kRGBA_8888_SkColorType, nullptr, &m_props);
+            PTK_ASSERT(m_surface, "Failed to create surface!");
+
+            //clear(Color{0xFFFFFFFF});
+            setSize(size);
+            PTK_INFO("Sized GLContext_win to {}x{}", size.width, size.height);
+        }
+#ifdef PTK_DEBUG
+        else
+        {
+            PTK_ASSERT(false, "Failed to resize GLContext_win, context is nullptr!");
+        }
+#endif
+    }
+
+    sk_sp<SkSurface> GLContext_win::surface() const
+    {
+        return m_surface;
+    }
+
+    void GLContext_win::swapBuffers()
+    {
+        PTK_INFO("swapBuffers");
+        HDC dc = GetDC((HWND)m_hwnd);
+        SwapBuffers(dc);
+        ReleaseDC((HWND)m_hwnd, dc);
+    }
+
+    void GLContext_win::createContext(const Size& size)
+    {
+        HDC dc{GetDC(m_hwnd)};
+        // m_hglrc = SkCreateWGLContext(dc, 1, false, kGLPreferCompatibilityProfile_SkWGLContextRequest);
+        m_hglrc = SkCreateWGLContext(dc, 1, false, kGLPreferCoreProfile_SkWGLContextRequest);
         PTK_ASSERT(m_hglrc, "Failed to create OpenGL handle!");
+        PTK_INFO("Created OpenGL context using WGL.");
+        ReleaseDC(m_hwnd, dc);
+
+        SkWGLExtensions extensions;
+        if (extensions.hasExtension(dc, "WGL_EXT_swap_control"))
+            extensions.swapInterval(1);
 
         if (wglMakeCurrent(dc, m_hglrc))
         {
@@ -39,16 +99,28 @@ namespace pTK
             glStencilMask(0xFFFFFFFF);
             glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
+            int pixelFormat = GetPixelFormat(dc);
+            PIXELFORMATDESCRIPTOR pfd;
+            DescribePixelFormat(dc, pixelFormat, sizeof(pfd), &pfd);
+            m_stencilBits = pfd.cStencilBits;
+
+            if (extensions.hasExtension(dc, "WGL_ARB_multisample")) {
+                static const int kSampleCountAttr = SK_WGL_SAMPLES;
+                extensions.getPixelFormatAttribiv(dc, pixelFormat, 0, 1, &kSampleCountAttr, &m_sampleCount);
+                m_sampleCount = std::max(m_sampleCount, 1);
+            }
+
             auto glInterface = GrGLMakeNativeInterface();
             PTK_ASSERT(glInterface, "Failed to create interface!");
-            m_backendContext.reset(GrGLMakeNativeInterface().release());
+            m_backendContext.reset(glInterface.release());
+            PTK_INFO("Created GrGLInterface");
 
             // m_info.fFormat = GL_RGBA8;
             // m_colorType = kRGBA_8888_SkColorType;
 
             m_context = GrDirectContext::MakeGL(m_backendContext, m_GrContextOptions);
+            PTK_INFO("Created GrDirectContext");
 
-            PTK_INFO("Initialized GLContext_win");
             resize(size);
         }
 #ifdef PTK_DEBUG
@@ -59,51 +131,12 @@ namespace pTK
 #endif
     }
 
-    GLContext_win::~GLContext_win()
+    void GLContext_win::destroyContext()
     {
-        // Apparently, surface needs to be destroyed before context.
-        // Otherwise, SkRefCount will give a nice assert.
         m_surface.reset();
         m_context.reset();
+        m_backendContext.reset();
 
-        PTK_INFO("Destroyed GLContext_win");
-    }
-
-    void GLContext_win::resize(const Size& size)
-    {
-        if (m_context)
-        {
-            GrGLint buffer;
-            GR_GL_CALL(m_backendContext.get(), GetIntegerv(GR_GL_FRAMEBUFFER_BINDING, &buffer));
-
-            GrGLFramebufferInfo fbInfo;
-            fbInfo.fFBOID = buffer;
-            fbInfo.fFormat = GR_GL_RGBA8;
-
-            glViewport(0, 0, size.width, size.height);
-
-            GrBackendRenderTarget backendRenderTarget(size.width, size.height, 1, 8, fbInfo);
-
-            SkSurface* surface{ SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget,
-                    kBottomLeft_GrSurfaceOrigin, kRGBA_8888_SkColorType, nullptr, &m_props).release() };
-            PTK_ASSERT(surface, "Failed to create surface!");
-            m_surface.reset(surface);
-
-            //clear(Color{0xFFFFFFFF});
-            PTK_INFO("Sized GLContext_win to {}x{}", size.width, size.height);
-            setSize(size);
-        }
-    }
-
-    sk_sp<SkSurface> GLContext_win::surface() const
-    {
-        return m_surface;
-    }
-
-    void GLContext_win::swapBuffers()
-    {
-        HDC dc{GetDC(m_hwnd)};
-        SwapBuffers(dc);
-        ReleaseDC(m_hwnd, dc);
+        wglDeleteContext(m_hglrc);
     }
 }

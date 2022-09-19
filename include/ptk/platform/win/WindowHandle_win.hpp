@@ -185,6 +185,11 @@ namespace pTK
             @return         true if operation is successful, otherwise false
         */
         bool setScaleHint(const Vec2f& scale) override;
+        
+        /** Function for invalidating the window.
+
+        */
+        void inval() override;
 
         /** Function for retrieving HWND from the window.
 
