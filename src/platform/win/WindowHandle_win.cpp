@@ -704,6 +704,18 @@ namespace pTK
                 HandleMouseClick(window, scale, Event::Type::MouseButtonReleased, Mouse::Button::Left, lParam);
                 break;
             }
+            case WM_MOUSEWHEEL:
+            {
+                const double y_offset = static_cast<float>(static_cast<SHORT>(HIWORD(wParam)) / static_cast<float>(WHEEL_DELTA));
+                EventSendHelper<ScrollEvent>(window, {{0.0f, (float)y_offset}});
+                break;
+            }
+            case WM_MOUSEHWHEEL:
+            {
+                const float x_offset = -static_cast<float>(static_cast<SHORT>(HIWORD(wParam)) / static_cast<float>(WHEEL_DELTA));
+                EventSendHelper<ScrollEvent>(window, {{x_offset, 0.0f}});
+                break;
+            }
             case WM_SIZING:
             {
                 RECT* rect = reinterpret_cast<RECT*>(lParam);
