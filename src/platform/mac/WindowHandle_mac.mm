@@ -7,6 +7,7 @@
 
 // Local Headers
 #include "ptk/platform/mac/WindowHandle_mac.hpp"
+#include "ptk/events/MouseEvent.hpp"
 #include "ptk/platform/common/RasterContext.hpp"
 #include "ptk/platform/mac/ApplicationHandle_mac.hpp"
 #include "ptk/platform/mac/RasterPolicy_mac.hpp"
@@ -292,6 +293,16 @@ static bool IsValid(uint32 data)
     std::underlying_type<pTK::KeyEvent::Modifier>::type mods{GetModifiers(event.modifierFlags)};
     pTK::KeyEvent evt{pTK::Event::Type::KeyReleased, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode)), mods};
     pTK::EventSendHelper<pTK::KeyEvent>(ptkWindow, evt);
+}
+
+- (void)scrollWheel:(NSEvent *)event
+{
+    const double delta{([event hasPreciseScrollingDeltas]) ? 0.1 : 1.0};
+    const pTK::ScrollEvent scrollEvent{{static_cast<float>([event scrollingDeltaX] * delta), 
+                                        static_cast<float>([event scrollingDeltaY] * delta)}};
+
+    if (std::fabs(scrollEvent.offset.x) > 0.0f || std::fabs(scrollEvent.offset.y) > 0.0f)
+        pTK::EventSendHelper<pTK::ScrollEvent>(ptkWindow, scrollEvent);
 }
 
 - (void)flagsChanged:(NSEvent *)event
