@@ -252,6 +252,70 @@ namespace pTK
             return m_holder.crend();
         }
 
+        /** Function for retrieving the element at the index in the IterableContainer.
+            @param pos      Index
+            @return         element in IterableContainer
+        */
+        reference at(size_type pos)
+        {
+            if (pos >= m_holder.size())
+                throw std::out_of_range("Index is out of range!");
+
+            return m_holder[pos];
+        }
+
+        /** Function for retrieving the element at the index in the IterableContainer.
+            @param pos      Index
+            @return         element in IterableContainer
+        */
+        const_reference at(size_type pos) const
+        {
+            if (pos >= m_holder.size())
+                throw std::out_of_range("Position is out of range!");
+
+            return m_holder[pos];
+        }
+
+        /** Function for retrieving the first element in the IterableContainer.
+            Should in no circumstances be called when the IterableContainer is empty!
+            This is considered to be undefined behavior!
+            @return    first element in IterableContainer
+        */
+        reference front()
+        {
+            return m_holder.front();
+        }
+
+        /** Function for retrieving the first element in the IterableContainer.
+            Should in no circumstances be called when the IterableContainer is empty!
+            This is considered to be undefined behavior!
+            @return    first element in IterableContainer
+        */
+        const_reference front() const
+        {
+            return m_holder.front();
+        }
+
+        /** Function for retrieving the last element in the IterableContainer.
+            Should in no circumstances be called when the IterableContainer is empty!
+            This is considered to be undefined behavior!
+            @return    last element in IterableContainer
+        */
+        reference back()
+        {
+            return m_holder.back();
+        }
+
+        /** Function for retrieving the last element in the IterableContainer.
+            Should in no circumstances be called when the IterableContainer is empty!
+            This is considered to be undefined behavior!
+            @return    last element in IterableContainer
+        */
+        const_reference back() const
+        {
+            return m_holder.back();
+        }
+
         size_type count() const noexcept
         {
             return m_holder.size();
