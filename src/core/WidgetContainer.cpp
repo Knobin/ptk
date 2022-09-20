@@ -128,7 +128,7 @@ namespace pTK
                 {
                     Widget* temp{item.get()}; // Iterator might change, when passing the event.
 
-                    item->triggerEvent<ClickEvent>(evt);
+                    item->handleEvent<ClickEvent>(evt);
                     m_lastClickedWidget = temp;
                     found = true;
                 }
@@ -138,7 +138,7 @@ namespace pTK
         if (lastClicked != nullptr && (lastClicked != m_lastClickedWidget || !found))
         {
             LeaveClickEvent lcEvent{evt.button, evt.pos};
-            lastClicked->triggerEvent<LeaveClickEvent>(lcEvent);
+            lastClicked->handleEvent<LeaveClickEvent>(lcEvent);
         }
 
 
@@ -149,19 +149,19 @@ namespace pTK
     void WidgetContainer::onReleaseCallback(const ReleaseEvent& evt)
     {
         if (m_lastClickedWidget != nullptr)
-            m_lastClickedWidget->triggerEvent<ReleaseEvent>(evt);
+            m_lastClickedWidget->handleEvent<ReleaseEvent>(evt);
     }
 
     void WidgetContainer::onKeyCallback(const KeyEvent& evt)
     {
         if (m_lastClickedWidget != nullptr)
-            m_lastClickedWidget->triggerEvent<KeyEvent>(evt);
+            m_lastClickedWidget->handleEvent<KeyEvent>(evt);
     }
 
     void WidgetContainer::onInputCallback(const InputEvent& evt)
     {
         if (m_lastClickedWidget != nullptr)
-            m_lastClickedWidget->triggerEvent<InputEvent>(evt);
+            m_lastClickedWidget->handleEvent<InputEvent>(evt);
     }
 
     void WidgetContainer::onHoverCallback(const MotionEvent& evt)
@@ -187,7 +187,7 @@ namespace pTK
                         if (m_currentHoverWidget != nullptr)
                         {
                             LeaveEvent lEvent{evt.pos};
-                            m_currentHoverWidget->triggerEvent<LeaveEvent>(lEvent);
+                            m_currentHoverWidget->handleEvent<LeaveEvent>(lEvent);
                         }
 
                         // New current hovered Widget.
@@ -195,10 +195,10 @@ namespace pTK
 
                         // Fire Enter event on this and on to child.
                         EnterEvent entEvent{evt.pos};
-                        triggerEvent<EnterEvent>(entEvent);
+                        m_currentHoverWidget->handleEvent<EnterEvent>(entEvent);
                     }
 
-                    m_currentHoverWidget->triggerEvent<MotionEvent>(evt);
+                    m_currentHoverWidget->handleEvent<MotionEvent>(evt);
                     return;
                 }
             }
@@ -207,7 +207,7 @@ namespace pTK
         if (m_currentHoverWidget != nullptr)
         {
             LeaveEvent lEvent{evt.pos};
-            m_currentHoverWidget->triggerEvent<LeaveEvent>(lEvent);
+            m_currentHoverWidget->handleEvent<LeaveEvent>(lEvent);
         }
 
         // New current hovered Widget.
@@ -217,14 +217,14 @@ namespace pTK
     void WidgetContainer::onEnterCallback(const EnterEvent& evt)
     {
         if (m_currentHoverWidget != nullptr)
-            m_currentHoverWidget->triggerEvent<EnterEvent>(evt);
+            m_currentHoverWidget->handleEvent<EnterEvent>(evt);
     }
 
     void WidgetContainer::onLeaveCallback(const LeaveEvent& evt)
     {
         if (m_currentHoverWidget != nullptr)
         {
-            m_currentHoverWidget->triggerEvent<LeaveEvent>(evt);
+            m_currentHoverWidget->handleEvent<LeaveEvent>(evt);
 
             // Reset current hovered Widget.
             m_currentHoverWidget = nullptr;
@@ -234,7 +234,7 @@ namespace pTK
     void WidgetContainer::onScrollCallback(const ScrollEvent& evt)
     {
         if (m_currentHoverWidget != nullptr)
-            m_currentHoverWidget->triggerEvent<ScrollEvent>(evt);
+            m_currentHoverWidget->handleEvent<ScrollEvent>(evt);
     }
 
     void WidgetContainer::setBackground(const Color& color)
@@ -300,7 +300,7 @@ namespace pTK
         addListener<LeaveClickEvent>([container = this](const LeaveClickEvent& evt){
             if (container->m_lastClickedWidget != nullptr)
             {
-                container->m_lastClickedWidget->triggerEvent<LeaveClickEvent>(evt);
+                container->m_lastClickedWidget->handleEvent<LeaveClickEvent>(evt);
                 container->m_lastClickedWidget = nullptr;
             }
             return false;
