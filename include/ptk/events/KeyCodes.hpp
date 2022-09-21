@@ -19,7 +19,6 @@ namespace pTK
     typedef enum class KeyCode : int32
     {
         Unknown = 0,
-        Escape  = 27,
         Space   = 32,
 
         // Numbers
@@ -62,6 +61,9 @@ namespace pTK
         Y       = 89,
         Z       = 90,
 
+        Escape      = 256,
+        Enter       = 257,
+        Tab         = 258,
         Backspace   = 259,
         Delete      = 261,
 

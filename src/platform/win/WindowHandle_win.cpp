@@ -576,15 +576,17 @@ namespace pTK
     static void HandleKeyEvent(WindowHandle_win* window, const Event::Type& type, WPARAM wParam, LPARAM lParam)
     {
         PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
-        
-        KeyCode key{KeyMap::KeyCodeToKey(static_cast<int32>(wParam))};
+
+        const int32 data{static_cast<int32>(wParam)};
+        KeyCode key{KeyMap::KeyCodeToKey(data)};
+
         if (key == Key::Unknown)
         {
             WPARAM lrKey{MapLeftRightKeys(wParam, lParam)};
             key = KeyMap::KeyCodeToKey(static_cast<int32>(lrKey));
         }
-
-        KeyEvent evt{type, key, static_cast<uint32>(KeyCodeToGraph(key)), GetKeyModifiers()};
+        
+        KeyEvent evt{type, key, static_cast<uint32>(data), GetKeyModifiers()};
         EventSendHelper<KeyEvent>(window, evt);
     }
 

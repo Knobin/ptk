@@ -17,7 +17,7 @@ namespace pTK
     std::map<int32, KeyCode> KeyCodeMapInit_win()
     {
         std::map<int32, KeyCode> map{};
-        map[VK_SPACE] = Key::Space; map[VK_ESCAPE] = Key::Escape;
+        map[VK_SPACE] = Key::Space;
         map[0x30] = Key::D0; map[0x31] = Key::D1; map[0x32] = Key::D2; map[0x33] = Key::D3;
         map[0x34] = Key::D4; map[0x35] = Key::D5; map[0x36] = Key::D6; map[0x37] = Key::D7;
         map[0x38] = Key::D8; map[0x39] = Key::D9;
@@ -33,8 +33,8 @@ namespace pTK
         map[0x55] = Key::U; map[0x56] = Key::V; map[0x57] = Key::W; map[0x58] = Key::X;
         map[0x59] = Key::Y; map[0x5A] = Key::Z;
 
-        map[VK_BACK] = Key::Backspace;
-        map[VK_DELETE] = Key::Delete;
+        map[VK_ESCAPE] = Key::Escape; map[VK_RETURN] = Key::Enter; map[VK_TAB] = Key::Tab;
+        map[VK_BACK] = Key::Backspace; map[VK_DELETE] = Key::Delete;
 
         map[VK_RIGHT] = Key::Right; map[VK_LEFT] = Key::Left; map[VK_DOWN] = Key::Down; map[VK_UP] = Key::Up;
 

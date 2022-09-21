@@ -67,7 +67,7 @@ namespace pTK
         // Key code.
         KeyCode keycode;
 
-        // Contains the char.
+        // Contains the raw data (may be different depending on platform).
         uint32 data;
 
         // Contains the encoding of the char.
