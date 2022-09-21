@@ -40,6 +40,8 @@ namespace pTK
         if (it != cend())
         {
             widget->setParent(nullptr);
+            if (m_currentHoverWidget == widget.get())
+                m_currentHoverWidget = nullptr;
             onRemove(widget);
             m_holder.erase(it);
             draw();
