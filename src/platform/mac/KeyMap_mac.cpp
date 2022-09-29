@@ -13,7 +13,7 @@ namespace pTK
     std::map<int32, KeyCode> KeyCodeMapInit_mac()
     {
         std::map<int32, KeyCode> map{};
-        map[0x31] = Key::Space; map[0x35] = Key::Escape;
+        map[0x31] = Key::Space;
         map[0x1D] = Key::D0; map[0x12] = Key::D1; map[0x13] = Key::D2; map[0x14] = Key::D3;
         map[0x15] = Key::D4; map[0x17] = Key::D5; map[0x16] = Key::D6; map[0x1A] = Key::D7;
         map[0x1C] = Key::D8; map[0x19] = Key::D9;
@@ -28,8 +28,8 @@ namespace pTK
         map[0x20] = Key::U; map[0x09] = Key::V; map[0x0D] = Key::W; map[0x07] = Key::X;
         map[0x10] = Key::Y; map[0x06] = Key::Z;
 
-        map[0x33] = Key::Backspace;
-        map[0x75] = Key::Delete;
+        map[0x35] = Key::Escape; map[0x24] = Key::Enter; map[0x30] = Key::Tab;
+        map[0x33] = Key::Backspace; map[0x75] = Key::Delete;
 
         map[0x7C] = Key::Right; map[0x7B] = Key::Left;
         map[0x7D] = Key::Down; map[0x7E] = Key::Up;

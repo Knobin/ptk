@@ -128,7 +128,7 @@ namespace pTK
 
     static void SetWindowMenu(NSMenu *menu)
     {
-        NSMenuItem *menuItem = [menu addItemWithTitle : NSLocalizedString(@"Minimize", nil)
+        [[maybe_unused]] NSMenuItem *menuItem = [menu addItemWithTitle : NSLocalizedString(@"Minimize", nil)
                                 action : @selector(performMinimize:) keyEquivalent : @"m"];
 
         menuItem = [menu addItemWithTitle : NSLocalizedString(@"Zoom", nil)
