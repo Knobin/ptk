@@ -20,11 +20,18 @@ option(PTK_ENABLE_METAL "Enable Metal backend" ON)
 set(PTK_OPENGL_PLATFORMS "Windows" "Unix")
 set(PTK_METAL_PLATFORMS "Apple")
 
+# Enable building with AddressSanitizer.
+option(PTK_ENABLE_SANITIZE "Enable AddressSanitizer" OFF)
+if (PTK_ENABLE_SANITIZE)
+    add_compile_options(-fsanitize=address -fsanitize-recover=all)
+    add_link_options(-fsanitize=address -fsanitize-recover=all)
+endif(PTK_ENABLE_SANITIZE)
+
 # Specific Debug Defines
 option(PTK_CB_STORAGE_DEBUG "Enable Callback Storage debug printing" OFF)
-IF(PTK_CB_STORAGE_DEBUG)
+if (PTK_CB_STORAGE_DEBUG)
     set(PTK_DEFINITIONS ${PTK_DEFINITIONS} PTK_CB_STORAGE_DEBUG)
-ENDIF(PTK_CB_STORAGE_DEBUG)
+endif(PTK_CB_STORAGE_DEBUG)
 
 # Compiler
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -78,20 +85,38 @@ endif()
 list (FIND PTK_METAL_PLATFORMS ${PTK_PLATFORM} _index)
 if (PTK_ENABLE_METAL AND ${_index} GREATER -1)
     message(STATUS "Metal backend is enabled")
+    set(PTK_USE_HW TRUE)
     set(PTK_DEFINITIONS ${PTK_DEFINITIONS} PTK_METAL)
     set(SKIA_DEFINITIONS ${SKIA_DEFINITIONS} SK_METAL)
     set(PTK_DEPENDENCIES ${PTK_DEPENDENCIES} ${PTK_METAL_DEPENDENCIES})
 endif ()
 
-# Enable OpenGL rendering backend if on supported platform and PTK_ENABLE_METAL=ON
+# Enable OpenGL rendering backend if on supported platform and PTK_ENABLE_OPENGL=ON
 list (FIND PTK_OPENGL_PLATFORMS ${PTK_PLATFORM} _index)
 if (PTK_ENABLE_OPENGL AND ${_index} GREATER -1)
     message(STATUS "OpenGL backend is enabled")
+    set(PTK_USE_HW TRUE)
     find_package(OpenGL REQUIRED)
     set(PTK_DEFINITIONS ${PTK_DEFINITIONS} PTK_OPENGL)
     set(SKIA_DEFINITIONS ${SKIA_DEFINITIONS} SK_GL)
     set(PTK_DEPENDENCIES ${PTK_DEPENDENCIES} ${PTK_OPENGL_DEPENDENCIES})
 endif ()
+
+# Set things for release build.
+if (PTK_BUILD_TYPE MATCHES Release)
+    set(SKIA_DEFINITIONS ${SKIA_DEFINITIONS} SK_RELEASE)
+    if (PTK_USE_HW)
+        set(SKIA_DEFINITIONS ${SKIA_DEFINITIONS} SK_SUPPORT_GPU=1)
+    endif()
+endif()
+
+# Set things for debug build.
+if (PTK_BUILD_TYPE MATCHES Debug)
+    set(SKIA_DEFINITIONS ${SKIA_DEFINITIONS} SK_DEBUG)
+    if (PTK_USE_HW)
+        set(SKIA_DEFINITIONS ${SKIA_DEFINITIONS} SK_SUPPORT_GPU=1 GR_TEST_UTILS=1)
+    endif()
+endif()
 
 # Library build prints.
 message(STATUS "pTK build: ${PTK_BUILD_TYPE}")
@@ -203,3 +228,4 @@ endif(PTK_BUILD_SANDBOX)
 message(STATUS "Build Tests: ${PTK_BUILD_TESTS}")
 message(STATUS "Build Examples: ${PTK_BUILD_EXAMPLES}")
 message(STATUS "Build Sandbox: ${PTK_BUILD_SANDBOX}")
+message(STATUS "AddressSanitizer is enabled: ${PTK_ENABLE_SANITIZE}")
