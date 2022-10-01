@@ -87,7 +87,7 @@
 
 // Enable Asserts
 #if defined(PTK_ENABLE_ASSERT)
-    #define PTK_ASSERT(x, ...)   if(!(x)) { PTK_ERROR("Assertion Failed: {0}", __VA_ARGS__); abort(); }
+    #define PTK_ASSERT(x, ...) do { if(!(x)) { PTK_ERROR("Assertion Failed: {0}", __VA_ARGS__); abort(); } } while(false)
 #else
     #define PTK_ASSERT(...)
 #endif

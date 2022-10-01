@@ -24,6 +24,11 @@ namespace pTK
         */
         NonCopyable() = default;
 
+        /** Destructor for NonCopyable.
+
+        */
+        virtual ~NonCopyable() = default;
+
         /** Deleted Copy Constructor.
 
         */

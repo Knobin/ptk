@@ -20,6 +20,16 @@ namespace pTK
     class PTK_API NonMovable
     {
     public:
+        /** Constructs NonMovable with default values.
+
+        */
+        NonMovable() = default;
+
+        /** Destructor for NonMovable.
+
+        */
+        virtual ~NonMovable() = default;
+
         /** Deleted Move Constructor.
 
         */
@@ -29,9 +39,6 @@ namespace pTK
 
         */
         NonMovable& operator=(const NonMovable&) = delete;
-        
-    protected:
-        NonMovable() = default;
     };
 }
 

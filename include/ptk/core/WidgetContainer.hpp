@@ -14,6 +14,7 @@
 // C++ Headers
 #include <vector>
 #include <utility>
+#include <stdexcept>
 
 namespace pTK
 {
@@ -26,14 +27,14 @@ namespace pTK
     {
     public:
         using value_type = Ref<Widget>;
-        using container_type = std::vector<value_type>;
         using reference = value_type&;
         using const_reference = const value_type&;
-        using iterator = typename container_type::iterator;
-        using reverse_iterator = typename container_type::reverse_iterator;
-        using const_iterator = typename container_type::const_iterator;
-        using const_reverse_iterator = typename container_type::const_reverse_iterator;
-        using size_type = typename container_type::size_type;
+        using container_type = std::vector<value_type>;
+        using iterator = container_type::iterator;
+        using reverse_iterator = container_type::reverse_iterator;
+        using const_iterator = container_type::const_iterator;
+        using const_reverse_iterator = container_type::const_reverse_iterator;
+        using size_type = std::size_t;
 
     public:
         /** Constructs Box with default values.
@@ -94,169 +95,169 @@ namespace pTK
         [[nodiscard]] Widget *getSelectedWidget() const;
 
         /** Function for retrieving the an iterator that points to the first
-            value in the IterableContainer.
+            value in the WidgetContainer.
 
-            The iterator may be equal to end iterator if the IterableContainer is empty.
+            The iterator may be equal to end iterator if the WidgetContainer is empty.
 
             @return    iterator
         */
-        iterator begin() noexcept
+        [[nodiscard]] iterator begin() noexcept
         {
             return m_holder.begin();
         }
 
         /** Function for retrieving the an iterator that points to the first
-            value in the IterableContainer.
+            value in the WidgetContainer.
 
-            The iterator may be equal to end iterator if the IterableContainer is empty.
+            The iterator may be equal to end iterator if the WidgetContainer is empty.
 
             @return    const iterator
         */
-        const_iterator begin() const noexcept
+        [[nodiscard]] const_iterator begin() const noexcept
         {
             return m_holder.begin();
         }
 
         /** Function for retrieving the an const iterator that points to the first
-            value in the IterableContainer.
+            value in the WidgetContainer.
 
-            The iterator may be equal to end iterator if the IterableContainer is empty.
+            The iterator may be equal to end iterator if the WidgetContainer is empty.
 
             @return    const iterator
         */
-        const_iterator cbegin() const noexcept
+        [[nodiscard]] const_iterator cbegin() const noexcept
         {
             return m_holder.cbegin();
         }
 
         /** Function for retrieving the special iterator referring to
-            the past-the-end of the IterableContainer.
+            the past-the-end of the WidgetContainer.
 
             The iterator should never be de-referenced, due to the fact that the iterator
             does not point to a value and should therefore only be used for checking.
 
             @return    iterator
         */
-        iterator end() noexcept
+        [[nodiscard]] iterator end() noexcept
         {
             return m_holder.end();
         }
 
         /** Function for retrieving the special iterator referring to
-            the past-the-end of the IterableContainer.
+            the past-the-end of the WidgetContainer.
 
             The iterator should never be de-referenced, due to the fact that the iterator
             does not point to a value and should therefore only be used for checking.
 
             @return    const iterator
         */
-        const_iterator end() const noexcept
+        [[nodiscard]] const_iterator end() const noexcept
         {
             return m_holder.end();
         }
 
         /** Function for retrieving the special const iterator referring to
-            the past-the-end of the IterableContainer.
+            the past-the-end of the WidgetContainer.
 
             The iterator should never be dereferenced, due to the fact that the iterator
             does not point to a value and should therefore only be used for checking.
 
             @return    const iterator
         */
-        const_iterator cend() const noexcept
+        [[nodiscard]] const_iterator cend() const noexcept
         {
             return m_holder.cend();
         }
 
         /** Function for retrieving the an iterator that points to the last
-            value in the IterableContainer.
+            value in the WidgetContainer.
 
             This iterator is working in reverse. Meaning that is starts at the end
             and is moving to the beginning.
 
-            The iterator may be equal to rend iterator if the IterableContainer is empty.
+            The iterator may be equal to rend iterator if the WidgetContainer is empty.
 
             @return    reverse iterator
         */
-        reverse_iterator rbegin() noexcept
+        [[nodiscard]] reverse_iterator rbegin() noexcept
         {
             return m_holder.rbegin();
         }
 
         /** Function for retrieving the an iterator that points to the last
-            value in the IterableContainer.
+            value in the WidgetContainer.
 
             This iterator is working in reverse. Meaning that is starts at the end
             and is moving to the beginning.
 
-            The iterator may be equal to rend iterator if the IterableContainer is empty.
+            The iterator may be equal to rend iterator if the WidgetContainer is empty.
 
             @return    const reverse begin iterator
         */
-        const_reverse_iterator rbegin() const noexcept
+        [[nodiscard]] const_reverse_iterator rbegin() const noexcept
         {
             return m_holder.rbegin();
         }
 
         /** Function for retrieving the an iterator that points to the last
-            value in the IterableContainer.
+            value in the WidgetContainer.
 
             This iterator is working in reverse. Meaning that is starts at the end
             and is moving to the beginning.
 
-            The iterator may be equal to rend iterator if the IterableContainer is empty.
+            The iterator may be equal to rend iterator if the WidgetContainer is empty.
 
             @return    const reverse begin iterator
         */
-        const_reverse_iterator crbegin() const noexcept
+        [[nodiscard]] const_reverse_iterator crbegin() const noexcept
         {
             return m_holder.crbegin();
         }
 
         /** Function for retrieving the special const iterator referring to
-            the past-the-end of the IterableContainer.
+            the past-the-end of the WidgetContainer.
 
             The iterator should never be de-referenced, due to the fact that the iterator
             does not point to a value and should therefore only be used for checking.
 
             @return    reverse reverse end iterator
         */
-        reverse_iterator rend() noexcept
+        [[nodiscard]] reverse_iterator rend() noexcept
         {
             return m_holder.rend();
         }
 
         /** Function for retrieving the special const iterator referring to
-            the past-the-end of the IterableContainer.
+            the past-the-end of the WidgetContainer.
 
             The iterator should never be de-referenced, due to the fact that the iterator
             does not point to a value and should therefore only be used for checking.
 
             @return    const reverse end iterator
         */
-        const_reverse_iterator rend() const noexcept
+        [[nodiscard]] const_reverse_iterator rend() const noexcept
         {
             return m_holder.rend();
         }
 
         /** Function for retrieving the special const iterator referring to
-             the past-the-end of the IterableContainer.
+             the past-the-end of the WidgetContainer.
 
              The iterator should never be de-referenced, due to the fact that the iterator
              does not point to a value and should therefore only be used for checking.
 
              @return    const reverse end iterator
          */
-        const_reverse_iterator crend() const noexcept
+        [[nodiscard]] const_reverse_iterator crend() const noexcept
         {
             return m_holder.crend();
         }
 
-        /** Function for retrieving the element at the index in the IterableContainer.
+        /** Function for retrieving the element at the index in the WidgetContainer.
             @param pos      Index
-            @return         element in IterableContainer
+            @return         element in WidgetContainer
         */
-        reference at(size_type pos)
+        [[nodiscard]] reference at(size_type pos)
         {
             if (pos >= m_holder.size())
                 throw std::out_of_range("Index is out of range!");
@@ -264,11 +265,11 @@ namespace pTK
             return m_holder[pos];
         }
 
-        /** Function for retrieving the element at the index in the IterableContainer.
+        /** Function for retrieving the element at the index in the WidgetContainer.
             @param pos      Index
-            @return         element in IterableContainer
+            @return         element in WidgetContainer
         */
-        const_reference at(size_type pos) const
+        [[nodiscard]] const_reference at(size_type pos) const
         {
             if (pos >= m_holder.size())
                 throw std::out_of_range("Position is out of range!");
@@ -276,47 +277,51 @@ namespace pTK
             return m_holder[pos];
         }
 
-        /** Function for retrieving the first element in the IterableContainer.
-            Should in no circumstances be called when the IterableContainer is empty!
+        /** Function for retrieving the first element in the WidgetContainer.
+            Should in no circumstances be called when the WidgetContainer is empty!
             This is considered to be undefined behavior!
-            @return    first element in IterableContainer
+            @return    first element in WidgetContainer
         */
-        reference front()
+        [[nodiscard]] reference front() noexcept
         {
             return m_holder.front();
         }
 
-        /** Function for retrieving the first element in the IterableContainer.
-            Should in no circumstances be called when the IterableContainer is empty!
+        /** Function for retrieving the first element in the WidgetContainer.
+            Should in no circumstances be called when the WidgetContainer is empty!
             This is considered to be undefined behavior!
-            @return    first element in IterableContainer
+            @return    first element in WidgetContainer
         */
-        const_reference front() const
+        [[nodiscard]] const_reference front() const noexcept
         {
             return m_holder.front();
         }
 
-        /** Function for retrieving the last element in the IterableContainer.
-            Should in no circumstances be called when the IterableContainer is empty!
+        /** Function for retrieving the last element in the WidgetContainer.
+            Should in no circumstances be called when the WidgetContainer is empty!
             This is considered to be undefined behavior!
-            @return    last element in IterableContainer
+            @return    last element in WidgetContainer
         */
-        reference back()
+        [[nodiscard]] reference back() noexcept
         {
             return m_holder.back();
         }
 
-        /** Function for retrieving the last element in the IterableContainer.
-            Should in no circumstances be called when the IterableContainer is empty!
+        /** Function for retrieving the last element in the WidgetContainer.
+            Should in no circumstances be called when the WidgetContainer is empty!
             This is considered to be undefined behavior!
-            @return    last element in IterableContainer
+            @return    last element in WidgetContainer
         */
-        const_reference back() const
+        [[nodiscard]] const_reference back() const noexcept
         {
             return m_holder.back();
         }
 
-        size_type count() const noexcept
+        /** Function for retrieving the current amount of items in the WidgetContainer.
+
+            @return     number of items in container
+        */
+        [[nodiscard]] size_type count() const noexcept
         {
             return m_holder.size();
         }
@@ -333,6 +338,13 @@ namespace pTK
 
         // TODO: Add doc.
         void drawBackground(SkCanvas *canvas) const;
+
+        // TODO: Add doc.
+        void drawChildren(SkCanvas *canvas)
+        {
+            for (auto it = m_holder.begin(); it != m_holder.end(); ++it)
+                (*it)->onDraw(canvas);
+        }
 
     private:
         void initCallbacks();
