@@ -29,6 +29,7 @@ namespace pTK
             m_GrContextOptions{}, m_props{0, kRGB_H_SkPixelGeometry}
     {
         createContext(size);
+        PTK_INFO("Initialized GLContext_win");
     }
 
     GLContext_win::~GLContext_win()
@@ -48,7 +49,9 @@ namespace pTK
             fbInfo.fFBOID = buffer;
             fbInfo.fFormat = GR_GL_RGBA8;
 
-            GrBackendRenderTarget backendRenderTarget(size.width, size.height, m_sampleCount, m_stencilBits, fbInfo);
+            const int width{static_cast<int>(size.width)};
+            const int height{static_cast<int>(size.height)};
+            GrBackendRenderTarget backendRenderTarget(width, height, m_sampleCount, m_stencilBits, fbInfo);
 
             m_surface = SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget,
                     kBottomLeft_GrSurfaceOrigin, kRGBA_8888_SkColorType, nullptr, &m_props);
@@ -73,7 +76,7 @@ namespace pTK
 
     void GLContext_win::swapBuffers()
     {
-        PTK_INFO("swapBuffers");
+        // PTK_INFO("swapBuffers");
         HDC dc = GetDC((HWND)m_hwnd);
         SwapBuffers(dc);
         ReleaseDC((HWND)m_hwnd, dc);
@@ -82,11 +85,9 @@ namespace pTK
     void GLContext_win::createContext(const Size& size)
     {
         HDC dc{GetDC(m_hwnd)};
-        // m_hglrc = SkCreateWGLContext(dc, 1, false, kGLPreferCompatibilityProfile_SkWGLContextRequest);
-        m_hglrc = SkCreateWGLContext(dc, 1, false, kGLPreferCoreProfile_SkWGLContextRequest);
+        m_hglrc = SkCreateWGLContext(dc, 1, false, kGLPreferCompatibilityProfile_SkWGLContextRequest);
         PTK_ASSERT(m_hglrc, "Failed to create OpenGL handle!");
         PTK_INFO("Created OpenGL context using WGL.");
-        ReleaseDC(m_hwnd, dc);
 
         SkWGLExtensions extensions;
         if (extensions.hasExtension(dc, "WGL_EXT_swap_control"))
@@ -133,10 +134,16 @@ namespace pTK
 
     void GLContext_win::destroyContext()
     {
-        m_surface.reset();
-        m_context.reset();
-        m_backendContext.reset();
+        m_surface.reset(nullptr);
+        if (m_context)
+        {
+            m_context->abandonContext();
+            m_context.reset();
+        }
+        
+        m_backendContext.reset(nullptr);
 
         wglDeleteContext(m_hglrc);
+        m_hglrc = nullptr;
     }
 }

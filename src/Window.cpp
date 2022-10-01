@@ -29,7 +29,7 @@ namespace pTK
 
     Window::~Window()
     {
-        // Remove the Window from the Application if it exists, in case if it is still there.
+        // Remove the Window from the Application if it exists, in case it is still there.
         if (auto app = Application::Get())
             app->removeWindow(this);
 
@@ -68,7 +68,8 @@ namespace pTK
 
         if (m_draw && !m_close)
         {
-            forceDrawAll();
+            // forceDrawAll();
+            inval();
             m_draw = false;
         }
     }
@@ -290,7 +291,7 @@ namespace pTK
 
     void Window::forceDrawAll()
     {
-        PTK_INFO("Painting window.");
+        // PTK_INFO("Painting window.");
 
         // m_handle.beginPaint();
         beginPaint();
@@ -316,8 +317,9 @@ namespace pTK
         paint.setARGB(255, bg.r, bg.g, bg.b);
         canvas->drawRect(rect, paint);
 
-        for (auto& widget : *this)
-            widget->onDraw(canvas);
+        //for (auto& widget : *this)
+        //    widget->onDraw(canvas);
+        drawChildren(canvas);
 
         surface->flushAndSubmit();
         //m_handle.swapBuffers();

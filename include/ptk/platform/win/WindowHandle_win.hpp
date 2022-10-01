@@ -236,6 +236,9 @@ namespace pTK
         friend Limits GetWindowLimits(WindowHandle_win*);
 
     private:
+        bool destroyWindow();
+
+    private:
         HWND m_hwnd;
         std::unique_ptr<ContextBase> m_context;
         PAINTSTRUCT m_ps{};

@@ -78,9 +78,9 @@ namespace pTK
     {
         RECT adjustedSize{};
         adjustedSize.top = 0;
-        adjustedSize.bottom = from.height;
+        adjustedSize.bottom = static_cast<long>(from.height);
         adjustedSize.left = 0;
-        adjustedSize.right = from.width;
+        adjustedSize.right = static_cast<long>(from.width);
         ::AdjustWindowRectExForDpi (&adjustedSize, style, menu, 0, static_cast<UINT>(dpi));
         return {static_cast<Size::value_type>(adjustedSize.right - adjustedSize.left),
                 static_cast<Size::value_type>(adjustedSize.bottom - adjustedSize.top)};
@@ -88,10 +88,9 @@ namespace pTK
 
     static Size ScaleSize(const Size& size, const Vec2f& scale) noexcept
     {
-        Size newSize{};
-        newSize.width = static_cast<Size::value_type>(std::ceil(size.width * scale.x));
-        newSize.height = static_cast<Size::value_type>(std::ceil(size.height * scale.y));
-        return newSize;
+        const float width{std::ceil(static_cast<float>(size.width) * scale.x)};
+        const float height{std::ceil(static_cast<float>(size.height) * scale.y)};
+        return {static_cast<Size::value_type>(width), static_cast<Size::value_type>(height)};
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -121,8 +120,10 @@ namespace pTK
         Size scaledSize = ScaleSize(size, m_scale);
         const Size adjSize{CalcAdjustedWindowSize(scaledSize, m_data.style, m_data.hasMenu, dpiX)};
         // Old position was set to CW_USEDEFAULT (replaced with flags.position).
+        const int width{static_cast<int>(adjSize.width)};
+        const int height{static_cast<int>(adjSize.height)};
         m_hwnd = ::CreateWindowExW(0, L"PTK", ApplicationHandle_win::stringToUTF16(name).c_str(), m_data.style,
-                                    flags.position.x, flags.position.y, adjSize.width, adjSize.height,
+                                    flags.position.x, flags.position.y, width, height,
                                      nullptr, nullptr, ::GetModuleHandleW(nullptr), nullptr);
         if (!m_hwnd)
             throw WindowError("Failed to create window!");
@@ -165,20 +166,40 @@ namespace pTK
 
     WindowHandle_win::~WindowHandle_win()
     {
-        for (auto it = m_data.menuItems.rbegin(); it != m_data.menuItems.rend(); ++it)
+        destroyWindow();
+        PTK_INFO("Destroyed WindowHandle_win");
+    }
+
+    bool WindowHandle_win::destroyWindow()
+    {
+        bool ret = false;
+
+        if (m_accelTable != nullptr)
         {
-            bool isMenu = std::get<2>(it->second);
-            if (isMenu)
+            for (auto it = m_data.menuItems.rbegin(); it != m_data.menuItems.rend(); ++it)
             {
-                HMENU hmenu = std::get<3>(it->second);
-                ::DestroyMenu(hmenu);
+                bool isMenu = std::get<2>(it->second);
+                if (isMenu)
+                {
+                    HMENU hmenu = std::get<3>(it->second);
+                    ::DestroyMenu(hmenu);
+                }
             }
+
+            ::DestroyAcceleratorTable(m_accelTable);
+            m_accelTable = nullptr;
         }
 
-        ::DestroyAcceleratorTable(m_accelTable);
-        m_accelTable = nullptr;
+        if (m_context)
+            m_context.reset();
 
-        PTK_INFO("Destroyed WindowHandle_win");
+        if (m_hwnd)
+        {
+            ret = ::DestroyWindow(m_hwnd);
+            m_hwnd = nullptr;
+        }
+
+        return ret;
     }
 
     void WindowHandle_win::setPosHint(const Point& pos)
@@ -303,7 +324,11 @@ namespace pTK
             m_context->resize(scaledSize);
 
             if (!m_data.ignoreSize)
-                ::SetWindowPos(m_hwnd, 0, 0, 0, adjSize.width, adjSize.height, SWP_NOSENDCHANGING | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
+            {
+                const int width{static_cast<int>(adjSize.width)};
+                const int height{static_cast<int>(adjSize.height)};
+                ::SetWindowPos(m_hwnd, nullptr, 0, 0, width, height, SWP_NOSENDCHANGING | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
+            }
         }
 
         m_data.ignoreSize = false;
@@ -312,7 +337,7 @@ namespace pTK
 
     bool WindowHandle_win::close()
     {
-        return ::DestroyWindow(m_hwnd);
+        return destroyWindow();
     }
 
     void WindowHandle_win::show()
@@ -421,17 +446,19 @@ namespace pTK
         PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
 
         const Point pos{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
-        const Point scaledPos{static_cast<Point::value_type>(pos.x * (1 / scale.x)),
-                            static_cast<Point::value_type>(pos.y * (1 / scale.y))};
+        const auto fX = static_cast<float>(pos.x);
+        const auto fY = static_cast<float>(pos.y);
+        const Point scaledPos{static_cast<Point::value_type>(fX * (1 / scale.x)),
+                            static_cast<Point::value_type>(fY * (1 / scale.y))};
 
         if (type == Event::Type::MouseButtonPressed)
         {
             ClickEvent evt{ btn, scaledPos };
             EventSendHelper<ClickEvent>(window, evt);
         }
-        else if (type == Event::Type::MouseButtonReleased)
+        else
         {
-            ReleaseEvent evt{ btn, scaledPos };
+            ReleaseEvent evt{btn, scaledPos};
             EventSendHelper<ReleaseEvent>(window, evt);
         }
     }
@@ -449,7 +476,7 @@ namespace pTK
         // Scale Window.
         const uint32 dpiX{static_cast<uint32>(GET_X_LPARAM(wParam))};
         const uint32 dpiY{static_cast<uint32>(GET_Y_LPARAM(wParam))};
-        const Vec2f scale{dpiX / 96.0f, dpiY / 96.0f};
+        const Vec2f scale{static_cast<float>(dpiX) / 96.0f, static_cast<float>(dpiY) / 96.0f};
         PTK_INFO("DPI CHANGED {0}x{1} SCALING {2:0.2f}x{3:0.2f}", dpiX, dpiY, scale.x, scale.y);
         ScaleEvent sEvt{scale};
         EventSendHelper<ScaleEvent>(window, sEvt);
@@ -464,15 +491,15 @@ namespace pTK
 
         const Size adjMinSize{CalcAdjustedWindowSize(ScaleSize(limits.min, scale),
                                                      window->getWindowStyle(), hasMenu, scale.x * 96.0f)};
-        lpMMI->ptMinTrackSize.x = adjMinSize.width;
-        lpMMI->ptMinTrackSize.y = adjMinSize.height;
+        lpMMI->ptMinTrackSize.x = static_cast<int>(adjMinSize.width);
+        lpMMI->ptMinTrackSize.y = static_cast<int>(adjMinSize.height);
         
         if (limits.max != Size::Max)
         {
             const Size adjMaxSize{CalcAdjustedWindowSize(
                 ScaleSize(limits.max, scale), style, hasMenu, scale.x * 96.0f)};
-            lpMMI->ptMaxTrackSize.x = adjMaxSize.width;
-            lpMMI->ptMaxTrackSize.y = adjMaxSize.height;
+            lpMMI->ptMaxTrackSize.x = static_cast<int>(adjMaxSize.width);
+            lpMMI->ptMaxTrackSize.y = static_cast<int>(adjMaxSize.height);
         }
         else
         {
@@ -512,9 +539,9 @@ namespace pTK
             if (static_cast<Size::value_type>(rc.right) != size.width ||
                 static_cast<Size::value_type>(rc.bottom) != size.height)
             {
-                const Size rsize{static_cast<Size::value_type>(rc.right),
+                const Size rSize{static_cast<Size::value_type>(rc.right),
                                 static_cast<Size::value_type>(rc.bottom)};
-                ResizeEvent evt{ScaleSize(rsize,
+                ResizeEvent evt{ScaleSize(rSize,
                                             Vec2f{1.0f / scale.x,
                                                 1.0f / scale.y})};
                 data->ignoreSize = true;
@@ -550,7 +577,7 @@ namespace pTK
     static std::underlying_type<KeyEvent::Modifier>::type GetKeyModifiers()
     {
         using utype = std::underlying_type<KeyEvent::Modifier>::type;
-        utype mods = static_cast<utype>(KeyEvent::Modifier::NONE);
+        auto mods = static_cast<utype>(KeyEvent::Modifier::NONE);
 
         if (GetKeyState(VK_SHIFT) & 0x800)
             mods |= static_cast<utype>(KeyEvent::Modifier::Shift);
@@ -643,10 +670,6 @@ namespace pTK
             {
                 // window->handleEvents(); // Handle all events before sending close event.
                 EventSendHelper<CloseEvent>(window, {});
-                break;
-            }
-            case WM_DESTROY:
-            {
                 if (auto win = dynamic_cast<Window*>(window))
                     Application::Get()->removeWindow(win);
                 ::PostQuitMessage(0);
@@ -687,34 +710,39 @@ namespace pTK
             }
             case WM_MOUSEMOVE:
             {
-                const Point pos{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+                const auto fX = static_cast<float>(GET_X_LPARAM(lParam));
+                const auto fY = static_cast<float>(GET_Y_LPARAM(lParam));
                 const Vec2f scale = window->getDPIScale();
-                MotionEvent evt{{static_cast<Point::value_type>(pos.x * (1 / scale.x)),
-                                 static_cast<Point::value_type>(pos.y * (1 / scale.y))}};
+                MotionEvent evt{{static_cast<Point::value_type>(fX * (1 / scale.x)),
+                                 static_cast<Point::value_type>(fY * (1 / scale.y))}};
                 EventSendHelper<MotionEvent>(window, evt);
                 break;
             }
             case WM_LBUTTONDOWN:
+            case WM_RBUTTONDOWN:
             {
                 const Vec2f scale = window->getDPIScale();
-                HandleMouseClick(window, scale, Event::Type::MouseButtonPressed, Mouse::Button::Left, lParam);
+                const Mouse::Button btn = (msg == WM_LBUTTONDOWN) ? Mouse::Button::Left : Mouse::Button::Right;
+                HandleMouseClick(window, scale, Event::Type::MouseButtonPressed, btn, lParam);
                 break;
             }
             case WM_LBUTTONUP:
+            case WM_RBUTTONUP:
             {
                 const Vec2f scale = window->getDPIScale();
-                HandleMouseClick(window, scale, Event::Type::MouseButtonReleased, Mouse::Button::Left, lParam);
+                const Mouse::Button btn = (msg == WM_LBUTTONUP) ? Mouse::Button::Left : Mouse::Button::Right;
+                HandleMouseClick(window, scale, Event::Type::MouseButtonReleased, btn, lParam);
                 break;
             }
             case WM_MOUSEWHEEL:
             {
-                const double y_offset = static_cast<float>(static_cast<SHORT>(HIWORD(wParam)) / static_cast<float>(WHEEL_DELTA));
+                const double y_offset = static_cast<float>(static_cast<SHORT>(HIWORD(wParam))) / static_cast<float>(WHEEL_DELTA);
                 EventSendHelper<ScrollEvent>(window, {{0.0f, (float)y_offset}});
                 break;
             }
             case WM_MOUSEHWHEEL:
             {
-                const float x_offset = -static_cast<float>(static_cast<SHORT>(HIWORD(wParam)) / static_cast<float>(WHEEL_DELTA));
+                const float x_offset = -static_cast<float>(static_cast<SHORT>(HIWORD(wParam))) / static_cast<float>(WHEEL_DELTA);
                 EventSendHelper<ScrollEvent>(window, {{x_offset, 0.0f}});
                 break;
             }
@@ -794,7 +822,7 @@ namespace pTK
 
                 if (item)
                 {
-                    NamedMenuItem *nItem = dynamic_cast<NamedMenuItem*>(item.get());
+                    auto *nItem = dynamic_cast<NamedMenuItem*>(item.get());
                     if (nItem)
                         nItem->notifyClick();
                 }

@@ -25,7 +25,9 @@ namespace pTK
 
     void WidgetContainer::add(const Ref<Widget>& widget)
     {
-        if (std::find(cbegin(), cend(), widget) == cend())
+        auto it = std::find(m_holder.cbegin(), m_holder.cend(), widget);
+
+        if (it == m_holder.cend())
         {
             m_holder.push_back(widget);
             widget->setParent(this);
@@ -36,12 +38,16 @@ namespace pTK
 
     void WidgetContainer::remove(const Ref<Widget>& widget)
     {
-        auto it = std::find(cbegin(), cend(), widget);
-        if (it != cend())
+        auto it = std::find(m_holder.cbegin(), m_holder.cend(), widget);
+
+        if (it != m_holder.cend())
         {
             widget->setParent(nullptr);
             if (m_currentHoverWidget == widget.get())
                 m_currentHoverWidget = nullptr;
+            if (m_lastClickedWidget == widget.get())
+                m_lastClickedWidget = nullptr;
+
             onRemove(widget);
             m_holder.erase(it);
             draw();
@@ -66,8 +72,7 @@ namespace pTK
         PTK_ASSERT(canvas, "Canvas is undefined");
 
         drawBackground(canvas);
-        for (auto& item : *this)
-            item->onDraw(canvas);
+        drawChildren(canvas);
     }
 
     bool WidgetContainer::updateChild(Widget* widget)
@@ -75,16 +80,19 @@ namespace pTK
         if (!m_busy)
         {
             m_busy = true;
-            WidgetContainer::const_iterator it{std::find_if(cbegin(), cend(), [&](WidgetContainer::const_reference item) {
-                return item.get() == widget;
-            })};
-            if (it != cend())
+
+            auto it = std::find_if(m_holder.cbegin(), m_holder.cend(), [&widget](const auto& entry) {
+                return entry.get() == widget;
+            });
+
+            if (it != m_holder.cend())
             {
-                onChildUpdate(static_cast<size_type>(it - cbegin()));
+                onChildUpdate(static_cast<size_type>(it - m_holder.cbegin()));
                 draw();
                 m_busy = false;
                 return true;
             }
+            m_busy = false;
         }
 
         return false;
@@ -95,16 +103,19 @@ namespace pTK
         if (!m_busy)
         {
             m_busy = true;
-            WidgetContainer::const_iterator it{std::find_if(cbegin(), cend(), [&](WidgetContainer::const_reference item) {
-                return item.get() == widget;
-            })};
-            if (it != cend())
+            
+            auto it = std::find_if(m_holder.cbegin(), m_holder.cend(), [&widget](const auto& entry) {
+                return entry.get() == widget;
+             });
+
+            if (it != m_holder.cend())
             {
-                onChildDraw(static_cast<size_type>(it - cbegin()));
+                onChildDraw(static_cast<size_type>(it - m_holder.cbegin()));
                 draw();
                 m_busy = false;
                 return true;
             }
+            m_busy = false;
         }
 
         return false;
@@ -112,13 +123,14 @@ namespace pTK
 
     void WidgetContainer::onClickCallback(const ClickEvent& evt)
     {
-
         Widget *lastClicked{m_lastClickedWidget};
         bool found{false};
         const Point& pos{evt.pos};
 
-        for (auto& item : *this)
+        for (std::size_t i{0}; i < m_holder.size(); ++i)
         {
+            const auto& item = m_holder.at(i);
+
             const Point startPos{item->getPosition()};
             const Size wSize{item->getSize()};
             const Point endPos{AddWithoutOverflow(startPos.x, static_cast<Point::value_type>(wSize.width)),
@@ -129,10 +141,10 @@ namespace pTK
                 if ((startPos.y <= pos.y) && (endPos.y >= pos.y))
                 {
                     Widget* temp{item.get()}; // Iterator might change, when passing the event.
-
-                    item->handleEvent<ClickEvent>(evt);
                     m_lastClickedWidget = temp;
                     found = true;
+                    item->handleEvent<ClickEvent>(evt);
+                    break;
                 }
             }
         }
@@ -142,7 +154,6 @@ namespace pTK
             LeaveClickEvent lcEvent{evt.button, evt.pos};
             lastClicked->handleEvent<LeaveClickEvent>(lcEvent);
         }
-
 
         if (!found)
             m_lastClickedWidget = nullptr;
@@ -170,10 +181,12 @@ namespace pTK
     {
         const Point& pos{evt.pos};
 
-        for (auto& it : *this)
+        for (std::size_t i{0}; i < m_holder.size(); ++i)
         {
-            const Point startPos{it->getPosition()};
-            const Size wSize{it->getSize()};
+            const auto& item = m_holder.at(i);
+
+            const Point startPos{item->getPosition()};
+            const Size wSize{item->getSize()};
             const Point endPos{AddWithoutOverflow(startPos.x, static_cast<Point::value_type>(wSize.width)),
                                 AddWithoutOverflow(startPos.y, static_cast<Point::value_type>(wSize.height))};
 
@@ -182,9 +195,9 @@ namespace pTK
                 if ((startPos.y <= pos.y) && (endPos.y >= pos.y))
                 {
                     // Send Leave Event.
-                    if (m_currentHoverWidget != it.get() || m_currentHoverWidget == nullptr)
+                    if (m_currentHoverWidget != item.get() || m_currentHoverWidget == nullptr)
                     {
-                        Widget* temp{it.get()}; // Iterator might change, when passing the event.
+                        Widget* temp{item.get()}; // Iterator might change, when passing the event.
 
                         if (m_currentHoverWidget != nullptr)
                         {
