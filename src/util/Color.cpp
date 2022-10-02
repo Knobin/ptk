@@ -14,7 +14,7 @@
 namespace pTK
 {
     // Get.
-    Color::size_type Color::to_int() const
+    Color::size_type Color::to_int() const noexcept
     {
         size_type r_value = 0;
         r_value |= static_cast<size_type>(r << 24);
@@ -26,21 +26,21 @@ namespace pTK
     }
     
     // Set.
-    void Color::setRGB(byte red, byte green, byte blue)
+    void Color::setRGB(value_type red, value_type green, value_type blue) noexcept
     {
         r = red;
         g = green;
         b = blue;
     }
     
-    void Color::setRGB(size_type color)
+    void Color::setRGB(size_type color) noexcept
     {
         r = static_cast<value_type>((color & 0xFF000000) >> 24);
         g = static_cast<value_type>((color & 0x00FF0000) >> 16);
         b = static_cast<value_type>((color & 0x0000FF00) >> 8);
     }
     
-    void Color::setRGBA(value_type red, value_type green, value_type blue, value_type alpha)
+    void Color::setRGBA(value_type red, value_type green, value_type blue, value_type alpha) noexcept
     {
         r = red;
         g = green;
@@ -48,7 +48,7 @@ namespace pTK
         a = alpha;
     }
     
-    void Color::setRGBA(size_type color)
+    void Color::setRGBA(size_type color) noexcept
     {
         setRGB(color);
         a = static_cast<value_type>(color & 0xFF);

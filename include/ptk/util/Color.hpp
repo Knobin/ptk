@@ -10,7 +10,9 @@
 
 // pTK Headers
 #include "ptk/core/Defines.hpp"
-#include "ptk/core/Types.hpp"
+
+// C++ Headers
+#include <cstdint>
 
 namespace pTK
 {
@@ -30,8 +32,8 @@ namespace pTK
     class PTK_API Color
     {
     public:
-        using value_type = byte;
-        using size_type = uint32;
+        using value_type = uint8_t;
+        using size_type = uint32_t;
 
     public:
         /** Constructs Color with default with red, green and blue.
@@ -42,7 +44,7 @@ namespace pTK
             @param blue    amount of blue [0, 255]
             @return        initialized Color with values
         */
-        [[nodiscard]] constexpr static Color MakeRGB(byte red, byte green, byte blue) noexcept
+        [[nodiscard]] constexpr static Color MakeRGB(value_type red, value_type green, value_type blue) noexcept
         {
             return {red, green, blue};
         }
@@ -55,7 +57,7 @@ namespace pTK
             @param alpha   amount of alpha [0, 255]
             @return        initialized Color with values
         */
-        [[nodiscard]] constexpr static Color MakeRGBA(byte red, byte green, byte blue, byte alpha) noexcept
+        [[nodiscard]] constexpr static Color MakeRGBA(value_type red, value_type green, value_type blue, value_type alpha) noexcept
         {
             return {red, green, blue, alpha};
         }
@@ -78,7 +80,7 @@ namespace pTK
          
             @return  default initialized Color
         */
-        constexpr Color()
+        constexpr Color() noexcept
             : r{0}, g{0}, b{0}, a{255}
         {}
         
@@ -87,7 +89,7 @@ namespace pTK
             @param color   color with alpha in int form
             @return        Color initialized
         */
-        explicit constexpr Color(size_type color)
+        explicit constexpr Color(size_type color) noexcept
             : r{0}, g{0}, b{0}, a{255}
         {
             r = static_cast<value_type>((color & 0xFF000000) >> 24);
@@ -105,7 +107,7 @@ namespace pTK
             @param alpha   amount of alpha [0, 255]
             @return        Color initialized
         */
-        constexpr Color(byte red, byte green, byte blue, byte alpha = 255)
+        constexpr Color(value_type red, value_type green, value_type blue, value_type alpha = 255) noexcept
             : r{red}, g{green}, b{blue}, a{alpha}
         {}
         
@@ -113,7 +115,7 @@ namespace pTK
          
             @return    Copy of Color in int form
         */
-        [[nodiscard]] size_type to_int() const;
+        [[nodiscard]] size_type to_int() const noexcept;
         
         /** Set function for setting r, g and b.
          
@@ -121,7 +123,7 @@ namespace pTK
             @param green   amount of green [0, 255]
             @param blue    amount of blue [0, 255]
         */
-        void setRGB(byte red, byte green, byte blue);
+        void setRGB(value_type red, value_type green, value_type blue) noexcept;
         
         /** Set function for setting r, g and b.
             Takes color in uint32 form.
@@ -137,7 +139,7 @@ namespace pTK
          
             @param color   color with alpha in int form
         */
-        void setRGB(size_type color);
+        void setRGB(size_type color) noexcept;
         
         /** Set function for setting r, g, b and a.
          
@@ -146,13 +148,13 @@ namespace pTK
             @param blue    amount of blue [0, 255]
             @param alpha   amount of alpha [0, 255]
         */
-        void setRGBA(byte red, byte green, byte blue, byte alpha);
+        void setRGBA(value_type red, value_type green, value_type blue, value_type alpha) noexcept;
         
         /** Set function for setting r, g, b and a.
          
             @param color   color with alpha in int form
         */
-        void setRGBA(size_type color);
+        void setRGBA(size_type color) noexcept;
         
         // Variables.
         value_type r;
