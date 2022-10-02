@@ -34,6 +34,46 @@ namespace pTK
         using size_type = uint32;
 
     public:
+        /** Constructs Color with default with red, green and blue.
+            Alpha is defaulted to 255.
+
+            @param red     amount of red [0, 255]
+            @param green   amount of green [0, 255]
+            @param blue    amount of blue [0, 255]
+            @return        initialized Color with values
+        */
+        [[nodiscard]] constexpr static Color MakeRGB(byte red, byte green, byte blue) noexcept
+        {
+            return {red, green, blue};
+        }
+
+        /** Constructs Color with default with red, green, blue and alpha.
+
+            @param red     amount of red [0, 255]
+            @param green   amount of green [0, 255]
+            @param blue    amount of blue [0, 255]
+            @param alpha   amount of alpha [0, 255]
+            @return        initialized Color with values
+        */
+        [[nodiscard]] constexpr static Color MakeRGBA(byte red, byte green, byte blue, byte alpha) noexcept
+        {
+            return {red, green, blue, alpha};
+        }
+
+        /** Constructs Color with default with hex color code.
+
+            @param color   hex color code in #RRGGBB format
+            @return        initialized Color with hex color code
+        */
+        [[nodiscard]] constexpr static Color MakeHex(size_type hex) noexcept
+        {
+            const auto r = static_cast<value_type>((hex & 0xFF0000) >> 16);
+            const auto g = static_cast<value_type>((hex & 0x00FF00) >> 8);
+            const auto b = static_cast<value_type>((hex & 0x0000FF) >> 0);
+            return {r, g, b};
+        }
+
+    public:
         /** Constructs Color with default values.
          
             @return  default initialized Color
@@ -56,7 +96,7 @@ namespace pTK
             a = static_cast<value_type>(color & 0xFF);
         }
         
-        /** Constructs Color with default with red, green blue and alpha.
+        /** Constructs Color with default with red, green, blue and alpha.
             Default value for alpha is 255, if none is specified.
          
             @param red     amount of red [0, 255]
@@ -73,7 +113,7 @@ namespace pTK
          
             @return    Copy of Color in int form
         */
-        size_type to_int() const;
+        [[nodiscard]] size_type to_int() const;
         
         /** Set function for setting r, g and b.
          
@@ -81,7 +121,7 @@ namespace pTK
             @param green   amount of green [0, 255]
             @param blue    amount of blue [0, 255]
         */
-        void set_rgb(byte red, byte green, byte blue);
+        void setRGB(byte red, byte green, byte blue);
         
         /** Set function for setting r, g and b.
             Takes color in uint32 form.
@@ -90,14 +130,14 @@ namespace pTK
          
             Example:
                 - Current to_int() = 0xFFFFFFFF
-                - set_rgb(C0C0C000)
+                - setRGB(0xC0C0C000)
                 - New to_int() = 0xC0C0C0FF
          
             a will remain unchanged.
          
             @param color   color with alpha in int form
         */
-        void set_rgb(size_type color);
+        void setRGB(size_type color);
         
         /** Set function for setting r, g, b and a.
          
@@ -106,13 +146,13 @@ namespace pTK
             @param blue    amount of blue [0, 255]
             @param alpha   amount of alpha [0, 255]
         */
-        void set_rgba(byte red, byte green, byte blue, byte alpha);
+        void setRGBA(byte red, byte green, byte blue, byte alpha);
         
         /** Set function for setting r, g, b and a.
          
             @param color   color with alpha in int form
         */
-        void set_rgba(size_type color);
+        void setRGBA(size_type color);
         
         // Variables.
         value_type r;

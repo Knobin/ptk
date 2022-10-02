@@ -26,21 +26,21 @@ namespace pTK
     }
     
     // Set.
-    void Color::set_rgb(byte red, byte green, byte blue)
+    void Color::setRGB(byte red, byte green, byte blue)
     {
         r = red;
         g = green;
         b = blue;
     }
     
-    void Color::set_rgb(size_type color)
+    void Color::setRGB(size_type color)
     {
         r = static_cast<value_type>((color & 0xFF000000) >> 24);
         g = static_cast<value_type>((color & 0x00FF0000) >> 16);
         b = static_cast<value_type>((color & 0x0000FF00) >> 8);
     }
     
-    void Color::set_rgba(value_type red, value_type green, value_type blue, value_type alpha)
+    void Color::setRGBA(value_type red, value_type green, value_type blue, value_type alpha)
     {
         r = red;
         g = green;
@@ -48,9 +48,9 @@ namespace pTK
         a = alpha;
     }
     
-    void Color::set_rgba(size_type color)
+    void Color::setRGBA(size_type color)
     {
-        set_rgb(color);
+        setRGB(color);
         a = static_cast<value_type>(color & 0xFF);
     }
     
