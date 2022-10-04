@@ -368,6 +368,30 @@ TEST_CASE ("Color Set")
 TEST_CASE ("Color Operators")
 {
     // Testing Operators.
+
+    SECTION("Operator+ Range Check")
+    {
+        const pTK::Color c1 = pTK::Color::MakeRGBA(100, 100, 100, 100);
+        const pTK::Color c2 = pTK::Color::MakeRGBA(200, 200, 200, 200);
+        const pTK::Color res = c1 + c2;
+
+        REQUIRE(res.r == 255);
+        REQUIRE(res.g == 255);
+        REQUIRE(res.b == 255);
+        REQUIRE(res.a == 255);
+    }
+
+    SECTION("Operator- Range Check")
+    {
+        const pTK::Color c1 = pTK::Color::MakeRGBA(100, 100, 100, 100);
+        const pTK::Color c2 = pTK::Color::MakeRGBA(200, 200, 200, 200);
+
+        const pTK::Color res = c1 - c2;
+        REQUIRE(res.g == 0);
+        REQUIRE(res.r == 0);
+        REQUIRE(res.b == 0);
+        REQUIRE(res.a == 0);
+    }
     
     for (const auto& p : data)
     {

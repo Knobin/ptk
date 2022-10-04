@@ -68,7 +68,7 @@ namespace pTK
     // Binary arithmetic operators.
     Color operator+(const Color& lhs, const Color& rhs)
     {
-        Color new_Color;
+        Color new_Color{};
         new_Color.r = static_cast<Color::value_type>(std::min(lhs.r + rhs.r, 255));
         new_Color.g = static_cast<Color::value_type>(std::min(lhs.g + rhs.g, 255));
         new_Color.b = static_cast<Color::value_type>(std::min(lhs.b + rhs.b, 255));
@@ -79,7 +79,7 @@ namespace pTK
     
     Color operator-(const Color& lhs, const Color& rhs)
     {
-        Color new_Color;
+        Color new_Color{};
         new_Color.r = static_cast<Color::value_type>(std::max(lhs.r - rhs.r, 0));
         new_Color.g = static_cast<Color::value_type>(std::max(lhs.g - rhs.g, 0));
         new_Color.b = static_cast<Color::value_type>(std::max(lhs.b - rhs.b, 0));
