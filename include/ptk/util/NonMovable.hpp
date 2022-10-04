@@ -33,12 +33,23 @@ namespace pTK
         /** Deleted Move Constructor.
 
         */
-        NonMovable(const NonMovable&) = delete;
+        NonMovable(NonMovable&&) = delete;
 
         /** Deleted Move Assignment operator.
 
         */
-        NonMovable& operator=(const NonMovable&) = delete;
+        NonMovable& operator=(NonMovable&&) = delete;
+
+    protected:
+        /** Copy Constructor.
+
+        */
+        NonMovable(const NonMovable&) = default;
+
+        /** Copy Assignment operator.
+
+        */
+        NonMovable& operator=(const NonMovable&) = default;
     };
 }
 

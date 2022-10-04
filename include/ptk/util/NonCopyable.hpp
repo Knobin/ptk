@@ -13,12 +13,13 @@
 
 namespace pTK
 {
-    /** NonMovable struct implementation.
+    /** NonMovable class implementation.
      
         Struct for forbidding copying.
     */
-    struct PTK_API NonCopyable
+    class PTK_API NonCopyable
     {
+    public:
         /** Constructs NonCopyable with default values.
 
         */
@@ -38,6 +39,17 @@ namespace pTK
 
         */
         NonCopyable& operator=(const NonCopyable&) = delete;
+
+    protected:
+        /** Move Constructor.
+
+        */
+        NonCopyable(NonCopyable&&) = default;
+
+        /** Move Assignment operator.
+
+        */
+        NonCopyable& operator=(NonCopyable&&) = default;
     };
 }
 
