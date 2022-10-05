@@ -44,6 +44,7 @@ endfunction()
 
 # Add tests here!
 define_test(NAME AlignmentTest FILES ${PTK_INCLUDE}/ptk/util/Alignment.hpp ${PTK_SRC}/util/Alignment.cpp AlignmentTest.cpp)
+define_test(NAME CallbackStorageTest FILES ${PTK_HEADER_FILES} CallbackStorageTest.cpp LINKS ptk DEFINITIONS ${PTK_DEFINITIONS})
 define_test(NAME ColorTest FILES ${PTK_INCLUDE}/ptk/util/Color.hpp ${PTK_SRC}/util/Color.cpp ColorTest.cpp)
 define_test(NAME PointTest FILES ${PTK_INCLUDE}/ptk/util/Point.hpp ${PTK_SRC}/util/Point.cpp PointTest.cpp)
 define_test(NAME RectangleTest FILES ${PTK_HEADER_FILES} RectangleTest.cpp LINKS ptk DEFINITIONS ${PTK_DEFINITIONS})
