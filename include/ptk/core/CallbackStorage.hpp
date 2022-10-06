@@ -30,12 +30,14 @@ namespace pTK
 {
     /** CallbackContainer class implementation.
 
-        This class stores function of type Callback for the type T.
+        This class stores function pointers of type Callback
+        and provides an API to access and modify them.
 
-        Different Callback types will therefore be stored separately for
-        the same type T.
+        Callbacks are stored together with a unique identifier.
+        This id will not be checked by this class, it is assumed
+        that the user will provide a unique identifier.
     */
-    template <typename T, typename Callback>
+    template <typename Callback>
     class CallbackContainer
     {
     public:
@@ -61,6 +63,7 @@ namespace pTK
     public:
         /** Constructs CallbackContainer with default values.
 
+            @return    initialized CallbackContainer
         */
         CallbackContainer() = default;
 
@@ -91,7 +94,6 @@ namespace pTK
 
             Copying of callbacks can return undesired results, especially implicit copying.
             To get a deep copy of CallbackStorage, use the clone() function.
-
         */
         CallbackContainer(const CallbackContainer&) = delete;
 
@@ -109,7 +111,6 @@ namespace pTK
 
             Copying of callbacks can return undesired results, especially implicit copying.
             To get a deep copy of CallbackStorage, use the clone() function.
-
         */
         CallbackContainer& operator=(const CallbackContainer&) = delete;
 
@@ -148,8 +149,8 @@ namespace pTK
 
         /** Function for removing a callback.
 
-            @param id           unique identifier
-            @return             true if removed, otherwise false
+            @param id       unique identifier
+            @return         true if removed, otherwise false
         */
         bool removeCallback(uint64_t id)
         {
@@ -169,13 +170,25 @@ namespace pTK
 
         /** Function for triggering all the callbacks.
 
+            @param args     callback parameters
         */
         template<typename... Args>
-        void triggerCallbacks(Args&& ...args)
+        void triggerCallbacks(Args&& ...args) const
+        {
+            for (auto it = m_storage.cbegin(); it != m_storage.cend(); ++it)
+                it->callback(std::forward<Args>(args)...);
+        }
+
+        /** Function for triggering and conditionally removing callbacks.
+
+            @param p     predicate
+        */
+        template<typename UnaryPredicate>
+        void removeCallbacksIf(UnaryPredicate p)
         {
             for (auto it = m_storage.begin(); it != m_storage.end();)
             {
-                if (it->callback(std::forward<Args>(args)...))
+                if (p(*it))
                 {
                     PTK_CB_STORAGE_LOG("CallbackContainer: auto-removed callback with id: {}", it->id);
                     it = m_storage.erase(it);
@@ -223,62 +236,63 @@ namespace pTK
         static std::size_t s_counter;
     };
 
-    /** CallbackStorageNode Node struct implementation.
+    /** CallbackStorageNodeInterface struct implementation.
 
-        "Member" functions for CallbackContainer<T, Callback> to use.
-        All functions should take a void pointer and cast it for use.
-
-        Pointer is always assumed to be valid.
+        Pure virtual base class for CallbackStorageNode that provides
+        the API necessary for CallbackStorage.
     */
-    template <typename T, typename Callback>
-    struct PTK_API CallbackStorageNodeFunctions
+    struct PTK_API CallbackStorageNodeInterface
     {
-        static CallbackContainer<T, Callback>* Cast(void *ptr)
+        virtual ~CallbackStorageNodeInterface() = default;
+        [[nodiscard]] virtual std::size_t count() const noexcept = 0;
+        [[nodiscard]] virtual std::unique_ptr<CallbackStorageNodeInterface> clone() const = 0;
+        [[nodiscard]] virtual const void* data() const noexcept = 0;
+        [[nodiscard]] virtual void* data() noexcept = 0;
+    };
+
+    /** CallbackStorageNode struct implementation.
+
+        Templated implementation for type Callback.
+    */
+    template <typename Callback>
+    struct CallbackStorageNode : public CallbackStorageNodeInterface
+    {
+        virtual ~CallbackStorageNode() = default;
+
+        [[nodiscard]] std::size_t count() const noexcept override
         {
-            return static_cast<CallbackContainer<T, Callback>*>(ptr);
+            return container.size();
         }
 
-        static void Deleter(void *ptr)
+        [[nodiscard]] std::unique_ptr<CallbackStorageNodeInterface> clone() const override
         {
-            delete Cast(ptr);
+            auto copy = std::make_unique<CallbackStorageNode<Callback>>();
+            copy->container = container.clone();
+            return copy;
         }
 
-        static void *Clone(void *ptr)
+        [[nodiscard]] const void* data() const noexcept override
         {
-            CallbackContainer<T, Callback>* contPtr{Cast(ptr)};
-            auto *copy = new CallbackContainer<T, Callback>();
-            *copy = contPtr->clone();
-            return static_cast<void*>(copy);
+            return static_cast<const void*>(&container);
         }
 
-        static std::size_t Count(void *ptr)
+        [[nodiscard]] void* data() noexcept override
         {
-            return Cast(ptr)->size();
+            return static_cast<void*>(&container);
         }
+
+        CallbackContainer<Callback> container{};
     };
 
     /** CallbackStorage class implementation.
 
         This class stores and handles all callbacks for specific types.
-
         It can store callbacks for any combination of T and Callback.
     */
     class PTK_API CallbackStorage
     {
     public:
-        /** CallbackStorage Node struct implementation.
-
-            Contains the data pointer and member function pointers to use.
-        */
-        struct PTK_API Node
-        {
-            std::function<void(void*)> deleter{nullptr};
-            std::function<void*(void*)> clone{nullptr};
-            std::function<std::size_t(void*)> count{nullptr};
-            void *data{nullptr};
-        };
-
-        using node_type = Node;
+        using node_type = std::unique_ptr<CallbackStorageNodeInterface>;
         using container_type = std::unordered_map<std::size_t, node_type>;
 
     public:
@@ -290,14 +304,8 @@ namespace pTK
 
         /** Destructor for CallbackStorage.
 
-            Calls the destructor paired with every CallbackContainer in
-            the storage.
         */
-        virtual ~CallbackStorage()
-        {
-            // Free used memory (if any).
-            clear();
-        }
+        virtual ~CallbackStorage() = default;
 
         /** Move Constructor for CallbackStorage.
 
@@ -349,20 +357,8 @@ namespace pTK
             CallbackStorage copy{};
             copy.m_storage.reserve(m_storage.size());
 
-            for (auto it = m_storage.cbegin(); it != m_storage.cend(); ++it)
-            {
-                const Node& from = it->second;
-
-                // Copy node.
-
-                Node to{};
-                to.deleter = from.deleter;
-                to.clone = from.clone;
-                to.count = from.count;
-                to.data = from.clone(from.data);
-
-                copy.m_storage.emplace(it->first, to);
-            }
+            for (const auto & it : m_storage)
+                copy.m_storage.emplace(it.first, it.second->clone());
 
             return copy;
         }
@@ -372,15 +368,7 @@ namespace pTK
         */
         void clear() noexcept
         {
-            if (!m_storage.empty())
-            {
-                // Call destructor for all nodes.
-                for (auto it{m_storage.begin()}; it != m_storage.end(); ++it)
-                    if (it->second.data != nullptr)
-                        it->second.deleter(it->second.data);
-
-                m_storage.clear();
-            }
+            m_storage.clear();
         }
 
         /** Function for adding a callback of type Callback for type T.
@@ -392,7 +380,7 @@ namespace pTK
         uint64_t addCallback(const std::function<Callback>& callback)
         {
             // Get callbacks based on T & Callback types.
-            CallbackContainer<T, Callback>* cont{getCallbackContainer<T, Callback>()};
+            CallbackContainer<Callback>* cont{getCallbackContainer<T, Callback>()};
 
             if (cont == nullptr)
                 cont = createNode<T, Callback>();
@@ -418,7 +406,7 @@ namespace pTK
         bool removeCallback(uint64_t id)
         {
             // Get callbacks based on T & Callback types.
-            CallbackContainer<T, Callback>* cont{getCallbackContainer<T, Callback>()};
+            CallbackContainer<Callback>* cont{getCallbackContainer<T, Callback>()};
 
             // Is container valid?
             if (cont != nullptr)
@@ -444,7 +432,7 @@ namespace pTK
         bool removeCallbacks()
         {
             // Get callbacks based on T & Callback types.
-            CallbackContainer<T, Callback>* cont{getCallbackContainer<T, Callback>()};
+            CallbackContainer<Callback>* cont{getCallbackContainer<T, Callback>()};
 
             // Is container valid?
             if (cont != nullptr)
@@ -460,35 +448,42 @@ namespace pTK
 
         /** Function for retrieving callbacks of type Callback with type T.
 
-            @return     CallbackContainer if found, otherwise nullptr
+            @return     CallbackContainer<Callback> pointer if found, otherwise nullptr
         */
         template <typename T, typename Callback>
-        [[nodiscard]] CallbackContainer<T, Callback>* getCallbacks() const
+        [[nodiscard]] const CallbackContainer<Callback>* getCallbacks() const
         {
-            // Get index based on T & Callback types.
-            CallbackContainer<T, Callback> *cont{getCallbackContainer<T, Callback>()};
+            return getCallbackContainer<T, Callback>();
+        }
 
-            // is node initialized?
-            if (cont != nullptr)
-                return cont;
+        /** Function for retrieving callbacks of type Callback with type T.
 
-            // Node not found or not initialized.
-            return nullptr;
+            @return     CallbackContainer<Callback> pointer if found, otherwise nullptr
+        */
+        template <typename T, typename Callback>
+        [[nodiscard]] CallbackContainer<Callback>* getCallbacks()
+        {
+            return getCallbackContainer<T, Callback>();
         }
 
         /** Function for triggering / handle callbacks.
 
+            @param args     callback parameters
         */
         template <typename T, typename Callback, typename... Args>
         void triggerCallbacks(Args&& ...args)
         {
             // Get index based on T & Callback types.
-            CallbackContainer<T, Callback> *cont{getCallbackContainer<T, Callback>()};
+            CallbackContainer<Callback> *cont{getCallbackContainer<T, Callback>()};
 
             // Is container valid?
             if (cont != nullptr)
             {
-                cont->triggerCallbacks(std::forward<Args>(args)...);
+                // Trigger and remove callbacks if necessary.
+                const auto predicate = [&](typename CallbackContainer<Callback>::Node& entry){
+                    return entry.callback(std::forward<Args>(args)...);
+                };
+                cont->removeCallbacksIf(predicate);
 
                 // Remove node is no callbacks exists.
                 if (cont->size() == 0)
@@ -517,20 +512,19 @@ namespace pTK
             std::size_t count{0};
 
             // Retrieve size of all containers.
-            for (auto it{m_storage.begin()}; it != m_storage.end(); ++it)
-                if (it->second.data != nullptr)
-                    count += it->second.count(it->second.data);
+            for (auto it{m_storage.cbegin()}; it != m_storage.cend(); ++it)
+                count += it->second->count();
 
             return count;
         }
 
     private:
-        /** Function to create index mapping based on T & Callback types.
+        /** Function for retrieving the CallbackContainer based on T and Callback types.
 
-            @return     optional index
+            @return     CallbackContainer<Callback> pointer if found, otherwise nullptr
         */
         template <typename T, typename Callback>
-        [[nodiscard]] CallbackContainer<T, Callback>* getCallbackContainer() const
+        [[nodiscard]] const CallbackContainer<Callback>* getCallbackContainer() const
         {
             // Get index based on T and Callback types.
             const std::size_t index = CallbackIndexGen::GetIndex<T, Callback>();
@@ -539,20 +533,42 @@ namespace pTK
             const auto count = m_storage.count(index);
 
             if (count == 1)
-                return static_cast<CallbackContainer<T, Callback>*>(m_storage.at(index).data);
+            {
+                const CallbackStorageNodeInterface *node{m_storage.at(index).get()};
+                return static_cast<const CallbackContainer<Callback>*>(node->data());
+            }
 
             return nullptr;
         }
 
-        /** Function to create index mapping based on T & Callback types.
+        /** Function for retrieving the CallbackContainer based on T and Callback types.
 
-            Can be used for creating index mapping, if mapping already exists the
-            current index will be returned.
-
-            @return     optional index
+            @return     CallbackContainer<Callback> pointer if found, otherwise nullptr
         */
         template <typename T, typename Callback>
-        [[nodiscard]] CallbackContainer<T, Callback> *createNode()
+        [[nodiscard]] CallbackContainer<Callback>* getCallbackContainer()
+        {
+            // Get index based on T and Callback types.
+            const std::size_t index = CallbackIndexGen::GetIndex<T, Callback>();
+
+            // Get key/value pair count.
+            const auto count = m_storage.count(index);
+
+            if (count == 1)
+            {
+                CallbackStorageNodeInterface *node{m_storage.at(index).get()};
+                return static_cast<CallbackContainer<Callback>*>(node->data());
+            }
+
+            return nullptr;
+        }
+
+        /** Function for creating a node based on T & Callback types.
+
+            @return     CallbackContainer<Callback> pointer if node is created, otherwise nullptr
+        */
+        template <typename T, typename Callback>
+        [[nodiscard]] CallbackContainer<Callback> *createNode()
         {
             // Get index based on T and Callback types.
             const std::size_t index = CallbackIndexGen::GetIndex<T, Callback>();
@@ -563,19 +579,10 @@ namespace pTK
             // Check how many pairs exists for that hash.
             if (count == 0)
             {
-                // New Container for T and Callback types.
-                auto *container = new CallbackContainer<T, Callback>();
+                auto status = m_storage.emplace(index, std::make_unique<CallbackStorageNode<Callback>>());
 
-                // Create Node.
-                Node node{};
-                node.data = static_cast<void*>(container);
-                node.deleter = CallbackStorageNodeFunctions<T, Callback>::Deleter;
-                node.clone = CallbackStorageNodeFunctions<T, Callback>::Clone;
-                node.count = CallbackStorageNodeFunctions<T, Callback>::Count;
-
-                // add the key/value pair.
-                m_storage.emplace(index, node);
-                return container;
+                if (status.second)
+                    return static_cast<CallbackContainer<Callback>*>(status.first->second.get()->data());
             }
 
             return nullptr;
@@ -595,15 +602,7 @@ namespace pTK
             const auto count = m_storage.count(index);
 
             if (count > 0)
-            {
-                auto& node = m_storage.at(index);
-
-                // is node initialized?
-                if (node.data != nullptr)
-                    node.deleter(node.data); // Will call delete on the pointer.
-
                 m_storage.erase(index);
-            }
         }
 
     private:

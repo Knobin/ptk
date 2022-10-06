@@ -14,19 +14,13 @@
 // C++ Headers
 #include <cstdint>
 
-//
-// TODO: Add test for auto removing callbacks.
-// The API for auto removing callbacks, currently returning true for removal,
-// will change in the future. So test for this should be done after the change.
-//
-
 static auto ZeroCallback = [](){ return false; };
 
 TEST_CASE ("CallbackContainer")
 {
     SECTION("Add")
     {
-        pTK::CallbackContainer<uint64_t, bool()> container{};
+        pTK::CallbackContainer<bool()> container{};
         container.addCallback(0, ZeroCallback);
         container.addCallback(1, ZeroCallback);
         container.addCallback(2, ZeroCallback);
@@ -35,7 +29,7 @@ TEST_CASE ("CallbackContainer")
 
     SECTION("Trigger")
     {
-        pTK::CallbackContainer<uint64_t, bool(std::size_t&)> container{};
+        pTK::CallbackContainer<bool(std::size_t&)> container{};
         container.addCallback(0, [](std::size_t& var){ var += 1; return false; });
         container.addCallback(1, [](std::size_t& var){ var += 2; return false; });
         container.addCallback(2, [](std::size_t& var){ var += 4; return false; });
@@ -47,7 +41,7 @@ TEST_CASE ("CallbackContainer")
 
     SECTION("Remove")
     {
-        pTK::CallbackContainer<uint64_t, bool(std::size_t&)> container{};
+        pTK::CallbackContainer<bool(std::size_t&)> container{};
         container.addCallback(0, [](std::size_t& var){ var += 1; return false; });
         container.addCallback(1, [](std::size_t& var){ var += 2; return false; });
         container.addCallback(2, [](std::size_t& var){ var += 4; return false; });
@@ -77,12 +71,12 @@ TEST_CASE ("CallbackContainer")
 
     SECTION("Copy")
     {
-        pTK::CallbackContainer<uint64_t, bool(std::size_t&)> container{};
+        pTK::CallbackContainer<bool(std::size_t&)> container{};
         container.addCallback(0, [](std::size_t& var){ var += 1; return false; });
         container.addCallback(1, [](std::size_t& var){ var += 2; return false; });
         container.addCallback(2, [](std::size_t& var){ var += 4; return false; });
 
-        pTK::CallbackContainer<uint64_t, bool(std::size_t&)> copy = container.clone();
+        pTK::CallbackContainer<bool(std::size_t&)> copy = container.clone();
 
         // Original.
         std::size_t count = 0;
@@ -99,7 +93,7 @@ TEST_CASE ("CallbackContainer")
 
     SECTION("Clear")
     {
-        pTK::CallbackContainer<uint64_t, bool()> container{};
+        pTK::CallbackContainer<bool()> container{};
         container.addCallback(0, ZeroCallback);
         container.addCallback(1, ZeroCallback);
         container.addCallback(2, ZeroCallback);
@@ -278,5 +272,47 @@ TEST_CASE("CallbackStorage")
         storage.removeCallbacks<uint8_t, bool()>();
         REQUIRE(storage.size() == 0);
         REQUIRE(storage.count() == 0);
+    }
+
+    SECTION("Auto-Removing Callback")
+    {
+        pTK::CallbackStorage storage{};
+        REQUIRE(24 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var){ var += 1; return false; }));
+        REQUIRE(25 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var){ var += 2; return true; }));
+        REQUIRE(26 == storage.addCallback<uint8_t, bool(std::size_t&)>([](std::size_t& var){ var += 4; return true; }));
+        REQUIRE(storage.size() == 2);
+        REQUIRE(storage.count() == 3);
+
+        std::size_t count = 0;
+        storage.triggerCallbacks<int8_t, bool(std::size_t&)>(count);
+        REQUIRE(count == 3);
+        REQUIRE(storage.size() == 2);
+        REQUIRE(storage.count() == 2);
+
+        count = 0;
+        storage.triggerCallbacks<uint8_t, bool(std::size_t&)>(count);
+        REQUIRE(count == 4);
+        REQUIRE(storage.size() == 1);
+        REQUIRE(storage.count() == 1);
+    }
+
+    SECTION("Get Callbacks")
+    {
+        pTK::CallbackStorage storage{};
+        REQUIRE(27 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var){ var += 1; return false; }));
+        REQUIRE(28 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var){ var += 2; return true; }));
+        REQUIRE(29 == storage.addCallback<uint8_t, bool(std::size_t&)>([](std::size_t& var){ var += 4; return true; }));
+
+        pTK::CallbackContainer<bool(std::size_t&)>* callbacks1 = storage.getCallbacks<int8_t, bool(std::size_t&)>();
+        REQUIRE(callbacks1->size() == 2);
+        std::size_t count = 0;
+        callbacks1->triggerCallbacks(count);
+        REQUIRE(count == 3);
+
+        const pTK::CallbackStorage *storagePtr = &storage;
+        const pTK::CallbackContainer<bool(std::size_t&)>* callbacks2 = storagePtr->getCallbacks<int8_t, bool(std::size_t&)>();
+        REQUIRE(callbacks2->size() == 2);
+        count = 0;
+        callbacks2->triggerCallbacks(count);
     }
 }
