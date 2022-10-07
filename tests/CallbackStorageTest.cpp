@@ -276,6 +276,11 @@ TEST_CASE("CallbackStorage")
 
     SECTION("Auto-Removing Callback")
     {
+        // Auto-Removing callbacks is not implemented in CallbackStorage.
+        // This functionallity has been removed to make CallbackStorage more genereal,
+        // however, it can still be achieved by an additional predicate lamda and calling
+        // the removeCallbackIf() function. This is tested here.
+
         pTK::CallbackStorage storage{};
         REQUIRE(24 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var){ var += 1; return false; }));
         REQUIRE(25 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var){ var += 2; return true; }));
@@ -284,13 +289,17 @@ TEST_CASE("CallbackStorage")
         REQUIRE(storage.count() == 3);
 
         std::size_t count = 0;
-        storage.triggerCallbacks<int8_t, bool(std::size_t&)>(count);
+        const auto predicate = [&](typename pTK::CallbackContainer<bool(std::size_t&)>::Node& entry){
+            return entry.callback(count); // Removes callback if true is returned.
+        };
+
+        storage.removeCallbackIf<int8_t, bool(std::size_t&)>(predicate);
         REQUIRE(count == 3);
         REQUIRE(storage.size() == 2);
         REQUIRE(storage.count() == 2);
 
         count = 0;
-        storage.triggerCallbacks<uint8_t, bool(std::size_t&)>(count);
+        storage.removeCallbackIf<uint8_t, bool(std::size_t&)>(predicate);
         REQUIRE(count == 4);
         REQUIRE(storage.size() == 1);
         REQUIRE(storage.count() == 1);

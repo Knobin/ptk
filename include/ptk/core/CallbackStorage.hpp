@@ -70,17 +70,16 @@ namespace pTK
         /** Destructor for CallbackContainer.
 
         */
-#ifdef PTK_CB_STORAGE_DEBUG
+
         ~CallbackContainer()
         {
+#ifdef PTK_CB_STORAGE_DEBUG
             for (const Node& node : m_storage)
             {
                 PTK_CB_STORAGE_LOG("Callback {} removed (destruction)", node.id);
             }
-        }
-#else
-        ~CallbackContainer() = default;
 #endif
+        }
 
         /** Move Constructor for CallbackContainer.
 
@@ -184,7 +183,7 @@ namespace pTK
             @param p     predicate
         */
         template<typename UnaryPredicate>
-        void removeCallbacksIf(UnaryPredicate p)
+        void removeCallbackIf(UnaryPredicate p)
         {
             for (auto it = m_storage.begin(); it != m_storage.end();)
             {
@@ -471,7 +470,22 @@ namespace pTK
             @param args     callback parameters
         */
         template <typename T, typename Callback, typename... Args>
-        void triggerCallbacks(Args&& ...args)
+        void triggerCallbacks(Args&& ...args) const
+        {
+            // Get index based on T & Callback types.
+            const CallbackContainer<Callback> *cont{getCallbackContainer<T, Callback>()};
+
+            // Is container valid?
+            if (cont != nullptr)
+                cont->triggerCallbacks(std::forward<Args>(args)...);
+        }
+
+        /** Function for triggering and conditionally removing callbacks.
+
+            @param p     predicate
+        */
+        template <typename T, typename Callback, typename UnaryPredicate>
+        void removeCallbackIf(UnaryPredicate p)
         {
             // Get index based on T & Callback types.
             CallbackContainer<Callback> *cont{getCallbackContainer<T, Callback>()};
@@ -480,10 +494,7 @@ namespace pTK
             if (cont != nullptr)
             {
                 // Trigger and remove callbacks if necessary.
-                const auto predicate = [&](typename CallbackContainer<Callback>::Node& entry){
-                    return entry.callback(std::forward<Args>(args)...);
-                };
-                cont->removeCallbacksIf(predicate);
+                cont->removeCallbackIf(p);
 
                 // Remove node is no callbacks exists.
                 if (cont->size() == 0)

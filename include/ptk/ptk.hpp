@@ -14,6 +14,7 @@
 #include "ptk/Window.hpp"
 
 // --- Core --------------------------
+#include "ptk/core/Alignment.hpp"
 #include "ptk/core/CallbackStorage.hpp"
 #include "ptk/core/Defines.hpp"
 #include "ptk/core/Drawable.hpp"
@@ -30,6 +31,7 @@
 #include "ptk/core/Types.hpp"
 #include "ptk/core/Widget.hpp"
 #include "ptk/core/WidgetContainer.hpp"
+#include "ptk/core/WidgetInterface.hpp"
 #include "ptk/core/WindowInfo.hpp"
 
 // --- Events ------------------------
@@ -51,7 +53,6 @@
 #include "ptk/menu/Shortcut.hpp"
 
 // --- Util --------------------------
-#include "ptk/util/Alignment.hpp"
 #include "ptk/util/Color.hpp"
 #include "ptk/util/Math.hpp"
 #include "ptk/util/NonCopyable.hpp"

@@ -9,6 +9,7 @@
 #define PTK_CORE_EVENTCALLBACKS_HPP
 
 // pTK Headers
+#include "ptk/core/Defines.hpp"
 #include "ptk/core/CallbackStorage.hpp"
 #include "ptk/events/KeyEvent.hpp"
 #include "ptk/events/MouseEvent.hpp"
@@ -16,13 +17,17 @@
 
 namespace pTK
 {
-    /** EventCallbacks class implementation.
+    /** EventCallbackInterface class implementation.
 
-        This class contains functions that are used to add callbacks to common
-        events that are triggered / handled.
+        This class contains functions that are used to add callbacks events
+        that are triggered / handled.
+
+        Main purpose is to store callbacks for Widgets.
+        And therefore has been limited in scope to only use functions
+        pointers of type bool() or bool(const T&) since the return value
+        serves a purpose for deletion.
 
         The addListener function can be used to add a callback to any type.
-
         When a callback has been added a unique identifier will be returned.
 
         If you want to remove that callback in the future you need to save
@@ -32,7 +37,96 @@ namespace pTK
         called (hence the bool return value). If you do not want to remove the
         function after it has been called, simply return false in the callback.
     */
-    class PTK_API EventCallbacks
+    class PTK_API EventCallbackInterface
+    {
+    public:
+        /** Constructs EventCallbackInterface with default values.
+
+            @return    initialized EventCallbackInterface
+        */
+        EventCallbackInterface() = default;
+
+        /** Destructor for EventCallbackInterface.
+
+        */
+        virtual ~EventCallbackInterface() = default;
+
+        /** Function to add callback.
+
+                @param callback     function to call on event
+                @return             callback id
+            */
+        template <typename T>
+        uint64_t addListener(const std::function<bool(const T&)>& callback)
+        {
+            return m_callbackStorage.addCallback<T, bool(const T&)>(callback);
+        }
+
+        /** Function to add callback.
+
+            @param callback     function to call on event
+            @return             callback id
+        */
+        template <typename T>
+        uint64_t addListener(const std::function<bool()>& callback)
+        {
+            auto helper_func = [callback](const T&) { return callback(); };
+            return m_callbackStorage.addCallback<T, bool(const T&)>(helper_func);
+        }
+
+        /** Function to remove callback.
+
+            @param id   callback id to remove
+        */
+        template <typename T>
+        bool removeListener(uint64_t id)
+        {
+            return m_callbackStorage.removeCallback<T, bool(const T&)>(id);
+        }
+
+        /** Function to trigger an event.
+
+            @param event    triggered event
+        */
+        template <typename T, typename... Args>
+        void triggerEvent(Args&& ...args)
+        {
+            const auto predicate = [&](typename CallbackContainer<bool(const T&)>::Node& entry){
+                return entry.callback(std::forward<Args>(args)...);
+            };
+            m_callbackStorage.removeCallbackIf<T, bool(const T&)>(predicate);
+        }
+
+        /** Function for retrieving the CallbackStorage.
+
+            @return     callback storage
+        */
+        [[nodiscard]] const CallbackStorage& callbackStorage() const noexcept { return m_callbackStorage; }
+
+        /** Function for retrieving the CallbackStorage.
+
+            @return     callback storage
+        */
+        [[nodiscard]] CallbackStorage& callbackStorage() noexcept { return m_callbackStorage; }
+
+    public:
+        EventCallbackInterface(const EventCallbackInterface&) = delete; // Deleted by CallbackStorage.
+        EventCallbackInterface& operator=(const EventCallbackInterface&) = delete; // Deleted by CallbackStorage.
+
+    protected:
+        EventCallbackInterface(EventCallbackInterface&&) = default;
+        EventCallbackInterface& operator=(EventCallbackInterface&&) = default;
+
+    private:
+        CallbackStorage m_callbackStorage;
+    };
+
+    /** EventCallbacks class implementation.
+
+        This class contains helper functions for adding callbacks into
+        storage for common events.
+    */
+    class PTK_API EventCallbacks : public virtual EventCallbackInterface
     {
     public:
         /** Constructs EventCallbacks with default values.
@@ -50,109 +144,63 @@ namespace pTK
             @param callback    function to call on key event
             @return            callback id
         */
-        uint64 onKey(const std::function<bool(const KeyEvent&)>& callback);
+        uint64_t onKey(const std::function<bool(const KeyEvent&)>& callback);
 
         /** Function for handling when key input
 
             @param callback    function to call on key input
             @return            callback id
         */
-        uint64 onInput(const std::function<bool(const InputEvent&)>& callback);
+        uint64_t onInput(const std::function<bool(const InputEvent&)>& callback);
 
         /** Function for handling when mouse is hovering.
 
             @param callback    function to call on hover event
             @return            callback id
         */
-        uint64 onHover(const std::function<bool(const MotionEvent&)>& callback);
+        uint64_t onHover(const std::function<bool(const MotionEvent&)>& callback);
 
         /** Function for handling when mouse is entering.
 
             @param callback    function to call on hover event
             @return            callback id
         */
-        uint64 onEnter(const std::function<bool(const EnterEvent&)>& callback);
+        uint64_t onEnter(const std::function<bool(const EnterEvent&)>& callback);
 
         /** Function for handling when mouse is leaving.
 
             @param callback    function to call on leaving event
             @return            callback id
         */
-        uint64 onLeave(const std::function<bool(const LeaveEvent&)>& callback);
+        uint64_t onLeave(const std::function<bool(const LeaveEvent&)>& callback);
 
         /** Function for handling when mouse has left and a previous click has happened.
 
             @param callback    function to call
             @return            callback id
         */
-        uint64 onLeaveClick(const std::function<bool(const LeaveClickEvent&)>& callback);
+        uint64_t onLeaveClick(const std::function<bool(const LeaveClickEvent&)>& callback);
 
         /** Function for handling when mouse is scrolling.
 
             @param callback    function to call
             @return            callback id
         */
-        uint64 onScroll(const std::function<bool(const ScrollEvent&)>& callback);
+        uint64_t onScroll(const std::function<bool(const ScrollEvent&)>& callback);
 
         /** Function for handling when mouse is clicking.
 
             @param callback    function to call
             @return            callback id
         */
-        uint64 onClick(const std::function<bool(const ClickEvent&)>& callback);
+        uint64_t onClick(const std::function<bool(const ClickEvent&)>& callback);
 
         /** Function for handling when mouse is released.
 
             @param callback    function to call
             @return            callback id
         */
-        uint64 onRelease(const std::function<bool(const ReleaseEvent&)>& callback);
-
-        /** Function to add callback.
-
-            @param callback     function to call on event
-            @return             callback id
-        */
-        template <typename T>
-        uint64 addListener(const std::function<bool(const T&)>& callback)
-        {
-            return m_callbackStorage.addCallback<T, bool(const T&)>(callback);
-        }
-
-        /** Function to add callback.
-
-            @param callback     function to call on event
-            @return             callback id
-        */
-        template <typename T>
-        uint64 addListener(const std::function<bool()>& callback)
-        {
-            auto helper_func = [callback](const T&) { return callback(); };
-            return m_callbackStorage.addCallback<T, bool(const T&)>(helper_func);
-        }
-
-        /** Function to remove callback.
-
-            @param id   callback id to remove
-        */
-        template <typename T>
-        bool removeListener(uint64 id)
-        {
-            return m_callbackStorage.removeCallback<T, bool(const T&)>(id);
-        }
-
-        /** Function to trigger an event.
-
-            @param event    triggered event
-        */
-        template <typename T, typename... Args>
-        void triggerEvent(Args&& ...args)
-        {
-            m_callbackStorage.triggerCallbacks<T, bool(const T&)>(std::forward<Args>(args)...);
-        }
-
-    private:
-        CallbackStorage m_callbackStorage;
+        uint64_t onRelease(const std::function<bool(const ReleaseEvent&)>& callback);
     };
 }
 

@@ -1,23 +1,27 @@
 //
-//  util/Layout.hpp
+//  core/Alignment.hpp
 //  pTK
 //
-//  Created by Robin Gustafsson on 2019-07-29s.
+//  Created by Robin Gustafsson on 2019-07-29.
 //
 
-#ifndef PTK_UTIL_ALIGNMENT_HPP
-#define PTK_UTIL_ALIGNMENT_HPP
+#ifndef PTK_CORE_ALIGNMENT_HPP
+#define PTK_CORE_ALIGNMENT_HPP
 
 // pTK Headers
-#include "ptk/core/Defines.hpp"
-#include "ptk/core/Types.hpp"
+#include "ptk/core/WidgetInterface.hpp"
 
 // C++ Headers
 #include <type_traits>
+#include <cstdint>
 
 namespace pTK
 {
-    enum class Align : int32
+    /** Align enum class.
+
+        Contains possible alignments.
+    */
+    enum class Align : int32_t
     {
         Top     = 0x0001,
         Bottom  = 0x0002,
@@ -42,7 +46,7 @@ namespace pTK
     constexpr bool IsAlignSet(std::underlying_type<Align>::type number, Aligns&&... aligns) noexcept
     {
         using align_utype = std::underlying_type<Align>::type;
-        align_utype align = 0;
+        align_utype align{};
 
         for (const auto p : { aligns... })
             align |= static_cast<align_utype>(p);
@@ -65,9 +69,36 @@ namespace pTK
         value_type right;
     };
 
-    using Margin = Directions<uint32>;
+    /** Margin is a specialization of Directions.
 
-    class PTK_API Alignment
+    */
+    using Margin = Directions<uint32_t>;
+
+    /** AlignChange struct implementation.
+
+        Used for unique type for triggerEvent when alignment has changed.
+        Only contains the new alignment value.
+    */
+    struct PTK_API AlignChange
+    {
+        std::underlying_type<Align>::type value{};
+    };
+
+    /** MarginChange struct implementation.
+
+        Used for unique type for triggerEvent when margin(s) has changed.
+        Only contains the new margin values.
+    */
+    struct PTK_API MarginChange
+    {
+        Margin value{};
+    };
+
+    /** Alignment class implementation.
+
+        Implements functions used for alignment in a widget.
+    */
+    class PTK_API Alignment : public virtual WidgetInterface
     {
     public:
         /** Constructs Alignment with default values.
@@ -95,14 +126,14 @@ namespace pTK
                 align |= static_cast<align_utype>(p);
 
             m_align = align;
-            onAlignChange(m_align);
+            notifyAlignChange(m_align);
         }
 
         /** Function for retrieving the align property of the Widget.
 
             @return current align
         */
-        [[nodiscard]] std::underlying_type<Align>::type getAlign() const;
+        [[nodiscard]] std::underlying_type<Align>::type getAlign() const noexcept;
 
         /** Function for setting the margin of the Widget.
 
@@ -152,44 +183,77 @@ namespace pTK
 
             @return  current margin
         */
-        [[nodiscard]] const Margin& getMargin() const;
+        [[nodiscard]] const Margin& getMargin() const noexcept;
 
         /** Function for retrieving the top margin of the Widget.
 
             @return  current top margin
         */
-        [[nodiscard]] Margin::value_type getMarginTop() const;
+        [[nodiscard]] Margin::value_type getMarginTop() const noexcept;
 
         /** Function for retrieving the bottom margin of the Widget.
 
             @return  current bottom margin
         */
-        [[nodiscard]] Margin::value_type getMarginBottom() const;
+        [[nodiscard]] Margin::value_type getMarginBottom() const noexcept;
 
         /** Function for retrieving the left margin of the Widget.
 
             @return  current left margin
         */
-        [[nodiscard]] Margin::value_type getMarginLeft() const;
+        [[nodiscard]] Margin::value_type getMarginLeft() const noexcept;
 
         /** Function for retrieving the right margin of the Widget.
 
             @return  current right margin
         */
-        [[nodiscard]] Margin::value_type getMarginRight() const;
+        [[nodiscard]] Margin::value_type getMarginRight() const noexcept;
 
-    private:
+    protected:
         /** Function for notifying that Align property has changed.
 
+            This is the first function that is called when alignment has
+            changed and for stored callbacks to also be called after, this
+            function must return false. If stored callback should not be called
+            instead return true.
+
             @param align    new Align value
+            @return         status
         */
-        virtual void onAlignChange(std::underlying_type<Align>::type) {}
+        virtual bool onAlignChange(std::underlying_type<Align>::type UNUSED(align)) { return false; }
 
         /** Function for notifying that Margin property has changed.
 
-            @param margin    new Margin value
+            This is the first function that is called when margin has changed
+            and for stored callbacks to also be called after, this function must
+            return false. If stored callback should not be called instead
+            return true.
+
+            @param margin   new Margin value(s)
+            @return         status
         */
-        virtual void onMarginChange(const Margin&) {}
+        virtual bool onMarginChange(const Margin& UNUSED(margin)) { return false; }
+
+    private:
+        /** Internal function for notifying that the Align property has changed.
+
+            Calls onAlignChange and if that returns false also calls triggerEvent
+            for type AlignChange with the new alignment (in AlignChange struct form)
+            as argument.
+
+            @param value    new Alignment value
+        */
+        void notifyAlignChange(std::underlying_type<Align>::type value);
+
+        /** Internal function for notifying that the Margin property has changed.
+
+            Calls onMarginChange and if that returns false also calls triggerEvent
+            for type MarginChange with the new alignment (in MarginChange struct form)
+            as argument.
+
+            @param value    new Margin value(s)
+        */
+        void notifyMarginChange(const Margin& value);
 
     private:
         Margin m_margin;
@@ -197,4 +261,4 @@ namespace pTK
     };
 }
 
-#endif // PTK_UTIL_ALIGNMENT_HPP
+#endif // PTK_CORE_ALIGNMENT_HPP

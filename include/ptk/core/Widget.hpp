@@ -9,11 +9,12 @@
 #define PTK_CORE_WIDGET_HPP
 
 // pTK Headers
+#include "ptk/core/WidgetInterface.hpp"
 #include "ptk/core/Drawable.hpp"
 #include "ptk/core/EventHandling.hpp"
 #include "ptk/core/Sizable.hpp"
 #include "ptk/util/Point.hpp"
-#include "ptk/util/Alignment.hpp"
+#include "Alignment.hpp"
 #include "ptk/util/SizePolicy.hpp"
 
 // C++ Headers
@@ -79,12 +80,12 @@ namespace pTK
         /** Function for notifying the parent of a change and
             to put it on an internal render queue.
         */
-        bool update();
+        bool update() override;
 
         /** Function for notifying the parent of a change and
             put it on an internal render queue.
         */
-        bool draw();
+        bool draw() override;
 
         /** Function to enable drawing.
 
@@ -147,10 +148,6 @@ namespace pTK
         // Size functions derived from Sizable.
         void onSizeChange(const Size& size) override;
         void onLimitChange(const Size& min, const Size& max) override;
-
-        // Alignment functions derived from Alignment.
-        void onAlignChange(std::underlying_type<Align>::type) override;
-        void onMarginChange(const Margin&) override;
 
     private:
         Widget* m_parent;

@@ -2,7 +2,7 @@
 #include "catch2/catch_test_macros.hpp"
 
 // pTK Headers
-#include "ptk/util/Alignment.hpp"
+#include "ptk/core/Alignment.hpp"
 
 using align_utype = std::underlying_type<pTK::Align>::type;
 

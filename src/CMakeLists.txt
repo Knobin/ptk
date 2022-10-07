@@ -2,7 +2,8 @@
 # Source files
 #
 
-set(PTK_CORE_FILES core/CallbackStorage.cpp
+set(PTK_CORE_FILES core/Alignment.cpp
+        core/CallbackStorage.cpp
         core/EventCallbacks.cpp
         core/EventManager.cpp
         core/Shape.cpp
@@ -19,8 +20,7 @@ set(PTK_MENU_FILES menu/CheckboxMenuItem.cpp
         menu/MenuItem.cpp
         menu/NamedMenuItem.cpp)
 
-set(PTK_UTIL_FILES util/Alignment.cpp
-        util/Color.cpp
+set(PTK_UTIL_FILES util/Color.cpp
         util/Point.cpp
         util/Semaphore.cpp
         util/Size.cpp)

@@ -148,16 +148,6 @@ namespace pTK
         return limits;
     }
 
-    void Widget::onAlignChange(std::underlying_type<Align>::type)
-    {
-        update();
-    }
-
-    void Widget::onMarginChange(const Margin&)
-    {
-        update();
-    }
-
     ///////////////////////////////////////////////////////////////////////////////
 
     // Comparison operators.
