@@ -12,15 +12,11 @@ namespace pTK
 {
     Widget::Widget()
         : Alignment(), Drawable(), EventHandling(), Sizable(),
-        m_parent{nullptr}, m_name{}
-    {
-
-    }
+            m_parent{nullptr}, m_name{}
+    {}
 
     Widget::~Widget()
-    {
-
-    }
+    {}
 
     void Widget::setParent(Widget* parent)
     {

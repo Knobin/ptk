@@ -26,13 +26,33 @@ namespace pTK
     class PTK_API WindowHandle : public VBox
     {
     public:
+        /** Constructs WindowHandle with default values.
+
+            @return    default initialized WindowHandle
+        */
         WindowHandle() = delete;
 
+        /** Constructs WindowHandle with values.
+
+            @return    initialized WindowHandle with values
+        */
         WindowHandle(const Size& size, const WindowInfo& flags)
         {
             setSizePolicy(flags.sizePolicy);
             updateSize(size);
         }
+
+        /** Move Constructor for WindowHandle.
+
+            @return    initialized WindowHandle from value
+        */
+        WindowHandle(WindowHandle&& other) = default;
+
+        /** Move Assignment operator for WindowHandle.
+
+            @return    WindowHandle with value
+        */
+        WindowHandle& operator=(WindowHandle&& other) = default;
 
         /** Destructor for WindowHandle.
 

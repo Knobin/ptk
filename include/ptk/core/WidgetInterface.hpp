@@ -33,8 +33,40 @@ namespace pTK
     class PTK_API WidgetInterface : public virtual EventCallbackInterface
     {
     public:
+        /** Constructs WidgetInterface with default values.
+
+            @return    default initialized WidgetInterface
+        */
         WidgetInterface() = default;
+
+        /** Destructor for WidgetInterface.
+
+        */
         virtual ~WidgetInterface() = default;
+
+        /** Move Constructor for WidgetInterface.
+
+            @return    initialized WidgetInterface from value
+        */
+        WidgetInterface(WidgetInterface&&) = default;
+
+        /** Deleted Copy Constructor.
+
+            Copying is prohibited (for now in Widget).
+        */
+        WidgetInterface(const WidgetInterface&) = delete;
+
+        /** Move Assignment operator for WidgetInterface.
+
+            @return    WidgetInterface with value
+        */
+        WidgetInterface& operator=(WidgetInterface&&) = default;
+
+        /** Deleted Copy Assignment operator.
+
+            Copying is prohibited (for now in Widget).
+        */
+        WidgetInterface& operator=(const WidgetInterface&) = delete;
 
         /** Function for notifying the parent of a change and
             to put it on an internal render queue.

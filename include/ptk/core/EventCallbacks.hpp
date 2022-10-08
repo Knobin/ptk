@@ -46,6 +46,32 @@ namespace pTK
         */
         EventCallbackInterface() = default;
 
+        /** Move Constructor for EventCallbackInterface.
+
+            @return    initialized EventCallbackInterface from value
+        */
+        EventCallbackInterface(EventCallbackInterface&&) = default;
+
+        /** Deleted Copy Constructor.
+
+            Copying of callbacks can return undesired results, especially implicit copying.
+            To get a deep copy of CallbackStorage, use the getter and then use the clone() function.
+        */
+        EventCallbackInterface(const EventCallbackInterface&) = delete;
+
+        /** Move Assignment operator for EventCallbackInterface.
+
+            @return    EventCallbackInterface with value
+        */
+        EventCallbackInterface& operator=(EventCallbackInterface&&) = default;
+
+        /** Deleted Copy Assignment operator.
+
+            Copying of callbacks can return undesired results, especially implicit copying.
+            To get a deep copy of CallbackStorage, use the getter and then use the clone() function.
+        */
+        EventCallbackInterface& operator=(const EventCallbackInterface&) = delete;
+
         /** Destructor for EventCallbackInterface.
 
         */
@@ -109,16 +135,8 @@ namespace pTK
         */
         [[nodiscard]] CallbackStorage& callbackStorage() noexcept { return m_callbackStorage; }
 
-    public:
-        EventCallbackInterface(const EventCallbackInterface&) = delete; // Deleted by CallbackStorage.
-        EventCallbackInterface& operator=(const EventCallbackInterface&) = delete; // Deleted by CallbackStorage.
-
-    protected:
-        EventCallbackInterface(EventCallbackInterface&&) = default;
-        EventCallbackInterface& operator=(EventCallbackInterface&&) = default;
-
     private:
-        CallbackStorage m_callbackStorage;
+        CallbackStorage m_callbackStorage{};
     };
 
     /** EventCallbacks class implementation.
@@ -133,6 +151,9 @@ namespace pTK
 
         */
         EventCallbacks() = default;
+
+        EventCallbacks(EventCallbacks&&) = default;
+        EventCallbacks& operator=(EventCallbacks&&) = default;
 
         /** Destructor for EventCallbacks.
 

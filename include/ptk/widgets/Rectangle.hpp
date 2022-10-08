@@ -26,6 +26,22 @@ namespace pTK
             @return    default initialized Rectangle
         */
         Rectangle();
+
+        /** Move Constructor for Rectangle.
+
+            @return    initialized Rectangle from value
+        */
+        Rectangle(Rectangle&& other) = default;
+
+        /** Move Assignment operator for Rectangle.
+
+            @return    Rectangle with value
+        */
+        Rectangle& operator=(Rectangle&& other) = default;
+
+        /** Destructor for Rectangle.
+
+        */
         virtual ~Rectangle() = default;
         
         /** Draw function.

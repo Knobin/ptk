@@ -37,13 +37,25 @@ namespace pTK
         using size_type = std::size_t;
 
     public:
-        /** Constructs Box with default values.
+        /** Constructs WidgetContainer with default values.
 
-            @return    default initialized Box
+            @return    default initialized WidgetContainer
         */
         WidgetContainer();
 
-        /** Destructor for Box.
+        /** Move Constructor for WidgetContainer.
+
+            @return    initialized WidgetContainer from value
+        */
+        WidgetContainer(WidgetContainer&& other) = default;
+
+        /** Move Assignment operator for WidgetContainer.
+
+            @return    WidgetContainer with value
+        */
+        WidgetContainer& operator=(WidgetContainer&& other) = default;
+
+        /** Destructor for WidgetContainer.
 
         */
         virtual ~WidgetContainer();

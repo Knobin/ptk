@@ -58,7 +58,23 @@ namespace pTK
 
             @return    default initialized Button
         */
-        Button(const Style& style);
+        explicit Button(const Style& style);
+
+        /** Move Constructor for Button.
+
+            @return    initialized Button from value
+        */
+        Button(Button&& other) = default;
+
+        /** Move Assignment operator for Button.
+
+            @return    Button with value
+        */
+        Button& operator=(Button&& other) = default;
+
+        /** Destructor for Button.
+
+        */
         virtual ~Button() = default;
 
         /** Function for setting the position of the Button.

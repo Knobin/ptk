@@ -30,6 +30,18 @@ namespace pTK
         */
         VBox();
 
+        /** Move Constructor for VBox.
+
+            @return    initialized VBox from value
+        */
+        VBox(VBox&& other) = default;
+
+        /** Move Assignment operator for VBox.
+
+            @return    VBox with value
+        */
+        VBox& operator=(VBox&& other) = default;
+
         /** Destructor for VBox.
 
         */

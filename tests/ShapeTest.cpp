@@ -45,7 +45,7 @@ TEST_CASE("Shape Getters and Setters")
     }
 }
 
-TEST_CASE("Shape Copy and Assignment")
+TEST_CASE("Move Semantics")
 {
     // Testing Shape Copy and Assignment.
     pTK::Color  color{50, 100, 150, 200};
@@ -57,9 +57,9 @@ TEST_CASE("Shape Copy and Assignment")
     s.setOutlineColor(outline_color);
     s.setOutlineThickness(outline_thickness);
     
-    SECTION("Copy")
+    SECTION("Constructor")
     {
-        pTK::Shape tmp = s;
+        pTK::Shape tmp{std::move(s)};
         REQUIRE(tmp.getColor() == color);
         REQUIRE(tmp.getOutlineColor() == outline_color);
         REQUIRE(tmp.getOutlineThickness() == outline_thickness);
@@ -68,7 +68,7 @@ TEST_CASE("Shape Copy and Assignment")
     SECTION("Assignment")
     {
         pTK::Shape tmp;
-        tmp = s;
+        tmp = std::move(s);
         REQUIRE(tmp.getColor() == color);
         REQUIRE(tmp.getOutlineColor() == outline_color);
         REQUIRE(tmp.getOutlineThickness() == outline_thickness);
@@ -86,7 +86,11 @@ TEST_CASE ("Shape Comparison")
     s.setColor(color);
     s.setOutlineColor(outline_color);
     s.setOutlineThickness(outline_thickness);
-    pTK::Shape s1 = s;
+
+    pTK::Shape s1;
+    s1.setColor(color);
+    s1.setOutlineColor(outline_color);
+    s1.setOutlineThickness(outline_thickness);
     
     pTK::Shape s2;
     s2.setOutlineColor(color);

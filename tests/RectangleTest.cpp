@@ -55,9 +55,9 @@ TEST_CASE("Getters and Setters")
     }
 }
 
-TEST_CASE("Copy and Assignment")
+TEST_CASE("Move Semantics")
 {
-    // Testing Rectangle Copy and Assignment.
+    // Testing Rectangle Move Semantics.
     pTK::Color  color{50, 100, 150, 200};
     pTK::Color  outlineColor{75, 125, 175, 225};
     float       outlineThickness = 50.0f;
@@ -69,9 +69,9 @@ TEST_CASE("Copy and Assignment")
     rect.setOutlineThickness(outlineThickness);
     rect.setCornerRadius(cornerRadius);
     
-    SECTION("Copy")
+    SECTION("Constructor")
     {
-        pTK::Rectangle tmp = rect;
+        pTK::Rectangle tmp{std::move(rect)};
         REQUIRE(tmp.getColor() == color);
         REQUIRE(tmp.getOutlineColor() == outlineColor);
         REQUIRE(tmp.getOutlineThickness() == outlineThickness);
@@ -81,7 +81,7 @@ TEST_CASE("Copy and Assignment")
     SECTION("Assignment")
     {
         pTK::Rectangle tmp;
-        tmp = rect;
+        tmp = std::move(rect);
         REQUIRE(tmp.getColor() == color);
         REQUIRE(tmp.getOutlineColor() == outlineColor);
         REQUIRE(tmp.getOutlineThickness() == outlineThickness);
@@ -102,7 +102,12 @@ TEST_CASE ("Comparison")
     rect.setOutlineColor(outlineColor);
     rect.setOutlineThickness(outlineThickness);
     rect.setCornerRadius(cornerRadius);
-    pTK::Rectangle r1 = rect;
+
+    pTK::Rectangle r1;
+    r1.setColor(color);
+    r1.setOutlineColor(outlineColor);
+    r1.setOutlineThickness(outlineThickness);
+    r1.setCornerRadius(cornerRadius);
     
     pTK::Rectangle r2;
     r2.setOutlineColor(color);

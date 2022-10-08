@@ -36,6 +36,30 @@ namespace pTK
         */
         Widget();
 
+        /** Move Constructor for Widget.
+
+            @return    initialized Widget from value
+        */
+        Widget(Widget&& other) = default;
+
+        /** Deleted Copy Constructor.
+
+            Copying is prohibited (for now), use clone() instead.
+        */
+        Widget(const Widget&) = delete;
+
+        /** Move Assignment operator for Widget.
+
+            @return    Widget with value
+        */
+        Widget& operator=(Widget&& other) = default;
+
+        /** Deleted Copy Assignment operator.
+
+            Copying is prohibited (for now), use clone() instead.
+        */
+        Widget& operator=(const Widget&) = delete;
+
         /** Destructor for Widget.
 
         */

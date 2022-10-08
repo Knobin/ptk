@@ -30,6 +30,18 @@ namespace pTK
         */
         HBox();
 
+        /** Move Constructor for HBox.
+
+            @return    initialized HBox from value
+        */
+        HBox(HBox&& other) = default;
+
+        /** Move Assignment operator for HBox.
+
+            @return    HBox with value
+        */
+        HBox& operator=(HBox&& other) = default;
+
         /** De-constructor for HBox.
 
         */

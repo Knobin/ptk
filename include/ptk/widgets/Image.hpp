@@ -40,6 +40,22 @@ namespace pTK
             @return    default initialized Image
         */
         Image(const std::string& path);
+
+        /** Move Constructor for Image.
+
+            @return    initialized Image from value
+        */
+        Image(Image&& other) = default;
+
+        /** Move Assignment operator for Image.
+
+            @return    Image with value
+        */
+        Image& operator=(Image&& other) = default;
+
+        /** Destructor for Image.
+
+        */
         virtual ~Image() = default;
         
         /** Function for loading an image from disk.

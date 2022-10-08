@@ -30,11 +30,27 @@ namespace pTK
     class PTK_API Checkbox : public Rectangle
     {
     public:
-        /** Checkbox Button with default values.
+        /** Checkbox with default values.
 
             @return    default initialized Checkbox
         */
         Checkbox();
+
+        /** Move Constructor for Checkbox.
+
+            @return    initialized Checkbox from value
+        */
+        Checkbox(Checkbox&& other) = default;
+
+        /** Move Assignment operator for Checkbox.
+
+            @return    Checkbox with value
+        */
+        Checkbox& operator=(Checkbox&& other) = default;
+
+        /** Destructor for Checkbox.
+
+        */
         virtual ~Checkbox() = default;
 
         /** Draw function.

@@ -29,6 +29,23 @@ namespace pTK
             @return    default initialized Label
         */
         Label();
+
+        /** Move Constructor for Label.
+
+            @return    initialized Label from value
+        */
+        Label(Label&& other) = default;
+
+        /** Move Assignment operator for Label.
+
+            @return    Label with value
+        */
+        Label& operator=(Label&& other) = default;
+
+        /** Move Constructor for Label.
+
+            @return    initialized Label from value
+        */
         virtual ~Label() = default;
         
         /** Draw function.

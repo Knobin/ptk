@@ -23,6 +23,18 @@ namespace pTK
         */
         Shape();
 
+        /** Move Constructor for Shape.
+
+            @return    initialized Shape from value
+        */
+        Shape(Shape&& other) = default;
+
+        /** Move Assignment operator for Shape.
+
+            @return    Shape with value
+        */
+        Shape& operator=(Shape&& other) = default;
+
         /** Destructor for Shape.
 
         */
@@ -32,7 +44,7 @@ namespace pTK
          
             @return    Current Color
         */
-        const Color& getColor() const;
+        [[nodiscard]] const Color& getColor() const;
         
         /** Function for setting the Color of the Shape.
          
@@ -44,7 +56,7 @@ namespace pTK
          
             @return    Current Color
         */
-        const Color& getOutlineColor() const;
+        [[nodiscard]] const Color& getOutlineColor() const;
         
         /** Function for setting the Color of the outline.
          
@@ -56,7 +68,7 @@ namespace pTK
          
             @return    outline thickness
         */
-        float getOutlineThickness() const;
+        [[nodiscard]] float getOutlineThickness() const;
         
         /** Function for setting the thickness of the outline.
          

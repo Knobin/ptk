@@ -23,14 +23,14 @@
 
 namespace pTK
 {
-    /** MainWindow_win class implementation.
+    /** WindowHandle_win class implementation.
 
         This class handles the Windows Window.
     */
     class PTK_API WindowHandle_win : public WindowHandle
     {
     public:
-        /** Constructs MainWindow_win with default values.
+        /** Constructs WindowHandle_win with default values.
 
             @param name     name of the window
             @param size     size of the window
@@ -39,7 +39,7 @@ namespace pTK
         */
         WindowHandle_win(const std::string& name, const Size& size, const WindowInfo& flags);
 
-        /** Destructor for MainWindow_win.
+        /** Destructor for WindowHandle_win.
 
         */
         virtual ~WindowHandle_win();

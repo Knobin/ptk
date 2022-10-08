@@ -112,6 +112,18 @@ namespace pTK
         */
         virtual ~Alignment() = default;
 
+        /** Move Constructor for Alignment.
+
+            @return    initialized Alignment from value
+        */
+        Alignment(Alignment&& other) = default;
+
+        /** Move Assignment operator for Alignment.
+
+            @return    Alignment with value
+        */
+        Alignment& operator=(Alignment&& other) = default;
+
         /** Function for setting the align property of the Widget.
 
             @param align  Align to apply.

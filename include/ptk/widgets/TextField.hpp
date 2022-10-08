@@ -21,11 +21,27 @@ namespace pTK
     class PTK_API TextField : public Rectangle, public Text
     {
     public:
-        /** Constructs Label with default values.
+        /** Constructs TextField with default values.
 
-            @return    default initialized Label
+            @return    default initialized TextField
         */
         TextField();
+
+        /** Move Constructor for TextField.
+
+            @return    initialized TextField from value
+        */
+        TextField(TextField&& other) = default;
+
+        /** Move Assignment operator for TextField.
+
+            @return    TextField with value
+        */
+        TextField& operator=(TextField&& other) = default;
+
+        /** Destructor for TextField.
+
+        */
         virtual ~TextField() = default;
 
         /** Draw function.

@@ -32,6 +32,18 @@ namespace pTK
         */
         EventHandling() = default;
 
+        /** Move Constructor for EventHandling.
+
+            @return    initialized EventHandling from value
+        */
+        EventHandling(EventHandling&&) = default;
+
+        /** Move Assignment operator for EventHandling.
+
+            @return    EventHandling with value
+        */
+        EventHandling& operator=(EventHandling&&) = default;
+
         /** Destructor for EventHandling.
 
         */

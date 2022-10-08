@@ -12,9 +12,7 @@ namespace pTK
 {
     Rectangle::Rectangle()
         : Shape(), m_cornerRadius{0.0f}
-    {
-
-    }
+    {}
     
     void Rectangle::onDraw(SkCanvas* canvas)
     {
