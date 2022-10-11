@@ -12,18 +12,17 @@
 #include "ptk/events/KeyMap.hpp"
 
 // C++ Headers
-#include <map>
 #include <algorithm>
+#include <map>
 
 namespace pTK
 {
     KeyMap KeyMap::s_Instance{};
 
     KeyMap::KeyMap()
-        : SingleObject(), m_keyMap{KeyMapInit()}
-    {
-
-    }
+        : SingleObject(),
+          m_keyMap{KeyMapInit()}
+    {}
 
     KeyMap& KeyMap::Get()
     {
@@ -33,7 +32,7 @@ namespace pTK
     bool KeyMap::KeyExists(Key key)
     {
         const std::map<int32, Key>& keyMap{Get().m_keyMap};
-        auto it = std::find_if(keyMap.cbegin(), keyMap.cend(), [&](const auto& pair){
+        auto it = std::find_if(keyMap.cbegin(), keyMap.cend(), [&](const auto& pair) {
             return pair.second == key;
         });
 
@@ -42,7 +41,7 @@ namespace pTK
 
     bool KeyMap::KeyCodeExists(int32 keycode)
     {
-        const std::map<int32, Key>& keyMap{ Get().m_keyMap };
+        const std::map<int32, Key>& keyMap{Get().m_keyMap};
         return static_cast<bool>(keyMap.count(keycode)); // 0 or 1 => false, true.
     }
 
@@ -59,7 +58,7 @@ namespace pTK
     int32 KeyMap::KeyToKeyCode(Key key)
     {
         const std::map<int32, Key>& keyMap{Get().m_keyMap};
-        auto it = std::find_if(keyMap.cbegin(), keyMap.cend(), [&](const auto& pair){
+        auto it = std::find_if(keyMap.cbegin(), keyMap.cend(), [&](const auto& pair) {
             return pair.second == key;
         });
 

@@ -5,6 +5,8 @@
 //  Created by Robin Gustafsson on 2021-01-21.
 //
 
+// clang-format off
+
 #ifndef PTK_CORE_DEFINES_HPP
 #define PTK_CORE_DEFINES_HPP
 
@@ -124,3 +126,4 @@
 
 #endif // PTK_CORE_DEFINES_HPP
 
+// clang-format on

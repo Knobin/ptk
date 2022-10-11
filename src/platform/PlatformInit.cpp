@@ -26,7 +26,7 @@ namespace pTK
         PTK_APPLICATION_HANDLE_T::Destroy();
     }
 
-    ApplicationHandle *AppInstance()
+    ApplicationHandle* AppInstance()
     {
         return PTK_APPLICATION_HANDLE_T::Instance();
     }

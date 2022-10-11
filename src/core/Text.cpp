@@ -21,8 +21,8 @@ namespace pTK
         : m_font{}
     {
         m_font.setEdging(SkFont::Edging::kAntiAlias);
-        //m_font.setEdging(SkFont::Edging::kAlias);
-        //m_font.setEdging(SkFont::Edging::kSubpixelAntiAlias);
+        // m_font.setEdging(SkFont::Edging::kAlias);
+        // m_font.setEdging(SkFont::Edging::kSubpixelAntiAlias);
         updateFontInfo();
     }
 
@@ -38,13 +38,14 @@ namespace pTK
                 updateFontInfo();
                 onTextUpdate();
                 return true;
-            } else
+            }
+            else
             {
                 m_font.setTypeface(SkTypeface::MakeDefault());
                 PTK_WARN("Failed to load \"{0}\", fell back to \"{1}\"", path, getFontFamily());
             }
         }
-        
+
         return false;
     }
 
@@ -54,7 +55,8 @@ namespace pTK
         {
             m_font.setTypeface(SkTypeface::MakeDefault());
             PTK_INFO("Loaded default font \"{0}\"", getFontFamily());
-        } else
+        }
+        else
         {
             m_font.setTypeface(SkTypeface::MakeFromName(fontFamily.c_str(), SkFontStyle::Normal()));
             if (fontFamily == getFontFamily())
@@ -72,22 +74,22 @@ namespace pTK
 
         return false;
     }
-    
+
     std::string Text::getFontFamily() const
     {
         SkString str{};
         m_font.getTypefaceOrDefault()->getFamilyName(&str);
-        
+
         return std::string(str.c_str());
     }
-    
+
     void Text::setFontSize(uint fontSize)
     {
         m_font.setSize(static_cast<SkScalar>(fontSize));
         updateFontInfo();
         onTextUpdate();
     }
-    
+
     uint Text::getFontSize() const
     {
         return static_cast<uint>(m_font.getSize());
@@ -106,11 +108,10 @@ namespace pTK
     Vec2f Text::getBoundsFromStr(const std::string& str) const
     {
         SkRect bounds{};
-        /*float advance =*/ m_font.measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &bounds);
+        /*float advance =*/m_font.measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &bounds);
         // return { advance, bounds.height() };
-        return { bounds.width(), bounds.height() };
+        return {bounds.width(), bounds.height()};
     }
-
 
     const SkFont& Text::skFont() const
     {
@@ -133,25 +134,25 @@ namespace pTK
 
         const void* ptr = data.text;
 
-        for (std::size_t i{ 0 }; i < data.size; ++i)
+        for (std::size_t i{0}; i < data.size; ++i)
         {
-            uint32 ch{ 0 };
+            uint32 ch{0};
 
             if (data.encoding == Text::Encoding::UTF8)
             {
-                const uint8 *c = static_cast<const uint8*>(ptr);
+                const auto* c = static_cast<const uint8*>(ptr);
                 ch = static_cast<uint32>(c[i]);
             }
 
             if (data.encoding == Text::Encoding::UTF16)
             {
-                const uint16* c = static_cast<const uint16*>(ptr);
+                const auto* c = static_cast<const uint16*>(ptr);
                 ch = static_cast<uint32>(c[i]);
             }
 
             if (data.encoding == Text::Encoding::UTF32)
             {
-                const uint32* c = static_cast<const uint32*>(ptr);
+                const auto* c = static_cast<const uint32*>(ptr);
                 ch = static_cast<uint32>(c[i]);
             }
 
@@ -160,9 +161,7 @@ namespace pTK
             else
                 break;
         }
-            
 
-        
         return count;
     }
 
@@ -183,17 +182,15 @@ namespace pTK
 
         float offset{0.0f};
         std::size_t spaceCount{SpaceCount(data)};
-        
+
         if (spaceCount > 0)
         {
             SkRect tmp{};
             offset = font.measureText(data.text, spaceCount, EncodingToSkTextEncoding(data.encoding), &tmp);
         }
-        
+
         return offset;
     }
-
-    
 
     float Text::drawTextLineWithPaint(SkCanvas* canvas, const StrData& data, const Vec2f& pos, const SkPaint& paint)
     {
@@ -226,11 +223,12 @@ namespace pTK
         return drawTextLineWithPaint(canvas, data, pos, paint);
     }
 
-    float Text::drawTextLine(SkCanvas* canvas, const StrData& data, const Color& color, const Vec2f& pos, float outlineSize, const Color& outColor)
+    float Text::drawTextLine(SkCanvas* canvas, const StrData& data, const Color& color, const Vec2f& pos,
+                             float outlineSize, const Color& outColor)
     {
         if (!(outlineSize > 0.0f))
             return drawTextLine(canvas, data, color, pos);
-        
+
         SkPaint paint = GetSkPaintFromColor(color);
         paint.setStrokeWidth(outlineSize);
         paint.setStyle(SkPaint::kFill_Style);
@@ -253,4 +251,4 @@ namespace pTK
         m_ascentToDescent = metrics.fDescent - metrics.fAscent;
     }
 
-}
+} // namespace pTK

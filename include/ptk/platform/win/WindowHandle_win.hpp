@@ -9,9 +9,9 @@
 #define PTK_PlATFORM_WIN_WINDOWHANDLE_HPP
 
 // pTK Headers
-#include "ptk/platform/base/WindowHandle.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/events/MouseEvent.hpp"
+#include "ptk/platform/base/WindowHandle.hpp"
 #include "ptk/platform/win/MenuBarUtil_win.hpp"
 
 // C++ Headers
@@ -78,7 +78,7 @@ namespace pTK
 
             @return context
         */
-        [[nodiscard]] ContextBase *getContext() const override;
+        [[nodiscard]] ContextBase* getContext() const override;
 
         /** Function for swapping the buffers.
 
@@ -128,7 +128,7 @@ namespace pTK
             @param pixels   image pixels in a RGBA format.
             @return         true if operation is successful, otherwise false
         */
-        bool setIcon(int32 width, int32 height, byte* pixels)  override;
+        bool setIcon(int32 width, int32 height, byte* pixels) override;
 
         /** Function for notifying the backend that an event has been pushed from
             a different thread.
@@ -220,17 +220,18 @@ namespace pTK
         struct Data
         {
             WindowHandle_win* window{nullptr};
-            bool minimized{ false };
-            uint wait{ 0 };
+            bool minimized{false};
+            uint wait{0};
             MenuBarUtil_win::MenuMap menuItems{};
-            bool ignoreSize{ false };
-            bool hasMenu{ false };
+            bool ignoreSize{false};
+            bool hasMenu{false};
             bool invalidated{false};
-            DWORD style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX};
+            DWORD style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX |
+                        WS_MAXIMIZEBOX};
         };
 
     private:
-        template<typename Event>
+        template <typename Event>
         friend void EventSendHelper(WindowHandle_win*, const Event&);
 
         friend Limits GetWindowLimits(WindowHandle_win*);
@@ -244,9 +245,9 @@ namespace pTK
         PAINTSTRUCT m_ps{};
         [[maybe_unused]] HDC m_hdc{};
         Vec2f m_scale{};
-        HACCEL m_accelTable{ nullptr };
+        HACCEL m_accelTable{nullptr};
         Data m_data{};
     };
-}
+} // namespace pTK
 
 #endif // PTK_PlATFORM_WIN_WINDOWHANDLE_HPP

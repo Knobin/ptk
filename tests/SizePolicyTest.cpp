@@ -57,7 +57,7 @@ TEST_CASE("Copy and Assignment")
     }
 }
 
-TEST_CASE ("Comparison")
+TEST_CASE("Comparison")
 {
     pTK::SizePolicy p1{pTK::SizePolicy::Policy::Expanding, pTK::SizePolicy::Policy::Fixed};
     pTK::SizePolicy p2{pTK::SizePolicy::Policy::Fixed, pTK::SizePolicy::Policy::Expanding};
@@ -87,16 +87,16 @@ TEST_CASE("Predefined Types")
         REQUIRE(fixed.horizontal == pTK::SizePolicy::Policy::Fixed);
         REQUIRE(fixed.vertical == pTK::SizePolicy::Policy::Fixed);
     }
-    
+
     SECTION("Expanding")
     {
-        pTK::SizePolicy expanding{ pTK::SizePolicy::Type::Expanding };
+        pTK::SizePolicy expanding{pTK::SizePolicy::Type::Expanding};
         REQUIRE(expanding.horizontal == pTK::SizePolicy::Policy::Expanding);
         REQUIRE(expanding.vertical == pTK::SizePolicy::Policy::Expanding);
     }
 }
 
-TEST_CASE ("IsSizePolicyFlagSet")
+TEST_CASE("IsSizePolicyFlagSet")
 {
     using pTK::SizePolicy;
     using policy_utype = std::underlying_type<SizePolicy::Policy>::type;

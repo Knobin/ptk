@@ -41,7 +41,8 @@ namespace pTK
             @return    default initialized Size
         */
         constexpr Size()
-            : width{0}, height{0}
+            : width{0},
+              height{0}
         {}
 
         /** Constructs Size with default values width and height.
@@ -51,7 +52,8 @@ namespace pTK
             @return        default initialized Size
         */
         constexpr Size(value_type t_width, value_type t_height)
-            : width{t_width}, height{t_height}
+            : width{t_width},
+              height{t_height}
         {}
 
         /** Function for setting size.
@@ -82,6 +84,6 @@ namespace pTK
     PTK_API Size& operator-=(Size& lhs, const Size& rhs);
     PTK_API Size& operator*=(Size& lhs, const Size& rhs);
     PTK_API Size& operator/=(Size& lhs, const Size& rhs);
-}
+} // namespace pTK
 
 #endif // PTK_UTIL_SIZE_HPP

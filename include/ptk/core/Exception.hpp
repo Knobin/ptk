@@ -45,6 +45,6 @@ namespace pTK
     public:
         using Exception::Exception;
     };
-}
+} // namespace pTK
 
 #endif // PTK_CORE_EXCEPTION_HPP

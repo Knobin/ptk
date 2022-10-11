@@ -43,6 +43,6 @@ namespace pTK
         return Create<MenuItemSeparator>();
     }
 
-} // pTK
+} // namespace pTK
 
 #endif // PTK_MENU_MENUITEMSEPARATOR_HPP

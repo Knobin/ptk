@@ -12,17 +12,14 @@
 #include <cmath>
 #include <string>
 
-namespace pTK
-{
+//
+// This file is purely for the need of math functions.
+//
+// Since in Linux apparently some math functions, like ceilf
+// are defined in the global namespace and not in std.
+//
 
-    /** This file is purely for the need of math functions.
-
-        Since in Linux apparently some math functions, like ceilf
-        are defined in the global namespace and not in std.
-
-    */
-
-    namespace Math
+namespace pTK::Math
     {
         static inline float ceilf(float arg)
         {
@@ -35,7 +32,6 @@ namespace pTK
             // This will call whatever is defined outside this function.
             return ::ceilf(arg);
         }
-    }
-}
+    } // namespace pTK
 
 #endif // PTK_UTIL_MATH_HPP

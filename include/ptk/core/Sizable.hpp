@@ -9,14 +9,14 @@
 #define PTK_CORE_SIZABLE_HPP
 
 // pTK Headers
-#include "ptk/util/Size.hpp"
 #include "ptk/core/Types.hpp"
+#include "ptk/util/Size.hpp"
 
 namespace pTK
 {
     /** Limits struct implementation.
 
-        Combines the limits (min and max) into 
+        Combines the limits (min and max) into
         an easy format to use.
     */
     struct PTK_API Limits
@@ -133,7 +133,7 @@ namespace pTK
         */
         virtual void onLimitChange(const Size&, const Size&) {}
 
-    protected: 
+    protected:
         /** Function for setting minimal size.
             Does not trigger callbacks.
 
@@ -177,7 +177,6 @@ namespace pTK
     // Comparison operators.
     PTK_API bool operator==(const Sizable& lhs, const Sizable& rhs);
     PTK_API bool operator!=(const Sizable& lhs, const Sizable& rhs);
-}
-
+} // namespace pTK
 
 #endif // PTK_CORE_SIZABLE_HPP

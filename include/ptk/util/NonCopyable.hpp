@@ -14,7 +14,7 @@
 namespace pTK
 {
     /** NonMovable class implementation.
-     
+
         Struct for forbidding copying.
     */
     class PTK_API NonCopyable
@@ -51,6 +51,6 @@ namespace pTK
         */
         NonCopyable& operator=(NonCopyable&&) = default;
     };
-}
+} // namespace pTK
 
 #endif // PTK_UTIL_NONCOPYABLE_HPP

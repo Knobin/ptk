@@ -10,8 +10,8 @@
 
 // pTK Headers
 #include "ptk/core/Event.hpp"
-#include "ptk/util/Size.hpp"
 #include "ptk/util/Point.hpp"
+#include "ptk/util/Size.hpp"
 
 namespace pTK
 {
@@ -28,10 +28,9 @@ namespace pTK
             @return         default initialized ResizeEvent
         */
         explicit ResizeEvent(const Size& t_size)
-            : Event(Event::Category::Window, Event::Type::WindowResize), size{t_size}
-        {
-
-        }
+            : Event(Event::Category::Window, Event::Type::WindowResize),
+              size{t_size}
+        {}
 
         // Resize values.
         Size size;
@@ -50,12 +49,12 @@ namespace pTK
             @return         default initialized MoveEvent
         */
         explicit MoveEvent(const Point& t_pos)
-            : Event(Event::Category::Window, Event::Type::WindowMove), pos{t_pos}
-        {
-        }
+            : Event(Event::Category::Window, Event::Type::WindowMove),
+              pos{t_pos}
+        {}
 
         // Movement coordinates.
-        const Point pos;
+        Point pos;
     };
 
     /** ScaleEvent class implementation.
@@ -71,12 +70,12 @@ namespace pTK
             @return         default initialized ScaleEvent
         */
         explicit ScaleEvent(const Vec2f& t_scale)
-            : Event(Event::Category::Window, Event::Type::WindowScale), scale{t_scale}
-        {
-        }
+            : Event(Event::Category::Window, Event::Type::WindowScale),
+              scale{t_scale}
+        {}
 
         // Movement coordinates.
-        const Vec2f scale;
+        Vec2f scale;
     };
 
     /** PaintEvent class implementation.
@@ -94,15 +93,15 @@ namespace pTK
         */
         PaintEvent(const Point& t_pos, const Size& t_size)
             : Event(Event::Category::Window, Event::Type::WindowPaint),
-                pos{t_pos}, size{t_size}
-        {
-        }
+              pos{t_pos},
+              size{t_size}
+        {}
 
         // Coordinates.
-        const Point pos;
+        Point pos;
 
         // Area.
-        const Size size;
+        Size size;
     };
 
     /** CloseEvent class implementation.
@@ -114,8 +113,7 @@ namespace pTK
     public:
         CloseEvent()
             : Event(Event::Category::Window, Event::Type::WindowClose)
-        {
-        }
+        {}
     };
 
     /** MinimizeEvent class implementation.
@@ -127,8 +125,7 @@ namespace pTK
     public:
         MinimizeEvent()
             : Event(Event::Category::Window, Event::Type::WindowMinimize)
-        {
-        }
+        {}
     };
 
     /** RestoreEvent class implementation.
@@ -141,8 +138,7 @@ namespace pTK
     public:
         RestoreEvent()
             : Event(Event::Category::Window, Event::Type::WindowRestore)
-        {
-        }
+        {}
     };
 
     /** FocusEvent class implementation.
@@ -154,8 +150,7 @@ namespace pTK
     public:
         FocusEvent()
             : Event(Event::Category::Window, Event::Type::WindowFocus)
-        {
-        }
+        {}
     };
 
     /** LostFocusEvent class implementation.
@@ -167,9 +162,8 @@ namespace pTK
     public:
         LostFocusEvent()
             : Event(Event::Category::Window, Event::Type::WindowLostFocus)
-        {
-        }
+        {}
     };
-}
+} // namespace pTK
 
 #endif // PTK_EVENTS_WINDOWEVENT_HPP

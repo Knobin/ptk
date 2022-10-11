@@ -9,8 +9,8 @@
 #define PTK_CORE_EVENTCALLBACKS_HPP
 
 // pTK Headers
-#include "ptk/core/Defines.hpp"
 #include "ptk/core/CallbackStorage.hpp"
+#include "ptk/core/Defines.hpp"
 #include "ptk/events/KeyEvent.hpp"
 #include "ptk/events/MouseEvent.hpp"
 #include "ptk/events/WidgetEvents.hpp"
@@ -79,9 +79,9 @@ namespace pTK
 
         /** Function to add callback.
 
-                @param callback     function to call on event
-                @return             callback id
-            */
+            @param callback     function to call on event
+            @return             callback id
+        */
         template <typename T>
         uint64_t addListener(const std::function<bool(const T&)>& callback)
         {
@@ -115,9 +115,9 @@ namespace pTK
             @param event    triggered event
         */
         template <typename T, typename... Args>
-        void triggerEvent(Args&& ...args)
+        void triggerEvent(Args&&... args)
         {
-            const auto predicate = [&](typename CallbackContainer<bool(const T&)>::Node& entry){
+            const auto predicate = [&](typename CallbackContainer<bool(const T&)>::Node& entry) {
                 return entry.callback(std::forward<Args>(args)...);
             };
             m_callbackStorage.removeCallbackIf<T, bool(const T&)>(predicate);
@@ -223,6 +223,6 @@ namespace pTK
         */
         uint64_t onRelease(const std::function<bool(const ReleaseEvent&)>& callback);
     };
-}
+} // namespace pTK
 
 #endif // PTK_CORE_EVENTCALLBACKS_HPP

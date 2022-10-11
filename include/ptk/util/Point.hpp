@@ -16,7 +16,7 @@
 namespace pTK
 {
     /** Point class implementation.
-     
+
         This class is low level class handling position.
     */
     class PTK_API Point
@@ -26,21 +26,23 @@ namespace pTK
 
     public:
         /** Constructs Point with default values.
-         
+
             @return    default initialized Point
         */
         constexpr Point() noexcept
-            : x{}, y{}
+            : x{},
+              y{}
         {}
-        
+
         /** Constructs Point with default values with other_x and other_y.
-         
+
             @param t_x     x position
             @param t_y     y position
             @return        default initialized Point
         */
         constexpr Point(value_type t_x, value_type t_y) noexcept
-            : x{t_x}, y{t_y}
+            : x{t_x},
+              y{t_y}
         {}
 
         /** Constructs Point with default values with v.
@@ -48,14 +50,14 @@ namespace pTK
             @param v   Vec2 to copy from
             @return    default initialized Point
         */
-        template<typename T>
+        template <typename T>
         constexpr Point(const Vec2<T>& v) noexcept
             : x{static_cast<Point::value_type>(v.x)},
-                y{static_cast<Point::value_type>(v.y)}
+              y{static_cast<Point::value_type>(v.y)}
         {}
-        
+
         /** Function for setting both x and y position.
-         
+
             @param other_x   new x position
             @param other_y   new y position
         */
@@ -74,15 +76,15 @@ namespace pTK
 
             return *this;
         }
-        
+
         value_type x;
         value_type y;
     };
-    
+
     // Comparison operators.
     PTK_API bool operator==(const Point& lhs, const Point& rhs);
     PTK_API bool operator!=(const Point& lhs, const Point& rhs);
-    
+
     // Binary arithmetic operators.
     PTK_API Point operator+(const Point& lhs, const Point& rhs);
     PTK_API Point operator-(const Point& lhs, const Point& rhs);
@@ -92,6 +94,6 @@ namespace pTK
     PTK_API Point& operator-=(Point& lhs, const Point& rhs);
     PTK_API Point& operator*=(Point& lhs, const Point& rhs);
     PTK_API Point& operator/=(Point& lhs, const Point& rhs);
-}
+} // namespace pTK
 
 #endif // PTK_UTIL_POSITION_HPP

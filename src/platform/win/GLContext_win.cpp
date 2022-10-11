@@ -25,8 +25,13 @@ PTK_DISABLE_WARN_END()
 namespace pTK
 {
     GLContext_win::GLContext_win(HWND hwnd, const Size& size)
-        : ContextBase(size), m_hwnd{hwnd}, m_hglrc{}, m_backendContext{nullptr}, m_context{nullptr}, 
-            m_GrContextOptions{}, m_props{0, kRGB_H_SkPixelGeometry}
+        : ContextBase(size),
+          m_hwnd{hwnd},
+          m_hglrc{},
+          m_backendContext{nullptr},
+          m_context{nullptr},
+          m_GrContextOptions{},
+          m_props{0, kRGB_H_SkPixelGeometry}
     {
         createContext(size);
         PTK_INFO("Initialized GLContext_win");
@@ -54,10 +59,11 @@ namespace pTK
             GrBackendRenderTarget backendRenderTarget(width, height, m_sampleCount, m_stencilBits, fbInfo);
 
             m_surface = SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRenderTarget,
-                    kBottomLeft_GrSurfaceOrigin, kRGBA_8888_SkColorType, nullptr, &m_props);
+                                                               kBottomLeft_GrSurfaceOrigin, kRGBA_8888_SkColorType,
+                                                               nullptr, &m_props);
             PTK_ASSERT(m_surface, "Failed to create surface!");
 
-            //clear(Color{0xFFFFFFFF});
+            // clear(Color{0xFFFFFFFF});
             setSize(size);
             PTK_INFO("Sized GLContext_win to {}x{}", size.width, size.height);
         }
@@ -105,7 +111,8 @@ namespace pTK
             DescribePixelFormat(dc, pixelFormat, sizeof(pfd), &pfd);
             m_stencilBits = pfd.cStencilBits;
 
-            if (extensions.hasExtension(dc, "WGL_ARB_multisample")) {
+            if (extensions.hasExtension(dc, "WGL_ARB_multisample"))
+            {
                 static const int kSampleCountAttr = SK_WGL_SAMPLES;
                 extensions.getPixelFormatAttribiv(dc, pixelFormat, 0, 1, &kSampleCountAttr, &m_sampleCount);
                 m_sampleCount = std::max(m_sampleCount, 1);
@@ -140,10 +147,10 @@ namespace pTK
             m_context->abandonContext();
             m_context.reset();
         }
-        
+
         m_backendContext.reset(nullptr);
 
         wglDeleteContext(m_hglrc);
         m_hglrc = nullptr;
     }
-}
+} // namespace pTK

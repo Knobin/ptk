@@ -11,15 +11,21 @@
 namespace pTK
 {
     Sizable::Sizable()
-        : m_minSize{pTK::Size::Min}, m_size{pTK::Size::Min}, m_maxSize{pTK::Size::Max}
+        : m_minSize{pTK::Size::Min},
+          m_size{pTK::Size::Min},
+          m_maxSize{pTK::Size::Max}
     {}
 
     Sizable::Sizable(const Size& size)
-        : m_minSize{pTK::Size::Min}, m_size{size}, m_maxSize{pTK::Size::Max}
+        : m_minSize{pTK::Size::Min},
+          m_size{size},
+          m_maxSize{pTK::Size::Max}
     {}
 
     Sizable::Sizable(const Size& min, const Size& size, const Size& max)
-        : m_minSize{size}, m_size{size}, m_maxSize{size}
+        : m_minSize{size},
+          m_size{size},
+          m_maxSize{size}
     {
         Size minSize{(size.width > min.width) ? min.width : size.width,
                      (size.height > min.height) ? min.height : size.height};
@@ -158,7 +164,7 @@ namespace pTK
                 m_size.width = width;
                 status = 1;
             }
-            
+
             if (width != m_minSize.width)
             {
                 // Update minimal width.
@@ -193,7 +199,7 @@ namespace pTK
                 m_size.height = height;
                 status = 1;
             }
-            
+
             if (height != m_minSize.height)
             {
                 // Update minimal height.
@@ -363,7 +369,7 @@ namespace pTK
                 m_size.height = height;
                 status = 1;
             }
-            
+
             if (height != m_maxSize.height)
             {
                 // Update maximum height.
@@ -388,8 +394,7 @@ namespace pTK
     // Comparison operators.
     bool operator==(const Sizable& lhs, const Sizable& rhs)
     {
-        return ((lhs.getMinSize() == rhs.getMinSize()) &&
-                (lhs.getSize() == rhs.getSize()) &&
+        return ((lhs.getMinSize() == rhs.getMinSize()) && (lhs.getSize() == rhs.getSize()) &&
                 (lhs.getMaxSize() == rhs.getMaxSize()));
     }
 
@@ -397,4 +402,4 @@ namespace pTK
     {
         return !(lhs == rhs);
     }
-}
+} // namespace pTK

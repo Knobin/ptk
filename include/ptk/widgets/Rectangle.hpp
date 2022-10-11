@@ -14,7 +14,7 @@
 namespace pTK
 {
     /** Rectangle class implementation.
-     
+
         Derived from Shape, this class if for creating a
         simple rectangle for drawing.
     */
@@ -22,7 +22,7 @@ namespace pTK
     {
     public:
         /** Constructs Rectangle with default values.
-         
+
             @return    default initialized Rectangle
         */
         Rectangle();
@@ -43,33 +43,33 @@ namespace pTK
 
         */
         virtual ~Rectangle() = default;
-        
+
         /** Draw function.
             Function is called when it is time to draw.
-         
+
             Derived from Drawable.
         */
         void onDraw(SkCanvas* canvas) override;
 
         /** Function for setting the corner radius.
-         
+
             @param radius  corner radius
         */
         void setCornerRadius(float radius);
-        
+
         /** Function for retrieving the corner radius.
-         
+
             @return    corner radius
         */
         [[nodiscard]] float getCornerRadius() const;
-        
+
     private:
         float m_cornerRadius;
     };
-    
+
     // Comparison operators.
     PTK_API bool operator==(const Rectangle& lhs, const Rectangle& rhs);
     PTK_API bool operator!=(const Rectangle& lhs, const Rectangle& rhs);
-}
+} // namespace pTK
 
 #endif // PTK_WIDGETS_RECTANGLE_HPP

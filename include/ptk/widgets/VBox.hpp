@@ -17,7 +17,7 @@
 namespace pTK
 {
     /** VBox class implementation.
-     
+
         Derived from Box, this class for holding Cells in
         order of displaying them in a vertical style.
     */
@@ -25,7 +25,7 @@ namespace pTK
     {
     public:
         /** Constructs VBox with default values.
-         
+
             @return    default initialized VBox
         */
         VBox();
@@ -46,7 +46,7 @@ namespace pTK
 
         */
         virtual ~VBox() = default;
-        
+
     protected:
         void refitContent(const Size& size);
 
@@ -55,15 +55,15 @@ namespace pTK
         void onRemove(const Ref<Widget>&) override;
         void onChildUpdate(size_type) override;
         void onSizeChange(const Size& size) override;
-        
+
     private:
         void expandOnAdd(const Size& newSize);
         Size calcMinSize() const;
         Size calcMaxSize() const;
-        
+
         std::vector<Size::value_type> calcSpaces(Size::value_type height);
-        Point::value_type alignChildH(Widget *child, const Size& parentSize, const Size& childSize);
+        Point::value_type alignChildH(Widget* child, const Size& parentSize, const Size& childSize);
     };
-}
+} // namespace pTK
 
 #endif // PTK_WIDGETS_VBOX_HPP

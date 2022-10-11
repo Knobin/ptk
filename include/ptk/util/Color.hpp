@@ -17,15 +17,15 @@
 namespace pTK
 {
     /** Color class implementation.
-     
-        r, g, b and a are stored as uint8 (8 bits) in range [0, 255].
+
+        r, g, b and a are stored as uint8_t (8 bits) in range [0, 255].
         These are stored as public members so they can be used with
         a dot.
-        
-        These members can also be set and retrieved with uint32 type.
+
+        These members can also be set and retrieved with uint32_t type.
         The Layout for this is: 0xRRGGBBAA
 
-        Functions with a single parameter of uint32, expects the
+        Functions with a single parameter of uint32_t, expects the
         aforementioned layout in order to be correct. If the
         function only sets r, g and b, unexpected behaviour will occur.
     */
@@ -57,7 +57,8 @@ namespace pTK
             @param alpha   amount of alpha [0, 255]
             @return        initialized Color with values
         */
-        [[nodiscard]] constexpr static Color MakeRGBA(value_type red, value_type green, value_type blue, value_type alpha) noexcept
+        [[nodiscard]] constexpr static Color MakeRGBA(value_type red, value_type green, value_type blue,
+                                                      value_type alpha) noexcept
         {
             return {red, green, blue, alpha};
         }
@@ -77,30 +78,36 @@ namespace pTK
 
     public:
         /** Constructs Color with default values.
-         
+
             @return  default initialized Color
         */
         constexpr Color() noexcept
-            : r{0}, g{0}, b{0}, a{255}
+            : r{0},
+              g{0},
+              b{0},
+              a{255}
         {}
-        
+
         /** Constructs Color with default values with color.
-         
+
             @param color   color with alpha in int form
             @return        Color initialized
         */
         explicit constexpr Color(size_type color) noexcept
-            : r{0}, g{0}, b{0}, a{255}
+            : r{0},
+              g{0},
+              b{0},
+              a{255}
         {
             r = static_cast<value_type>((color & 0xFF000000) >> 24);
             g = static_cast<value_type>((color & 0x00FF0000) >> 16);
             b = static_cast<value_type>((color & 0x0000FF00) >> 8);
             a = static_cast<value_type>(color & 0xFF);
         }
-        
+
         /** Constructs Color with default with red, green, blue and alpha.
             Default value for alpha is 255, if none is specified.
-         
+
             @param red     amount of red [0, 255]
             @param green   amount of green [0, 255]
             @param blue    amount of blue [0, 255]
@@ -108,70 +115,73 @@ namespace pTK
             @return        Color initialized
         */
         constexpr Color(value_type red, value_type green, value_type blue, value_type alpha = 255) noexcept
-            : r{red}, g{green}, b{blue}, a{alpha}
+            : r{red},
+              g{green},
+              b{blue},
+              a{alpha}
         {}
-        
+
         /** Get function for retrieving copy of Color in int form.
-         
+
             @return    Copy of Color in int form
         */
         [[nodiscard]] size_type to_int() const noexcept;
-        
+
         /** Set function for setting r, g and b.
-         
+
             @param red     amount of red [0, 255]
             @param green   amount of green [0, 255]
             @param blue    amount of blue [0, 255]
         */
         void setRGB(value_type red, value_type green, value_type blue) noexcept;
-        
+
         /** Set function for setting r, g and b.
             Takes color in uint32 form.
             This will ignore the 8 first bits, they are reserved to
             alpha in this Color implementation and not used here.
-         
+
             Example:
                 - Current to_int() = 0xFFFFFFFF
                 - setRGB(0xC0C0C000)
                 - New to_int() = 0xC0C0C0FF
-         
+
             a will remain unchanged.
-         
+
             @param color   color with alpha in int form
         */
         void setRGB(size_type color) noexcept;
-        
+
         /** Set function for setting r, g, b and a.
-         
+
             @param red     amount of red [0, 255]
             @param green   amount of green [0, 255]
             @param blue    amount of blue [0, 255]
             @param alpha   amount of alpha [0, 255]
         */
         void setRGBA(value_type red, value_type green, value_type blue, value_type alpha) noexcept;
-        
+
         /** Set function for setting r, g, b and a.
-         
+
             @param color   color with alpha in int form
         */
         void setRGBA(size_type color) noexcept;
-        
+
         // Variables.
         value_type r;
         value_type g;
         value_type b;
         value_type a;
     };
-    
+
     // Comparison operators.
     PTK_API bool operator==(const Color& lhs, const Color& rhs);
     PTK_API bool operator!=(const Color& lhs, const Color& rhs);
-    
+
     // Binary arithmetic operators.
     PTK_API Color operator+(const Color& lhs, const Color& rhs);
     PTK_API Color operator-(const Color& lhs, const Color& rhs);
     PTK_API Color& operator+=(Color& lhs, const Color& rhs);
     PTK_API Color& operator-=(Color& lhs, const Color& rhs);
-}
+} // namespace pTK
 
 #endif // PTK_UTIL_COLOR_HPP

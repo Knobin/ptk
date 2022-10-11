@@ -1,7 +1,7 @@
 #include "ptk/ptk.hpp"
 #include <iostream>
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     // Create app and window.
     pTK::Application app("RectangleExample Application", argc, argv);
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     rect->setOutlineColor(pTK::Color(0xF4A950FF));
 
     // Callback for when the rectangle is clicked.
-    rect->onClick([&rect](const pTK::ClickEvent&){
+    rect->onClick([&rect](const pTK::ClickEvent&) {
         std::cout << rect->getName() << " clicked!\n";
         return false;
     });

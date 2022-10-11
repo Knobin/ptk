@@ -9,9 +9,9 @@
 #define PTK_WIDGETS_TEXTFIELD_HPP
 
 // pTK Headers
-#include "ptk/widgets/Rectangle.hpp"
 #include "ptk/core/Text.hpp"
 #include "ptk/util/Vec2.hpp"
+#include "ptk/widgets/Rectangle.hpp"
 
 namespace pTK
 {
@@ -96,7 +96,6 @@ namespace pTK
         void setText(const std::string& text);
         [[nodiscard]] const std::string& getText() const;
 
-
     private:
         // Callback function from Text.
         void onTextUpdate() override;
@@ -124,6 +123,6 @@ namespace pTK
         // Only supports UTF-8 for now.
         std::string m_text{};
     };
-}
+} // namespace pTK
 
 #endif // PTK_WIDGETS_TEXTFIELD_HPP

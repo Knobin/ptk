@@ -29,7 +29,7 @@ namespace pTK
             Middle,
             Right
         };
-    }
+    } // namespace Mouse
 
     /** MotionEvent class implementation.
 
@@ -43,11 +43,10 @@ namespace pTK
             @param t_pos    associated x and y position
             @return         default initialized MotionEvent
         */
-        MotionEvent(const Point& t_pos)
+        explicit MotionEvent(const Point& t_pos)
             : Event(Event::Category::Mouse, Event::Type::MouseMoved),
-                pos{t_pos}
-        {
-        }
+              pos{t_pos}
+        {}
 
         // Location.
         const Point pos;
@@ -65,11 +64,10 @@ namespace pTK
             @param t_offset     associated x and y offset
             @return             default initialized ScrollEvent
         */
-        ScrollEvent(const Vec2f& t_offset)
+        explicit ScrollEvent(const Vec2f& t_offset)
             : Event(Event::Category::Mouse, Event::Type::MouseScrolled),
-                offset{t_offset}
-        {
-        }
+              offset{t_offset}
+        {}
 
         // Scroll offset.
         const Vec2f offset;
@@ -92,10 +90,9 @@ namespace pTK
         */
         ButtonEvent(Event::Type t_type, Mouse::Button t_button, const Point& t_pos)
             : Event(Event::Category::Mouse, t_type),
-                button{t_button}, pos{t_pos}
-        {
-
-        }
+              button{t_button},
+              pos{t_pos}
+        {}
 
         // Button pressed or released.
         const Mouse::Button button;
@@ -115,11 +112,8 @@ namespace pTK
         */
         ClickEvent(Mouse::Button t_button, const Point& t_pos)
             : ButtonEvent(Event::Type::MouseButtonPressed, t_button, t_pos)
-        {
-
-        }
+        {}
     };
-
 
     class PTK_API ReleaseEvent : public ButtonEvent
     {
@@ -132,10 +126,8 @@ namespace pTK
         */
         ReleaseEvent(Mouse::Button t_button, const Point& t_pos)
             : ButtonEvent(Event::Type::MouseButtonReleased, t_button, t_pos)
-        {
-
-        }
+        {}
     };
-}
+} // namespace pTK
 
 #endif // PTK_EVENTS_MOUSEEVENT_HPP

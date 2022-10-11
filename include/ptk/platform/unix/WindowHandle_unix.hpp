@@ -75,7 +75,7 @@ namespace pTK
 
             @return context
         */
-        [[nodiscard]] ContextBase *getContext() const override;
+        [[nodiscard]] ContextBase* getContext() const override;
 
         /** Function for swapping the buffers.
 
@@ -113,7 +113,7 @@ namespace pTK
             @param pixels   image pixels in a RGBA format.
             @return         true if operation is successful, otherwise false
         */
-        bool setIcon(int32 width, int32 height, byte* pixels)  override;
+        bool setIcon(int32 width, int32 height, byte* pixels) override;
 
         /** Function for notifying the backend that an event has been pushed from
             a different thread.
@@ -189,7 +189,7 @@ namespace pTK
     private:
         std::pair<unsigned long, unsigned char*> getWindowProperty(Atom property, Atom type) const;
 
-        template<typename Event>
+        template <typename Event>
         friend void EventSendHelper(WindowHandle_unix*, const Event&);
 
         friend Size& WindowLastSize(WindowHandle_unix*);
@@ -210,6 +210,6 @@ namespace pTK
         Atom m_atomWmDeleteWindow;
         XVisualInfo m_info;
     };
-}
+} // namespace pTK
 
 #endif // PTK_PLATFORM_UNIX_WINDOWHANDLE_HPP

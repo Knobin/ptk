@@ -16,6 +16,8 @@
 
 namespace pTK
 {
+    // clang-format off
+
     typedef enum class KeyCode : int32
     {
         Unknown = 0,
@@ -92,6 +94,8 @@ namespace pTK
 
     } Key;
 
+    // clang-format on
+
     constexpr bool IsKeyCodeAlpha(const KeyCode code) noexcept
     {
         const auto value = static_cast<int32>(code);
@@ -148,8 +152,6 @@ namespace pTK
     {
         return code == Key::Space;
     }
-}
+} // namespace pTK
 
-
-
-#endif //PTK_KEYCODES_HPP
+#endif // PTK_KEYCODES_HPP

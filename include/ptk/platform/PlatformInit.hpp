@@ -9,8 +9,8 @@
 #define PTK_PLATFORM_PLATFORMINIT_HPP
 
 // pTK Headers
-#include "ptk/platform/base/ApplicationHandle.hpp"
 #include "ptk/events/KeyCodes.hpp"
+#include "ptk/platform/base/ApplicationHandle.hpp"
 
 // C++ Headers
 #include <string>
@@ -21,7 +21,7 @@ namespace pTK
 
     PTK_API void AppInit(const std::string& name);
     PTK_API void AppDestroy();
-    PTK_API ApplicationHandle *AppInstance();
+    PTK_API ApplicationHandle* AppInstance();
 
 } // namespace pTK
 

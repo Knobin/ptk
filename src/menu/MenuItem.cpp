@@ -11,7 +11,8 @@
 namespace pTK
 {
     MenuItem::MenuItem(MenuItemType type, MenuItemStatus status)
-        : m_type{type}, m_status{status}
+        : m_type{type},
+          m_status{status}
     {}
 
     [[nodiscard]] MenuItemType MenuItem::type() const
@@ -62,4 +63,4 @@ namespace pTK
             m_statusCallbacks.erase(statusIt);
     }
 
-} // pTK
+} // namespace pTK

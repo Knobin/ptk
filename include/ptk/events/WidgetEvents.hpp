@@ -5,7 +5,7 @@
 //  Created by Robin Gustafsson on 2021-12-23.
 //
 
-// Idea of this file is to create events that are specific
+// The idea of this file is to create events that are specific
 // to widgets and are not triggered by the OS.
 //
 // For example, the onEnter & onLeave mouse events that the widget

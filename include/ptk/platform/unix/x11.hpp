@@ -8,9 +8,10 @@
 #ifndef PTK_PlATFORM_UNIX_X11_HPP
 #define PTK_PlATFORM_UNIX_X11_HPP
 
-extern "C" {
-#include <X11/Xlib.h>
+extern "C"
+{
 #include <X11/Xatom.h>
+#include <X11/Xlib.h>
 #include <X11/Xresource.h>
 #include <X11/Xutil.h>
 
@@ -19,9 +20,10 @@ extern "C" {
 #undef Success
 }
 
-namespace x11 {
+namespace x11
+{
     static constexpr long None = 0L;
     using Status = int;
-}
+} // namespace x11
 
 #endif // PTK_PlATFORM_UNIX_X11_HPP

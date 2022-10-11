@@ -9,13 +9,13 @@
 #define PTK_WINDOW_HPP
 
 // pTK Headers
-#include "ptk/platform/Platform.hpp"
-#include "ptk/util/SingleObject.hpp"
-#include "ptk/widgets/VBox.hpp"
 #include "ptk/core/Event.hpp"
-#include "ptk/util/Vec2.hpp"
 #include "ptk/core/EventQueue.hpp"
 #include "ptk/core/WindowInfo.hpp"
+#include "ptk/platform/Platform.hpp"
+#include "ptk/util/SingleObject.hpp"
+#include "ptk/util/Vec2.hpp"
+#include "ptk/widgets/VBox.hpp"
 
 // C++ Headers
 #include <memory>
@@ -63,7 +63,7 @@ namespace pTK
 
             Returns after the event is handled.
         */
-        void sendEvent(Event *event);
+        void sendEvent(Event* event);
 
         /** Function for sending events to the window to
             be handled later when handleEvents() is called.
@@ -74,8 +74,8 @@ namespace pTK
 
             This function is thread safe.
         */
-        template<typename T, typename... Args>
-        void postEvent(Args&& ...args);
+        template <typename T, typename... Args>
+        void postEvent(Args&&... args);
 
         /** Function for setting the window icon.
 
@@ -95,7 +95,7 @@ namespace pTK
 
     private:
         // Event processing (for pointer based event).
-        void handleEvent(Event *event);
+        void handleEvent(Event* event);
         void handleKeyboardEvent(Event* event);
         void handleMouseEvent(Event* event);
         void handleWindowEvent(Event* event);
@@ -114,10 +114,7 @@ namespace pTK
         void forceDrawAll();
 
         // This draw function gets called from the backend.
-        void draw(const PaintEvent&) override
-        {
-            forceDrawAll();
-        }
+        void draw(const PaintEvent&) override { forceDrawAll(); }
 
     private:
         EventQueue<std::deque> m_eventQueue{};
@@ -127,8 +124,8 @@ namespace pTK
         bool m_close{false};
     };
 
-    template<typename T, typename... Args>
-    void Window::postEvent(Args&& ...args)
+    template <typename T, typename... Args>
+    void Window::postEvent(Args&&... args)
     {
         m_eventQueue.lock();
         if (m_eventQueue.push<T>(std::forward<Args>(args)...))
@@ -142,6 +139,6 @@ namespace pTK
         m_eventQueue.unlock();
     }
 
-}
+} // namespace pTK
 
 #endif // PTK_WINDOW_HPP

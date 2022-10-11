@@ -69,163 +69,163 @@ namespace pTK
 
             @return     true if empty, otherwise false
         */
-        bool empty() const;
+        [[nodiscard]] bool empty() const;
 
         /** Function for retrieving the an iterator that points to the first
-            value in the IterableContainer.
+            value in the MenuBar.
 
-            The iterator may be equal to end iterator if the IterableContainer is empty.
+            The iterator may be equal to end iterator if the MenuBar is empty.
 
             @return    iterator
         */
-        iterator begin() noexcept
+        [[nodiscard]] iterator begin() noexcept
         {
             return m_holder.begin();
         }
 
         /** Function for retrieving the an iterator that points to the first
-            value in the IterableContainer.
+            value in the MenuBar.
 
-            The iterator may be equal to end iterator if the IterableContainer is empty.
+            The iterator may be equal to end iterator if the MenuBar is empty.
 
             @return    const iterator
         */
-        const_iterator begin() const noexcept
+        [[nodiscard]] const_iterator begin() const noexcept
         {
             return m_holder.begin();
         }
 
         /** Function for retrieving the an const iterator that points to the first
-            value in the IterableContainer.
+            value in the MenuBar.
 
-            The iterator may be equal to end iterator if the IterableContainer is empty.
+            The iterator may be equal to end iterator if the MenuBar is empty.
 
             @return    const iterator
         */
-        const_iterator cbegin() const noexcept
+        [[nodiscard]] const_iterator cbegin() const noexcept
         {
             return m_holder.cbegin();
         }
 
         /** Function for retrieving the special iterator referring to
-            the past-the-end of the IterableContainer.
+            the past-the-end of the MenuBar.
 
             The iterator should never be de-referenced, due to the fact that the iterator
             does not point to a value and should therefore only be used for checking.
 
             @return    iterator
         */
-        iterator end() noexcept
+        [[nodiscard]] iterator end() noexcept
         {
             return m_holder.end();
         }
 
         /** Function for retrieving the special iterator referring to
-            the past-the-end of the IterableContainer.
+            the past-the-end of the MenuBar.
 
             The iterator should never be de-referenced, due to the fact that the iterator
             does not point to a value and should therefore only be used for checking.
 
             @return    const iterator
         */
-        const_iterator end() const noexcept
+        [[nodiscard]] const_iterator end() const noexcept
         {
             return m_holder.end();
         }
 
         /** Function for retrieving the special const iterator referring to
-            the past-the-end of the IterableContainer.
+            the past-the-end of the MenuBar.
 
-            The iterator should never be dereferenced, due to the fact that the iterator
+            The iterator should never be de-referenced, due to the fact that the iterator
             does not point to a value and should therefore only be used for checking.
 
             @return    const iterator
         */
-        const_iterator cend() const noexcept
+        [[nodiscard]] const_iterator cend() const noexcept
         {
             return m_holder.cend();
         }
 
         /** Function for retrieving the an iterator that points to the last
-            value in the IterableContainer.
+            value in the MenuBar.
 
             This iterator is working in reverse. Meaning that is starts at the end
             and is moving to the beginning.
 
-            The iterator may be equal to rend iterator if the IterableContainer is empty.
+            The iterator may be equal to rend iterator if the MenuBar is empty.
 
             @return    reverse iterator
         */
-        reverse_iterator rbegin() noexcept
+        [[nodiscard]] reverse_iterator rbegin() noexcept
         {
             return m_holder.rbegin();
         }
 
         /** Function for retrieving the an iterator that points to the last
-            value in the IterableContainer.
+            value in the MenuBar.
 
             This iterator is working in reverse. Meaning that is starts at the end
             and is moving to the beginning.
 
-            The iterator may be equal to rend iterator if the IterableContainer is empty.
+            The iterator may be equal to rend iterator if the MenuBar is empty.
 
             @return    const reverse begin iterator
         */
-        const_reverse_iterator rbegin() const noexcept
+        [[nodiscard]] const_reverse_iterator rbegin() const noexcept
         {
             return m_holder.rbegin();
         }
 
         /** Function for retrieving the an iterator that points to the last
-            value in the IterableContainer.
+            value in the MenuBar.
 
             This iterator is working in reverse. Meaning that is starts at the end
             and is moving to the beginning.
 
-            The iterator may be equal to rend iterator if the IterableContainer is empty.
+            The iterator may be equal to rend iterator if the MenuBar is empty.
 
             @return    const reverse begin iterator
         */
-        const_reverse_iterator crbegin() const noexcept
+        [[nodiscard]] const_reverse_iterator crbegin() const noexcept
         {
             return m_holder.crbegin();
         }
 
         /** Function for retrieving the special const iterator referring to
-            the past-the-end of the IterableContainer.
+            the past-the-end of the MenuBar.
 
             The iterator should never be de-referenced, due to the fact that the iterator
             does not point to a value and should therefore only be used for checking.
 
             @return    reverse reverse end iterator
         */
-        reverse_iterator rend() noexcept
+        [[nodiscard]] reverse_iterator rend() noexcept
         {
             return m_holder.rend();
         }
 
         /** Function for retrieving the special const iterator referring to
-            the past-the-end of the IterableContainer.
+            the past-the-end of the MenuBar.
 
             The iterator should never be de-referenced, due to the fact that the iterator
             does not point to a value and should therefore only be used for checking.
 
             @return    const reverse end iterator
         */
-        const_reverse_iterator rend() const noexcept
+        [[nodiscard]] const_reverse_iterator rend() const noexcept
         {
             return m_holder.rend();
         }
 
         /** Function for retrieving the special const iterator referring to
-             the past-the-end of the IterableContainer.
+             the past-the-end of the MenuBar.
 
              The iterator should never be de-referenced, due to the fact that the iterator
              does not point to a value and should therefore only be used for checking.
 
              @return    const reverse end iterator
          */
-        const_reverse_iterator crend() const noexcept
+        [[nodiscard]] const_reverse_iterator crend() const noexcept
         {
             return m_holder.crend();
         }

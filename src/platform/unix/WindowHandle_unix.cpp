@@ -7,11 +7,11 @@
 
 // pTK Headers
 #include "ptk/platform/unix/WindowHandle_unix.hpp"
-#include "ptk/platform/unix/ApplicationHandle_unix.hpp"
-#include "ptk/platform//common/RasterContext.hpp"
-#include "ptk/platform/unix/RasterPolicy_unix.hpp"
 #include "ptk/Window.hpp"
 #include "ptk/core/Exception.hpp"
+#include "ptk/platform//common/RasterContext.hpp"
+#include "ptk/platform/unix/ApplicationHandle_unix.hpp"
+#include "ptk/platform/unix/RasterPolicy_unix.hpp"
 
 #ifdef PTK_OPENGL
     #include "ptk/platform/unix/GLContext_unix.hpp"
@@ -26,13 +26,13 @@ namespace pTK
 {
     static float SystemDPI()
     {
-        char *rString{XResourceManagerString(App::Display())};
+        char* rString{XResourceManagerString(App::Display())};
         XrmInitialize();
         XrmDatabase db{XrmGetStringDatabase(rString)};
 
         if (rString)
         {
-            char *type;
+            char* type;
             XrmValue val;
             if (XrmGetResource(db, "Xft.dpi", "String", &type, &val) == True)
             {
@@ -51,19 +51,21 @@ namespace pTK
     {
         const float width{static_cast<float>(size.width)};
         const float height{static_cast<float>(size.height)};
-        return {static_cast<Size::value_type>(width * scale.x),
-                static_cast<Size::value_type>(height * scale.y)};
+        return {static_cast<Size::value_type>(width * scale.x), static_cast<Size::value_type>(height * scale.y)};
     }
 
-    static std::unique_ptr<ContextBase> CreateContext([[maybe_unused]] WindowInfo::Backend backend, ::Window *window, const Size& size, [[maybe_unused]] XVisualInfo info)
+    static std::unique_ptr<ContextBase> CreateContext([[maybe_unused]] WindowInfo::Backend backend, ::Window* window,
+                                                      const Size& size, [[maybe_unused]] XVisualInfo info)
     {
         std::unique_ptr<ContextBase> context{nullptr};
 #ifdef PTK_OPENGL
         if (backend == WindowInfo::Backend::Hardware)
         {
-            try {
+            try
+            {
                 context = std::make_unique<GLContext_unix>(window, size);
-            } catch (ContextError& err)
+            }
+            catch (ContextError& err)
             {
                 PTK_ERROR("Failed to create GLContext_unix with msg: {}", err.what());
             }
@@ -90,16 +92,14 @@ namespace pTK
         : WindowHandle(size, flags) //, m_lastSize{size}
     {
         ::Window root{App::Root()};
-        Display *display{App::Display()};
+        Display* display{App::Display()};
         int screenBitDepth{24};
 
         if (!XMatchVisualInfo(display, App::Screen(), screenBitDepth, TrueColor, &m_info))
             throw WindowError("No matching visual info");
 
-        const unsigned long eventMask = ExposureMask | StructureNotifyMask |
-                                        KeyPressMask | KeyReleaseMask |
-                                        PointerMotionMask | ButtonPressMask | ButtonReleaseMask |
-                                        FocusChangeMask;
+        const unsigned long eventMask = ExposureMask | StructureNotifyMask | KeyPressMask | KeyReleaseMask |
+                                        PointerMotionMask | ButtonPressMask | ButtonReleaseMask | FocusChangeMask;
 
         XSetWindowAttributes attr{};
         attr.event_mask = eventMask;
@@ -108,7 +108,8 @@ namespace pTK
 
         const unsigned int width{static_cast<unsigned int>(size.width)};
         const unsigned int height{static_cast<unsigned int>(size.height)};
-        m_window = XCreateWindow(display, root, 0, 0, width, height, 0, 24, InputOutput, m_info.visual, attrMask, &attr);
+        m_window =
+            XCreateWindow(display, root, 0, 0, width, height, 0, 24, InputOutput, m_info.visual, attrMask, &attr);
 
         if (!m_window)
             throw WindowError("Failed to create Window");
@@ -169,13 +170,13 @@ namespace pTK
     {
         if (pos != getWinPos())
         {
-            Display *display{App::Display()};
+            Display* display{App::Display()};
             XMoveWindow(display, m_window, pos.x, pos.y);
             XFlush(display);
         }
     }
 
-    ContextBase *WindowHandle_unix::getContext() const
+    ContextBase* WindowHandle_unix::getContext() const
     {
         return m_context.get();
     }
@@ -216,17 +217,21 @@ namespace pTK
 
     void WindowHandle_unix::setWindowLimits(const Size& min, const Size& max)
     {
-        XSizeHints *hints{XAllocSizeHints()};
+        XSizeHints* hints{XAllocSizeHints()};
         PTK_ASSERT(hints, "Unable to allocate memory for XSizeHints");
         long err;
         XGetWMNormalHints(App::Display(), m_window, hints, &err);
-        PTK_INFO("WindowHandle_unix: Trying to set new Window Limits, min: {}x{} & max: {}x{}", min.width, min.height, max.width, max.height);
-        PTK_INFO("WindowHandle_unix: Current Window Limits: min: {}x{} & max: {}x{}", hints->min_width, hints->min_height, hints->max_width, hints->max_height);
+        PTK_INFO("WindowHandle_unix: Trying to set new Window Limits, min: {}x{} & max: {}x{}", min.width, min.height,
+                 max.width, max.height);
+        PTK_INFO("WindowHandle_unix: Current Window Limits: min: {}x{} & max: {}x{}", hints->min_width,
+                 hints->min_height, hints->max_width, hints->max_height);
 
         constexpr int int_max = std::numeric_limits<int>::max();
 
-        const int min_width = (min.width > static_cast<Size::value_type>(int_max)) ? int_max : static_cast<int>(min.width);
-        const int min_height = (min.height > static_cast<Size::value_type>(int_max)) ? int_max : static_cast<int>(min.height);
+        const int min_width =
+            (min.width > static_cast<Size::value_type>(int_max)) ? int_max : static_cast<int>(min.width);
+        const int min_height =
+            (min.height > static_cast<Size::value_type>(int_max)) ? int_max : static_cast<int>(min.height);
 
         if (hints->min_width != min_width || hints->min_height != min_height)
         {
@@ -234,11 +239,12 @@ namespace pTK
             hints->flags |= PMinSize;
             hints->min_width = min_width;
             hints->min_height = min_height;
-
         }
 
-        const int max_width = (max.width > static_cast<Size::value_type>(int_max)) ? int_max : static_cast<int>(max.width);
-        const int max_height = (max.height > static_cast<Size::value_type>(int_max)) ? int_max : static_cast<int>(max.height);
+        const int max_width =
+            (max.width > static_cast<Size::value_type>(int_max)) ? int_max : static_cast<int>(max.width);
+        const int max_height =
+            (max.height > static_cast<Size::value_type>(int_max)) ? int_max : static_cast<int>(max.height);
 
         if (hints->max_width != max_width || hints->max_height != max_height)
         {
@@ -259,13 +265,15 @@ namespace pTK
 
     bool WindowHandle_unix::setTitle(const std::string& name)
     {
-        Display *display{App::Display()};
+        Display* display{App::Display()};
         const Atom utf8_string = XInternAtom(display, "UTF8_STRING", False);
         const Atom net_wm_name = XInternAtom(display, "_NET_WM_NAME", False);
         const Atom net_wm_icon_name = XInternAtom(display, "_NET_WM_ICON_NAME", False);
 
-        XChangeProperty(display, m_window, net_wm_name, utf8_string, 8, PropModeReplace, reinterpret_cast<const unsigned char*>(name.c_str()), static_cast<int>(name.size()));
-        XChangeProperty(display, m_window, net_wm_icon_name, utf8_string, 8, PropModeReplace, reinterpret_cast<const unsigned char*>(name.c_str()),  static_cast<int>(name.size()));
+        XChangeProperty(display, m_window, net_wm_name, utf8_string, 8, PropModeReplace,
+                        reinterpret_cast<const unsigned char*>(name.c_str()), static_cast<int>(name.size()));
+        XChangeProperty(display, m_window, net_wm_icon_name, utf8_string, 8, PropModeReplace,
+                        reinterpret_cast<const unsigned char*>(name.c_str()), static_cast<int>(name.size()));
 
         XFlush(display);
         return true;
@@ -273,7 +281,7 @@ namespace pTK
 
     bool WindowHandle_unix::setIcon(int32 width, int32 height, byte* pixels)
     {
-        Display *display{App::Display()};
+        Display* display{App::Display()};
         const Atom net_wm_icon = XInternAtom(display, "_NET_WM_ICON", False);
         const std::size_t longCount{static_cast<std::size_t>(2 + (width * height))};
         std::unique_ptr<long[]> longData{std::make_unique<long[]>(longCount)};
@@ -290,11 +298,14 @@ namespace pTK
             byte b{pixels[(i * 4) + 2]};
             byte a{pixels[(i * 4) + 3]};
 
-            longData[i] = (static_cast<long>(a) << 24) | (static_cast<long>(r) << 16) | (static_cast<long>(g) << 8) | static_cast<long>(b);
+            longData[i] = (static_cast<long>(a) << 24) | (static_cast<long>(r) << 16) | (static_cast<long>(g) << 8) |
+                          static_cast<long>(b);
         }
 
-        XChangeProperty(display, m_window, net_wm_icon, XA_CARDINAL, 32, PropModeReplace, reinterpret_cast<unsigned char*>(longData.get()), static_cast<int>(longCount));
-        //XChangeProperty(display, m_window, net_wm_icon, cardinal, 32, PropModeReplace, (unsigned char*)longData.get(), longCount);
+        XChangeProperty(display, m_window, net_wm_icon, XA_CARDINAL, 32, PropModeReplace,
+                        reinterpret_cast<unsigned char*>(longData.get()), static_cast<int>(longCount));
+        // XChangeProperty(display, m_window, net_wm_icon, cardinal, 32, PropModeReplace, (unsigned
+        // char*)longData.get(), longCount);
         XFlush(display);
         return true;
     }
@@ -304,14 +315,13 @@ namespace pTK
         // notifyEvent is not thread safe, so m_window can already be destroyed.
         if (m_window != x11::None)
         {
-            Display *display{App::Display()};
+            Display* display{App::Display()};
             const Atom nullAtom{XInternAtom(display, "NULL", False)};
 
             XEvent event{ClientMessage};
             event.xclient.window = m_window;
             event.xclient.format = 32;
             event.xclient.message_type = nullAtom;
-
 
             XSendEvent(display, m_window, False, 0, &event);
             XFlush(display);
@@ -337,7 +347,7 @@ namespace pTK
 
     bool WindowHandle_unix::minimize()
     {
-        Display *display{App::Display()};
+        Display* display{App::Display()};
         XIconifyWindow(display, m_window, m_info.screen);
         XFlush(display);
         return true;
@@ -362,7 +372,7 @@ namespace pTK
 
     bool WindowHandle_unix::restore()
     {
-        Display *display{App::Display()};
+        Display* display{App::Display()};
         XMapWindow(display, m_window);
         XFlush(display);
         return true;
@@ -394,7 +404,8 @@ namespace pTK
         int realFormat;
         unsigned long left;
         std::pair<unsigned long, unsigned char*> data{};
-        XGetWindowProperty(App::Display(), m_window, property, 0L, 2L, False, type, &realType, &realFormat, &data.first, &left, &data.second);
+        XGetWindowProperty(App::Display(), m_window, property, 0L, 2L, False, type, &realType, &realFormat, &data.first,
+                           &left, &data.second);
         return data;
     }
 
@@ -407,4 +418,4 @@ namespace pTK
     {
         return m_atomWmDeleteWindow;
     }
-}
+} // namespace pTK

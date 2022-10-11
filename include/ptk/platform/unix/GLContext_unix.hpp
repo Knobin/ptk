@@ -15,16 +15,17 @@
 #include "ptk/platform/base/ContextBase.hpp"
 
 // OpenGL Headers
-extern "C" {
-    #define Status int
-    #include <GL/gl.h>
-    #include <GL/glx.h>
-    #undef Status
+extern "C"
+{
+#define Status int
+#include <GL/gl.h>
+#include <GL/glx.h>
+#undef Status
 }
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
-//#include "include/gpu/GrContext.h"
+// #include "include/gpu/GrContext.h"
 #include "include/gpu/GrDirectContext.h"
 #include "include/gpu/gl/GrGLInterface.h"
 PTK_DISABLE_WARN_END()
@@ -43,7 +44,7 @@ namespace pTK
 
             @return    default initialized GLContext_unix
         */
-        GLContext_unix(::Window *window, const Size& size);
+        GLContext_unix(::Window* window, const Size& size);
 
         /** Win32RasterCanvas for GLCanvas.
 
@@ -69,7 +70,7 @@ namespace pTK
         void swapBuffers() override;
 
     private:
-        ::Window *m_window;
+        ::Window* m_window;
         XVisualInfo* m_visual;
         GLXContext m_GLContext;
         sk_sp<SkSurface> m_surface;
@@ -78,6 +79,6 @@ namespace pTK
         GrContextOptions m_GrContextOptions;
         SkSurfaceProps m_props;
     };
-}
+} // namespace pTK
 
 #endif // PTK_PlATFORM_UNIX_GLCONTEXT_HPP

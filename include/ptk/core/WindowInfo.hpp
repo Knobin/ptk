@@ -57,6 +57,6 @@ namespace pTK
         Ref<MenuBar> menus{nullptr};
         SizePolicy sizePolicy{SizePolicy::Policy::Expanding, SizePolicy::Policy::Expanding};
     };
-}
+} // namespace pTK
 
 #endif // PTK_CORE_WINDOWINFO_HPP

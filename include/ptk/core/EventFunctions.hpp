@@ -105,6 +105,6 @@ namespace pTK
         */
         virtual void onReleaseEvent(const ReleaseEvent&) {}
     };
-}
+} // namespace pTK
 
 #endif // PTK_CORE_EVENTFUNCTIONS_HPP

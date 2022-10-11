@@ -78,6 +78,6 @@ namespace pTK
         */
         virtual bool draw() { return false; }
     };
-}
+} // namespace pTK
 
 #endif // PTK_CORE_WIDGETINTERFACE_HPP

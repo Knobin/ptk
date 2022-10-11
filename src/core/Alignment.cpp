@@ -11,8 +11,9 @@
 namespace pTK
 {
     Alignment::Alignment()
-        :  WidgetInterface(),
-            m_margin{}, m_align{static_cast<std::underlying_type<Align>::type>(Align::Center)}
+        : WidgetInterface(),
+          m_margin{},
+          m_align{static_cast<std::underlying_type<Align>::type>(Align::Center)}
     {}
 
     std::underlying_type<Align>::type Alignment::getAlign() const noexcept
@@ -110,4 +111,4 @@ namespace pTK
 
         update();
     }
-}
+} // namespace pTK

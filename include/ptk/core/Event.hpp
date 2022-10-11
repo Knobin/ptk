@@ -14,11 +14,11 @@
 namespace pTK
 {
     /** Event class implementation.
-     
+
         This class is the base class for events.
-        It specifies which event that occured and cannot be
+        It specifies which event that occurred and cannot be
         created without specifying the category and type.
-     
+
         Event::Category and Event::Type cannot be changed after the
         event is created.
     */
@@ -26,20 +26,32 @@ namespace pTK
     {
     public:
         /** Event::Type enum class implementation.
-     
+
             This enum class is to specify the event type of the event.
         */
         enum class Type
         {
             NONE = 0,
-            WindowClose, WindowLostFocus, WindowFocus, WindowPaint, WindowResize,
-            WindowMove, WindowMinimize, WindowRestore, WindowScale,
-            KeyPressed, KeyReleased, KeyInput,
-            MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
+            WindowClose,
+            WindowLostFocus,
+            WindowFocus,
+            WindowPaint,
+            WindowResize,
+            WindowMove,
+            WindowMinimize,
+            WindowRestore,
+            WindowScale,
+            KeyPressed,
+            KeyReleased,
+            KeyInput,
+            MouseButtonPressed,
+            MouseButtonReleased,
+            MouseMoved,
+            MouseScrolled
         };
 
         /** Event::Category enum class implementation.
-        
+
             This enum class is to specify the category type of the event.
         */
         enum class Category
@@ -53,15 +65,15 @@ namespace pTK
     public:
         /** Constructs Event with default values with t_category
             and t_type.
-         
+
             @param t_category  category of event
             @param t_type      type of event
             @return            default initialized Event
         */
         Event(Category t_category, Type t_type)
-            : category{t_category}, type{t_type}
-        {
-        }
+            : category{t_category},
+              type{t_type}
+        {}
 
         /** Destructor for Event.
 
@@ -74,6 +86,6 @@ namespace pTK
         // Type of the event.
         const Type type;
     };
-}
+} // namespace pTK
 
 #endif // PTK_CORE_EVENT_HPP

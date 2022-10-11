@@ -12,8 +12,8 @@
 #include "ptk/platform/unix/x11.hpp"
 
 // pTK Headers
-#include "ptk/util/Size.hpp"
 #include "ptk/core/Defines.hpp"
+#include "ptk/util/Size.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
@@ -47,7 +47,7 @@ namespace pTK
             @param hwnd   HWND
             @return       default initialized RasterPolicy_unix
         */
-        RasterPolicy_unix(::Window *window, XVisualInfo info);
+        RasterPolicy_unix(::Window* window, XVisualInfo info);
 
         /** Destructor for RasterPolicy_unix.
 
@@ -68,16 +68,16 @@ namespace pTK
 
     public:
         std::size_t size{0};
-        void *pixels{nullptr};
+        void* pixels{nullptr};
         const SkColorType colorType{kBGRA_8888_SkColorType};
 
     private:
-        ::Window *m_window;
+        ::Window* m_window;
         XVisualInfo m_info;
-        XImage *m_image;
+        XImage* m_image;
         GC m_gc;
         Size wSize;
     };
-}
+} // namespace pTK
 
 #endif // PTK_PlATFORM_WIN_RASTERPOLICY_HPP

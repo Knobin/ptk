@@ -9,13 +9,13 @@
 #define PTK_WIDGETS_LABEL_HPP
 
 // pTK Headers
-#include "ptk/core/Text.hpp"
 #include "ptk/core/Shape.hpp"
+#include "ptk/core/Text.hpp"
 
 namespace pTK
 {
     /** Label class implementation.
-     
+
         This class is for drawing a Label.
         Deriving from Shape instead of directly of Widget,
         is for the unique properties that Shape has that Label
@@ -25,7 +25,7 @@ namespace pTK
     {
     public:
         /** Constructs Label with default values.
-         
+
             @return    default initialized Label
         */
         Label();
@@ -47,28 +47,28 @@ namespace pTK
             @return    initialized Label from value
         */
         virtual ~Label() = default;
-        
+
         /** Draw function.
             Function is called when it is time to draw.
-         
+
             Derived from Drawable.
         */
         void onDraw(SkCanvas* canvas) override;
 
         void setText(const std::string& str);
         const std::string& getText() const;
-        
+
     private:
         // Label should only change size on setFontSize!
+        using Widget::setMaxSize;
         using Widget::setMinSize;
         using Widget::setSize;
-        using Widget::setMaxSize;
-        
+
         void onTextUpdate() override;
 
         // Only supports UTF-8 for now.
         std::string m_text{};
     };
-}
+} // namespace pTK
 
 #endif // PTK_WIDGETS_LABEL_HPP

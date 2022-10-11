@@ -5,6 +5,8 @@
 //  Created by Robin Gustafsson on 2020-03-13.
 //
 
+// clang-format off
+
 #ifndef PTK_PLATFORM_HPP
 #define PTK_PLATFORM_HPP
 
@@ -40,3 +42,5 @@
 #endif
 
 #endif // PTK_PLATFORM_HPP
+
+// clang-format on

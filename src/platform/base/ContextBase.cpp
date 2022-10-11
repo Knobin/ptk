@@ -12,10 +12,8 @@ namespace pTK
 {
     ContextBase::ContextBase(const Size& size)
         : SingleObject(),
-            m_size{size}
-    {
-
-    }
+          m_size{size}
+    {}
 
     const Size& ContextBase::getSize() const
     {
@@ -30,12 +28,12 @@ namespace pTK
     // Functions for converting utility classes to SkPoint for drawing.
     SkPoint convertToSkPoint(const Point& pos, const Vec2f& scale)
     {
-        return SkPoint{static_cast<float>(pos.x)*scale.x, static_cast<float>(pos.y)*scale.y};
+        return SkPoint{static_cast<float>(pos.x) * scale.x, static_cast<float>(pos.y) * scale.y};
     }
 
     SkPoint convertToSkPoint(const Size& size, const Vec2f& scale)
     {
-        return SkPoint{static_cast<float>(size.width)*scale.x, static_cast<float>(size.height)*scale.y};
+        return SkPoint{static_cast<float>(size.width) * scale.x, static_cast<float>(size.height) * scale.y};
     }
 
     SkPaint GetSkPaintFromColor(const Color& color)
@@ -45,4 +43,4 @@ namespace pTK
         paint.setARGB(color.a, color.r, color.g, color.b);
         return paint;
     }
-}
+} // namespace pTK

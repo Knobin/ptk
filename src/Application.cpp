@@ -20,7 +20,7 @@
 namespace pTK
 {
     // Application class static definitions.
-    Application *Application::s_Instance{nullptr};
+    Application* Application::s_Instance{nullptr};
 
     Application::Application(const std::string& name)
         : SingleObject()
@@ -28,7 +28,7 @@ namespace pTK
         init(name);
     }
 
-    Application::Application(const std::string& name, int, char* [])
+    Application::Application(const std::string& name, int, char*[])
         : SingleObject()
     {
         init(name);
@@ -51,9 +51,9 @@ namespace pTK
     Application::~Application()
     {
         // Close all attached Windows.
-        for (const auto & it : *this)
+        for (const auto& it : *this)
         {
-            Window *window{it.second};
+            Window* window{it.second};
             Event evt{Event::Category::Window, Event::Type::WindowClose};
             window->handleEvents(); // Handle all events before sending the close event.
             window->sendEvent(&evt);
@@ -68,7 +68,7 @@ namespace pTK
         PTK_INFO("Destroyed Application");
     }
 
-    int Application::exec(Window *window)
+    int Application::exec(Window* window)
     {
         PTK_ASSERT(window, "Undefined window");
 
@@ -76,7 +76,7 @@ namespace pTK
         return run();
     }
 
-    int32 Application::addWindow(Window *window)
+    int32 Application::addWindow(Window* window)
     {
         int32 id{1};
         for (const std::pair<const int32, Window*>& pair : *this)
@@ -87,17 +87,20 @@ namespace pTK
             }
         }
 
-        try {
+        try
+        {
             m_holder.insert({id, window});
             AppInstance()->onWindowAdd({id, window});
-        } catch (const std::exception&) {
+        }
+        catch (const std::exception&)
+        {
             return -1;
         }
 
         return id;
     }
 
-    bool Application::removeWindow(Window *window)
+    bool Application::removeWindow(Window* window)
     {
         auto it{std::find_if(begin(), end(), [window](const auto& pair) {
             return pair.second == window;
@@ -136,10 +139,10 @@ namespace pTK
         }
 
         // Paint all visible windows and handle already pushed events.
-        for (const auto&[key, window] : *this)
+        for (const auto& [key, window] : *this)
         {
             if (window->visible())
-                window->postEvent<PaintEvent>(Point{0,0}, window->getSize());
+                window->postEvent<PaintEvent>(Point{0, 0}, window->getSize());
             window->handleEvents();
         }
 
@@ -161,7 +164,7 @@ namespace pTK
         removeAllWindows();
     }
 
-    Application *Application::Get()
+    Application* Application::Get()
     {
         PTK_ASSERT(s_Instance, "Application is not initialized");
         return s_Instance;
@@ -173,9 +176,9 @@ namespace pTK
             m_holder.erase(it++);
     }
 
-    Window *Application::findByKey(int32 key) const
+    Window* Application::findByKey(int32 key) const
     {
         auto it = m_holder.find(key);
         return (it != m_holder.end()) ? it->second : nullptr;
     }
-}
+} // namespace pTK

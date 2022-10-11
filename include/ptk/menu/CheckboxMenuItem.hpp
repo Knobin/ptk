@@ -84,6 +84,6 @@ namespace pTK
         std::map<std::string, std::function<void(MenuItemStatus)>> m_toggleCallbacks;
     };
 
-} // pTK
+} // namespace pTK
 
 #endif // PTK_MENU_CHECKBOXMENUITEM_HPP

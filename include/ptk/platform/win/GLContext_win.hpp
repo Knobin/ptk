@@ -53,7 +53,7 @@ namespace pTK
 
             @return    SkSurface property
         */
-        sk_sp<SkSurface> surface() const override;
+        [[nodiscard]] sk_sp<SkSurface> surface() const override;
 
         /** Function for swapping the buffers
 
@@ -63,7 +63,7 @@ namespace pTK
     private:
         void createContext(const Size& size);
         void destroyContext();
-        
+
     private:
         HWND m_hwnd;
         HGLRC m_hglrc;
@@ -75,6 +75,6 @@ namespace pTK
         int m_stencilBits{8};
         int m_sampleCount{1};
     };
-}
+} // namespace pTK
 
 #endif // PTK_PlATFORM_WIN_WINGLCONTEXT_HPP

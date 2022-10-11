@@ -108,6 +108,50 @@ pTK::Ref<CustomBtn> CreateCustomBtn(const std::string& text, const pTK::Margin& 
     return btn;
 }
 
+class SpinningRect : public pTK::Widget
+{
+public:
+    SpinningRect() = default;
+    virtual ~SpinningRect() = default;
+
+    void onDraw(SkCanvas *canvas) override
+    {
+        // Size and pos to Skia variants.
+        const SkPoint pos{convertToSkPoint(getPosition())};
+        SkPoint size{convertToSkPoint(getSize())};
+        SkRect rect = SkRect::MakeXYWH(pos.x(), pos.y(), size.x(), size.y());
+
+        SkPaint paint{};
+        paint.setAntiAlias(true);
+        paint.setARGB(255, 100, 90, 110);
+
+        canvas->drawRoundRect(rect, 4, 4, paint);
+
+        canvas->save();
+
+        SkRect smallRect = SkRect::MakeXYWH(pos.x() + size.x() / 4, pos.y() + size.y() / 4, size.x() / 2, size.y() / 2);
+        paint.setARGB(255, 150, 140, 160);
+        canvas->rotate(m_degrees, rect.centerX(), rect.centerY());
+        canvas->drawRoundRect(smallRect, 4, 4, paint);
+
+        canvas->restore();
+    }
+
+    void setDegrees(float degrees)
+    {
+        m_degrees = degrees;
+        draw();
+    }
+
+    float getDegrees() const
+    {
+        return m_degrees;
+    }
+
+private:
+    float m_degrees{0.0f};
+};
+
 #include <type_traits>
 
 //template <typename T>
@@ -348,10 +392,23 @@ int main(int argc, char *argv[])
         return false;
     });
 
+    pTK::Ref<SpinningRect> sRect = pTK::Create<SpinningRect>();
+    sRect->setSize({250, 250});
+
+    std::atomic<bool> sRun = true;
+    std::thread sThread{[&](){
+        while (sRun)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(8));
+            sRect->setDegrees(sRect->getDegrees() + 1.0f);
+        }
+    }};
+
     content->add(cTitle);
     content->add(hline);
     content->add(btn);
     content->add(textField);
+    content->add(sRect);
 
     hbox->add(content);
 
@@ -360,5 +417,15 @@ int main(int argc, char *argv[])
     window.setMaxSize({1280, 720});
     // window.show();
 
-    return app.exec(&window);
+    {
+        pTK::Widget widget{};
+        widget.addListener<int>([](){return false;});
+    }
+
+
+    // return app.exec(&window);
+    auto ret = app.exec(&window);
+    sRun = false;
+    sThread.join();
+    return ret;
 }

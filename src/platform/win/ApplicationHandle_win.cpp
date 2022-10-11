@@ -10,8 +10,8 @@
 #include "ptk/platform/win/WindowHandle_win.hpp"
 
 // pTK Headers
-#include "ptk/core/Exception.hpp"
 #include "ptk/Application.hpp"
+#include "ptk/core/Exception.hpp"
 
 namespace pTK
 {
@@ -70,7 +70,7 @@ namespace pTK
         PTK_INFO("Destroyed ApplicationHandle_win");
     }
 
-    ApplicationHandle_win *ApplicationHandle_win::Instance()
+    ApplicationHandle_win* ApplicationHandle_win::Instance()
     {
         return &s_Instance;
     }
@@ -83,7 +83,7 @@ namespace pTK
             s_windowIter = s_windows.begin();
             for (auto it = s_windowIter; it != s_windows.end();)
             {
-                WindowHandle_win *window = it->second;
+                WindowHandle_win* window = it->second;
                 if (HACCEL accel = window->accelTable())
                 {
                     if (TranslateAccelerator(window->handle(), accel, &msg))
@@ -137,7 +137,7 @@ namespace pTK
 
     void ApplicationHandle_win::onWindowRemove(const std::pair<int32, Window*> item)
     {
-        auto it = std::find_if(s_windows.begin(), s_windows.end(), [item](const auto& pair){
+        auto it = std::find_if(s_windows.begin(), s_windows.end(), [item](const auto& pair) {
             return pair.first == item.first;
         });
         if (it != s_windows.end())
@@ -145,6 +145,5 @@ namespace pTK
             s_windowIter = s_windows.erase(it);
             s_erased = true;
         }
-
     }
-}
+} // namespace pTK

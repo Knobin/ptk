@@ -9,9 +9,9 @@
 #define PTK_UTIL_SAFEQUEUE_HPP
 
 // C++ Headers
+#include <condition_variable>
 #include <deque>
 #include <mutex>
-#include <condition_variable>
 #include <utility>
 
 namespace pTK
@@ -32,10 +32,10 @@ namespace pTK
         call front() or back() the thread will be blocked until
         push() has been called.
 
-        Important to note is that all the comparison and assignment operators do not lock 
+        Important to note is that all the comparison and assignment operators do not lock
         the queues!
     */
-    template<typename T, typename Container = std::deque<T>>
+    template <typename T, typename Container = std::deque<T>>
     class SafeQueue
     {
     public:
@@ -54,9 +54,7 @@ namespace pTK
             : m_mutex{},
               m_conditionVariable{},
               m_cont{}
-        {
-
-        }
+        {}
 
         /** Copy Constructs for SafeQueue.
 
@@ -154,7 +152,7 @@ namespace pTK
 
             @param item    item to emplace
         */
-        template<typename... Args>
+        template <typename... Args>
         void emplace(Args&&... args)
         {
             std::unique_lock<std::mutex> lock(m_mutex);
@@ -268,13 +266,10 @@ namespace pTK
         }
 
         /** Function for locking the queue.
-            
+
             Will block if the mutex is not available.
         */
-        void lock()
-        {
-            m_mutex.lock();
-        }
+        void lock() { m_mutex.lock(); }
 
         /** Function for trying to lock the queue.
 
@@ -282,69 +277,61 @@ namespace pTK
 
             @return    lock status
         */
-        bool try_lock()
-        {
-            return m_mutex.try_lock();
-        }
+        bool try_lock() { return m_mutex.try_lock(); }
 
         /** Function for unlocking the queue.
 
             Will block if the mutex is not available.
         */
-        void unlock()
-        {
-            m_mutex.unlock();
-        }
+        void unlock() { m_mutex.unlock(); }
 
     private:
         mutable std::mutex m_mutex;
         mutable std::condition_variable m_conditionVariable;
         Container m_cont;
 
-        template<typename T1, typename Container1>
-        friend bool operator==(const SafeQueue<T1, Container1>& lhs,
-            const SafeQueue<T1, Container1>& rhs);
+        template <typename T1, typename Container1>
+        friend bool operator==(const SafeQueue<T1, Container1>& lhs, const SafeQueue<T1, Container1>& rhs);
 
-        template<typename T1, typename Container1>
-        friend bool operator>(const SafeQueue<T1, Container1>& lhs,
-            const SafeQueue<T1, Container1>& rhs);
+        template <typename T1, typename Container1>
+        friend bool operator>(const SafeQueue<T1, Container1>& lhs, const SafeQueue<T1, Container1>& rhs);
     };
 
-    template<typename T, typename Container>
+    template <typename T, typename Container>
     bool operator==(const SafeQueue<T, Container>& lhs, const SafeQueue<T, Container>& rhs)
     {
         return lhs.m_cont == rhs.m_cont;
     }
 
-    template<typename T, typename Container>
+    template <typename T, typename Container>
     bool operator!=(const SafeQueue<T, Container>& lhs, const SafeQueue<T, Container>& rhs)
     {
         return !(lhs == rhs);
     }
 
-    template<typename T, typename Container>
+    template <typename T, typename Container>
     bool operator<(const SafeQueue<T, Container>& lhs, const SafeQueue<T, Container>& rhs)
     {
         return rhs > lhs;
     }
 
-    template<typename T, typename Container>
+    template <typename T, typename Container>
     bool operator<=(const SafeQueue<T, Container>& lhs, const SafeQueue<T, Container>& rhs)
     {
         return !(lhs > rhs);
     }
 
-    template<typename T, typename Container>
+    template <typename T, typename Container>
     bool operator>(const SafeQueue<T, Container>& lhs, const SafeQueue<T, Container>& rhs)
     {
         return lhs.m_cont > rhs.m_cont;
     }
 
-    template<typename T, typename Container>
+    template <typename T, typename Container>
     bool operator>=(const SafeQueue<T, Container>& lhs, const SafeQueue<T, Container>& rhs)
     {
         return !(lhs < rhs);
     }
-}
+} // namespace pTK
 
 #endif // PTK_UTIL_SAFEQUEUE_HPP

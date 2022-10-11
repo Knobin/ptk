@@ -66,7 +66,7 @@ TEST_CASE("Copy and Assignment")
     More tests in Comparison should be added in the future.
  */
 
-TEST_CASE ("Comparison")
+TEST_CASE("Comparison")
 {
     // Testing Widget Comparison.
     pTK::Widget t;

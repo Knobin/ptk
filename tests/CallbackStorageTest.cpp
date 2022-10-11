@@ -14,9 +14,11 @@
 // C++ Headers
 #include <cstdint>
 
-static auto ZeroCallback = [](){ return false; };
+static auto ZeroCallback = []() {
+    return false;
+};
 
-TEST_CASE ("CallbackContainer")
+TEST_CASE("CallbackContainer")
 {
     SECTION("Add")
     {
@@ -30,9 +32,18 @@ TEST_CASE ("CallbackContainer")
     SECTION("Trigger")
     {
         pTK::CallbackContainer<bool(std::size_t&)> container{};
-        container.addCallback(0, [](std::size_t& var){ var += 1; return false; });
-        container.addCallback(1, [](std::size_t& var){ var += 2; return false; });
-        container.addCallback(2, [](std::size_t& var){ var += 4; return false; });
+        container.addCallback(0, [](std::size_t& var) {
+            var += 1;
+            return false;
+        });
+        container.addCallback(1, [](std::size_t& var) {
+            var += 2;
+            return false;
+        });
+        container.addCallback(2, [](std::size_t& var) {
+            var += 4;
+            return false;
+        });
 
         std::size_t count = 0;
         container.triggerCallbacks(count);
@@ -42,9 +53,18 @@ TEST_CASE ("CallbackContainer")
     SECTION("Remove")
     {
         pTK::CallbackContainer<bool(std::size_t&)> container{};
-        container.addCallback(0, [](std::size_t& var){ var += 1; return false; });
-        container.addCallback(1, [](std::size_t& var){ var += 2; return false; });
-        container.addCallback(2, [](std::size_t& var){ var += 4; return false; });
+        container.addCallback(0, [](std::size_t& var) {
+            var += 1;
+            return false;
+        });
+        container.addCallback(1, [](std::size_t& var) {
+            var += 2;
+            return false;
+        });
+        container.addCallback(2, [](std::size_t& var) {
+            var += 4;
+            return false;
+        });
 
         std::size_t count = 0;
         container.triggerCallbacks(count);
@@ -72,9 +92,18 @@ TEST_CASE ("CallbackContainer")
     SECTION("Copy")
     {
         pTK::CallbackContainer<bool(std::size_t&)> container{};
-        container.addCallback(0, [](std::size_t& var){ var += 1; return false; });
-        container.addCallback(1, [](std::size_t& var){ var += 2; return false; });
-        container.addCallback(2, [](std::size_t& var){ var += 4; return false; });
+        container.addCallback(0, [](std::size_t& var) {
+            var += 1;
+            return false;
+        });
+        container.addCallback(1, [](std::size_t& var) {
+            var += 2;
+            return false;
+        });
+        container.addCallback(2, [](std::size_t& var) {
+            var += 4;
+            return false;
+        });
 
         pTK::CallbackContainer<bool(std::size_t&)> copy = container.clone();
 
@@ -137,9 +166,18 @@ TEST_CASE("CallbackStorage")
     SECTION("Trigger")
     {
         pTK::CallbackStorage storage{};
-        REQUIRE(6 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var){ var += 1; return false; }));
-        REQUIRE(7 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var){ var += 2; return false; }));
-        REQUIRE(8 == storage.addCallback<uint8_t, bool(std::size_t&)>([](std::size_t& var){ var += 4; return false; }));
+        REQUIRE(6 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var) {
+            var += 1;
+            return false;
+        }));
+        REQUIRE(7 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var) {
+            var += 2;
+            return false;
+        }));
+        REQUIRE(8 == storage.addCallback<uint8_t, bool(std::size_t&)>([](std::size_t& var) {
+            var += 4;
+            return false;
+        }));
         REQUIRE(storage.size() == 2);
         REQUIRE(storage.count() == 3);
 
@@ -155,9 +193,18 @@ TEST_CASE("CallbackStorage")
     SECTION("Remove")
     {
         pTK::CallbackStorage storage{};
-        REQUIRE(9 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var){ var += 1; return false; }));
-        REQUIRE(10 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var){ var += 2; return false; }));
-        REQUIRE(11 == storage.addCallback<uint8_t, bool(std::size_t&)>([](std::size_t& var){ var += 4; return false; }));
+        REQUIRE(9 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var) {
+            var += 1;
+            return false;
+        }));
+        REQUIRE(10 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var) {
+            var += 2;
+            return false;
+        }));
+        REQUIRE(11 == storage.addCallback<uint8_t, bool(std::size_t&)>([](std::size_t& var) {
+            var += 4;
+            return false;
+        }));
         REQUIRE(storage.size() == 2);
         REQUIRE(storage.count() == 3);
 
@@ -204,9 +251,18 @@ TEST_CASE("CallbackStorage")
     SECTION("Copy")
     {
         pTK::CallbackStorage storage{};
-        REQUIRE(12 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var){ var += 1; return false; }));
-        REQUIRE(13 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var){ var += 2; return false; }));
-        REQUIRE(14 == storage.addCallback<uint8_t, bool(std::size_t&)>([](std::size_t& var){ var += 4; return false; }));
+        REQUIRE(12 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var) {
+            var += 1;
+            return false;
+        }));
+        REQUIRE(13 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var) {
+            var += 2;
+            return false;
+        }));
+        REQUIRE(14 == storage.addCallback<uint8_t, bool(std::size_t&)>([](std::size_t& var) {
+            var += 4;
+            return false;
+        }));
         REQUIRE(storage.count() == 3);
 
         pTK::CallbackStorage copy = storage.clone();
@@ -228,7 +284,10 @@ TEST_CASE("CallbackStorage")
         REQUIRE(count == 7);
 
         // Change check.
-        REQUIRE(15 == copy.addCallback<uint8_t, bool(std::size_t&)>([](std::size_t& var){ var += 8; return false; }));
+        REQUIRE(15 == copy.addCallback<uint8_t, bool(std::size_t&)>([](std::size_t& var) {
+            var += 8;
+            return false;
+        }));
         REQUIRE(copy.count() == 4);
         REQUIRE(storage.count() == 3);
         count = 0;
@@ -282,14 +341,23 @@ TEST_CASE("CallbackStorage")
         // the removeCallbackIf() function. This is tested here.
 
         pTK::CallbackStorage storage{};
-        REQUIRE(24 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var){ var += 1; return false; }));
-        REQUIRE(25 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var){ var += 2; return true; }));
-        REQUIRE(26 == storage.addCallback<uint8_t, bool(std::size_t&)>([](std::size_t& var){ var += 4; return true; }));
+        REQUIRE(24 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var) {
+            var += 1;
+            return false;
+        }));
+        REQUIRE(25 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var) {
+            var += 2;
+            return true;
+        }));
+        REQUIRE(26 == storage.addCallback<uint8_t, bool(std::size_t&)>([](std::size_t& var) {
+            var += 4;
+            return true;
+        }));
         REQUIRE(storage.size() == 2);
         REQUIRE(storage.count() == 3);
 
         std::size_t count = 0;
-        const auto predicate = [&](typename pTK::CallbackContainer<bool(std::size_t&)>::Node& entry){
+        const auto predicate = [&](typename pTK::CallbackContainer<bool(std::size_t&)>::Node& entry) {
             return entry.callback(count); // Removes callback if true is returned.
         };
 
@@ -308,9 +376,18 @@ TEST_CASE("CallbackStorage")
     SECTION("Get Callbacks")
     {
         pTK::CallbackStorage storage{};
-        REQUIRE(27 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var){ var += 1; return false; }));
-        REQUIRE(28 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var){ var += 2; return true; }));
-        REQUIRE(29 == storage.addCallback<uint8_t, bool(std::size_t&)>([](std::size_t& var){ var += 4; return true; }));
+        REQUIRE(27 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var) {
+            var += 1;
+            return false;
+        }));
+        REQUIRE(28 == storage.addCallback<int8_t, bool(std::size_t&)>([](std::size_t& var) {
+            var += 2;
+            return true;
+        }));
+        REQUIRE(29 == storage.addCallback<uint8_t, bool(std::size_t&)>([](std::size_t& var) {
+            var += 4;
+            return true;
+        }));
 
         pTK::CallbackContainer<bool(std::size_t&)>* callbacks1 = storage.getCallbacks<int8_t, bool(std::size_t&)>();
         REQUIRE(callbacks1->size() == 2);
@@ -318,8 +395,9 @@ TEST_CASE("CallbackStorage")
         callbacks1->triggerCallbacks(count);
         REQUIRE(count == 3);
 
-        const pTK::CallbackStorage *storagePtr = &storage;
-        const pTK::CallbackContainer<bool(std::size_t&)>* callbacks2 = storagePtr->getCallbacks<int8_t, bool(std::size_t&)>();
+        const pTK::CallbackStorage* storagePtr = &storage;
+        const pTK::CallbackContainer<bool(std::size_t&)>* callbacks2 =
+            storagePtr->getCallbacks<int8_t, bool(std::size_t&)>();
         REQUIRE(callbacks2->size() == 2);
         count = 0;
         callbacks2->triggerCallbacks(count);

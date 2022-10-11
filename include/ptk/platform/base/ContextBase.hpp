@@ -10,11 +10,11 @@
 
 // pTK Headers
 #include "ptk/Core.hpp"
+#include "ptk/util/Color.hpp"
+#include "ptk/util/Point.hpp"
 #include "ptk/util/SingleObject.hpp"
 #include "ptk/util/Size.hpp"
-#include "ptk/util/Color.hpp"
 #include "ptk/util/Vec2.hpp"
-#include "ptk/util/Point.hpp"
 
 // C++ Headers
 #include <memory>
@@ -22,8 +22,8 @@
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
 #include "include/core/SkCanvas.h"
-#include "include/core/SkSurface.h"
 #include "include/core/SkColorSpace.h"
+#include "include/core/SkSurface.h"
 PTK_DISABLE_WARN_END()
 
 namespace pTK
@@ -69,7 +69,7 @@ namespace pTK
         /** Function for swapping the buffers.
 
         */
-        virtual void swapBuffers() {};
+        virtual void swapBuffers(){};
 
     protected:
         /** Function for setting the size of the context.
@@ -88,6 +88,6 @@ namespace pTK
     PTK_API SkPoint convertToSkPoint(const Point& pos, const Vec2f& scale = {1.0f, 1.0f});
     PTK_API SkPoint convertToSkPoint(const Size& size, const Vec2f& scale = {1.0f, 1.0f});
     PTK_API SkPaint GetSkPaintFromColor(const Color& color);
-}
+} // namespace pTK
 
 #endif // PTK_CORE_PLATFORM_CONTEXTBASE_HPP

@@ -5,13 +5,15 @@
 //  Created by Robin Gustafsson on 2021-01-16.
 //
 
+// TODO(knobin): Add docs for all functions in file.
+
 #ifndef PTK_PlATFORM_WIN_MENUBARUTIL_HPP
 #define PTK_PlATFORM_WIN_MENUBARUTIL_HPP
 
 // pTK Headers
 #include "ptk/events/KeyCodes.hpp"
-#include "ptk/menu/MenuItem.hpp"
 #include "ptk/menu/Menu.hpp"
+#include "ptk/menu/MenuItem.hpp"
 #include "ptk/menu/Shortcut.hpp"
 
 // C++ Headers
@@ -27,7 +29,8 @@ namespace pTK::MenuBarUtil_win
 {
     using MenuMap = std::map<uint, std::tuple<Ref<MenuItem>, uint, bool, HMENU>>;
 
-    void CreateMenuStructure(HMENU parent, MenuMap& menus, const pTK::Ref<pTK::Menu>& menu, uint parentId, std::vector<ACCEL>& keys);
+    void CreateMenuStructure(HMENU parent, MenuMap& menus, const pTK::Ref<pTK::Menu>& menu, uint parentId,
+                             std::vector<ACCEL>& keys);
     uint InsertMenuItemToMap(MenuMap& menus, const Ref<MenuItem>& menuItem, uint parentId, bool isMenu, HMENU hmenu);
     Ref<MenuItem> FindMenuItemById(const MenuMap& menuItems, uint id);
     std::string TranslateKeyCodeToShortcutStr(const KeyCode& key);
@@ -55,6 +58,6 @@ namespace pTK::MenuBarUtil_win
         return flag;
     }
 
-} // namespace pTK
+} // namespace pTK::MenuBarUtil_win
 
 #endif // PTK_PlATFORM_WIN_MENUBARUTIL_HPP

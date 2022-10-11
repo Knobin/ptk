@@ -7,11 +7,11 @@
 
 // pTK Headers
 #include "ptk/platform/unix/ApplicationHandle_unix.hpp"
-#include "ptk/platform/unix/WindowHandle_unix.hpp"
 #include "ptk/Application.hpp"
-#include "ptk/core/Exception.hpp"
 #include "ptk/core/Event.hpp"
+#include "ptk/core/Exception.hpp"
 #include "ptk/events/KeyMap.hpp"
+#include "ptk/platform/unix/WindowHandle_unix.hpp"
 
 // C++ Headers
 #include <map>
@@ -21,7 +21,7 @@ namespace pTK
     // Since the iHandleEvent function is protected in WindowHandle, this is a friend function
     // to get around that issue. Maybe another way is better in the future, but this works
     // for now.
-    template<typename Event>
+    template <typename Event>
     void EventSendHelper(WindowHandle_unix* window, const Event& evt)
     {
         window->iHandleEvent<Event>(evt);
@@ -39,7 +39,7 @@ namespace pTK
 
     struct AppUnixData
     {
-        Display *display{nullptr};
+        Display* display{nullptr};
         XContext xcontext{-1};
         int screen{-1};
         ::Window root;
@@ -82,7 +82,7 @@ namespace pTK
         PTK_INFO("Destroyed ApplicationHandle_unix");
     }
 
-    ApplicationHandle_unix *ApplicationHandle_unix::Instance()
+    ApplicationHandle_unix* ApplicationHandle_unix::Instance()
     {
         return &s_Instance;
     }
@@ -93,7 +93,7 @@ namespace pTK
     {
         XPending(s_appData.display);
 
-        while(QLength(s_appData.display))
+        while (QLength(s_appData.display))
         {
             XEvent event = {};
             XNextEvent(s_appData.display, &event);
@@ -113,7 +113,7 @@ namespace pTK
 
     void ApplicationHandle_unix::waitEventsTimeout(uint ms)
     {
-        ::Display *display{s_appData.display};
+        ::Display* display{s_appData.display};
         XEvent event = {};
         bool evtFound{false};
 
@@ -148,7 +148,7 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Display *ApplicationHandle_unix::Display()
+    Display* ApplicationHandle_unix::Display()
     {
         return s_appData.display;
     }
@@ -196,12 +196,13 @@ namespace pTK
         return mods;
     }
 
-    void ApplicationHandle_unix::handleEvent(XEvent *event)
+    void ApplicationHandle_unix::handleEvent(XEvent* event)
     {
         PTK_ASSERT(event, "Undefined XEvent!");
 
-        WindowHandle_unix *window{nullptr};
-        if (XFindContext(s_appData.display, event->xany.window, s_appData.xcontext, reinterpret_cast<XPointer*>(&window)) != 0)
+        WindowHandle_unix* window{nullptr};
+        if (XFindContext(s_appData.display, event->xany.window, s_appData.xcontext,
+                         reinterpret_cast<XPointer*>(&window)) != 0)
             return;
 
         switch (event->type)
@@ -221,8 +222,8 @@ namespace pTK
             }
             case ClientMessage:
             {
-                WindowHandle_unix *uWindow = static_cast<WindowHandle_unix*>(window);
-                XClientMessageEvent *cEvent = reinterpret_cast<XClientMessageEvent*>(event);
+                WindowHandle_unix* uWindow = static_cast<WindowHandle_unix*>(window);
+                XClientMessageEvent* cEvent = reinterpret_cast<XClientMessageEvent*>(event);
                 if (cEvent && static_cast<Atom>(cEvent->data.l[0]) == uWindow->deleteAtom())
                 {
                     window->handleEvents(); // Handle all events before sending close event.
@@ -265,7 +266,7 @@ namespace pTK
             case MotionNotify:
             {
                 MotionEvent mEvt{{static_cast<Point::value_type>(event->xbutton.x),
-                                    static_cast<Point::value_type>(event->xbutton.y)}};
+                                  static_cast<Point::value_type>(event->xbutton.y)}};
                 EventSendHelper<MotionEvent>(window, mEvt);
                 break;
             }
@@ -279,8 +280,7 @@ namespace pTK
                 EventSendHelper<KeyEvent>(window, {type, key, mods});
 
                 // Send Input event.
-                if ((type == KeyEvent::Pressed) &&
-                    (key != Key::Delete) && // Quick fix for now.
+                if ((type == KeyEvent::Pressed) && (key != Key::Delete) && // Quick fix for now.
                     (key != Key::Backspace))
                 {
                     char buffer[32];
@@ -319,13 +319,12 @@ namespace pTK
             {
                 // Size change
                 Size& wSize{WindowLastSize(window)};
-                if (static_cast<Size::value_type>(event->xconfigure.width) != wSize.width
-                    || static_cast<Size::value_type>(event->xconfigure.height) != wSize.height)
+                if (static_cast<Size::value_type>(event->xconfigure.width) != wSize.width ||
+                    static_cast<Size::value_type>(event->xconfigure.height) != wSize.height)
                 {
                     wSize.width = static_cast<Size::value_type>(event->xconfigure.width);
                     wSize.height = static_cast<Size::value_type>(event->xconfigure.height);
                     EventSendHelper<ResizeEvent>(window, ResizeEvent{wSize});
-
                 }
 
                 // Position change
@@ -343,4 +342,4 @@ namespace pTK
                 break;
         }
     }
-}
+} // namespace pTK

@@ -9,29 +9,29 @@
 #define PTK_CORE_HPP
 
 // pTK Headers
-#include "ptk/core/Defines.hpp"
 #include "ptk/Log.hpp"
+#include "ptk/core/Defines.hpp"
 #include "ptk/util/Size.hpp"
 #include "ptk/util/Vec2.hpp"
 
 // C++ Headers
-#include <memory>
 #include <limits>
+#include <memory>
 
 namespace pTK
 {
     // Custom Ref pointer, will maybe be a custom class.
-    template<typename T>
+    template <typename T>
     using Ref = std::shared_ptr<T>;
-    
-    template<typename T, typename... Args>
+
+    template <typename T, typename... Args>
     inline auto Create(Args&&... args) -> decltype(std::make_shared<T>(std::forward<Args>(args)...))
     {
         return std::make_shared<T>(std::forward<Args>(args)...);
     }
 
     // returns x + y if no overflow and max of T if overflow.
-    template<typename T>
+    template <typename T>
     constexpr T AddWithoutOverflow(T x, T y) noexcept
     {
         constexpr auto max = std::numeric_limits<T>::max();
@@ -42,13 +42,11 @@ namespace pTK
         return x + y;
     }
 
-    template<typename T, typename Rounding>
+    template <typename T, typename Rounding>
     constexpr Size Vec2ToSize(const Vec2<T>& v, Rounding func) noexcept
     {
-        return {static_cast<Size::value_type>(func(v.x)),
-                static_cast<Size::value_type>(func(v.y))};
+        return {static_cast<Size::value_type>(func(v.x)), static_cast<Size::value_type>(func(v.y))};
     }
-}
+} // namespace pTK
 
 #endif // PTK_CORE_HPP
-

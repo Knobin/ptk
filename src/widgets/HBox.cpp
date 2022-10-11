@@ -32,9 +32,10 @@ namespace pTK
              Set minimal size to HBox and set minimal size to each child.
              */
             expandOnAdd(minLayoutSize);
-        }else
+        }
+        else
         {
-            /** Childs will fit in the current size.
+            /** Children will fit in the current size.
 
              Only need to resize and position children.
              */
@@ -70,8 +71,8 @@ namespace pTK
         const Size vbSize{getSize()};
         Point vbPos{getPosition()};
 
-        layoutSize.height   = (vbSize.height > layoutSize.height) ? vbSize.height : layoutSize.height;
-        layoutSize.width    = (vbSize.width > layoutSize.width) ? vbSize.width : layoutSize.width;
+        layoutSize.height = (vbSize.height > layoutSize.height) ? vbSize.height : layoutSize.height;
+        layoutSize.width = (vbSize.width > layoutSize.width) ? vbSize.width : layoutSize.width;
 
         setSize(layoutSize); // this will generate a Resize event.
         constexpr int int_max = std::numeric_limits<int>::max();
@@ -129,7 +130,8 @@ namespace pTK
         Size::value_type lastEachLeft = totalEachLeft;
         while (totalEachLeft > 0)
         {
-            Size::value_type eachAdd{static_cast<Size::value_type>(std::floor(static_cast<float>(totalEachLeft) / static_cast<float>(childrenCount)))};
+            Size::value_type eachAdd{static_cast<Size::value_type>(
+                std::floor(static_cast<float>(totalEachLeft) / static_cast<float>(childrenCount)))};
             eachAdd = (totalEachLeft < static_cast<Size::value_type>(childrenCount)) ? 1 : eachAdd;
             bool done{true};
 
@@ -149,7 +151,8 @@ namespace pTK
                         sizes.at(i).width += delta;
                         totalEachLeft -= (delta);
                         done = false;
-                    }else
+                    }
+                    else
                     {
                         sizes.at(i).width += eachAdd;
                         totalEachLeft -= (eachAdd);
@@ -166,7 +169,7 @@ namespace pTK
                 ++i;
             }
 
-            // Check if the total was reduced. 
+            // Check if the total was reduced.
             // if not break as nothing was added (same will happen next iteration).
             if (totalEachLeft == lastEachLeft)
                 break;
@@ -220,7 +223,7 @@ namespace pTK
             for (const auto& child : *this)
             {
                 spaces.at(i) = 0;
-                const std::underlying_type<Align>::type cAlign{ child->getAlign() };
+                const std::underlying_type<Align>::type cAlign{child->getAlign()};
 
                 if (IsAlignSet(cAlign, Align::Left))
                 {
@@ -233,7 +236,7 @@ namespace pTK
                         spaces.at(i) = 1;
                     else
                         spaces.at(i) = (spaces.at(i) == 0) ? 0 : 1;
-                    
+
                     spaces.at(i + 1) = 0;
                 }
 
@@ -260,12 +263,12 @@ namespace pTK
         return spaces;
     }
 
-    Point::value_type HBox::alignChildV(Widget *child, const Size& parentSize, const Size& childSize)
+    Point::value_type HBox::alignChildV(Widget* child, const Size& parentSize, const Size& childSize)
     {
         Point::value_type posy{0};
 
         // Total size with margin and padding.
-        Size cSize{ child->calcOuterFromSize(childSize) };
+        Size cSize{child->calcOuterFromSize(childSize)};
 
         // Align
         std::underlying_type<Align>::type cAlign = child->getAlign();
@@ -284,10 +287,10 @@ namespace pTK
     Size HBox::calcMinSize() const
     {
         Size contMinSize{Size::Min};
-        for (auto it{ cbegin() }; it != cend(); ++it)
+        for (auto it{cbegin()}; it != cend(); ++it)
         {
-            const Limits limits{ (*it)->getLimitsWithSizePolicy() };
-            const Size minSize{ (*it)->calcOuterFromSize(limits.min) };
+            const Limits limits{(*it)->getLimitsWithSizePolicy()};
+            const Size minSize{(*it)->calcOuterFromSize(limits.min)};
 
             contMinSize.height = (minSize.height > contMinSize.height) ? minSize.height : contMinSize.height;
             contMinSize.width = AddWithoutOverflow(contMinSize.width, minSize.width);
@@ -299,10 +302,10 @@ namespace pTK
     Size HBox::calcMaxSize() const
     {
         Size contMaxSize{Size::Max};
-        for (auto it{ cbegin() }; it != cend(); ++it)
+        for (auto it{cbegin()}; it != cend(); ++it)
         {
-            const Limits limits{ (*it)->getLimitsWithSizePolicy() };
-            const Size maxSize{ (*it)->calcOuterFromSize(limits.max) };
+            const Limits limits{(*it)->getLimitsWithSizePolicy()};
+            const Size maxSize{(*it)->calcOuterFromSize(limits.max)};
 
             contMaxSize.height = (maxSize.height > contMaxSize.height) ? maxSize.height : contMaxSize.height;
             contMaxSize.width = AddWithoutOverflow(contMaxSize.width, maxSize.width);
@@ -310,4 +313,4 @@ namespace pTK
 
         return calcOuterFromSize(contMaxSize);
     }
-}
+} // namespace pTK

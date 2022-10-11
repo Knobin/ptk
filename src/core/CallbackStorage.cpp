@@ -15,4 +15,4 @@ namespace pTK
 
     // CallbackStorage class static definitions.
     uint64_t CallbackStorage::s_idCounter{1};
-}
+} // namespace pTK

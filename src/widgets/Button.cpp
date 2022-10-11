@@ -12,13 +12,23 @@
 
 namespace pTK
 {
-    const Button::Style Button::Style::Default{Color(0x007BFFFF), Color(0x0071E6FF), Color(0x0068D9FF), Color(0xFFFFFFFF), 5};
-    const Button::Style Button::Style::Success{Color(0x28A745FF), Color(0x24963CFF), Color(0x218838FF), Color(0xFFFFFFFF), 5};
-    const Button::Style Button::Style::Danger{Color(0xDC3545FF), Color(0xce2331FF), Color(0xBC202DFF), Color(0xFFFFFFFF), 5};
+    const Button::Style Button::Style::Default{Color(0x007BFFFF), Color(0x0071E6FF), Color(0x0068D9FF),
+                                               Color(0xFFFFFFFF), 5.0f};
+    const Button::Style Button::Style::Success{Color(0x28A745FF), Color(0x24963CFF), Color(0x218838FF),
+                                               Color(0xFFFFFFFF), 5.0f};
+    const Button::Style Button::Style::Danger{Color(0xDC3545FF), Color(0xce2331FF), Color(0xBC202DFF),
+                                              Color(0xFFFFFFFF), 5.0f};
 
     Button::Button()
-        : Rectangle(), m_text{Create<Label>()}, m_labelPos{}, m_borderSize{14},
-            m_hoverColor{}, m_clickColor{}, m_colorCopy{}, m_hover{false}, m_click{false}
+        : Rectangle(),
+          m_text{Create<Label>()},
+          m_labelPos{},
+          m_borderSize{14},
+          m_hoverColor{},
+          m_clickColor{},
+          m_colorCopy{},
+          m_hover{false},
+          m_click{false}
     {
         initCallbacks();
 
@@ -28,8 +38,15 @@ namespace pTK
     }
 
     Button::Button(const Style& style)
-        : Rectangle(), m_text{Create<Label>()}, m_labelPos{}, m_borderSize{14},
-            m_hoverColor{}, m_clickColor{}, m_colorCopy{}, m_hover{false}, m_click{false}
+        : Rectangle(),
+          m_text{Create<Label>()},
+          m_labelPos{},
+          m_borderSize{14},
+          m_hoverColor{},
+          m_clickColor{},
+          m_colorCopy{},
+          m_hover{false},
+          m_click{false}
     {
         initCallbacks();
 
@@ -40,10 +57,22 @@ namespace pTK
 
     void Button::initCallbacks()
     {
-        addListener<EnterEvent>([&](const EnterEvent& evt) { onEnterCallback(evt); return false; });
-        addListener<LeaveEvent>([&](const LeaveEvent& evt) { onLeaveCallback(evt); return false; });
-        addListener<ClickEvent>([&](const ClickEvent& evt) { onClickCallback(evt); return false; });
-        addListener<ReleaseEvent>([&](const ReleaseEvent& evt) { onReleaseCallback(evt); return false; });
+        addListener<EnterEvent>([&](const EnterEvent& evt) {
+            onEnterCallback(evt);
+            return false;
+        });
+        addListener<LeaveEvent>([&](const LeaveEvent& evt) {
+            onLeaveCallback(evt);
+            return false;
+        });
+        addListener<ClickEvent>([&](const ClickEvent& evt) {
+            onClickCallback(evt);
+            return false;
+        });
+        addListener<ReleaseEvent>([&](const ReleaseEvent& evt) {
+            onReleaseCallback(evt);
+            return false;
+        });
     }
 
     void Button::setPosHint(const Point& pos)
@@ -82,7 +111,7 @@ namespace pTK
             if ((wSize.width > bSize.width) || (wSize.height > bSize.height))
             {
                 // Apparently, this looks good.
-                const Size::value_type dMargin{static_cast<Size::value_type>(static_cast<float>(m_borderSize)*2.0f)};
+                const Size::value_type dMargin{static_cast<Size::value_type>(static_cast<float>(m_borderSize) * 2.0f)};
                 const Size::value_type hMargin{((bSize.height - wSize.height) > dMargin) ? 0 : dMargin};
                 const Size::value_type wMargin{((bSize.width - wSize.width) > dMargin) ? 0 : dMargin};
                 wSize.width = ((wSize.width > bSize.width) ? wSize.width : bSize.width) + (wMargin);
@@ -275,4 +304,4 @@ namespace pTK
         if ((sizeBounds.height > cSize.height) || (sizeBounds.width > cSize.width))
             setSize(sizeBounds);
     }
-}
+} // namespace pTK

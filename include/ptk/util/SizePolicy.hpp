@@ -46,14 +46,14 @@ namespace pTK
 
         enum PolicyFlag : byte
         {
-            Fixed = 1,  // Size is fixed.
-            Grow = 2,   // Size can grow.
-            Shrink = 4  // Size can shrink.
+            Fixed = 1, // Size is fixed.
+            Grow = 2,  // Size can grow.
+            Shrink = 4 // Size can shrink.
         };
 
         enum class Policy : std::underlying_type<PolicyFlag>::type
         {
-            Fixed = PolicyFlag::Fixed, // Fixed size.
+            Fixed = PolicyFlag::Fixed,                        // Fixed size.
             Expanding = PolicyFlag::Grow | PolicyFlag::Shrink // Size can be altered (either shrink or grow).
         };
 
@@ -61,8 +61,9 @@ namespace pTK
         Policy vertical{Policy::Fixed};
     };
 
-    inline const SizePolicy SizePolicy::Type::Fixed = { SizePolicy::Policy::Fixed , SizePolicy::Policy::Fixed };
-    inline const SizePolicy SizePolicy::Type::Expanding = { SizePolicy::Policy::Expanding , SizePolicy::Policy::Expanding };
+    inline const SizePolicy SizePolicy::Type::Fixed = {SizePolicy::Policy::Fixed, SizePolicy::Policy::Fixed};
+    inline const SizePolicy SizePolicy::Type::Expanding = {SizePolicy::Policy::Expanding,
+                                                           SizePolicy::Policy::Expanding};
 
     // Comparison operators.
     inline bool operator==(const SizePolicy& lhs, const SizePolicy& rhs) noexcept
@@ -78,13 +79,13 @@ namespace pTK
     /** Function for checking if a specific PolicyFlag is set.
 
     */
-    template<typename... Flags>
+    template <typename... Flags>
     constexpr bool IsSizePolicyFlagSet(std::underlying_type<SizePolicy::Policy>::type policy, Flags&&... flags) noexcept
     {
         using policy_utype = std::underlying_type<SizePolicy::Policy>::type;
         policy_utype sp = 0;
 
-        for (const auto p : { flags... })
+        for (const auto p : {flags...})
             sp |= static_cast<policy_utype>(p);
 
         return ((policy & sp) == sp);
@@ -93,14 +94,14 @@ namespace pTK
     /** Function for checking if a specific PolicyFlag is set in the Policy.
 
     */
-    template<typename... Flags>
+    template <typename... Flags>
     constexpr bool IsSizePolicyFlagSet(SizePolicy::Policy policy, Flags&&... flags) noexcept
     {
         using policy_utype = std::underlying_type<SizePolicy::Policy>::type;
-        policy_utype p = static_cast<policy_utype>(policy);
+        auto p = static_cast<policy_utype>(policy);
 
         return IsSizePolicyFlagSet(p, std::forward<Flags>(flags)...);
     }
-}
+} // namespace pTK
 
 #endif // PTK_UTIL_SIZEPOLICY_HPP

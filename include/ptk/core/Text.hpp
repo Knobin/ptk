@@ -10,9 +10,9 @@
 
 // pTK Headers
 #include "ptk/Core.hpp"
+#include "ptk/core/Drawable.hpp"
 #include "ptk/util/Color.hpp"
 #include "ptk/util/Size.hpp"
-#include "ptk/core/Drawable.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
@@ -28,12 +28,13 @@ namespace pTK
     class PTK_API Text
     {
     public:
-
         // Encoding of the text.
         enum class Encoding : byte
         {
             NONE = 0,
-            UTF8, UTF16, UTF32
+            UTF8,
+            UTF16,
+            UTF32
         };
 
         struct StrData
@@ -131,7 +132,8 @@ namespace pTK
             @param outColor     outline color
             @return             advance
          */
-        float drawTextLine(SkCanvas* canvas, const StrData& data, const Color& color, const Vec2f& pos, float outlineSize, const Color& outColor);
+        float drawTextLine(SkCanvas* canvas, const StrData& data, const Color& color, const Vec2f& pos,
+                           float outlineSize, const Color& outColor);
 
         /** Function for drawing a line of text.
 
@@ -156,6 +158,6 @@ namespace pTK
         float m_capHeight{0.0f};
         float m_ascentToDescent{0.0f};
     };
-}
+} // namespace pTK
 
 #endif // PTK_CORE_TEXT_HPP

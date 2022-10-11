@@ -11,8 +11,12 @@
 namespace pTK
 {
     Widget::Widget()
-        : Alignment(), Drawable(), EventHandling(), Sizable(),
-            m_parent{nullptr}, m_name{}
+        : Alignment(),
+          Drawable(),
+          EventHandling(),
+          Sizable(),
+          m_parent{nullptr},
+          m_name{}
     {}
 
     Widget::~Widget()
@@ -88,13 +92,13 @@ namespace pTK
     void Widget::show()
     {
         Drawable::show(); // Set the visible boolean.
-        update(); // Tell parent to display widget.
+        update();         // Tell parent to display widget.
     }
 
     void Widget::hide()
     {
         Drawable::hide(); // Set the visible boolean.
-        update(); // Tell parent to hide widget.
+        update();         // Tell parent to hide widget.
     }
 
     Size Widget::getOuterSize() const
@@ -108,8 +112,7 @@ namespace pTK
         const Margin::value_type hMargin{AddWithoutOverflow(margin.left, margin.right)};
         const Margin::value_type vMargin{AddWithoutOverflow(margin.top, margin.bottom)};
 
-        return {AddWithoutOverflow(size.width, hMargin),
-                AddWithoutOverflow(size.height, vMargin)};
+        return {AddWithoutOverflow(size.width, hMargin), AddWithoutOverflow(size.height, vMargin)};
     }
 
     SizePolicy Widget::getSizePolicy() const noexcept
@@ -149,14 +152,12 @@ namespace pTK
     // Comparison operators.
     bool operator==(const Widget& lhs, const Widget& rhs)
     {
-        return ((lhs.getPosition() == rhs.getPosition()) &&
-                (lhs.getSize() == rhs.getSize()) &&
-                (lhs.getName() == rhs.getName()) &&
-                (lhs.getParent() == rhs.getParent()));
+        return ((lhs.getPosition() == rhs.getPosition()) && (lhs.getSize() == rhs.getSize()) &&
+                (lhs.getName() == rhs.getName()) && (lhs.getParent() == rhs.getParent()));
     }
 
     bool operator!=(const Widget& lhs, const Widget& rhs)
     {
         return !(lhs == rhs);
     }
-}
+} // namespace pTK

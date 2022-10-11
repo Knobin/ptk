@@ -9,8 +9,8 @@
 #define PTK_MENU_MENUITEM_HPP
 
 // pTK Headers
-#include "ptk/events/KeyCodes.hpp"
 #include "ptk/core/Types.hpp"
+#include "ptk/events/KeyCodes.hpp"
 #include "ptk/menu/MenuItemType.hpp"
 
 // C++ Headers
@@ -77,13 +77,13 @@ namespace pTK
         /** Template function for handling events.
 
         */
-        template<MenuItemEvent Event, typename... FuncArgs>
+        template <MenuItemEvent Event, typename... FuncArgs>
         void handleEvent(FuncArgs&&... args);
 
         /** Template function for updating and handling events.
 
         */
-        template<MenuItemEvent Event, typename... FuncArgs>
+        template <MenuItemEvent Event, typename... FuncArgs>
         void updateWithEvent(FuncArgs&&... args);
 
         /** Function for adding a update callback.
@@ -114,8 +114,9 @@ namespace pTK
         MenuItemStatus m_status{};
     };
 
-    template<MenuItemEvent Event, typename... FuncArgs>
-    void MenuItem::handleEvent(FuncArgs&&... args) {
+    template <MenuItemEvent Event, typename... FuncArgs>
+    void MenuItem::handleEvent(FuncArgs&&... args)
+    {
         if constexpr (Event == MenuItemEvent::Update)
         {
             for (const auto& it : m_updateCallbacks)
@@ -128,13 +129,13 @@ namespace pTK
         }
     }
 
-    template<MenuItemEvent Event, typename... FuncArgs>
+    template <MenuItemEvent Event, typename... FuncArgs>
     void MenuItem::updateWithEvent(FuncArgs&&... args)
     {
         if constexpr (Event != MenuItemEvent::Update)
             handleEvent<Event>(std::forward<FuncArgs>(args)...);
         update();
     }
-}
+} // namespace pTK
 
 #endif // PTK_MENU_MENUITEM_HPP

@@ -221,7 +221,7 @@ TEST_CASE("Modifiers")
 TEST_CASE("Capacity")
 {
     pTK::SafeQueue<int> queue{};
-    
+
     SECTION("empty")
     {
         REQUIRE(queue.empty() == true);

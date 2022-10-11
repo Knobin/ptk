@@ -13,7 +13,7 @@ static constexpr align_utype operator|(pTK::Align a, pTK::Align b) noexcept
 
 TEST_CASE("IsAlignSet")
 {
-    constexpr align_utype align{ pTK::Align::Top | pTK::Align::Left };
+    constexpr align_utype align{pTK::Align::Top | pTK::Align::Left};
 
     SECTION("true")
     {
@@ -22,7 +22,7 @@ TEST_CASE("IsAlignSet")
         REQUIRE(pTK::IsAlignSet(align, pTK::Align::Top, pTK::Align::Left));
         REQUIRE(pTK::IsAlignSet(align, pTK::Align::Left, pTK::Align::Top));
     }
-    
+
     SECTION("false")
     {
         REQUIRE_FALSE(pTK::IsAlignSet(align, pTK::Align::Bottom));
@@ -45,7 +45,7 @@ TEST_CASE("Alignment()")
     REQUIRE(pTK::IsAlignSet(alignment.getAlign(), pTK::Align::Center));
 }
 
-template<typename... Aligns>
+template <typename... Aligns>
 static bool CheckAlign(const pTK::Alignment& align, Aligns&&... aligns) noexcept
 {
     return pTK::IsAlignSet(align.getAlign(), std::forward<Aligns>(aligns)...);

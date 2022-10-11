@@ -123,7 +123,6 @@ namespace pTK
         void onToggle(const std::function<bool(bool status)>& callback);
 
     private:
-
         void initCallbacks();
 
     private:
@@ -140,6 +139,6 @@ namespace pTK
         void internalToggle();
     };
 
-}
+} // namespace pTK
 
 #endif // PTK_WIDGETS_CHECKBOX_HPP

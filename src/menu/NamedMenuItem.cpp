@@ -11,16 +11,27 @@
 namespace pTK
 {
     NamedMenuItem::NamedMenuItem(const std::string& name, const Shortcut& shortcut)
-            : MenuItem(MenuItemType::Text, MenuItemStatus::Enabled),
-              m_shortcut{shortcut}, m_name{name}
+        : MenuItem(MenuItemType::Text, MenuItemStatus::Enabled),
+          m_shortcut{shortcut},
+          m_name{name}
     {}
 
-    NamedMenuItem::NamedMenuItem(const std::string& name, MenuItemType type, MenuItemStatus status, const Shortcut& shortcut)
-            : MenuItem(type, status), m_shortcut{shortcut}, m_name{name}
+    NamedMenuItem::NamedMenuItem(const std::string& name, MenuItemType type, MenuItemStatus status,
+                                 const Shortcut& shortcut)
+        : MenuItem(type, status),
+          m_shortcut{shortcut},
+          m_name{name}
     {}
 
-    [[nodiscard]] const Shortcut& NamedMenuItem::shortcut() const { return m_shortcut; }
-    [[nodiscard]] const std::string& NamedMenuItem::name() const { return m_name; }
+    const Shortcut& NamedMenuItem::shortcut() const
+    {
+        return m_shortcut;
+    }
+
+    const std::string& NamedMenuItem::name() const
+    {
+        return m_name;
+    }
 
     void NamedMenuItem::notifyClick()
     {
@@ -38,7 +49,7 @@ namespace pTK
     {
         auto updateIt = m_clickCallbacks.find(name);
         if (updateIt != m_clickCallbacks.end())
-        m_clickCallbacks.erase(updateIt);
+            m_clickCallbacks.erase(updateIt);
 
         MenuItem::removeCallback(name);
     }
@@ -48,4 +59,4 @@ namespace pTK
         m_clickCallbacks[name] = func;
     }
 
-} // pTK
+} // namespace pTK

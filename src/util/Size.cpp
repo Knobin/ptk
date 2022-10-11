@@ -25,8 +25,7 @@ namespace pTK
     // Comparison operators.
     bool operator==(const Size& lhs, const Size& rhs)
     {
-        return ((lhs.width == rhs.width)
-                && (lhs.height == rhs.height));
+        return ((lhs.width == rhs.width) && (lhs.height == rhs.height));
     }
 
     bool operator!=(const Size& lhs, const Size& rhs)
@@ -41,8 +40,7 @@ namespace pTK
 
     bool operator>(const Size& lhs, const Size& rhs)
     {
-        return ((lhs.width > rhs.width)
-                && (lhs.height > rhs.height));
+        return ((lhs.width > rhs.width) && (lhs.height > rhs.height));
     }
 
     bool operator<=(const Size& lhs, const Size& rhs)
@@ -111,4 +109,4 @@ namespace pTK
     {
         return lhs = lhs / rhs;
     }
-}
+} // namespace pTK

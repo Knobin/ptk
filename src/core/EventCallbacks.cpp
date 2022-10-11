@@ -54,4 +54,4 @@ namespace pTK
     {
         return addListener<ReleaseEvent>(callback);
     }
-}
+} // namespace pTK

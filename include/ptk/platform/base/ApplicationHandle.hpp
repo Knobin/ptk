@@ -48,12 +48,13 @@ namespace pTK
         */
         virtual void waitEvents() = 0;
 
-        /** Function for waiting for an event with a timout.
+        /** Function for waiting for an event with a timeout.
 
             @param ms   max time to wait for an event
         */
         virtual void waitEventsTimeout(uint ms) = 0;
 
+        // TODO(knobin): Add docs.
         virtual void onClose() {}
 
         /** Callback that will be called when a window is added to the

@@ -7,8 +7,8 @@
 
 // Local Headers
 #include "ptk/platform/win/WindowHandle_win.hpp"
-#include "ptk/platform/win/ApplicationHandle_win.hpp"
 #include "ptk/platform/common/RasterContext.hpp"
+#include "ptk/platform/win/ApplicationHandle_win.hpp"
 #include "ptk/platform/win/RasterPolicy_win.hpp"
 
 // pTK Headers
@@ -18,18 +18,18 @@
 
 // Include OpenGL backend if HW Acceleration is enabled.
 #ifdef PTK_OPENGL
-#include "ptk/platform/win/GLContext_win.hpp"
+    #include "ptk/platform/win/GLContext_win.hpp"
 #endif // PTK_OPENGL
 
 // Windows Headers
-#include <windowsx.h>
 #include <Dwmapi.h>
+#include <windowsx.h>
 
 // C++ Headers
 #include <cmath>
 #include <memory>
-#include <tuple>
 #include <mutex>
+#include <tuple>
 
 namespace pTK
 {
@@ -37,7 +37,7 @@ namespace pTK
     // to get around that issue. Maybe another way is better in the future, but this works
     // for now. This must be done since the win32 WndPro is a static function and only a
     // pointer to window can be used (in this implementation anyway).
-    template<typename Event>
+    template <typename Event>
     void EventSendHelper(WindowHandle_win* window, const Event& evt)
     {
         window->iHandleEvent<Event>(evt);
@@ -51,7 +51,7 @@ namespace pTK
     ///////////////////////////////////////////////////////////////////////////////
 
     static std::unique_ptr<ContextBase> CreateContextForWin32([[maybe_unused]] WindowInfo::Backend type, HWND hwnd,
-                                                           const Size& size)
+                                                              const Size& size)
     {
 #ifdef PTK_OPENGL
         if (type == WindowInfo::Backend::Hardware)
@@ -81,7 +81,7 @@ namespace pTK
         adjustedSize.bottom = static_cast<long>(from.height);
         adjustedSize.left = 0;
         adjustedSize.right = static_cast<long>(from.width);
-        ::AdjustWindowRectExForDpi (&adjustedSize, style, menu, 0, static_cast<UINT>(dpi));
+        ::AdjustWindowRectExForDpi(&adjustedSize, style, menu, 0, static_cast<UINT>(dpi));
         return {static_cast<Size::value_type>(adjustedSize.right - adjustedSize.left),
                 static_cast<Size::value_type>(adjustedSize.bottom - adjustedSize.top)};
     }
@@ -123,8 +123,8 @@ namespace pTK
         const int width{static_cast<int>(adjSize.width)};
         const int height{static_cast<int>(adjSize.height)};
         m_hwnd = ::CreateWindowExW(0, L"PTK", ApplicationHandle_win::stringToUTF16(name).c_str(), m_data.style,
-                                    flags.position.x, flags.position.y, width, height,
-                                     nullptr, nullptr, ::GetModuleHandleW(nullptr), nullptr);
+                                   flags.position.x, flags.position.y, width, height, nullptr, nullptr,
+                                   ::GetModuleHandleW(nullptr), nullptr);
         if (!m_hwnd)
             throw WindowError("Failed to create window!");
 
@@ -161,7 +161,8 @@ namespace pTK
             m_accelTable = ::CreateAcceleratorTableW(accelShortcuts.data(), static_cast<int>(accelShortcuts.size()));
         }
 
-        PTK_INFO("Initialized WindowHandle_win {}x{} at {}x{}", size.width, size.height, flags.position.x, flags.position.y);
+        PTK_INFO("Initialized WindowHandle_win {}x{} at {}x{}", size.width, size.height, flags.position.x,
+                 flags.position.y);
     }
 
     WindowHandle_win::~WindowHandle_win()
@@ -287,10 +288,8 @@ namespace pTK
         SendMessage(m_hwnd, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(hIcon));
 
         // Ensure that the application icon is changed.
-        SendMessage(::GetWindow(m_hwnd, GW_OWNER), WM_SETICON, ICON_SMALL,
-                    reinterpret_cast<LPARAM>(hIcon));
-        SendMessage(::GetWindow(m_hwnd, GW_OWNER), WM_SETICON, ICON_BIG,
-                    reinterpret_cast<LPARAM>(hIcon));
+        SendMessage(::GetWindow(m_hwnd, GW_OWNER), WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(hIcon));
+        SendMessage(::GetWindow(m_hwnd, GW_OWNER), WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(hIcon));
 
         return true;
     }
@@ -314,7 +313,7 @@ namespace pTK
     bool WindowHandle_win::resize(const Size& size)
     {
         // Apply the DPI scaling.
-        const Vec2f scale{ getDPIScale() };
+        const Vec2f scale{getDPIScale()};
         const Size scaledSize{ScaleSize(size, getDPIScale())};
         const Size adjSize{CalcAdjustedWindowSize(scaledSize, getWindowStyle(), m_data.hasMenu, scale.x * 96.0f)};
 
@@ -327,7 +326,8 @@ namespace pTK
             {
                 const int width{static_cast<int>(adjSize.width)};
                 const int height{static_cast<int>(adjSize.height)};
-                ::SetWindowPos(m_hwnd, nullptr, 0, 0, width, height, SWP_NOSENDCHANGING | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
+                ::SetWindowPos(m_hwnd, nullptr, 0, 0, width, height,
+                               SWP_NOSENDCHANGING | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
             }
         }
 
@@ -343,14 +343,14 @@ namespace pTK
     void WindowHandle_win::show()
     {
         ::ShowWindow(m_hwnd, SW_SHOW);
-        EventSendHelper<PaintEvent>(this, {{0,0}, getSize()});
+        EventSendHelper<PaintEvent>(this, {{0, 0}, getSize()});
     }
 
     void WindowHandle_win::hide()
     {
         ::ShowWindow(m_hwnd, SW_HIDE);
     }
-    
+
     bool WindowHandle_win::isHidden() const
     {
         return !static_cast<bool>(::IsWindowVisible(m_hwnd));
@@ -370,8 +370,7 @@ namespace pTK
     {
         RECT rect{};
         ::GetWindowRect(m_hwnd, &rect);
-        return { static_cast<Point::value_type>(rect.left),
-                static_cast<Point::value_type>(rect.top) };
+        return {static_cast<Point::value_type>(rect.left), static_cast<Point::value_type>(rect.top)};
     }
 
     Size WindowHandle_win::getWinSize() const
@@ -382,7 +381,7 @@ namespace pTK
                 static_cast<Size::value_type>(rect.bottom - rect.top)};
     }
 
-    void WindowHandle_win::setWindowLimits(const Size& min, const Size& max)
+    void WindowHandle_win::setWindowLimits([[maybe_unused]] const Size& min, [[maybe_unused]] const Size& max)
     {
         PTK_INFO("Updating Window limits to: min: {}x{} max: {}x{}", min.width, min.height, max.width, max.height);
         RECT rect{};
@@ -440,8 +439,8 @@ namespace pTK
         return m_accelTable;
     }
 
-    static void HandleMouseClick(WindowHandle_win* window, const Vec2f& scale,  Event::Type type,
-                                    Mouse::Button btn, LPARAM lParam)
+    static void HandleMouseClick(WindowHandle_win* window, const Vec2f& scale, Event::Type type, Mouse::Button btn,
+                                 LPARAM lParam)
     {
         PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
 
@@ -449,11 +448,11 @@ namespace pTK
         const auto fX = static_cast<float>(pos.x);
         const auto fY = static_cast<float>(pos.y);
         const Point scaledPos{static_cast<Point::value_type>(fX * (1 / scale.x)),
-                            static_cast<Point::value_type>(fY * (1 / scale.y))};
+                              static_cast<Point::value_type>(fY * (1 / scale.y))};
 
         if (type == Event::Type::MouseButtonPressed)
         {
-            ClickEvent evt{ btn, scaledPos };
+            ClickEvent evt{btn, scaledPos};
             EventSendHelper<ClickEvent>(window, evt);
         }
         else
@@ -469,8 +468,7 @@ namespace pTK
 
         // Change Window position.
         RECT* rect = reinterpret_cast<RECT*>(lParam);
-        MoveEvent mEvt{{static_cast<Point::value_type>(rect->left),
-                           static_cast<Point::value_type>(rect->top)}};
+        MoveEvent mEvt{{static_cast<Point::value_type>(rect->left), static_cast<Point::value_type>(rect->top)}};
         EventSendHelper<MoveEvent>(window, mEvt);
 
         // Scale Window.
@@ -482,22 +480,23 @@ namespace pTK
         EventSendHelper<ScaleEvent>(window, sEvt);
     }
 
-    static void HandleWindowLimits(WindowHandle_win* window, LPARAM lParam, const Vec2f& scale, bool hasMenu, DWORD style)
+    static void HandleWindowLimits(WindowHandle_win* window, LPARAM lParam, const Vec2f& scale, bool hasMenu,
+                                   DWORD style)
     {
         PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
 
         LPMINMAXINFO lpMMI{reinterpret_cast<LPMINMAXINFO>(lParam)};
         const Limits limits{GetWindowLimits(window)};
 
-        const Size adjMinSize{CalcAdjustedWindowSize(ScaleSize(limits.min, scale),
-                                                     window->getWindowStyle(), hasMenu, scale.x * 96.0f)};
+        const Size adjMinSize{
+            CalcAdjustedWindowSize(ScaleSize(limits.min, scale), window->getWindowStyle(), hasMenu, scale.x * 96.0f)};
         lpMMI->ptMinTrackSize.x = static_cast<int>(adjMinSize.width);
         lpMMI->ptMinTrackSize.y = static_cast<int>(adjMinSize.height);
-        
+
         if (limits.max != Size::Max)
         {
-            const Size adjMaxSize{CalcAdjustedWindowSize(
-                ScaleSize(limits.max, scale), style, hasMenu, scale.x * 96.0f)};
+            const Size adjMaxSize{
+                CalcAdjustedWindowSize(ScaleSize(limits.max, scale), style, hasMenu, scale.x * 96.0f)};
             lpMMI->ptMaxTrackSize.x = static_cast<int>(adjMaxSize.width);
             lpMMI->ptMaxTrackSize.y = static_cast<int>(adjMaxSize.height);
         }
@@ -539,11 +538,8 @@ namespace pTK
             if (static_cast<Size::value_type>(rc.right) != size.width ||
                 static_cast<Size::value_type>(rc.bottom) != size.height)
             {
-                const Size rSize{static_cast<Size::value_type>(rc.right),
-                                static_cast<Size::value_type>(rc.bottom)};
-                ResizeEvent evt{ScaleSize(rSize,
-                                            Vec2f{1.0f / scale.x,
-                                                1.0f / scale.y})};
+                const Size rSize{static_cast<Size::value_type>(rc.right), static_cast<Size::value_type>(rc.bottom)};
+                ResizeEvent evt{ScaleSize(rSize, Vec2f{1.0f / scale.x, 1.0f / scale.y})};
                 data->ignoreSize = true;
                 EventSendHelper<ResizeEvent>(window, evt);
             }
@@ -554,7 +550,7 @@ namespace pTK
     {
         WPARAM key = wParam;
         uint scancode = (lParam & 0x00ff0000) >> 16;
-        int extended  = (lParam & 0x01000000) != 0;
+        int extended = (lParam & 0x01000000) != 0;
 
         switch (wParam)
         {
@@ -612,7 +608,7 @@ namespace pTK
             WPARAM lrKey{MapLeftRightKeys(wParam, lParam)};
             key = KeyMap::KeyCodeToKey(static_cast<int32>(lrKey));
         }
-        
+
         KeyEvent evt{type, key, static_cast<uint32>(data), GetKeyModifiers()};
         EventSendHelper<KeyEvent>(window, evt);
     }
@@ -688,7 +684,7 @@ namespace pTK
             case WM_PAINT:
             {
                 data->invalidated = true;
-                EventSendHelper<PaintEvent>(window, {{0,0}, window->getSize()});
+                EventSendHelper<PaintEvent>(window, {{0, 0}, window->getSize()});
                 break;
             }
             case WM_CHAR:
@@ -736,14 +732,16 @@ namespace pTK
             }
             case WM_MOUSEWHEEL:
             {
-                const double y_offset = static_cast<float>(static_cast<SHORT>(HIWORD(wParam))) / static_cast<float>(WHEEL_DELTA);
-                EventSendHelper<ScrollEvent>(window, {{0.0f, (float)y_offset}});
+                const float y_offset =
+                    static_cast<float>(static_cast<SHORT>(HIWORD(wParam))) / static_cast<float>(WHEEL_DELTA);
+                EventSendHelper<ScrollEvent>(window, ScrollEvent{{0.0f, y_offset}});
                 break;
             }
             case WM_MOUSEHWHEEL:
             {
-                const float x_offset = -static_cast<float>(static_cast<SHORT>(HIWORD(wParam))) / static_cast<float>(WHEEL_DELTA);
-                EventSendHelper<ScrollEvent>(window, {{x_offset, 0.0f}});
+                const float x_offset =
+                    -static_cast<float>(static_cast<SHORT>(HIWORD(wParam))) / static_cast<float>(WHEEL_DELTA);
+                EventSendHelper<ScrollEvent>(window, ScrollEvent{{x_offset, 0.0f}});
                 break;
             }
             case WM_SIZING:
@@ -812,7 +810,7 @@ namespace pTK
             case WM_TIMER:
             {
                 if (wParam == 1)
-                  window->handleEvents();
+                    window->handleEvents();
                 break;
             }
             case WM_COMMAND:
@@ -822,7 +820,7 @@ namespace pTK
 
                 if (item)
                 {
-                    auto *nItem = dynamic_cast<NamedMenuItem*>(item.get());
+                    auto* nItem = dynamic_cast<NamedMenuItem*>(item.get());
                     if (nItem)
                         nItem->notifyClick();
                 }

@@ -53,14 +53,14 @@ namespace pTK
         /** Function to disable drawing and hide it.
 
         */
-        virtual void hide() {};
+        virtual void hide() {}
 
         /** Function for checking if it is visible.
 
             @return    status
         */
-        virtual bool visible() const { return false; };
+        [[nodiscard]] virtual bool visible() const { return false; };
     };
-}
+} // namespace pTK
 
 #endif // PTK_CORE_DRAWABLE_HPP

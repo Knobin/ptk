@@ -36,7 +36,8 @@ namespace pTK
             @return             initialized Shortcut
         */
         Shortcut(const std::initializer_list<KeyCode>& modifiers, const KeyCode key)
-            : m_modifiers{modifiers}, m_key{key}
+            : m_modifiers{modifiers},
+              m_key{key}
         {}
 
         /** Function for retrieving the modifiers.
@@ -56,6 +57,6 @@ namespace pTK
         KeyCode m_key{pTK::KeyCode::Unknown};
     };
 
-} // pTK
+} // namespace pTK
 
 #endif // PTK_MENU_SHORTCUT_HPP

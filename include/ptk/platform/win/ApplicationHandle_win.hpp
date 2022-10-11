@@ -27,7 +27,7 @@ namespace pTK
         static void Init(const std::string& name);
         static void Destroy();
 
-        static ApplicationHandle_win *Instance();
+        static ApplicationHandle_win* Instance();
 
         /** Function for polling all the window events.
 
@@ -73,6 +73,6 @@ namespace pTK
         static ApplicationHandle_win s_Instance;
         static bool s_Initialized;
     };
-}
+} // namespace pTK
 
 #endif // PTK_PLATFORM_WIN_APPLICATIONHANDLE_HPP

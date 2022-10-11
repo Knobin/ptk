@@ -5,6 +5,8 @@
 //  Created by Robin Gustafsson on 2019-06-27.
 //
 
+// clang-format off
+
 #ifndef PTK_CORE_TYPES_HPP
 #define PTK_CORE_TYPES_HPP
 
@@ -25,3 +27,5 @@ typedef uint8       byte;
 typedef uint32      uint;
 
 #endif // PTK_CORE_TYPES_HPP
+
+// clang-format on

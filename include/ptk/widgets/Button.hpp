@@ -9,9 +9,9 @@
 #define PTK_WIDGETS_BUTTON_HPP
 
 // pTK Headers
+#include "ptk/core/Text.hpp"
 #include "ptk/widgets/Label.hpp"
 #include "ptk/widgets/Rectangle.hpp"
-#include "ptk/core/Text.hpp"
 
 namespace pTK
 {
@@ -24,12 +24,11 @@ namespace pTK
     class PTK_API Button : public Rectangle
     {
     public:
-
         /** Style struct for Button styling implementation.
 
-            This struct is for setting various styiling options for
+            This struct is for setting various styling options for
             a Button to make it easier for the user to style a button.
-            Button class can ofcourse be styled without this struct.
+            Button class can of course be styled without this struct.
 
             It also includes 3 pre-assigned styles (Default,
             Success, Danger).
@@ -262,7 +261,6 @@ namespace pTK
         bool m_hover;
         bool m_click;
     };
-}
-
+} // namespace pTK
 
 #endif // PTK_WIDGETS_BUTTON_HPP

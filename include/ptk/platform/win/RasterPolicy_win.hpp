@@ -9,8 +9,8 @@
 #define PTK_PlATFORM_WIN_RASTERPOLICY_HPP
 
 // pTK Headers
-#include "ptk/util/Size.hpp"
 #include "ptk/Core.hpp"
+#include "ptk/util/Size.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
@@ -69,14 +69,14 @@ namespace pTK
 
     public:
         std::size_t size{0};
-        void *pixels{nullptr};
+        void* pixels{nullptr};
         const SkColorType colorType{kN32_SkColorType};
 
     private:
-        BITMAPINFO *bmpInfo{nullptr};
+        BITMAPINFO* bmpInfo{nullptr};
         HWND m_hwnd;
         Size wSize{};
     };
-}
+} // namespace pTK
 
 #endif // PTK_PlATFORM_WIN_RASTERPOLICY_HPP

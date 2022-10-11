@@ -34,7 +34,7 @@ namespace pTK
         const std::size_t height{static_cast<std::size_t>(nSize.height)};
         const std::size_t bmpSize = sizeof(BITMAPINFOHEADER) + width * height * sizeof(uint32_t);
 
-        void *bmpPtr{std::malloc(bmpSize)};
+        void* bmpPtr{std::malloc(bmpSize)};
         if (!bmpPtr)
             return false;
 
@@ -56,7 +56,7 @@ namespace pTK
 
     void RasterPolicy_win::swapBuffers() const
     {
-        HRGN hrgn{CreateRectRgn(0,0,0,0)};
+        HRGN hrgn{CreateRectRgn(0, 0, 0, 0)};
         GetWindowRgn(m_hwnd, hrgn);
         HDC dc{GetDCEx(m_hwnd, hrgn, DCX_PARENTCLIP)};
         StretchDIBits(dc, 0, 0, wSize.width, wSize.height, 0, 0, wSize.width, wSize.height, bmpInfo->bmiColors, bmpInfo,
@@ -64,4 +64,4 @@ namespace pTK
         DeleteObject(hrgn);
         ReleaseDC(m_hwnd, dc);
     }
-}
+} // namespace pTK

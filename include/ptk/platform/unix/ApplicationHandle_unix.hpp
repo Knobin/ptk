@@ -29,7 +29,7 @@ namespace pTK
         static void Init(const std::string& name);
         static void Destroy();
 
-        static ApplicationHandle_unix *Instance();
+        static ApplicationHandle_unix* Instance();
 
         // TODO: Add documentation.
         void pollEvents() override;
@@ -42,7 +42,7 @@ namespace pTK
 
     public:
         // TODO: Add documentation.
-        static ::Display *Display();
+        static ::Display* Display();
 
         // TODO: Add documentation.
         static ::XContext Context();
@@ -58,11 +58,11 @@ namespace pTK
         virtual ~ApplicationHandle_unix() = default;
 
         bool init();
-        void handleEvent(XEvent *event);
+        void handleEvent(XEvent* event);
 
     private:
         static ApplicationHandle_unix s_Instance;
     };
-}
+} // namespace pTK
 
 #endif // PTK_PLATFORM_UNIX_APPLICATIONHANDLE_HPP

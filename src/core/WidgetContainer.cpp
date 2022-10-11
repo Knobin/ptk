@@ -81,9 +81,8 @@ namespace pTK
         {
             m_busy = true;
 
-            auto it = std::find_if(m_holder.cbegin(), m_holder.cend(), [&widget](const auto& entry) {
-                return entry.get() == widget;
-            });
+            auto it = std::find_if(m_holder.cbegin(), m_holder.cend(),
+                                   [&widget](const auto& entry) { return entry.get() == widget; });
 
             if (it != m_holder.cend())
             {
@@ -103,10 +102,9 @@ namespace pTK
         if (!m_busy)
         {
             m_busy = true;
-            
-            auto it = std::find_if(m_holder.cbegin(), m_holder.cend(), [&widget](const auto& entry) {
-                return entry.get() == widget;
-             });
+
+            auto it = std::find_if(m_holder.cbegin(), m_holder.cend(),
+                                   [&widget](const auto& entry) { return entry.get() == widget; });
 
             if (it != m_holder.cend())
             {
@@ -123,7 +121,7 @@ namespace pTK
 
     void WidgetContainer::onClickCallback(const ClickEvent& evt)
     {
-        Widget *lastClicked{m_lastClickedWidget};
+        Widget* lastClicked{m_lastClickedWidget};
         bool found{false};
         const Point& pos{evt.pos};
 
@@ -134,7 +132,7 @@ namespace pTK
             const Point startPos{item->getPosition()};
             const Size wSize{item->getSize()};
             const Point endPos{AddWithoutOverflow(startPos.x, static_cast<Point::value_type>(wSize.width)),
-                                AddWithoutOverflow(startPos.y, static_cast<Point::value_type>(wSize.height))};
+                               AddWithoutOverflow(startPos.y, static_cast<Point::value_type>(wSize.height))};
 
             if ((startPos.x <= pos.x) && (endPos.x >= pos.x))
             {
@@ -188,7 +186,7 @@ namespace pTK
             const Point startPos{item->getPosition()};
             const Size wSize{item->getSize()};
             const Point endPos{AddWithoutOverflow(startPos.x, static_cast<Point::value_type>(wSize.width)),
-                                AddWithoutOverflow(startPos.y, static_cast<Point::value_type>(wSize.height))};
+                               AddWithoutOverflow(startPos.y, static_cast<Point::value_type>(wSize.height))};
 
             if ((startPos.x <= pos.x) && (endPos.x >= pos.x))
             {
@@ -262,7 +260,7 @@ namespace pTK
         return m_background;
     }
 
-    Widget *WidgetContainer::getSelectedWidget() const
+    Widget* WidgetContainer::getSelectedWidget() const
     {
         return m_lastClickedWidget;
     }
@@ -272,7 +270,7 @@ namespace pTK
         return m_busy;
     }
 
-    void WidgetContainer::drawBackground(SkCanvas *canvas) const
+    void WidgetContainer::drawBackground(SkCanvas* canvas) const
     {
         PTK_ASSERT(canvas, "Canvas is undefined");
 
@@ -301,18 +299,41 @@ namespace pTK
             return false; // Do not remove callback, ever.
         });*/
 
-        addListener<KeyEvent>([&](const KeyEvent& evt) { onKeyCallback(evt); return false; });
-        addListener<InputEvent>([&](const InputEvent& evt) { onInputCallback(evt); return false; });
-        addListener<MotionEvent>([&](const MotionEvent& evt) { onHoverCallback(evt); return false; });
-        addListener<EnterEvent>([&](const EnterEvent& evt) { onEnterCallback(evt); return false; });
-        addListener<LeaveEvent>([&](const LeaveEvent& evt) { onLeaveCallback(evt); return false; });
+        addListener<KeyEvent>([&](const KeyEvent& evt) {
+            onKeyCallback(evt);
+            return false;
+        });
+        addListener<InputEvent>([&](const InputEvent& evt) {
+            onInputCallback(evt);
+            return false;
+        });
+        addListener<MotionEvent>([&](const MotionEvent& evt) {
+            onHoverCallback(evt);
+            return false;
+        });
+        addListener<EnterEvent>([&](const EnterEvent& evt) {
+            onEnterCallback(evt);
+            return false;
+        });
+        addListener<LeaveEvent>([&](const LeaveEvent& evt) {
+            onLeaveCallback(evt);
+            return false;
+        });
         // addListener<LeaveClickEvent>([&](const LeaveClickEvent& evt) { onLeaveClickEvent(evt); return false; });
-        addListener<ScrollEvent>([&](const ScrollEvent& evt) { onScrollCallback(evt); return false; });
-        addListener<ClickEvent>([&](const ClickEvent& evt) { onClickCallback(evt); return false; });
-        addListener<ReleaseEvent>([&](const ReleaseEvent& evt) { onReleaseCallback(evt); return false; });
+        addListener<ScrollEvent>([&](const ScrollEvent& evt) {
+            onScrollCallback(evt);
+            return false;
+        });
+        addListener<ClickEvent>([&](const ClickEvent& evt) {
+            onClickCallback(evt);
+            return false;
+        });
+        addListener<ReleaseEvent>([&](const ReleaseEvent& evt) {
+            onReleaseCallback(evt);
+            return false;
+        });
 
-
-        addListener<LeaveClickEvent>([container = this](const LeaveClickEvent& evt){
+        addListener<LeaveClickEvent>([container = this](const LeaveClickEvent& evt) {
             if (container->m_lastClickedWidget != nullptr)
             {
                 container->m_lastClickedWidget->handleEvent<LeaveClickEvent>(evt);

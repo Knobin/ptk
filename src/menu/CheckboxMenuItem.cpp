@@ -21,7 +21,7 @@ namespace pTK
         init();
     }
 
-    [[nodiscard]] const std::map<std::string, std::function<void(MenuItemStatus)>>& CheckboxMenuItem::toggleCallbacks() const
+    const std::map<std::string, std::function<void(MenuItemStatus)>>& CheckboxMenuItem::toggleCallbacks() const
     {
         return m_toggleCallbacks;
     }
@@ -31,7 +31,7 @@ namespace pTK
         m_toggleCallbacks[name] = func;
     }
 
-    [[nodiscard]] bool CheckboxMenuItem::checked() const
+    bool CheckboxMenuItem::checked() const
     {
         return status() == MenuItemStatus::Checked;
     }
@@ -56,7 +56,7 @@ namespace pTK
 
     void CheckboxMenuItem::init()
     {
-        onStatus("CMI_s_func", [this](MenuItemStatus from, MenuItemStatus to){
+        onStatus("CMI_s_func", [this](MenuItemStatus from, MenuItemStatus to) {
             if ((IsMenuItemStatusTypeCheckbox(from)) && IsMenuItemStatusTypeCheckbox(to))
             {
                 for (const auto& it : this->toggleCallbacks())
@@ -64,9 +64,9 @@ namespace pTK
             }
         });
 
-        onClick("CMI_c_func", [this](){
+        onClick("CMI_c_func", [this]() {
             this->setChecked(!this->checked());
         });
     }
 
-} // pTK
+} // namespace pTK

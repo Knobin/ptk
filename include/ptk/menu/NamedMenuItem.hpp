@@ -89,6 +89,6 @@ namespace pTK
         std::string m_name{};
     };
 
-} // pTK
+} // namespace pTK
 
 #endif // PTK_MENU_NAMEDMENUITEM_HPP

@@ -31,4 +31,4 @@ namespace pTK
         return m_holder.empty();
     }
 
-} // pTK
+} // namespace pTK

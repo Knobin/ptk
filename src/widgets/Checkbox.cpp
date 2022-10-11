@@ -10,8 +10,8 @@
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
-#include "include/core/SkRRect.h"
 #include "include/core/SkPath.h"
+#include "include/core/SkRRect.h"
 PTK_DISABLE_WARN_END()
 
 // TODO: Fix m_click or just delete it.
@@ -19,17 +19,30 @@ PTK_DISABLE_WARN_END()
 namespace pTK
 {
     Checkbox::Checkbox()
-        : Rectangle(), m_checkColor{0x007BFFFF}
+        : Rectangle(),
+          m_checkColor{0x007BFFFF}
     {
         Shape::setColor(Color(0x00000000));
     }
 
     void Checkbox::initCallbacks()
     {
-        addListener<EnterEvent>([&](const EnterEvent& evt) { onEnterCallback(evt); return false; });
-        addListener<LeaveEvent>([&](const LeaveEvent& evt) { onLeaveCallback(evt); return false; });
-        addListener<ClickEvent>([&](const ClickEvent& evt) { onClickCallback(evt); return false; });
-        addListener<ReleaseEvent>([&](const ReleaseEvent& evt) { onReleaseCallback(evt); return false; });
+        addListener<EnterEvent>([&](const EnterEvent& evt) {
+            onEnterCallback(evt);
+            return false;
+        });
+        addListener<LeaveEvent>([&](const LeaveEvent& evt) {
+            onLeaveCallback(evt);
+            return false;
+        });
+        addListener<ClickEvent>([&](const ClickEvent& evt) {
+            onClickCallback(evt);
+            return false;
+        });
+        addListener<ReleaseEvent>([&](const ReleaseEvent& evt) {
+            onReleaseCallback(evt);
+            return false;
+        });
     }
 
     void Checkbox::onDraw(SkCanvas* canvas)
@@ -50,7 +63,8 @@ namespace pTK
             Rectangle::onDraw(canvas);
 
             setColor(temp);
-        }else
+        }
+        else
         {
             Color outlineTemp = getOutlineColor();
 
@@ -58,7 +72,8 @@ namespace pTK
             {
                 setOutlineColor(getColor());
                 Rectangle::onDraw(canvas);
-            }else // State 2 and 3
+            }
+            else // State 2 and 3
             {
                 Color temp = getColor();
                 Color color = (m_state == 3) ? m_checkColor : temp; // Depends on this.
@@ -81,19 +96,21 @@ namespace pTK
         Size size = getSize();
         Point pos = getPosition();
 
-        float posy = static_cast<float>(pos.y) + static_cast<float>(size.height)/2.0f + static_cast<float>(size.height)*0.25f;
-        float posx = static_cast<float>(pos.x) + static_cast<float>(size.width)/2.0f - static_cast<float>(size.height)*0.20f;
-        float longy = static_cast<float>(size.height)*0.7f*0.9f;
-        float shortx = static_cast<float>(size.height)*0.3f*0.9f;
+        float posy = static_cast<float>(pos.y) + static_cast<float>(size.height) / 2.0f +
+                     static_cast<float>(size.height) * 0.25f;
+        float posx =
+            static_cast<float>(pos.x) + static_cast<float>(size.width) / 2.0f - static_cast<float>(size.height) * 0.20f;
+        float longy = static_cast<float>(size.height) * 0.7f * 0.9f;
+        float shortx = static_cast<float>(size.height) * 0.3f * 0.9f;
         float cornerRadius = getCornerRadius();
-        float outline = getOutlineThickness()*2.0f;
+        float outline = getOutlineThickness() * 2.0f;
 
         // Setup clip rects.
         SkRect rect;
-        rect.set({posx, posy-longy}, {posx + outline, posy});
+        rect.set({posx, posy - longy}, {posx + outline, posy});
         SkRRect rects[2];
         rects[0] = SkRRect::MakeRectXY(rect, cornerRadius, cornerRadius);
-        rect.set({posx-shortx, posy-outline}, {posx + outline, posy});
+        rect.set({posx - shortx, posy - outline}, {posx + outline, posy});
         rects[1] = SkRRect::MakeRectXY(rect, cornerRadius, cornerRadius);
 
         // Setup a path from rects.
@@ -200,9 +217,7 @@ namespace pTK
     }
 
     void Checkbox::onToggleEvent(bool)
-    {
-
-    }
+    {}
 
     void Checkbox::onToggle(const std::function<bool(bool status)>& callback)
     {
@@ -223,4 +238,4 @@ namespace pTK
         if (status)
             onToggleEvent(m_checked);
     }
-}
+} // namespace pTK

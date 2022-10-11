@@ -9,8 +9,8 @@
 #define PTK_MENU_MENUITEMTYPE_HPP
 
 // pTK Headers
-#include "ptk/core/Types.hpp"
 #include "ptk/Log.hpp"
+#include "ptk/core/Types.hpp"
 
 // C++ Headers
 #include <string_view>
@@ -19,24 +19,24 @@ namespace pTK
 {
     enum class MenuItemType : byte
     {
-        Text = 0,   // Text item, can be pressed (button).
-        Checkbox,   // Text with a checkbox, can be toggled.
-        Separator,  // Usually a line, cannot be clicked and is "static".
-        Menu        // Collections of Menus.
+        Text = 0,  // Text item, can be pressed (button).
+        Checkbox,  // Text with a checkbox, can be toggled.
+        Separator, // Usually a line, cannot be clicked and is "static".
+        Menu       // Collections of Menus.
     };
 
     enum class MenuItemStatus : byte
-     {
-         Enabled = 0,    // Can be selected.
-         Disabled,       // Can not be selected and is "greyed" out.
-         Checked,        // Should only be combined with Type::Checkbox.
-         Unchecked,      // Should only be combined with Type::Checkbox.
-     };
+    {
+        Enabled = 0, // Can be selected.
+        Disabled,    // Can not be selected and is "greyed" out.
+        Checked,     // Should only be combined with Type::Checkbox.
+        Unchecked,   // Should only be combined with Type::Checkbox.
+    };
 
     enum class MenuItemEvent : byte
     {
         Update = 0, // Something updated.
-        Status ,    // Status changed.
+        Status,     // Status changed.
     };
 
     constexpr std::string_view MenuItemTypeToStr(MenuItemType type) noexcept
@@ -50,7 +50,7 @@ namespace pTK
             case MenuItemType::Separator:
                 return "Separator";
             case MenuItemType::Menu:
-               return "Menu";
+                return "Menu";
         }
 
         // All paths are covered, but MSVC complains anyways.
@@ -59,19 +59,19 @@ namespace pTK
     }
 
     constexpr std::string_view MenuItemStatusToStr(MenuItemStatus status) noexcept
-     {
-         switch (status)
-         {
-             case MenuItemStatus::Enabled:
-                 return "Enabled";
-             case MenuItemStatus::Disabled:
-                 return "Disabled";
-             case MenuItemStatus::Checked:
-                 return "Checked";
-             case MenuItemStatus::Unchecked:
-                 return "Unchecked";
-         }
-     }
+    {
+        switch (status)
+        {
+            case MenuItemStatus::Enabled:
+                return "Enabled";
+            case MenuItemStatus::Disabled:
+                return "Disabled";
+            case MenuItemStatus::Checked:
+                return "Checked";
+            case MenuItemStatus::Unchecked:
+                return "Unchecked";
+        }
+    }
 
     constexpr std::string_view MenuItemEventToStr(MenuItemEvent evt) noexcept
     {
@@ -88,6 +88,6 @@ namespace pTK
     {
         return ((status == MenuItemStatus::Checked) || (status == MenuItemStatus::Unchecked));
     }
-}
+} // namespace pTK
 
 #endif // PTK_MENU_MENUITEMTYPE_HPP

@@ -33,7 +33,8 @@ namespace pTK
              Set minimal size to VBox and set minimal size to each child.
              */
             expandOnAdd(minLayoutSize);
-        }else
+        }
+        else
         {
             /** Children will fit in the current size.
 
@@ -69,8 +70,8 @@ namespace pTK
     {
         Size layoutSize{newSize};
         const Size vbSize{getSize()};
-        layoutSize.height   = (vbSize.height > layoutSize.height) ? vbSize.height : layoutSize.height;
-        layoutSize.width    = (vbSize.width > layoutSize.width) ? vbSize.width : layoutSize.width;
+        layoutSize.height = (vbSize.height > layoutSize.height) ? vbSize.height : layoutSize.height;
+        layoutSize.width = (vbSize.width > layoutSize.width) ? vbSize.width : layoutSize.width;
         setSize(layoutSize); // this will generate a Resize event.
 
         Point vbPos{getPosition()};
@@ -112,9 +113,9 @@ namespace pTK
             const Limits limits = child->getLimitsWithSizePolicy();
             sizes.at(i) = child->calcOuterFromSize(limits.min);
 
-            const Size::value_type maxWidth{ child->calcOuterFromSize(limits.max).width };
+            const Size::value_type maxWidth{child->calcOuterFromSize(limits.max).width};
             sizes.at(i).width = (vbSize.width > maxWidth) ? maxWidth : vbSize.width;
-        
+
             ++i;
         }
 
@@ -128,7 +129,8 @@ namespace pTK
         Size::value_type lastEachLeft = totalEachLeft;
         while (totalEachLeft > 0)
         {
-            Size::value_type eachAdd{static_cast<Size::value_type>(std::floor(static_cast<float>(totalEachLeft) / static_cast<float>(childrenCount)))};
+            Size::value_type eachAdd{static_cast<Size::value_type>(
+                std::floor(static_cast<float>(totalEachLeft) / static_cast<float>(childrenCount)))};
             eachAdd = (totalEachLeft < static_cast<Size::value_type>(childrenCount)) ? 1 : eachAdd;
             bool done{true};
 
@@ -148,7 +150,8 @@ namespace pTK
                         sizes.at(i).height += delta;
                         totalEachLeft -= (delta);
                         done = false;
-                    }else
+                    }
+                    else
                     {
                         sizes.at(i).height += eachAdd;
                         totalEachLeft -= (eachAdd);
@@ -165,7 +168,7 @@ namespace pTK
                 ++i;
             }
 
-            // Check if the total was reduced. 
+            // Check if the total was reduced.
             // if not break as nothing was added (same will happen next iteration).
             if (totalEachLeft == lastEachLeft)
                 break;
@@ -226,7 +229,7 @@ namespace pTK
                 if (IsAlignSet(cAlign, Align::Top))
                 {
                     spaces.at(i) = 0;
-                    spaces.at(i+1) = 1;
+                    spaces.at(i + 1) = 1;
                 }
                 else if (IsAlignSet(cAlign, Align::Bottom))
                 {
@@ -235,12 +238,12 @@ namespace pTK
                     else
                         spaces.at(i) = (spaces.at(i) == 0) ? 0 : 1;
 
-                    spaces.at(i+1) = 0;
+                    spaces.at(i + 1) = 0;
                 }
                 else if (IsAlignSet(cAlign, Align::Center) || IsAlignSet(cAlign, Align::VCenter))
                 {
                     spaces.at(i) = 1;
-                    spaces.at(i+1) = 1;
+                    spaces.at(i + 1) = 1;
                 }
 
                 ++i;
@@ -255,25 +258,24 @@ namespace pTK
             for (auto& value : spaces)
                 if (value == 1)
                     value = spaceHeight;
-
         }
 
         return spaces;
     }
 
-    Point::value_type VBox::alignChildH(Widget *child, const Size& parentSize, const Size& childSize)
+    Point::value_type VBox::alignChildH(Widget* child, const Size& parentSize, const Size& childSize)
     {
         Point::value_type posx{0};
 
         // Total size including margin.
-        Size cSize{ child->calcOuterFromSize(childSize) };
+        Size cSize{child->calcOuterFromSize(childSize)};
 
         // Align.
         const std::underlying_type<Align>::type cAlign{child->getAlign()};
         if (IsAlignSet(cAlign, Align::Right))
             posx = static_cast<Point::value_type>(parentSize.width - cSize.width);
         else if (IsAlignSet(cAlign, Align::Center) || IsAlignSet(cAlign, Align::HCenter))
-            posx = static_cast<Point::value_type>((parentSize.width/2) - (cSize.width/2));
+            posx = static_cast<Point::value_type>((parentSize.width / 2) - (cSize.width / 2));
 
         // Offset position.
         // Maybe remove "AddWithoutOverflow" since it is highly unlikely that it overflows int32.
@@ -300,7 +302,7 @@ namespace pTK
     Size VBox::calcMaxSize() const
     {
         Size contMaxSize{Size::Max};
-        for (auto it{ cbegin() }; it != cend(); ++it)
+        for (auto it{cbegin()}; it != cend(); ++it)
         {
             const Limits limits{(*it)->getLimitsWithSizePolicy()};
             const Size maxSize{(*it)->calcOuterFromSize(limits.max)};
@@ -308,7 +310,7 @@ namespace pTK
             contMaxSize.height = AddWithoutOverflow(contMaxSize.height, maxSize.height);
             contMaxSize.width = (maxSize.width > contMaxSize.width) ? maxSize.width : contMaxSize.width;
         }
-        
+
         return calcOuterFromSize(contMaxSize);
     }
-}
+} // namespace pTK

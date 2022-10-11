@@ -9,12 +9,12 @@
 #define PTK_CORE_WIDGET_HPP
 
 // pTK Headers
-#include "ptk/core/WidgetInterface.hpp"
+#include "Alignment.hpp"
 #include "ptk/core/Drawable.hpp"
 #include "ptk/core/EventHandling.hpp"
 #include "ptk/core/Sizable.hpp"
+#include "ptk/core/WidgetInterface.hpp"
 #include "ptk/util/Point.hpp"
-#include "Alignment.hpp"
 #include "ptk/util/SizePolicy.hpp"
 
 // C++ Headers
@@ -75,7 +75,7 @@ namespace pTK
 
             @return  the Container parent of the Widget
         */
-        Widget* getParent() const;
+        [[nodiscard]] Widget* getParent() const;
 
         /** Function for requesting the position of the Widget.
 
@@ -121,7 +121,10 @@ namespace pTK
         */
         void hide() override;
 
+        // TODO(knobin): Add docs.
         [[nodiscard]] Size getOuterSize() const;
+
+        // TODO(knobin): Add docs.
         [[nodiscard]] Size calcOuterFromSize(const Size& size) const;
 
         /** Function for retrieving the SizePolicy of the Widget.
@@ -135,7 +138,7 @@ namespace pTK
         */
         virtual void setSizePolicy(SizePolicy policy);
 
-        /** Function for retrieving the limits of the Widget with 
+        /** Function for retrieving the limits of the Widget with
             respect to the current set SizePolicy.
 
             @return  limits based on current SizePolicy
@@ -183,6 +186,6 @@ namespace pTK
     // Comparison operators.
     PTK_API bool operator==(const Widget& lhs, const Widget& rhs);
     PTK_API bool operator!=(const Widget& lhs, const Widget& rhs);
-}
+} // namespace pTK
 
 #endif // PTK_CORE_WIDGET_HPP

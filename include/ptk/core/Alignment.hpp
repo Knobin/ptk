@@ -12,8 +12,8 @@
 #include "ptk/core/WidgetInterface.hpp"
 
 // C++ Headers
-#include <type_traits>
 #include <cstdint>
+#include <type_traits>
 
 namespace pTK
 {
@@ -23,14 +23,14 @@ namespace pTK
     */
     enum class Align : int32_t
     {
-        Top     = 0x0001,
-        Bottom  = 0x0002,
-        Left    = 0x0004,
-        Right   = 0x0008,
+        Top = 0x0001,
+        Bottom = 0x0002,
+        Left = 0x0004,
+        Right = 0x0008,
 
         HCenter = 0x0020,
         VCenter = 0x0040,
-        Center  = 0x0080
+        Center = 0x0080
     };
 
     /** Function for checking if a specific Align is set.
@@ -42,13 +42,13 @@ namespace pTK
         IsAlignSet(align, Align::Left, Align::Top); => returns true
         all other combinations will return false.
     */
-    template<typename... Aligns>
+    template <typename... Aligns>
     constexpr bool IsAlignSet(std::underlying_type<Align>::type number, Aligns&&... aligns) noexcept
     {
         using align_utype = std::underlying_type<Align>::type;
         align_utype align{};
 
-        for (const auto p : { aligns... })
+        for (const auto p : {aligns...})
             align |= static_cast<align_utype>(p);
 
         return ((number & align) == align);
@@ -58,7 +58,7 @@ namespace pTK
 
         Pretty self-explanatory.
     */
-    template<typename T>
+    template <typename T>
     struct Directions
     {
         using value_type = T;
@@ -128,13 +128,13 @@ namespace pTK
 
             @param align  Align to apply.
         */
-        template<typename... Aligns>
+        template <typename... Aligns>
         void setAlign(Aligns&&... aligns)
         {
             using align_utype = std::underlying_type<Align>::type;
             align_utype align = 0;
 
-            for (const auto p : { aligns... })
+            for (const auto p : {aligns...})
                 align |= static_cast<align_utype>(p);
 
             m_align = align;
@@ -271,6 +271,6 @@ namespace pTK
         Margin m_margin;
         std::underlying_type<Align>::type m_align;
     };
-}
+} // namespace pTK
 
 #endif // PTK_CORE_ALIGNMENT_HPP

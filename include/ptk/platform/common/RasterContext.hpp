@@ -9,8 +9,8 @@
 #define PTK_PlATFORM_COMMON_RASTERCONTEXT_HPP
 
 // pTK Headers
-#include "ptk/platform/base/ContextBase.hpp"
 #include "ptk/core/Exception.hpp"
+#include "ptk/platform/base/ContextBase.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
@@ -24,7 +24,7 @@ namespace pTK
         Context for a software based Rendering backend.
         All drawings will be done using the CPU.
     */
-    template<typename Policy>
+    template <typename Policy>
     class RasterContext : public ContextBase
     {
     public:
@@ -33,7 +33,8 @@ namespace pTK
             @return    default initialized RasterContext
         */
         RasterContext(const Size& size, const Policy& policy)
-            : ContextBase(size), m_policy{policy}
+            : ContextBase(size),
+              m_policy{policy}
         {
             PTK_INFO("Initialized RasterContext");
             resize(size);
@@ -42,10 +43,7 @@ namespace pTK
         /** RasterContext destructor.
 
         */
-        virtual ~RasterContext()
-        {
-            PTK_INFO("Destroyed RasterContext");
-        }
+        virtual ~RasterContext() { PTK_INFO("Destroyed RasterContext"); }
 
         /** Function for resizing the context.
 
@@ -58,12 +56,13 @@ namespace pTK
             if (!m_policy.resize(size))
                 throw ContextError("Policy failed to resize in Raster Context");
 
-            void *pixels{static_cast<void*>(m_policy.pixels)};
+            void* pixels{static_cast<void*>(m_policy.pixels)};
 
             const int w{static_cast<int>(size.width)};
             const int h{static_cast<int>(size.height)};
-            SkImageInfo info{SkImageInfo::Make(w, h, m_policy.colorType, kPremul_SkAlphaType,nullptr)};
-            m_surface = SkSurface::MakeRasterDirect(info, pixels, sizeof(uint32_t) * static_cast<decltype(sizeof(uint32_t))>(w));
+            SkImageInfo info{SkImageInfo::Make(w, h, m_policy.colorType, kPremul_SkAlphaType, nullptr)};
+            m_surface = SkSurface::MakeRasterDirect(info, pixels,
+                                                    sizeof(uint32_t) * static_cast<decltype(sizeof(uint32_t))>(w));
             if (!m_surface)
                 throw ContextError("Failed to create Raster Context");
 
@@ -75,23 +74,17 @@ namespace pTK
 
             @return    SkSurface property
         */
-        sk_sp<SkSurface> surface() const override
-        {
-            return m_surface;
-        }
+        [[nodiscard]] sk_sp<SkSurface> surface() const override { return m_surface; }
 
         /** Function for swapping the buffers.
 
         */
-        void swapBuffers() override
-        {
-            m_policy.swapBuffers();
-        }
+        void swapBuffers() override { m_policy.swapBuffers(); }
 
     private:
         sk_sp<SkSurface> m_surface;
         Policy m_policy;
     };
-}
+} // namespace pTK
 
 #endif // PTK_PlATFORM_COMMON_RASTERCONTEXT_HPP

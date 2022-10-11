@@ -53,7 +53,7 @@ namespace pTK
 
             @param evt    event of type Event
         */
-        template<typename Event>
+        template <typename Event>
         void handleEvent(const Event& evt);
     };
 
@@ -61,7 +61,7 @@ namespace pTK
 
         @param evt    event of type Event
     */
-    template<typename Event>
+    template <typename Event>
     void EventHandling::handleEvent(const Event& evt)
     {
         triggerEvent<Event>(evt);
@@ -71,7 +71,7 @@ namespace pTK
 
         @param evt    KeyEvent
     */
-    template<>
+    template <>
     inline void EventHandling::handleEvent(const KeyEvent& evt)
     {
         onKeyEvent(evt);
@@ -82,7 +82,7 @@ namespace pTK
 
         @param evt    InputEvent
     */
-    template<>
+    template <>
     inline void EventHandling::handleEvent(const InputEvent& evt)
     {
         onKeyInput(evt);
@@ -93,7 +93,7 @@ namespace pTK
 
         @param evt    MotionEvent
     */
-    template<>
+    template <>
     inline void EventHandling::handleEvent(const MotionEvent& evt)
     {
         onHoverEvent(evt);
@@ -104,7 +104,7 @@ namespace pTK
 
         @param evt    EnterEvent
     */
-    template<>
+    template <>
     inline void EventHandling::handleEvent(const EnterEvent& evt)
     {
         onEnterEvent(evt);
@@ -115,7 +115,7 @@ namespace pTK
 
         @param evt    LeaveEvent
     */
-    template<>
+    template <>
     inline void EventHandling::handleEvent(const LeaveEvent& evt)
     {
         onLeaveEvent(evt);
@@ -126,7 +126,7 @@ namespace pTK
 
         @param evt    LeaveClickEvent
     */
-    template<>
+    template <>
     inline void EventHandling::handleEvent(const LeaveClickEvent& evt)
     {
         onLeaveClickEvent(evt);
@@ -137,7 +137,7 @@ namespace pTK
 
         @param evt    ScrollEvent
     */
-    template<>
+    template <>
     inline void EventHandling::handleEvent(const ScrollEvent& evt)
     {
         onScrollEvent(evt);
@@ -148,7 +148,7 @@ namespace pTK
 
         @param evt    ClickEvent
     */
-    template<>
+    template <>
     inline void EventHandling::handleEvent(const ClickEvent& evt)
     {
         onClickEvent(evt);
@@ -159,12 +159,12 @@ namespace pTK
 
         @param evt    ReleaseEvent
     */
-    template<>
+    template <>
     inline void EventHandling::handleEvent(const ReleaseEvent& evt)
     {
         onReleaseEvent(evt);
         triggerEvent<ReleaseEvent>(evt);
     }
-}
+} // namespace pTK
 
 #endif // PTK_CORE_EVENTHANDLING_HPP

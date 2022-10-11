@@ -1,8 +1,9 @@
 // Must be before the Catch2 include.
-#include <ostream>
 #include "ptk/util/Size.hpp"
+#include <ostream>
 
-std::ostream& operator<<(std::ostream& os, const pTK::Size& size) {
+std::ostream& operator<<(std::ostream& os, const pTK::Size& size)
+{
     os << "{" << size.width << ", " << size.height << "}";
     return os;
 }
@@ -252,7 +253,7 @@ TEST_CASE("Copy and Assignment")
     }
 }
 
-TEST_CASE ("Comparison")
+TEST_CASE("Comparison")
 {
     // Testing Transformable Comparison.
     pTK::Sizable size;

@@ -16,6 +16,8 @@ namespace pTK
 {
     std::map<int32, KeyCode> KeyCodeMapInit_win()
     {
+        // clang-format off
+
         std::map<int32, KeyCode> map{};
         map[VK_SPACE] = Key::Space;
         map[0x30] = Key::D0; map[0x31] = Key::D1; map[0x32] = Key::D2; map[0x33] = Key::D3;
@@ -42,6 +44,8 @@ namespace pTK
 
         map[VK_LSHIFT] = Key::LeftShift; map[VK_LCONTROL] = Key::LeftControl; map[VK_LMENU] = Key::LeftAlt;
         map[VK_RSHIFT] = Key::RightShift; map[VK_RCONTROL] = Key::RightControl; map[VK_RMENU] = Key::RightAlt;
+
+        // clang-format on
 
         return map;
     }

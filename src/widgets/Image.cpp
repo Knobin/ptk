@@ -17,16 +17,20 @@ namespace pTK
 {
     Image::Image()
         : Widget(),
-            m_path{}, m_image{nullptr}, m_scale{1.0f, 1.0f}
+          m_path{},
+          m_image{nullptr},
+          m_scale{1.0f, 1.0f}
     {}
-    
+
     Image::Image(const std::string& path)
         : Widget(),
-            m_path{path}, m_image{nullptr}, m_scale{1.0f, 1.0f}
+          m_path{path},
+          m_image{nullptr},
+          m_scale{1.0f, 1.0f}
     {
         loadFromFile(path);
     }
-    
+
     bool Image::loadFromFile(const std::string& path)
     {
         sk_sp<SkData> data{SkData::MakeFromFileName(path.c_str())};
@@ -55,7 +59,7 @@ namespace pTK
 
         return false;
     }
-    
+
     void Image::onDraw(SkCanvas* canvas)
     {
         if (m_image)
@@ -64,18 +68,18 @@ namespace pTK
             const SkPoint pos{convertToSkPoint(getPosition())};
             SkPoint size{convertToSkPoint(getSize())};
             size += pos; // skia needs the size to be pos+size.
-            
+
             SkRect dst{};
             dst.set(pos, size);
             canvas->drawImageRect(m_image, dst, SkSamplingOptions(), nullptr);
-        } 
+        }
     }
 
     const Vec2f& Image::getScale() const
     {
         return m_scale;
     }
-    
+
     void Image::setScale(float x, float y)
     {
         applyScale(x, y);
@@ -100,4 +104,4 @@ namespace pTK
             setSize(Size{static_cast<Size::value_type>(w), static_cast<Size::value_type>(h)});
         }
     }
-}
+} // namespace pTK

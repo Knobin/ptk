@@ -17,8 +17,9 @@ PTK_DISABLE_WARN_END()
 namespace pTK
 {
     Window::Window(const std::string& name, const Size& size, const WindowInfo& flags)
-        : PTK_WINDOW_HANDLE_T(name, size, flags), SingleObject(),
-            m_threadID{std::this_thread::get_id()}
+        : PTK_WINDOW_HANDLE_T(name, size, flags),
+          SingleObject(),
+          m_threadID{std::this_thread::get_id()}
     {
         // Set Widget properties.
         setName(name);
@@ -108,7 +109,7 @@ namespace pTK
 
     void Window::onMove(const std::function<bool(const Point& pos)>& callback)
     {
-        addListener<MoveEvent>([&](const MoveEvent& evt){
+        addListener<MoveEvent>([&](const MoveEvent& evt) {
             callback(evt.pos);
             return false;
         });
@@ -116,7 +117,7 @@ namespace pTK
 
     void Window::onResize(const std::function<bool(const Size& pos)>& callback)
     {
-        addListener<ResizeEvent>([&](const ResizeEvent& evt){
+        addListener<ResizeEvent>([&](const ResizeEvent& evt) {
             callback(evt.size);
             return false;
         });
@@ -183,8 +184,7 @@ namespace pTK
             MotionEvent* mEvent{static_cast<MotionEvent*>(event)};
             triggerEvent<MotionEvent>(*mEvent);
         }
-        else if (type == Event::Type::MouseButtonPressed ||
-                 type == Event::Type::MouseButtonReleased)
+        else if (type == Event::Type::MouseButtonPressed || type == Event::Type::MouseButtonReleased)
         {
             ButtonEvent* bEvent{static_cast<ButtonEvent*>(event)};
             Point pos{bEvent->pos};
@@ -196,7 +196,7 @@ namespace pTK
             }
             else if (type == Event::Type::MouseButtonReleased)
             {
-                ReleaseEvent rEvt{ btn, pos };
+                ReleaseEvent rEvt{btn, pos};
                 triggerEvent<ReleaseEvent>(rEvt);
             }
         }
@@ -246,16 +246,16 @@ namespace pTK
             }
             case Event::Type::WindowFocus:
             {
-                //if (m_onFocus) // Nullptr for some reason.
-                    //m_onFocus();
+                // if (m_onFocus) // Nullptr for some reason.
+                // m_onFocus();
                 break;
             }
             case Event::Type::WindowLostFocus:
             {
-                //if (m_onLostFocus)
-                    //m_onLostFocus();
-                //handleLeaveClickEvent();
-                // TODO: Fix handleLeaveClickEvent()
+                // if (m_onLostFocus)
+                // m_onLostFocus();
+                // handleLeaveClickEvent();
+                //  TODO: Fix handleLeaveClickEvent()
                 break;
             }
             case Event::Type::WindowMinimize:
@@ -296,7 +296,7 @@ namespace pTK
         // m_handle.beginPaint();
         beginPaint();
         // ContextBase* context{m_handle.getContext()};
-        ContextBase* context{ getContext() };
+        ContextBase* context{getContext()};
         sk_sp<SkSurface> surface = context->surface();
         SkCanvas* canvas{surface->getCanvas()};
 
@@ -305,7 +305,7 @@ namespace pTK
         // Apply monitor scale.
         SkMatrix matrix{};
         // Vec2f scale{m_handle.getDPIScale()};
-        Vec2f scale{ getDPIScale() };
+        Vec2f scale{getDPIScale()};
         matrix.setScale(scale.x, scale.y);
         canvas->setMatrix(matrix);
 
@@ -317,13 +317,13 @@ namespace pTK
         paint.setARGB(255, bg.r, bg.g, bg.b);
         canvas->drawRect(rect, paint);
 
-        //for (auto& widget : *this)
-        //    widget->onDraw(canvas);
+        // for (auto& widget : *this)
+        //     widget->onDraw(canvas);
         drawChildren(canvas);
 
         surface->flushAndSubmit();
-        //m_handle.swapBuffers();
-        //m_handle.endPaint();
+        // m_handle.swapBuffers();
+        // m_handle.endPaint();
         swapBuffers();
         endPaint();
     }
@@ -339,14 +339,13 @@ namespace pTK
             if (image)
             {
                 // Read pixels in an RGBA format.
-                const SkImageInfo imageInfo{
-                    image->imageInfo().makeColorType(SkColorType::kRGBA_8888_SkColorType)};
+                const SkImageInfo imageInfo{image->imageInfo().makeColorType(SkColorType::kRGBA_8888_SkColorType)};
                 const size_t storageSize{imageInfo.computeMinByteSize()};
                 std::unique_ptr<byte[]> pixelData{std::make_unique<byte[]>(storageSize)};
 
                 if (image->readPixels(imageInfo, pixelData.get(), imageInfo.minRowBytes(), 0, 0))
-                    return setIcon(static_cast<int32>(image->width()),
-                                   static_cast<int32>(image->height()), pixelData.get());
+                    return setIcon(static_cast<int32>(image->width()), static_cast<int32>(image->height()),
+                                   pixelData.get());
 #ifdef PTK_DEBUG
                 else
                 {

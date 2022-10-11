@@ -14,7 +14,7 @@
 namespace pTK
 {
     /** NonMovable class implementation.
-     
+
         Class for forbidding moving.
     */
     class PTK_API NonMovable
@@ -51,7 +51,6 @@ namespace pTK
         */
         NonMovable& operator=(const NonMovable&) = default;
     };
-}
+} // namespace pTK
 
 #endif // PTK_UTIL_NONMOVABLE_HPP
-

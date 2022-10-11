@@ -15,7 +15,7 @@
 namespace pTK
 {
     /** SingleObject class implementation.
-     
+
         Class for forbidding copying and moving.
     */
     class PTK_API SingleObject : public NonMovable, public NonCopyable
@@ -23,7 +23,6 @@ namespace pTK
     public:
         virtual ~SingleObject() = default;
     };
-}
+} // namespace pTK
 
 #endif // PTK_UTIL_SINGLEOBJECT_HPP
-

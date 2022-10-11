@@ -7,7 +7,7 @@
 const unsigned int SCR_WIDTH = 960;
 const unsigned int SCR_HEIGHT = 540;
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     pTK::Application app("ButtonExample Application", argc, argv);
     pTK::Window window("ButtonExample Window", {SCR_WIDTH, SCR_HEIGHT});
@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     pTK::Ref<pTK::Button> defaultBtn = pTK::Create<pTK::Button>(pTK::Button::Style::Default);
     defaultBtn->setText("Default Button");
     window.add(defaultBtn);
-    defaultBtn->onClick([&defaultBtn](const pTK::ClickEvent&){
+    defaultBtn->onClick([&defaultBtn](const pTK::ClickEvent&) {
         std::cout << defaultBtn->getText() << " clicked!\n";
         return false;
     });
@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     pTK::Ref<pTK::Button> successBtn = pTK::Create<pTK::Button>(pTK::Button::Style::Success);
     successBtn->setText("Success Button");
     window.add(successBtn);
-    successBtn->onClick([&successBtn](const pTK::ClickEvent&){
+    successBtn->onClick([&successBtn](const pTK::ClickEvent&) {
         std::cout << successBtn->getText() << " clicked!\n";
         return false;
     });
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     pTK::Ref<pTK::Button> dangerBtn = pTK::Create<pTK::Button>(pTK::Button::Style::Danger);
     dangerBtn->setText("Danger Button");
     window.add(dangerBtn);
-    dangerBtn->onClick([&dangerBtn](const pTK::ClickEvent&){
+    dangerBtn->onClick([&dangerBtn](const pTK::ClickEvent&) {
         std::cout << dangerBtn->getText() << " clicked!\n";
         return false;
     });
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     customBtn->setClickColor(pTK::Color(0x656565FF));
     customBtn->setHoverColor(pTK::Color(0x707070FF));
     window.add(customBtn);
-    customBtn->onClick([&customBtn](const pTK::ClickEvent&){
+    customBtn->onClick([&customBtn](const pTK::ClickEvent&) {
         std::cout << customBtn->getText() << " clicked!\n";
         return false;
     });
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     customStyleBtn->setStyle(style);
     customStyleBtn->setText("Custom Style Button");
     window.add(customStyleBtn);
-    customStyleBtn->onClick([&customStyleBtn](const pTK::ClickEvent&){
+    customStyleBtn->onClick([&customStyleBtn](const pTK::ClickEvent&) {
         std::cout << customStyleBtn->getText() << " clicked!\n";
         return false;
     });
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
     customSizeBtn->setSize(pTK::Size(250, 100));
     customSizeBtn->setText("Custom Size Button");
     window.add(customSizeBtn);
-    customSizeBtn->onClick([&customSizeBtn](const pTK::ClickEvent&){
+    customSizeBtn->onClick([&customSizeBtn](const pTK::ClickEvent&) {
         std::cout << customSizeBtn->getText() << " clicked!\n";
         return false;
     });
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     customLabelSizeBtn->setFontSize(24);
     customLabelSizeBtn->setText("Custom Font Size Button");
     window.add(customLabelSizeBtn);
-    customLabelSizeBtn->onClick([&customLabelSizeBtn](const pTK::ClickEvent&){
+    customLabelSizeBtn->onClick([&customLabelSizeBtn](const pTK::ClickEvent&) {
         std::cout << customLabelSizeBtn->getText() << " clicked!\n";
         return false;
     });

@@ -17,9 +17,10 @@
 
 namespace pTK::MenuBarUtil_win
 {
-    void SetNamedOrCheckboxItem(HMENU hmenu, MenuMap& menus, const Ref<MenuItem>& item, uint menuId, std::vector<ACCEL>& keys, bool isCheckbox)
+    void SetNamedOrCheckboxItem(HMENU hmenu, MenuMap& menus, const Ref<MenuItem>& item, uint menuId,
+                                std::vector<ACCEL>& keys, bool isCheckbox)
     {
-        NamedMenuItem *nItem = dynamic_cast<NamedMenuItem*>(item.get());
+        NamedMenuItem* nItem = dynamic_cast<NamedMenuItem*>(item.get());
         if (!nItem)
             return;
 
@@ -36,11 +37,12 @@ namespace pTK::MenuBarUtil_win
         UINT statusFlag = MenuBarUtil_win::MenuItemStatusToFlag(nItem->status());
         if (isCheckbox)
         {
-            nItem->onUpdate("Win32::Update", [nItem, id, hmenu](){
+            nItem->onUpdate("Win32::Update", [nItem, id, hmenu]() {
                 UINT checked = (nItem->status() == MenuItemStatus::Checked) ? MF_CHECKED : MF_UNCHECKED;
                 UINT statusFlag = MenuBarUtil_win::MenuItemStatusToFlag(nItem->status());
-                //CheckMenuItem(m_parent, m_id, MF_BYCOMMAND | checked | statusFlag);
-                const std::string str = nItem->name() + "\t" + MenuBarUtil_win::TranslateKeyCodesToShortcutStr(nItem->shortcut());
+                // CheckMenuItem(m_parent, m_id, MF_BYCOMMAND | checked | statusFlag);
+                const std::string str =
+                    nItem->name() + "\t" + MenuBarUtil_win::TranslateKeyCodesToShortcutStr(nItem->shortcut());
                 ModifyMenu(hmenu, id, MF_BYCOMMAND | MF_STRING | checked | statusFlag, id, str.c_str());
                 PTK_INFO("Win32::Update, id {}", id);
             });
@@ -49,9 +51,10 @@ namespace pTK::MenuBarUtil_win
         }
         else
         {
-            nItem->onUpdate("Win32::Update", [nItem, id, hmenu](){
+            nItem->onUpdate("Win32::Update", [nItem, id, hmenu]() {
                 UINT statusFlag = MenuBarUtil_win::MenuItemStatusToFlag(nItem->status());
-                const std::string str = nItem->name() + "\t" + MenuBarUtil_win::TranslateKeyCodesToShortcutStr(nItem->shortcut());
+                const std::string str =
+                    nItem->name() + "\t" + MenuBarUtil_win::TranslateKeyCodesToShortcutStr(nItem->shortcut());
                 ModifyMenu(hmenu, id, MF_BYCOMMAND | MF_STRING | statusFlag, id, str.c_str());
                 PTK_INFO("Win32::Update, id {}", id);
             });
@@ -60,8 +63,8 @@ namespace pTK::MenuBarUtil_win
         }
     }
 
-
-    void CreateMenuStructure(HMENU parent, MenuMap& menus, const pTK::Ref<pTK::Menu>& menu, uint parentId, std::vector<ACCEL>& keys)
+    void CreateMenuStructure(HMENU parent, MenuMap& menus, const pTK::Ref<pTK::Menu>& menu, uint parentId,
+                             std::vector<ACCEL>& keys)
     {
         HMENU currentMenu = ::CreateMenu();
         AppendMenu(parent, MF_POPUP, reinterpret_cast<UINT_PTR>(currentMenu), menu->name().c_str());
@@ -149,8 +152,7 @@ namespace pTK::MenuBarUtil_win
 
             if (foundKey != shortcutKeys.cend())
                 str = foundKey->first;
-            else
-            if (IsKeyCodeAlpha(key))
+            else if (IsKeyCodeAlpha(key))
                 str = KeyCodeToAlpha(key);
         }
 
@@ -175,7 +177,7 @@ namespace pTK::MenuBarUtil_win
                     constexpr std::pair<std::string_view, int32> shift("Shift", FSHIFT);
 
                     constexpr std::array<std::pair<std::string_view, int32>, 3> virts{alt, ctrl, shift};
-                    const auto foundVirt = std::find_if(virts.cbegin(), virts.cend(),[&](const auto& pair) {
+                    const auto foundVirt = std::find_if(virts.cbegin(), virts.cend(), [&](const auto& pair) {
                         return pair.first == str;
                     });
 
@@ -210,10 +212,10 @@ namespace pTK::MenuBarUtil_win
         for (auto it{shortcut.modifiers().cbegin()}; it != shortcut.modifiers().cend(); ++it)
         {
             const std::string keyStr = TranslateKeyCodeToShortcutStr(*it);
-                str += (!str.empty() ? "+" : "") + keyStr;
+            str += (!str.empty() ? "+" : "") + keyStr;
         }
 
         return str + (!str.empty() ? "+" : "") + key;
     }
 
-} // namespace pTK
+} // namespace pTK::MenuBarUtil_win

@@ -74,5 +74,4 @@
 #include "ptk/widgets/TextField.hpp"
 #include "ptk/widgets/VBox.hpp"
 
-
 #endif // PTK_HPP

@@ -9,12 +9,12 @@
 #define PTK_PLATFORM_BASE_WINDOWHANDLE_HPP
 
 // pTK Headers
-#include "ptk/util/Point.hpp"
-#include "ptk/util/Size.hpp"
-#include "ptk/platform/base/ContextBase.hpp"
 #include "ptk/Core.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/core/WindowInfo.hpp"
+#include "ptk/platform/base/ContextBase.hpp"
+#include "ptk/util/Point.hpp"
+#include "ptk/util/Size.hpp"
 #include "ptk/widgets/VBox.hpp"
 
 namespace pTK
@@ -93,7 +93,7 @@ namespace pTK
             @return     true if operation is successful, otherwise false
         */
         // virtual bool setPosHint(const Point& UNUSED(pos)) = 0;
-        void setPosHint(const Point& UNUSED(pos)) override {};
+        void setPosHint(const Point& UNUSED(pos)) override{};
 
         /** Function for resizing the window.
 
@@ -111,7 +111,7 @@ namespace pTK
 
             @return     Context
         */
-        [[nodiscard]] virtual ContextBase *getContext() const = 0;
+        [[nodiscard]] virtual ContextBase* getContext() const = 0;
 
         /** Function for retrieving the scaling of the Window.
 
@@ -159,7 +159,7 @@ namespace pTK
             Depending on the implementation, pollEvents() might need to be exited.
             This function will notify when that is needed.
         */
-        virtual void notifyEvent() {};
+        virtual void notifyEvent(){};
 
         /** Function for retrieving the window position.
 
@@ -219,12 +219,12 @@ namespace pTK
 
     protected:
         /** Function for invalidating the window.
-            
+
         */
         virtual void inval() {}
 
         // Use this function to send events.
-        template<typename Event>
+        template <typename Event>
         void iHandleEvent(const Event& evt);
 
     private:
@@ -254,39 +254,39 @@ namespace pTK
     };
 
     // Default event that is not handled by the window.
-    template<typename Event>
+    template <typename Event>
     void WindowHandle::iHandleEvent(const Event& evt)
     {
         handleEvent<Event>(evt);
     }
 
-    template<>
+    template <>
     inline void WindowHandle::iHandleEvent<CloseEvent>(const CloseEvent& evt)
     {
         close();
         handleEvent<CloseEvent>(evt);
     }
 
-    template<>
+    template <>
     inline void WindowHandle::iHandleEvent<ResizeEvent>(const ResizeEvent& evt)
     {
         setSize(evt.size);
         handleEvent<ResizeEvent>(evt);
     }
 
-    template<>
+    template <>
     inline void WindowHandle::iHandleEvent<MoveEvent>(const MoveEvent& evt)
     {
         setPosHint(evt.pos);
         handleEvent<MoveEvent>(evt);
     }
 
-    template<>
+    template <>
     inline void WindowHandle::iHandleEvent<PaintEvent>(const PaintEvent& evt)
     {
         handleEvent<PaintEvent>(evt);
         draw(evt);
     }
-}
+} // namespace pTK
 
 #endif // PTK_PLATFORM_BASE_WINDOWHANDLE_HPP

@@ -11,10 +11,12 @@
 namespace pTK
 {
     Menu::Menu(const std::string& name, const std::initializer_list<Ref<MenuItem>>& items)
-        : MenuItem(MenuItemType::Menu, MenuItemStatus::Enabled), m_holder{items}, m_name{name}
+        : MenuItem(MenuItemType::Menu, MenuItemStatus::Enabled),
+          m_holder{items},
+          m_name{name}
     {}
 
-    [[nodiscard]] const std::string& Menu::name() const
+    const std::string& Menu::name() const
     {
         return m_name;
     }
@@ -37,4 +39,4 @@ namespace pTK
                 m_holder.erase(it);
     }
 
-} // pTK
+} // namespace pTK

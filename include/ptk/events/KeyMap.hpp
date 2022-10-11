@@ -17,6 +17,7 @@
 
 namespace pTK
 {
+    // TODO(knobin): Add docs.
     class PTK_API KeyMap : public SingleObject
     {
     public:

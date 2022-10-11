@@ -9,21 +9,21 @@
 #define PTK_CORE_CALLBACKSTORAGE_HPP
 
 // pTK Headers
-#include "ptk/core/Defines.hpp"
 #include "ptk/Log.hpp"
+#include "ptk/core/Defines.hpp"
 
 // C++ Headers
 #include <algorithm>
 #include <cstdint>
 #include <functional>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 // Defines for logging in this file.
 #if defined(PTK_CB_STORAGE_DEBUG) && defined(PTK_DEBUG)
-    #define PTK_CB_STORAGE_LOG(...) PTK_INFO(__VA_ARGS__)
+#define PTK_CB_STORAGE_LOG(...) PTK_INFO(__VA_ARGS__)
 #else
-    #define PTK_CB_STORAGE_LOG(...)
+#define PTK_CB_STORAGE_LOG(...)
 #endif
 
 namespace pTK
@@ -46,12 +46,13 @@ namespace pTK
 
         // Each callback will be stored in a node together with
         // a unique identifier. Note: the uniqueness of the id will
-        // not be checked, it is assumed that the id is unique when 
-        // passed from adding the callback. 
+        // not be checked, it is assumed that the id is unique when
+        // passed from adding the callback.
         struct Node
         {
             Node(uint64_t identifier, callback_type func)
-                : id{identifier}, callback{func} 
+                : id{identifier},
+                  callback{func}
             {}
             uint64_t id;
             callback_type callback;
@@ -130,10 +131,7 @@ namespace pTK
         /** Function for clearing the CallbackContainer.
 
         */
-        void clear() noexcept
-        {
-            m_storage.clear();
-        }
+        void clear() noexcept { m_storage.clear(); }
 
         /** Function for adding a callback.
 
@@ -153,9 +151,8 @@ namespace pTK
         */
         bool removeCallback(uint64_t id)
         {
-            auto it = std::find_if(m_storage.cbegin(), m_storage.cend(), [id](const Node& node) {
-                return node.id == id;
-            });
+            auto it =
+                std::find_if(m_storage.cbegin(), m_storage.cend(), [id](const Node& node) { return node.id == id; });
 
             if (it != m_storage.cend())
             {
@@ -171,8 +168,8 @@ namespace pTK
 
             @param args     callback parameters
         */
-        template<typename... Args>
-        void triggerCallbacks(Args&& ...args) const
+        template <typename... Args>
+        void triggerCallbacks(Args&&... args) const
         {
             for (auto it = m_storage.cbegin(); it != m_storage.cend(); ++it)
                 it->callback(std::forward<Args>(args)...);
@@ -182,7 +179,7 @@ namespace pTK
 
             @param p     predicate
         */
-        template<typename UnaryPredicate>
+        template <typename UnaryPredicate>
         void removeCallbackIf(UnaryPredicate p)
         {
             for (auto it = m_storage.begin(); it != m_storage.end();)
@@ -201,10 +198,7 @@ namespace pTK
 
             @return     number of callbacks
         */
-        [[nodiscard]] std::size_t size() const noexcept
-        {
-            return m_storage.size();
-        }
+        [[nodiscard]] std::size_t size() const noexcept { return m_storage.size(); }
 
     private:
         container_type m_storage;
@@ -258,10 +252,7 @@ namespace pTK
     {
         virtual ~CallbackStorageNode() = default;
 
-        [[nodiscard]] std::size_t count() const noexcept override
-        {
-            return container.size();
-        }
+        [[nodiscard]] std::size_t count() const noexcept override { return container.size(); }
 
         [[nodiscard]] std::unique_ptr<CallbackStorageNodeInterface> clone() const override
         {
@@ -270,15 +261,9 @@ namespace pTK
             return copy;
         }
 
-        [[nodiscard]] const void* data() const noexcept override
-        {
-            return static_cast<const void*>(&container);
-        }
+        [[nodiscard]] const void* data() const noexcept override { return static_cast<const void*>(&container); }
 
-        [[nodiscard]] void* data() noexcept override
-        {
-            return static_cast<void*>(&container);
-        }
+        [[nodiscard]] void* data() noexcept override { return static_cast<void*>(&container); }
 
         CallbackContainer<Callback> container{};
     };
@@ -356,7 +341,7 @@ namespace pTK
             CallbackStorage copy{};
             copy.m_storage.reserve(m_storage.size());
 
-            for (const auto & it : m_storage)
+            for (const auto& it : m_storage)
                 copy.m_storage.emplace(it.first, it.second->clone());
 
             return copy;
@@ -365,10 +350,7 @@ namespace pTK
         /** Function for clearing the CallbackStorage.
 
         */
-        void clear() noexcept
-        {
-            m_storage.clear();
-        }
+        void clear() noexcept { m_storage.clear(); }
 
         /** Function for adding a callback of type Callback for type T.
 
@@ -470,10 +452,10 @@ namespace pTK
             @param args     callback parameters
         */
         template <typename T, typename Callback, typename... Args>
-        void triggerCallbacks(Args&& ...args) const
+        void triggerCallbacks(Args&&... args) const
         {
             // Get index based on T & Callback types.
-            const CallbackContainer<Callback> *cont{getCallbackContainer<T, Callback>()};
+            const CallbackContainer<Callback>* cont{getCallbackContainer<T, Callback>()};
 
             // Is container valid?
             if (cont != nullptr)
@@ -488,7 +470,7 @@ namespace pTK
         void removeCallbackIf(UnaryPredicate p)
         {
             // Get index based on T & Callback types.
-            CallbackContainer<Callback> *cont{getCallbackContainer<T, Callback>()};
+            CallbackContainer<Callback>* cont{getCallbackContainer<T, Callback>()};
 
             // Is container valid?
             if (cont != nullptr)
@@ -509,10 +491,7 @@ namespace pTK
 
             @return     number of containers in storage
         */
-        [[nodiscard]] std::size_t size() const noexcept
-        {
-            return m_storage.size();
-        }
+        [[nodiscard]] std::size_t size() const noexcept { return m_storage.size(); }
 
         /** Function for retrieving the amount of callbacks in the storage.
 
@@ -545,7 +524,7 @@ namespace pTK
 
             if (count == 1)
             {
-                const CallbackStorageNodeInterface *node{m_storage.at(index).get()};
+                const CallbackStorageNodeInterface* node{m_storage.at(index).get()};
                 return static_cast<const CallbackContainer<Callback>*>(node->data());
             }
 
@@ -567,7 +546,7 @@ namespace pTK
 
             if (count == 1)
             {
-                CallbackStorageNodeInterface *node{m_storage.at(index).get()};
+                CallbackStorageNodeInterface* node{m_storage.at(index).get()};
                 return static_cast<CallbackContainer<Callback>*>(node->data());
             }
 
@@ -579,7 +558,7 @@ namespace pTK
             @return     CallbackContainer<Callback> pointer if node is created, otherwise nullptr
         */
         template <typename T, typename Callback>
-        [[nodiscard]] CallbackContainer<Callback> *createNode()
+        [[nodiscard]] CallbackContainer<Callback>* createNode()
         {
             // Get index based on T and Callback types.
             const std::size_t index = CallbackIndexGen::GetIndex<T, Callback>();
@@ -620,6 +599,6 @@ namespace pTK
         container_type m_storage{};
         static uint64_t s_idCounter;
     };
-}
+} // namespace pTK
 
 #endif // PTK_CORE_CALLBACKSTORAGE_HPP

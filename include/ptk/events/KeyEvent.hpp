@@ -10,9 +10,9 @@
 
 // pTK Headers
 #include "ptk/core/Event.hpp"
+#include "ptk/core/Text.hpp"
 #include "ptk/core/Types.hpp"
 #include "ptk/events/KeyCodes.hpp"
-#include "ptk/core/Text.hpp"
 
 // C++ Headers
 #include <type_traits>
@@ -32,6 +32,8 @@ namespace pTK
         inline static const Event::Type Pressed = Event::Type::KeyPressed;
         inline static const Event::Type Released = Event::Type::KeyReleased;
 
+        // clang-format off
+
         enum class Modifier : byte
         {
             NONE        = 0,
@@ -43,6 +45,8 @@ namespace pTK
             NumLock     = 32
         };
 
+        // clang-format on
+
     public:
         /** Constructs KeyEvent with default values with type and code.
 
@@ -51,7 +55,10 @@ namespace pTK
             @return         default initialized KeyEvent
         */
         KeyEvent(Event::Type t_type, KeyCode code, uint32 ch, std::underlying_type<KeyEvent::Modifier>::type mod = 0)
-            : Event(Event::Category::Keyboard, t_type), keycode{code}, data{ch}, modifier{mod}
+            : Event(Event::Category::Keyboard, t_type),
+              keycode{code},
+              data{ch},
+              modifier{mod}
         {}
 
         /** Constructs KeyEvent with default values with type and code.
@@ -60,8 +67,13 @@ namespace pTK
             @param code     associated keycode
             @return         default initialized KeyEvent
         */
-        KeyEvent(Event::Type t_type, KeyCode code, uint32 ch, Text::Encoding enc, std::underlying_type<KeyEvent::Modifier>::type mod = 0)
-            : Event(Event::Category::Keyboard, t_type), keycode{code}, data{ch}, encoding{enc}, modifier{mod}
+        KeyEvent(Event::Type t_type, KeyCode code, uint32 ch, Text::Encoding enc,
+                 std::underlying_type<KeyEvent::Modifier>::type mod = 0)
+            : Event(Event::Category::Keyboard, t_type),
+              keycode{code},
+              data{ch},
+              encoding{enc},
+              modifier{mod}
         {}
 
         // Key code.
@@ -71,7 +83,7 @@ namespace pTK
         uint32 data;
 
         // Contains the encoding of the char.
-        Text::Encoding encoding{ Text::Encoding::UTF8 };
+        Text::Encoding encoding{Text::Encoding::UTF8};
 
         // Modifiers.
         std::underlying_type<Modifier>::type modifier;
@@ -97,7 +109,10 @@ namespace pTK
             @return         default initialized KeyEvent
         */
         InputEvent(std::unique_ptr<uint32[]>& arr, std::size_t count, Text::Encoding enc = Text::Encoding::UTF8)
-            : Event(Event::Category::Keyboard, Event::Type::KeyInput), data(std::move(arr)), size{count}, encoding(enc)
+            : Event(Event::Category::Keyboard, Event::Type::KeyInput),
+              data(std::move(arr)),
+              size{count},
+              encoding(enc)
         {}
 
         // Contains array of characters.
@@ -125,7 +140,8 @@ namespace pTK
     {
         KeyEvent::Modifier mod = KeyEvent::Modifier::NONE;
 
-        switch (code) {
+        switch (code)
+        {
             case pTK::Key::LeftShift:
             case pTK::Key::RightShift:
                 mod = KeyEvent::Modifier::Shift;
@@ -148,6 +164,6 @@ namespace pTK
 
         return mod;
     }
-}
+} // namespace pTK
 
 #endif // PTK_EVENTS_KEYEVENT_HPP

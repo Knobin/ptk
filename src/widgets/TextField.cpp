@@ -20,9 +20,10 @@ PTK_DISABLE_WARN_END()
 namespace pTK
 {
     TextField::TextField()
-        : Rectangle(), Text()
+        : Rectangle(),
+          Text()
     {
-        onKey([this](const KeyEvent& evt){
+        onKey([this](const KeyEvent& evt) {
             if (evt.type == Event::Type::KeyPressed)
                 handleKeyPress(evt.keycode, evt.modifier);
             return false;
@@ -33,12 +34,12 @@ namespace pTK
             return false;
         });
 
-        onClick([this](const ClickEvent&){
+        onClick([this](const ClickEvent&) {
             m_drawCursor = true;
             return false;
         });
 
-        onLeaveClick([this](const LeaveClickEvent&){
+        onLeaveClick([this](const LeaveClickEvent&) {
             m_drawCursor = false;
             return false;
         });
@@ -46,7 +47,8 @@ namespace pTK
 
     void TextField::handleKeyPress(KeyCode keycode, byte)
     {
-        switch (keycode) {
+        switch (keycode)
+        {
             case Key::Backspace:
             case Key::Delete:
             {
@@ -150,12 +152,13 @@ namespace pTK
         Rectangle::onDraw(canvas);
         const Size rectSize{getSize()};
 
-        const Text::StrData textData{ getText().c_str(), getText().size(), Text::Encoding::UTF8 };
+        const Text::StrData textData{getText().c_str(), getText().size(), Text::Encoding::UTF8};
         float advance = (!getText().empty()) ? drawTextLine(canvas, textData, m_textColor, m_textPos) : 0.0f;
 
         if (getText().empty())
         {
-            const Text::StrData placeholderStrData{ m_placeholderText.c_str(), m_placeholderText.size(), Text::Encoding::UTF8 };
+            const Text::StrData placeholderStrData{m_placeholderText.c_str(), m_placeholderText.size(),
+                                                   Text::Encoding::UTF8};
             drawTextLine(canvas, placeholderStrData, m_placeholderColor, m_textPos);
         }
 
@@ -172,7 +175,8 @@ namespace pTK
 
             float posX = m_textPos.x + advance - ((m_cursorLocation == 0) ? 2.0f : 0.0f);
 
-            float startY = static_cast<float>(getPosition().y)  + ((static_cast<float>(rectSize.height) - m_cursorHeight) / 2);
+            float startY =
+                static_cast<float>(getPosition().y) + ((static_cast<float>(rectSize.height) - m_cursorHeight) / 2);
             float endY = startY + m_cursorHeight;
             canvas->drawLine({posX, startY}, {posX, endY}, paint);
         }
@@ -218,8 +222,8 @@ namespace pTK
         auto ceilCursorHeight = static_cast<Size::value_type>(std::ceil(m_cursorHeight));
         minSize.height = (minSize.height > ceilCursorHeight) ? minSize.height : ceilCursorHeight;
 
-        Vec2f placeholderBounds{ getBoundsFromStr(m_placeholderText) };
-        Size placeholderSize{ Vec2ToSize(placeholderBounds, Math::ceilf) };
+        Vec2f placeholderBounds{getBoundsFromStr(m_placeholderText)};
+        Size placeholderSize{Vec2ToSize(placeholderBounds, Math::ceilf)};
 
         minSize.width = (minSize.width > placeholderSize.width) ? minSize.width : placeholderSize.width;
         minSize.height = (minSize.height > placeholderSize.height) ? minSize.height : placeholderSize.height;
@@ -260,4 +264,4 @@ namespace pTK
     {
         return m_textColor;
     }
-}
+} // namespace pTK
