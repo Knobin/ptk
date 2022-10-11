@@ -114,7 +114,7 @@ namespace pTK
         void forceDrawAll();
 
         // This draw function gets called from the backend.
-        void draw(const PaintEvent&) override { forceDrawAll(); }
+        void paint(const PaintEvent&) override { forceDrawAll(); }
 
     private:
         EventQueue<std::deque> m_eventQueue{};

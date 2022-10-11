@@ -229,7 +229,7 @@ namespace pTK
 
     private:
         // Gets called when drawing the window is needed (only from a window backend).
-        virtual void draw(const PaintEvent&) = 0;
+        virtual void paint(const PaintEvent&) = 0;
 
         // Sets the new window limits based on the SizePolicy.
         void setLimitsWithSizePolicy()
@@ -285,7 +285,7 @@ namespace pTK
     inline void WindowHandle::iHandleEvent<PaintEvent>(const PaintEvent& evt)
     {
         handleEvent<PaintEvent>(evt);
-        draw(evt);
+        paint(evt);
     }
 } // namespace pTK
 
