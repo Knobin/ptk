@@ -17,6 +17,11 @@
 #include "ptk/util/Size.hpp"
 #include "ptk/widgets/VBox.hpp"
 
+//
+// TODO(knobin): This file needs documentation and possibly changes of
+// functions / thorough check of the necessity of some functions.
+//
+
 namespace pTK
 {
     /** WindowHandle class implementation
@@ -228,6 +233,17 @@ namespace pTK
         void iHandleEvent(const Event& evt);
 
     private:
+        // Window specific callbacks.
+        // TODO(knobin): Add docs.
+        virtual void onCloseEvent() {}
+        virtual void onMoveEvent(const Point& UNUSED(pos)) {}
+        virtual void onResizeEvent(const Size& UNUSED(size)) {}
+        virtual void onFocusEvent() {}
+        virtual void onLostFocusEvent() {}
+        virtual void onMinimizeEvent() {}
+        virtual void onRestoreEvent() {}
+
+    private:
         // Gets called when drawing the window is needed (only from a window backend).
         virtual void paint(const PaintEvent&) = 0;
 
@@ -264,6 +280,7 @@ namespace pTK
     inline void WindowHandle::iHandleEvent<CloseEvent>(const CloseEvent& evt)
     {
         close();
+        onCloseEvent();
         handleEvent<CloseEvent>(evt);
     }
 
@@ -271,6 +288,7 @@ namespace pTK
     inline void WindowHandle::iHandleEvent<ResizeEvent>(const ResizeEvent& evt)
     {
         setSize(evt.size);
+        onResizeEvent(evt.size);
         handleEvent<ResizeEvent>(evt);
     }
 
@@ -278,6 +296,7 @@ namespace pTK
     inline void WindowHandle::iHandleEvent<MoveEvent>(const MoveEvent& evt)
     {
         setPosHint(evt.pos);
+        onMoveEvent(evt.pos);
         handleEvent<MoveEvent>(evt);
     }
 
@@ -286,6 +305,34 @@ namespace pTK
     {
         handleEvent<PaintEvent>(evt);
         paint(evt);
+    }
+
+    template <>
+    inline void WindowHandle::iHandleEvent<FocusEvent>(const FocusEvent& evt)
+    {
+        onFocusEvent();
+        handleEvent<FocusEvent>(evt);
+    }
+
+    template <>
+    inline void WindowHandle::iHandleEvent<LostFocusEvent>(const LostFocusEvent& evt)
+    {
+        onLostFocusEvent();
+        handleEvent<LostFocusEvent>(evt);
+    }
+
+    template <>
+    inline void WindowHandle::iHandleEvent<MinimizeEvent>(const MinimizeEvent& evt)
+    {
+        onMinimizeEvent();
+        handleEvent<MinimizeEvent>(evt);
+    }
+
+    template <>
+    inline void WindowHandle::iHandleEvent<RestoreEvent>(const RestoreEvent& evt)
+    {
+        onRestoreEvent();
+        handleEvent<RestoreEvent>(evt);
     }
 } // namespace pTK
 
