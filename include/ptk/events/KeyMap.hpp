@@ -17,22 +17,65 @@
 
 namespace pTK
 {
-    // TODO(knobin): Add docs.
+    /** KeyMap class implementation.
+
+        Contains the key mapping and provides an abstracted interface for the user.
+
+        The key map is created using the KeyMapInit function in PlatformInit.hpp
+        and will be different depending on the platform.
+    */
     class PTK_API KeyMap : public SingleObject
     {
     public:
-        static KeyMap& Get();
-        static bool KeyExists(Key key);
-        static bool KeyCodeExists(int32 keycode);
-        static Key KeyCodeToKey(int32 keycode);
-        static int32 KeyToKeyCode(Key key);
+        /** Function for retrieving the KeyMap instance.
+
+            @return     KeyMap instance
+        */
+        [[nodiscard]] static KeyMap& Get();
+
+        /** Function for checking if a Key exists in the KeyMap.
+
+            @param  key     Key to check
+            @return         status
+        */
+        [[nodiscard]] static bool KeyExists(Key key);
+
+        /** Function for checking if a Key exists in the KeyMap.
+
+            @param  keycode     Keycode to check
+            @return             status
+        */
+        [[nodiscard]] static bool KeyCodeExists(int32 keycode);
+
+        /** Function for converting a keycode to Key.
+
+            @param  keycode     Keycode to convert
+            @return             Key if found, otherwise Key::Unknown
+        */
+        [[nodiscard]] static Key KeyCodeToKey(int32 keycode);
+
+        /** Function for converting a Key to keycode.
+
+            @param  key     Key to convert
+            @return         Keycode if found, otherwise value of Key::Unknown
+        */
+        [[nodiscard]] static int32 KeyToKeyCode(Key key);
 
     private:
+        /** Constructs KeyMap with default values.
+
+            @return    default initialized KeyMap
+        */
         KeyMap();
+
+        /** Destructor for KeyMap.
+
+        */
         virtual ~KeyMap() = default;
 
+    private:
         static KeyMap s_Instance;
-        const std::map<int32, Key> m_keyMap;
+        const std::map<int32, Key> m_keyMap; // TODO(knobin): Change this to std::unordered_map.
     };
 
 } // namespace pTK

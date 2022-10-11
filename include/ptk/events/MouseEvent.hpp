@@ -43,13 +43,13 @@ namespace pTK
             @param t_pos    associated x and y position
             @return         default initialized MotionEvent
         */
-        explicit MotionEvent(const Point& t_pos)
+        explicit constexpr MotionEvent(const Point& t_pos) noexcept
             : Event(Event::Category::Mouse, Event::Type::MouseMoved),
               pos{t_pos}
         {}
 
         // Location.
-        const Point pos;
+        Point pos;
     };
 
     /** ScrollEvent class implementation.
@@ -64,13 +64,13 @@ namespace pTK
             @param t_offset     associated x and y offset
             @return             default initialized ScrollEvent
         */
-        explicit ScrollEvent(const Vec2f& t_offset)
+        explicit constexpr ScrollEvent(const Vec2f& t_offset) noexcept
             : Event(Event::Category::Mouse, Event::Type::MouseScrolled),
               offset{t_offset}
         {}
 
         // Scroll offset.
-        const Vec2f offset;
+        Vec2f offset;
     };
 
     /** ButtonEvent class implementation.
@@ -88,17 +88,17 @@ namespace pTK
             @param t_pos        associated x and y
             @return             default initialized ButtonEvent
         */
-        ButtonEvent(Event::Type t_type, Mouse::Button t_button, const Point& t_pos)
+        constexpr ButtonEvent(Event::Type t_type, Mouse::Button t_button, const Point& t_pos) noexcept
             : Event(Event::Category::Mouse, t_type),
               button{t_button},
               pos{t_pos}
         {}
 
         // Button pressed or released.
-        const Mouse::Button button;
+        Mouse::Button button;
 
         // Location.
-        const Point pos;
+        Point pos;
     };
 
     class PTK_API ClickEvent : public ButtonEvent
@@ -110,7 +110,7 @@ namespace pTK
             @param t_pos        associated x and y
             @return             default initialized ButtonEvent
         */
-        ClickEvent(Mouse::Button t_button, const Point& t_pos)
+        constexpr ClickEvent(Mouse::Button t_button, const Point& t_pos) noexcept
             : ButtonEvent(Event::Type::MouseButtonPressed, t_button, t_pos)
         {}
     };
@@ -124,7 +124,7 @@ namespace pTK
             @param t_pos        associated x and y
             @return             default initialized ButtonEvent
         */
-        ReleaseEvent(Mouse::Button t_button, const Point& t_pos)
+        constexpr ReleaseEvent(Mouse::Button t_button, const Point& t_pos) noexcept
             : ButtonEvent(Event::Type::MouseButtonReleased, t_button, t_pos)
         {}
     };

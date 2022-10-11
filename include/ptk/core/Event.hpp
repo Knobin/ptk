@@ -70,7 +70,7 @@ namespace pTK
             @param t_type      type of event
             @return            default initialized Event
         */
-        Event(Category t_category, Type t_type)
+        constexpr Event(Category t_category, Type t_type) noexcept
             : category{t_category},
               type{t_type}
         {}
@@ -81,10 +81,10 @@ namespace pTK
         virtual ~Event() = default;
 
         // Category of the event.
-        const Category category;
+        Category category;
 
         // Type of the event.
-        const Type type;
+        Type type;
     };
 } // namespace pTK
 

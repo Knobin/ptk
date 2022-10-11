@@ -24,6 +24,9 @@ namespace pTK
         Derived from Event, this class if for creating
         events from the keyboard. Such as Key presses or
         releases.
+
+        Multiple modifier keys are allowed.
+        Use isModifierSet for checking if a single modifier set in the modifier variable.
     */
     class PTK_API KeyEvent : public Event
     {
@@ -47,6 +50,8 @@ namespace pTK
 
         // clang-format on
 
+        using ModifierUnderlyingType = std::underlying_type<KeyEvent::Modifier>::type;
+
     public:
         /** Constructs KeyEvent with default values with type and code.
 
@@ -54,7 +59,7 @@ namespace pTK
             @param code     associated keycode
             @return         default initialized KeyEvent
         */
-        KeyEvent(Event::Type t_type, KeyCode code, uint32 ch, std::underlying_type<KeyEvent::Modifier>::type mod = 0)
+        constexpr KeyEvent(Event::Type t_type, KeyCode code, uint32 ch, ModifierUnderlyingType mod = 0) noexcept
             : Event(Event::Category::Keyboard, t_type),
               keycode{code},
               data{ch},
@@ -67,8 +72,8 @@ namespace pTK
             @param code     associated keycode
             @return         default initialized KeyEvent
         */
-        KeyEvent(Event::Type t_type, KeyCode code, uint32 ch, Text::Encoding enc,
-                 std::underlying_type<KeyEvent::Modifier>::type mod = 0)
+        constexpr KeyEvent(Event::Type t_type, KeyCode code, uint32 ch, Text::Encoding enc,
+                           ModifierUnderlyingType mod = 0) noexcept
             : Event(Event::Category::Keyboard, t_type),
               keycode{code},
               data{ch},
@@ -86,9 +91,14 @@ namespace pTK
         Text::Encoding encoding{Text::Encoding::UTF8};
 
         // Modifiers.
-        std::underlying_type<Modifier>::type modifier;
+        ModifierUnderlyingType modifier;
 
-        bool isModifierSet(KeyEvent::Modifier mod) const;
+        /** Helper functions to check if a specific modifier is set.
+
+            @param mod      modifier to check for
+            @return         status
+        */
+        [[nodiscard]] bool isModifierSet(KeyEvent::Modifier mod) const noexcept;
     };
 
     /** InputEvent class implementation.
@@ -125,18 +135,19 @@ namespace pTK
         Text::Encoding encoding;
     };
 
-    constexpr bool IsKeyEventModifierSet(std::underlying_type<KeyEvent::Modifier>::type number, KeyEvent::Modifier mod)
+    constexpr bool IsKeyEventModifierSet(std::underlying_type<KeyEvent::Modifier>::type number,
+                                         KeyEvent::Modifier mod) noexcept
     {
         using utype = std::underlying_type<KeyEvent::Modifier>::type;
         return (static_cast<utype>(mod) & number);
     }
 
-    inline bool KeyEvent::isModifierSet(KeyEvent::Modifier mod) const
+    inline bool KeyEvent::isModifierSet(KeyEvent::Modifier mod) const noexcept
     {
         return IsKeyEventModifierSet(modifier, mod);
     }
 
-    constexpr KeyEvent::Modifier KeyCodeToKeyEventModifier(const KeyCode code)
+    constexpr KeyEvent::Modifier KeyCodeToKeyEventModifier(const KeyCode code) noexcept
     {
         KeyEvent::Modifier mod = KeyEvent::Modifier::NONE;
 

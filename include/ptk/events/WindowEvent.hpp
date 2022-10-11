@@ -27,7 +27,7 @@ namespace pTK
             @param t_size   associated width and height
             @return         default initialized ResizeEvent
         */
-        explicit ResizeEvent(const Size& t_size)
+        explicit constexpr ResizeEvent(const Size& t_size) noexcept
             : Event(Event::Category::Window, Event::Type::WindowResize),
               size{t_size}
         {}
@@ -48,7 +48,7 @@ namespace pTK
             @param t_pos    associated x and y
             @return         default initialized MoveEvent
         */
-        explicit MoveEvent(const Point& t_pos)
+        explicit constexpr MoveEvent(const Point& t_pos) noexcept
             : Event(Event::Category::Window, Event::Type::WindowMove),
               pos{t_pos}
         {}
@@ -69,7 +69,7 @@ namespace pTK
             @param t_scale  associated x and y scale
             @return         default initialized ScaleEvent
         */
-        explicit ScaleEvent(const Vec2f& t_scale)
+        explicit constexpr ScaleEvent(const Vec2f& t_scale) noexcept
             : Event(Event::Category::Window, Event::Type::WindowScale),
               scale{t_scale}
         {}
@@ -91,7 +91,7 @@ namespace pTK
             @param t_size   area
             @return         default initialized PaintEvent
         */
-        PaintEvent(const Point& t_pos, const Size& t_size)
+        constexpr PaintEvent(const Point& t_pos, const Size& t_size) noexcept
             : Event(Event::Category::Window, Event::Type::WindowPaint),
               pos{t_pos},
               size{t_size}
@@ -111,7 +111,7 @@ namespace pTK
     class PTK_API CloseEvent final : public Event
     {
     public:
-        CloseEvent()
+        constexpr CloseEvent() noexcept
             : Event(Event::Category::Window, Event::Type::WindowClose)
         {}
     };
@@ -123,7 +123,7 @@ namespace pTK
     class PTK_API MinimizeEvent final : public Event
     {
     public:
-        MinimizeEvent()
+        constexpr MinimizeEvent() noexcept
             : Event(Event::Category::Window, Event::Type::WindowMinimize)
         {}
     };
@@ -136,7 +136,7 @@ namespace pTK
     class PTK_API RestoreEvent final : public Event
     {
     public:
-        RestoreEvent()
+        constexpr RestoreEvent() noexcept
             : Event(Event::Category::Window, Event::Type::WindowRestore)
         {}
     };
@@ -148,7 +148,7 @@ namespace pTK
     class PTK_API FocusEvent final : public Event
     {
     public:
-        FocusEvent()
+        constexpr FocusEvent() noexcept
             : Event(Event::Category::Window, Event::Type::WindowFocus)
         {}
     };
@@ -160,7 +160,7 @@ namespace pTK
     class PTK_API LostFocusEvent final : public Event
     {
     public:
-        LostFocusEvent()
+        constexpr LostFocusEvent() noexcept
             : Event(Event::Category::Window, Event::Type::WindowLostFocus)
         {}
     };
