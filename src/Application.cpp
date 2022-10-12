@@ -142,7 +142,11 @@ namespace pTK
         for (const auto& [key, window] : *this)
         {
             if (window->visible())
-                window->postEvent<PaintEvent>(Point{0, 0}, window->getSize());
+            {
+                // window->postEvent<PaintEvent>(Point{0, 0}, window->getSize());
+                window->invalidate();
+            }
+                
             window->handleEvents();
         }
 

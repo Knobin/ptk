@@ -82,16 +82,14 @@ namespace pTK
             @param path     path to image
         */
         bool setIconFromFile(const std::string& path);
-
-    public:
-        // Window specific callbacks.
-        void onClose(const std::function<bool()>& callback);
-        void onMove(const std::function<bool(const Point& pos)>& callback);
-        void onResize(const std::function<bool(const Size& pos)>& callback);
-        void onFocus(const std::function<bool()>& callback);
-        void onLostFocus(const std::function<bool()>& callback);
-        void onMinimize(const std::function<bool()>& callback);
-        void onRestore(const std::function<bool()>& callback);
+        
+        // TODO(knobin): Add docs.
+        void invalidate()
+        {
+            // Setting m_draw to true will result in a call to paint()
+            // after all events have been handled in handleEvents().
+            m_draw = true;
+        }
 
     private:
         // Event processing (for pointer based event).
@@ -108,13 +106,19 @@ namespace pTK
         using VBox::getPosition;
 
     private:
-        /** Function for forcing the window to redraw everything.
-
-        */
-        void forceDrawAll();
+        
+        // TODO(knobin): Add docs.
+        void paint();
 
         // This draw function gets called from the backend.
-        void paint(const PaintEvent&) override { forceDrawAll(); }
+        void regionInvalidated(const PaintEvent&) override
+        {
+            // Just assume that the entire window needs to be painted here (for now).
+            // Another (better) solution would be to find what children needs to be
+            // painted and just paint those. But currently there isn't any support
+            // for rendering individual widgets anyway.
+            invalidate();
+        }
 
     private:
         EventQueue<std::deque> m_eventQueue{};

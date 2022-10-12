@@ -245,7 +245,7 @@ namespace pTK
 
     private:
         // Gets called when drawing the window is needed (only from a window backend).
-        virtual void paint(const PaintEvent&) = 0;
+        virtual void regionInvalidated(const PaintEvent&) = 0;
 
         // Sets the new window limits based on the SizePolicy.
         void setLimitsWithSizePolicy()
@@ -303,8 +303,10 @@ namespace pTK
     template <>
     inline void WindowHandle::iHandleEvent<PaintEvent>(const PaintEvent& evt)
     {
+        // This paint event is from the backend and is only called when the platform
+        // wants a redraw.
         handleEvent<PaintEvent>(evt);
-        paint(evt);
+        regionInvalidated(evt);
     }
 
     template <>

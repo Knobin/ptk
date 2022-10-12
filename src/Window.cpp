@@ -37,7 +37,7 @@ namespace pTK
         PTK_INFO("Destroyed Window");
     }
 
-    void Window::onChildDraw(size_type)
+    void Window::onChildDraw([[maybe_unused]] size_type index)
     {
         // onChildDraw is not a thread safe function...
         postEvent<PaintEvent>(Point{0, 0}, getSize());
@@ -69,8 +69,7 @@ namespace pTK
 
         if (m_draw && !m_close)
         {
-            // forceDrawAll();
-            inval();
+            paint();
             m_draw = false;
         }
     }
@@ -90,7 +89,7 @@ namespace pTK
         resize(size);
         refitContent(size);
 
-        forceDrawAll();
+        paint();
         // postEvent<PaintEvent>(Point{0, 0}, getSize());
     }
 
@@ -101,46 +100,29 @@ namespace pTK
         // setLimits(min, max);
     }*/
 
-    // Window specific callbacks.
-    void Window::onClose(const std::function<bool()>& callback)
+    void Window::paint()
     {
-        addListener<CloseEvent>(callback);
-    }
+        beginPaint();
+        
+        ContextBase* context{getContext()};
+        sk_sp<SkSurface> surface = context->surface();
+        SkCanvas* canvas{surface->getCanvas()};
 
-    void Window::onMove(const std::function<bool(const Point& pos)>& callback)
-    {
-        addListener<MoveEvent>([&](const MoveEvent& evt) {
-            callback(evt.pos);
-            return false;
-        });
-    }
+        inval();
 
-    void Window::onResize(const std::function<bool(const Size& pos)>& callback)
-    {
-        addListener<ResizeEvent>([&](const ResizeEvent& evt) {
-            callback(evt.size);
-            return false;
-        });
-    }
-
-    void Window::onFocus(const std::function<bool()>& callback)
-    {
-        addListener<FocusEvent>(callback);
-    }
-
-    void Window::onLostFocus(const std::function<bool()>& callback)
-    {
-        addListener<LostFocusEvent>(callback);
-    }
-
-    void Window::onMinimize(const std::function<bool()>& callback)
-    {
-        addListener<MinimizeEvent>(callback);
-    }
-
-    void Window::onRestore(const std::function<bool()>& callback)
-    {
-        addListener<RestoreEvent>(callback);
+        // Apply monitor scale.
+        SkMatrix matrix{};
+        Vec2f scale{getDPIScale()};
+        matrix.setScale(scale.x, scale.y);
+        canvas->setMatrix(matrix);
+        
+        // Will paint background and then children.
+        onDraw(canvas);
+        
+        surface->flushAndSubmit();
+        swapBuffers();
+        
+        endPaint();
     }
 
     void Window::handleEvent(Event* event)
@@ -288,45 +270,6 @@ namespace pTK
         }
     }
     */
-
-    void Window::forceDrawAll()
-    {
-        // PTK_INFO("Painting window.");
-
-        // m_handle.beginPaint();
-        beginPaint();
-        // ContextBase* context{m_handle.getContext()};
-        ContextBase* context{getContext()};
-        sk_sp<SkSurface> surface = context->surface();
-        SkCanvas* canvas{surface->getCanvas()};
-
-        inval();
-
-        // Apply monitor scale.
-        SkMatrix matrix{};
-        // Vec2f scale{m_handle.getDPIScale()};
-        Vec2f scale{getDPIScale()};
-        matrix.setScale(scale.x, scale.y);
-        canvas->setMatrix(matrix);
-
-        // Background.
-        Size size{getSize()};
-        SkRect rect{0, 0, static_cast<float>(size.width), static_cast<float>(size.height)};
-        Color bg{getBackground()};
-        SkPaint paint{};
-        paint.setARGB(255, bg.r, bg.g, bg.b);
-        canvas->drawRect(rect, paint);
-
-        // for (auto& widget : *this)
-        //     widget->onDraw(canvas);
-        drawChildren(canvas);
-
-        surface->flushAndSubmit();
-        // m_handle.swapBuffers();
-        // m_handle.endPaint();
-        swapBuffers();
-        endPaint();
-    }
 
     bool Window::setIconFromFile(const std::string& path)
     {
