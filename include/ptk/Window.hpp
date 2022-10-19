@@ -117,7 +117,8 @@ namespace pTK
             // Another (better) solution would be to find what children needs to be
             // painted and just paint those. But currently there isn't any support
             // for rendering individual widgets anyway.
-            invalidate();
+            paint();
+            m_draw = false;
         }
 
     private:
