@@ -11,7 +11,7 @@
 
 namespace pTK
 {
-    std::map<int32, KeyCode> KeyMapInit()
+    std::map<int32_t, KeyCode> KeyMapInit()
     {
         return PTK_KEYMAP_INIT_FUNC();
     }

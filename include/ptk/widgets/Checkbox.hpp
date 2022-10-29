@@ -129,7 +129,7 @@ namespace pTK
         bool m_checked = false;
         bool m_hover = false;
         bool m_click = false;
-        byte m_state = 0;
+        uint8_t m_state = 0;
         Color m_checkColor;
         std::function<bool(bool status)> m_toggleCallback;
 

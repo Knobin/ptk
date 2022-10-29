@@ -14,11 +14,11 @@
 
 namespace pTK
 {
-    std::map<int32, KeyCode> KeyCodeMapInit_win()
+    std::map<int32_t, KeyCode> KeyCodeMapInit_win()
     {
         // clang-format off
 
-        std::map<int32, KeyCode> map{};
+        std::map<int32_t, KeyCode> map{};
         map[VK_SPACE] = Key::Space;
         map[0x30] = Key::D0; map[0x31] = Key::D1; map[0x32] = Key::D2; map[0x33] = Key::D3;
         map[0x34] = Key::D4; map[0x35] = Key::D5; map[0x36] = Key::D6; map[0x37] = Key::D7;

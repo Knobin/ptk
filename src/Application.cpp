@@ -76,10 +76,10 @@ namespace pTK
         return run();
     }
 
-    int32 Application::addWindow(Window* window)
+    Application::key_type Application::addWindow(Window* window)
     {
-        int32 id{1};
-        for (const std::pair<const int32, Window*>& pair : *this)
+        key_type id{1};
+        for (const std::pair<const key_type, Window*>& pair : *this)
         {
             if (pair.first == id)
             {
@@ -116,7 +116,7 @@ namespace pTK
         return false;
     }
 
-    bool Application::removeWindow(int32 key)
+    bool Application::removeWindow(key_type key)
     {
         auto it{m_holder.find(key)};
         if (it != m_holder.end())
@@ -180,7 +180,7 @@ namespace pTK
             m_holder.erase(it++);
     }
 
-    Window* Application::findByKey(int32 key) const
+    Window* Application::findByKey(key_type key) const
     {
         auto it = m_holder.find(key);
         return (it != m_holder.end()) ? it->second : nullptr;

@@ -166,7 +166,7 @@ namespace pTK
         return m_text->getFontFamily();
     }
 
-    void Button::setFontSize(uint fontSize)
+    void Button::setFontSize(uint32_t fontSize)
     {
         // This will call draw in Label.
         // So we handle it in drawChild.
@@ -174,7 +174,7 @@ namespace pTK
         setBounds();
     }
 
-    uint Button::getFontSize() const
+    uint32_t Button::getFontSize() const
     {
         return m_text->getFontSize();
     }
@@ -226,13 +226,13 @@ namespace pTK
         return m_clickColor;
     }
 
-    void Button::setBorderSize(uint size)
+    void Button::setBorderSize(uint32_t size)
     {
         m_borderSize = size;
         setBounds();
     }
 
-    uint Button::getBorderSize() const
+    uint32_t Button::getBorderSize() const
     {
         return m_borderSize;
     }

@@ -43,7 +43,7 @@ namespace pTK
 
             @param ms   max time to wait for an event
         */
-        void waitEventsTimeout(uint ms) override;
+        void waitEventsTimeout(uint32_t ms) override;
 
         /** Function for converting std::string to UTF16 std::stringw.
 
@@ -57,14 +57,14 @@ namespace pTK
 
             @param key  ptk window id
         */
-        void onWindowAdd(const std::pair<int32, Window*> item) override;
+        void onWindowAdd(const std::pair<int32_t, Window*> item) override;
 
         /** Callback that will be called when a window is removed from the
             application.
 
             @param key  ptk window id
         */
-        void onWindowRemove(const std::pair<int32, Window*> item) override;
+        void onWindowRemove(const std::pair<int32_t, Window*> item) override;
 
     private:
         ApplicationHandle_win() = default;

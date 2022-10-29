@@ -150,7 +150,7 @@ namespace pTK
         if (m_data.hasMenu)
         {
             HMENU menuBar = ::CreateMenu();
-            uint menuBarId = MenuBarUtil_win::InsertMenuItemToMap(m_data.menuItems, nullptr, 1, true, menuBar);
+            uint32_t menuBarId = MenuBarUtil_win::InsertMenuItemToMap(m_data.menuItems, nullptr, 1, true, menuBar);
             std::vector<ACCEL> accelShortcuts{};
 
             for (auto menuIt{flags.menus->cbegin()}; menuIt != flags.menus->cend(); ++menuIt)
@@ -226,7 +226,7 @@ namespace pTK
         return ::SetWindowTextW(m_hwnd, ApplicationHandle_win::stringToUTF16(name).c_str());
     }
 
-    bool WindowHandle_win::setIcon(int32 width, int32 height, byte* pixels)
+    bool WindowHandle_win::setIcon(int32_t width, int32_t height, byte* pixels)
     {
         // DIB information.
         BITMAPV5HEADER bmInfo{};
@@ -472,8 +472,8 @@ namespace pTK
         EventSendHelper<MoveEvent>(window, mEvt);
 
         // Scale Window.
-        const uint32 dpiX{static_cast<uint32>(GET_X_LPARAM(wParam))};
-        const uint32 dpiY{static_cast<uint32>(GET_Y_LPARAM(wParam))};
+        const auto dpiX{static_cast<uint32_t>(GET_X_LPARAM(wParam))};
+        const auto dpiY{static_cast<uint32_t>(GET_Y_LPARAM(wParam))};
         const Vec2f scale{static_cast<float>(dpiX) / 96.0f, static_cast<float>(dpiY) / 96.0f};
         PTK_INFO("DPI CHANGED {0}x{1} SCALING {2:0.2f}x{3:0.2f}", dpiX, dpiY, scale.x, scale.y);
         ScaleEvent sEvt{scale};
@@ -549,7 +549,7 @@ namespace pTK
     static constexpr WPARAM MapLeftRightKeys(WPARAM wParam, LPARAM lParam) noexcept
     {
         WPARAM key = wParam;
-        uint scancode = (lParam & 0x00ff0000) >> 16;
+        uint32_t scancode = (lParam & 0x00ff0000) >> 16;
         int extended = (lParam & 0x01000000) != 0;
 
         switch (wParam)
@@ -600,16 +600,16 @@ namespace pTK
     {
         PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
 
-        const int32 data{static_cast<int32>(wParam)};
+        const auto data{static_cast<int32_t>(wParam)};
         KeyCode key{KeyMap::KeyCodeToKey(data)};
 
         if (key == Key::Unknown)
         {
             WPARAM lrKey{MapLeftRightKeys(wParam, lParam)};
-            key = KeyMap::KeyCodeToKey(static_cast<int32>(lrKey));
+            key = KeyMap::KeyCodeToKey(static_cast<int32_t>(lrKey));
         }
 
-        KeyEvent evt{type, key, static_cast<uint32>(data), GetKeyModifiers()};
+        KeyEvent evt{type, key, static_cast<uint32_t>(data), GetKeyModifiers()};
         EventSendHelper<KeyEvent>(window, evt);
     }
 
@@ -617,7 +617,7 @@ namespace pTK
     {
         PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
 
-        uint32 data{0};
+        uint32_t data{0};
 
         switch (wParam)
         {
@@ -634,7 +634,7 @@ namespace pTK
             default:
             {
                 // Displayable character.
-                data = static_cast<uint32>(wParam);
+                data = static_cast<uint32_t>(wParam);
                 break;
             }
         }
@@ -815,7 +815,7 @@ namespace pTK
             }
             case WM_COMMAND:
             {
-                uint wmId{LOWORD(wParam)};
+                uint32_t wmId{LOWORD(wParam)};
                 Ref<MenuItem> item{MenuBarUtil_win::FindMenuItemById(data->menuItems, wmId)};
 
                 if (item)

@@ -284,10 +284,10 @@ namespace pTK
                 // Read pixels in an RGBA format.
                 const SkImageInfo imageInfo{image->imageInfo().makeColorType(SkColorType::kRGBA_8888_SkColorType)};
                 const size_t storageSize{imageInfo.computeMinByteSize()};
-                std::unique_ptr<byte[]> pixelData{std::make_unique<byte[]>(storageSize)};
+                std::unique_ptr<uint8_t[]> pixelData{std::make_unique<uint8_t[]>(storageSize)};
 
                 if (image->readPixels(imageInfo, pixelData.get(), imageInfo.minRowBytes(), 0, 0))
-                    return setIcon(static_cast<int32>(image->width()), static_cast<int32>(image->height()),
+                    return setIcon(static_cast<int32_t>(image->width()), static_cast<int32_t>(image->height()),
                                    pixelData.get());
 #ifdef PTK_DEBUG
                 else

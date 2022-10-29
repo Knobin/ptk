@@ -9,10 +9,12 @@
 #define PTK_CORE_WINDOWINFO_HPP
 
 // pTK Headers
-#include "ptk/core/Types.hpp"
 #include "ptk/menu/MenuBar.hpp"
 #include "ptk/util/Point.hpp"
 #include "ptk/util/SizePolicy.hpp"
+
+// C++ Headers
+#include <cstdint>
 
 namespace pTK
 {
@@ -33,7 +35,7 @@ namespace pTK
 
             Specifies which backend that should be used.
         */
-        enum class Backend : byte
+        enum class Backend : uint8_t
         {
             Software = 1,
             Hardware
@@ -43,7 +45,7 @@ namespace pTK
             // If the user specifies "Hardware" it will select the "best" available backend.
         };
 
-        enum class Visibility : byte
+        enum class Visibility : uint8_t
         {
             Windowed = 0, // Default
             Hidden

@@ -38,7 +38,7 @@ namespace pTK
         void waitEvents() override;
 
         // TODO: Add documentation.
-        void waitEventsTimeout(uint ms) override;
+        void waitEventsTimeout(uint32_t ms) override;
 
     public:
         // TODO: Add documentation.

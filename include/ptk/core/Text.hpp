@@ -29,7 +29,7 @@ namespace pTK
     {
     public:
         // Encoding of the text.
-        enum class Encoding : byte
+        enum class Encoding : uint8_t
         {
             NONE = 0,
             UTF8,
@@ -79,13 +79,13 @@ namespace pTK
 
             @param fontSize    size of the font
         */
-        void setFontSize(uint fontSize);
+        void setFontSize(uint32_t fontSize);
 
         /** Function for retrieving the font size.
 
             @return  current font size
         */
-        [[nodiscard]] uint getFontSize() const;
+        [[nodiscard]] uint32_t getFontSize() const;
 
         /** Function for retrieving the distance between ascent and descent.
 

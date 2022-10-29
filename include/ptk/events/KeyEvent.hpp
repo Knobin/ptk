@@ -11,10 +11,10 @@
 // pTK Headers
 #include "ptk/core/Event.hpp"
 #include "ptk/core/Text.hpp"
-#include "ptk/core/Types.hpp"
 #include "ptk/events/KeyCodes.hpp"
 
 // C++ Headers
+#include <cstdint>
 #include <type_traits>
 
 namespace pTK
@@ -37,7 +37,7 @@ namespace pTK
 
         // clang-format off
 
-        enum class Modifier : byte
+        enum class Modifier : uint8_t
         {
             NONE        = 0,
             Shift       = 1,
@@ -59,7 +59,7 @@ namespace pTK
             @param code     associated keycode
             @return         default initialized KeyEvent
         */
-        constexpr KeyEvent(Event::Type t_type, KeyCode code, uint32 ch, ModifierUnderlyingType mod = 0) noexcept
+        constexpr KeyEvent(Event::Type t_type, KeyCode code, uint32_t ch, ModifierUnderlyingType mod = 0) noexcept
             : Event(Event::Category::Keyboard, t_type),
               keycode{code},
               data{ch},
@@ -72,7 +72,7 @@ namespace pTK
             @param code     associated keycode
             @return         default initialized KeyEvent
         */
-        constexpr KeyEvent(Event::Type t_type, KeyCode code, uint32 ch, Text::Encoding enc,
+        constexpr KeyEvent(Event::Type t_type, KeyCode code, uint32_t ch, Text::Encoding enc,
                            ModifierUnderlyingType mod = 0) noexcept
             : Event(Event::Category::Keyboard, t_type),
               keycode{code},
@@ -82,16 +82,16 @@ namespace pTK
         {}
 
         // Key code.
-        KeyCode keycode;
+        KeyCode keycode{};
 
         // Contains the raw data (may be different depending on platform).
-        uint32 data;
+        uint32_t data{};
 
         // Contains the encoding of the char.
         Text::Encoding encoding{Text::Encoding::UTF8};
 
         // Modifiers.
-        ModifierUnderlyingType modifier;
+        ModifierUnderlyingType modifier{};
 
         /** Helper functions to check if a specific modifier is set.
 
@@ -108,7 +108,7 @@ namespace pTK
     class PTK_API InputEvent : public Event
     {
     public:
-        using data_type = uint32;
+        using data_type = uint32_t;
         using data_cont = std::unique_ptr<data_type[]>;
 
     public:
@@ -118,7 +118,7 @@ namespace pTK
             @param code     associated keycode
             @return         default initialized KeyEvent
         */
-        InputEvent(std::unique_ptr<uint32[]>& arr, std::size_t count, Text::Encoding enc = Text::Encoding::UTF8)
+        InputEvent(data_cont& arr, std::size_t count, Text::Encoding enc = Text::Encoding::UTF8)
             : Event(Event::Category::Keyboard, Event::Type::KeyInput),
               data(std::move(arr)),
               size{count},
@@ -126,13 +126,13 @@ namespace pTK
         {}
 
         // Contains array of characters.
-        std::unique_ptr<uint32[]> data;
+        data_cont data{};
 
         // Number of characters.
-        std::size_t size;
+        std::size_t size{};
 
         // Contains the encoding of the array.
-        Text::Encoding encoding;
+        Text::Encoding encoding{Text::Encoding::UTF8};
     };
 
     constexpr bool IsKeyEventModifierSet(std::underlying_type<KeyEvent::Modifier>::type number,

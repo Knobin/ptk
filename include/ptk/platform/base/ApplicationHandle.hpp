@@ -13,6 +13,7 @@
 #include "ptk/util/SingleObject.hpp"
 
 // C++ Header
+#include <cstdint>
 #include <map>
 
 namespace pTK
@@ -52,7 +53,7 @@ namespace pTK
 
             @param ms   max time to wait for an event
         */
-        virtual void waitEventsTimeout(uint ms) = 0;
+        virtual void waitEventsTimeout(uint32_t ms) = 0;
 
         // TODO(knobin): Add docs.
         virtual void onClose() {}
@@ -62,14 +63,14 @@ namespace pTK
 
             @param key  ptk window id
         */
-        virtual void onWindowAdd(const std::pair<int32, Window*> UNUSED(item)) {}
+        virtual void onWindowAdd(const std::pair<int32_t, Window*> UNUSED(item)) {}
 
         /** Callback that will be called when a window is removed from the
             application.
 
             @param key  ptk window id
         */
-        virtual void onWindowRemove(const std::pair<int32, Window*> UNUSED(item)) {}
+        virtual void onWindowRemove(const std::pair<int32_t, Window*> UNUSED(item)) {}
     };
 }
 

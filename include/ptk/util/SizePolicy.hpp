@@ -10,9 +10,9 @@
 
 // pTK Headers
 #include "ptk/core/Defines.hpp"
-#include "ptk/core/Types.hpp"
 
 // C++ Headers
+#include <cstdint>
 #include <type_traits>
 
 namespace pTK
@@ -44,7 +44,7 @@ namespace pTK
             static const SizePolicy Expanding;
         };
 
-        enum PolicyFlag : byte
+        enum PolicyFlag : uint8_t
         {
             Fixed = 1, // Size is fixed.
             Grow = 2,  // Size can grow.

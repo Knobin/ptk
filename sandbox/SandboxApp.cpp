@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
 
     window.onKey([](const pTK::KeyEvent& evt){
         std::string str = (evt.type == pTK::KeyEvent::Pressed) ? "pressed" : "released";
-        std::cout << "Key " << str << ": " << static_cast<int32>(evt.keycode) << std::endl;
+        std::cout << "Key " << str << ": " << static_cast<int32_t>(evt.keycode) << std::endl;
         return false;
     });
 
@@ -246,7 +246,7 @@ int main(int argc, char *argv[])
     });
 
     // Removes callback when R is pressed.
-    uint64 cb_id = window.onKey([&](const pTK::KeyEvent& evt){
+    uint64_t cb_id = window.onKey([&](const pTK::KeyEvent& evt) {
         if (pTK::IsKeyCodeDigit(evt.keycode))
             window.triggerEvent<int>(pTK::KeyCodeToDigit(evt.keycode));
 

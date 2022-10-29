@@ -10,10 +10,10 @@
 
 // pTK Headers
 #include "ptk/Window.hpp"
-#include "ptk/core/Types.hpp"
 #include "ptk/util/SingleObject.hpp"
 
 // C++ Headers
+#include <cstdint>
 #include <map>
 #include <utility>
 
@@ -28,7 +28,7 @@ namespace pTK
     class PTK_API Application : public SingleObject
     {
     public:
-        using key_type = int32;
+        using key_type = int32_t;
         using mapped_type = Window*;
         using value_type = std::pair<key_type, mapped_type>;
         using container_type = std::map<key_type, mapped_type>;
@@ -79,7 +79,7 @@ namespace pTK
             @param window   window
             @return         id
         */
-        int32 addWindow(Window* window);
+        key_type addWindow(Window* window);
 
         /** Function for removing a window from the application with pointer.
 
@@ -93,13 +93,13 @@ namespace pTK
             @param key      window id
             @return         true if removed
         */
-        bool removeWindow(int32 key);
+        bool removeWindow(key_type key);
 
         // TODO(knobin): Add docs.
         void removeAllWindows();
 
         // TODO(knobin): Add docs.
-        [[nodiscard]] Window* findByKey(int32 key) const;
+        [[nodiscard]] Window* findByKey(key_type key) const;
 
         /** Function for executing the application.
 

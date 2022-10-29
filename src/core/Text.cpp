@@ -83,16 +83,16 @@ namespace pTK
         return std::string(str.c_str());
     }
 
-    void Text::setFontSize(uint fontSize)
+    void Text::setFontSize(uint32_t fontSize)
     {
         m_font.setSize(static_cast<SkScalar>(fontSize));
         updateFontInfo();
         onTextUpdate();
     }
 
-    uint Text::getFontSize() const
+    uint32_t Text::getFontSize() const
     {
-        return static_cast<uint>(m_font.getSize());
+        return static_cast<uint32_t>(m_font.getSize());
     }
 
     float Text::ascentToDescent() const
@@ -136,24 +136,24 @@ namespace pTK
 
         for (std::size_t i{0}; i < data.size; ++i)
         {
-            uint32 ch{0};
+            uint32_t ch{0};
 
             if (data.encoding == Text::Encoding::UTF8)
             {
-                const auto* c = static_cast<const uint8*>(ptr);
-                ch = static_cast<uint32>(c[i]);
+                const auto* c = static_cast<const uint8_t*>(ptr);
+                ch = static_cast<uint32_t>(c[i]);
             }
 
             if (data.encoding == Text::Encoding::UTF16)
             {
-                const auto* c = static_cast<const uint16*>(ptr);
-                ch = static_cast<uint32>(c[i]);
+                const auto* c = static_cast<const uint16_t*>(ptr);
+                ch = static_cast<uint32_t>(c[i]);
             }
 
             if (data.encoding == Text::Encoding::UTF32)
             {
-                const auto* c = static_cast<const uint32*>(ptr);
-                ch = static_cast<uint32>(c[i]);
+                const auto* c = static_cast<const uint32_t*>(ptr);
+                ch = static_cast<uint32_t>(c[i]);
             }
 
             if (ch == 0x20)

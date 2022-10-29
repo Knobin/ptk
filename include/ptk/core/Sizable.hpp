@@ -9,8 +9,10 @@
 #define PTK_CORE_SIZABLE_HPP
 
 // pTK Headers
-#include "ptk/core/Types.hpp"
 #include "ptk/util/Size.hpp"
+
+// C++ Headers
+#include <cstdint>
 
 namespace pTK
 {
@@ -36,19 +38,19 @@ namespace pTK
 
             @return  default initialized Sizable
         */
-        Sizable();
+        Sizable() noexcept;
 
         /** Constructs Sizable with default values with size.
 
             @return  default initialized Sizable
         */
-        explicit Sizable(const Size& size);
+        explicit Sizable(const Size& size) noexcept;
 
         /** Constructs Sizable with default values with size.
 
             @return  default initialized Sizable
         */
-        Sizable(const Size& min, const Size& size, const Size& max);
+        Sizable(const Size& min, const Size& size, const Size& max) noexcept;
 
         /** Destructor for Sizable.
 
@@ -157,16 +159,16 @@ namespace pTK
 
     private:
         // Helper functions for updating minimal size.
-        byte updateMinWidth(Size::value_type width);
-        byte updateMinHeight(Size::value_type height);
+        uint8_t updateMinWidth(Size::value_type width);
+        uint8_t updateMinHeight(Size::value_type height);
 
         // Helper functions for updating size.
-        byte updateWidth(Size::value_type width);
-        byte updateHeight(Size::value_type height);
+        uint8_t updateWidth(Size::value_type width);
+        uint8_t updateHeight(Size::value_type height);
 
         // Helper functions for updating maximum size.
-        byte updateMaxWidth(Size::value_type width);
-        byte updateMaxHeight(Size::value_type height);
+        uint8_t updateMaxWidth(Size::value_type width);
+        uint8_t updateMaxHeight(Size::value_type height);
 
     private:
         Size m_minSize;

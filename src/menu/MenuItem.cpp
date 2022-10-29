@@ -10,7 +10,7 @@
 
 namespace pTK
 {
-    MenuItem::MenuItem(MenuItemType type, MenuItemStatus status)
+    MenuItem::MenuItem(MenuItemType type, MenuItemStatus status) noexcept
         : m_type{type},
           m_status{status}
     {}

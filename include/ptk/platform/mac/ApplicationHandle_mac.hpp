@@ -42,7 +42,7 @@ namespace pTK
 
             @param ms   max time to wait for an event
         */
-        void waitEventsTimeout(uint ms) override;
+        void waitEventsTimeout(uint32_t ms) override;
 
         static void SetMenuBar(const Ref<MenuBar>& menuBar);
 

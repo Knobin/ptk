@@ -45,7 +45,7 @@ namespace pTK
         });
     }
 
-    void TextField::handleKeyPress(KeyCode keycode, byte)
+    void TextField::handleKeyPress(KeyCode keycode, uint8_t)
     {
         switch (keycode)
         {
@@ -95,7 +95,7 @@ namespace pTK
         }
     }
 
-    void TextField::handleInput(const std::unique_ptr<uint32[]>& data, std::size_t size, Text::Encoding)
+    void TextField::handleInput(const std::unique_ptr<uint32_t[]>& data, std::size_t size, Text::Encoding)
     {
         // This currently ignores the encoding.
         // TODO: Fix encoding for the data.

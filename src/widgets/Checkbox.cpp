@@ -161,7 +161,7 @@ namespace pTK
 
     void Checkbox::onEnterCallback(const EnterEvent&)
     {
-        byte temp = m_state;
+        uint8_t temp = m_state;
         if (m_state == 3)
             m_state = 2;
         else
@@ -174,7 +174,7 @@ namespace pTK
 
     void Checkbox::onLeaveCallback(const LeaveEvent&)
     {
-        byte temp = m_state;
+        uint8_t temp = m_state;
         if ((m_state == 2) && (status()))
             m_state = 3;
         else if ((m_state == 2) && (!status()))
@@ -189,7 +189,7 @@ namespace pTK
 
     void Checkbox::onClickCallback(const ClickEvent&)
     {
-        byte temp = m_state;
+        uint8_t temp = m_state;
         m_click = true;
         if (status())
             m_state = 1;
@@ -204,7 +204,7 @@ namespace pTK
 
     void Checkbox::onReleaseCallback(const ReleaseEvent&)
     {
-        byte temp = m_state;
+        uint8_t temp = m_state;
 
         if (!status())
             if (m_hover)

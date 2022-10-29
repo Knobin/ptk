@@ -16,7 +16,7 @@ namespace pTK
     const Size Size::Min(Size::Limits::Min, Size::Limits::Min);
     const Size Size::Max(Size::Limits::Max, Size::Limits::Max);
 
-    void Size::set(value_type t_width, value_type t_height)
+    void Size::set(value_type t_width, value_type t_height) noexcept
     {
         width = t_width;
         height = t_height;

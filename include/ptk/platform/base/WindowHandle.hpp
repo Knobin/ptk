@@ -156,7 +156,7 @@ namespace pTK
             @param pixels   image pixels in a RGBA format.
             @return         true if operation is successful, otherwise false
         */
-        virtual bool setIcon(int32 UNUSED(width), int32 UNUSED(height), byte* UNUSED(pixels)) = 0;
+        virtual bool setIcon(int32_t UNUSED(width), int32_t UNUSED(height), uint8_t* UNUSED(pixels)) = 0;
 
         /** Function for notifying the backend that an event has been pushed from
             a different thread.

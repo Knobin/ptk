@@ -10,9 +10,9 @@
 
 // pTK Headers
 #include "ptk/core/Defines.hpp"
-#include "ptk/core/Types.hpp"
 
 // C++ Headers
+#include <cstdint>
 #include <limits>
 
 namespace pTK
@@ -24,7 +24,7 @@ namespace pTK
     class PTK_API Size
     {
     public:
-        using value_type = uint32;
+        using value_type = uint32_t;
 
         struct PTK_API Limits
         {
@@ -40,7 +40,7 @@ namespace pTK
 
             @return    default initialized Size
         */
-        constexpr Size()
+        constexpr Size() noexcept
             : width{0},
               height{0}
         {}
@@ -51,7 +51,7 @@ namespace pTK
             @param height  height
             @return        default initialized Size
         */
-        constexpr Size(value_type t_width, value_type t_height)
+        constexpr Size(value_type t_width, value_type t_height) noexcept
             : width{t_width},
               height{t_height}
         {}
@@ -61,7 +61,7 @@ namespace pTK
             @param width   new width
             @param height  new height
         */
-        void set(value_type t_width, value_type t_height);
+        void set(value_type t_width, value_type t_height) noexcept;
 
         value_type width;
         value_type height;

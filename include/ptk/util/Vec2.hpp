@@ -8,8 +8,8 @@
 #ifndef PTK_UTIL_VEC2_HPP
 #define PTK_UTIL_VEC2_HPP
 
-// pTK Headers
-#include "ptk/core/Types.hpp"
+// C++ Headers
+#include <cstdint>
 
 namespace pTK
 {
@@ -29,7 +29,7 @@ namespace pTK
 
             @return    default initialized Vec2
         */
-        constexpr Vec2()
+        constexpr Vec2() noexcept
             : x{},
               y{}
         {}
@@ -38,9 +38,9 @@ namespace pTK
 
             @return    default initialized Vec2
         */
-        constexpr Vec2(T other_x, T other_y)
-            : x{other_x},
-              y{other_y}
+        constexpr Vec2(T t_x, T t_y) noexcept
+            : x{t_x},
+              y{t_y}
         {}
 
         /** Constructs Vec2 with default values from another Vec2. (Copy)
@@ -52,7 +52,7 @@ namespace pTK
             @return        default initialized Vec2
         */
         template <typename U>
-        explicit constexpr Vec2(const Vec2<U>& vec)
+        explicit constexpr Vec2(const Vec2<U>& vec) noexcept
             : x{static_cast<T>(vec.x)},
               y{static_cast<T>(vec.y)}
         {}
@@ -66,7 +66,7 @@ namespace pTK
             @return        default initialized Vec2
         */
         template <typename U>
-        constexpr Vec2<T>& operator=(const Vec2<U>& vec)
+        constexpr Vec2<T>& operator=(const Vec2<U>& vec) noexcept
         {
             x = static_cast<T>(vec.x);
             y = static_cast<T>(vec.y);
@@ -158,8 +158,8 @@ namespace pTK
     }
 
     using Vec2f = Vec2<float>;
-    using Vec2u = Vec2<uint>;
-    using Vec2i = Vec2<int32>;
+    using Vec2u = Vec2<uint32_t>;
+    using Vec2i = Vec2<int32_t>;
 } // namespace pTK
 
 #endif // PTK_UTIL_VEC2_HPP

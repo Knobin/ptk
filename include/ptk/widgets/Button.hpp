@@ -134,13 +134,13 @@ namespace pTK
 
             @param fontSize    size of the font
         */
-        void setFontSize(uint fontSize);
+        void setFontSize(uint32_t fontSize);
 
         /** Function for retrieving the current font size used by Label.
 
             @return  current font size
         */
-        [[nodiscard]] uint getFontSize() const;
+        [[nodiscard]] uint32_t getFontSize() const;
 
         /** Function for setting the Color of the text.
 
@@ -194,13 +194,13 @@ namespace pTK
 
             @param margin   text margin
         */
-        void setBorderSize(uint size);
+        void setBorderSize(uint32_t size);
 
         /** Function for retrieving the margin to the text.
 
             @return    Current margin
         */
-        [[nodiscard]] uint getBorderSize() const;
+        [[nodiscard]] uint32_t getBorderSize() const;
 
         /** Function for setting the style of the Button.
 
@@ -254,7 +254,7 @@ namespace pTK
     private:
         Ref<Label> m_text;
         Point m_labelPos;
-        uint m_borderSize;
+        uint32_t m_borderSize;
         Color m_hoverColor;
         Color m_clickColor;
         Color m_colorCopy;

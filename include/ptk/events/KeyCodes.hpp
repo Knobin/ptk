@@ -10,7 +10,9 @@
 
 // pTK Headers
 #include "ptk/Core.hpp"
-#include "ptk/core/Types.hpp"
+
+// C++ Header
+#include <cstdint>
 
 // TODO: Add more keycodes.
 
@@ -18,7 +20,7 @@ namespace pTK
 {
     // clang-format off
 
-    typedef enum class KeyCode : int32
+    typedef enum class KeyCode : int32_t
     {
         Unknown = 0,
         Space   = 32,
@@ -98,30 +100,30 @@ namespace pTK
 
     constexpr bool IsKeyCodeAlpha(const KeyCode code) noexcept
     {
-        const auto value = static_cast<int32>(code);
+        const auto value = static_cast<int32_t>(code);
         return ((value >= 65) && (value <= 90));
     }
 
     constexpr char KeyCodeToAlpha(const KeyCode code) noexcept
     {
-        return static_cast<char>(static_cast<int32>(code));
+        return static_cast<char>(static_cast<int32_t>(code));
     }
 
     constexpr bool IsKeyCodeDigit(const KeyCode code) noexcept
     {
-        const auto value = static_cast<int32>(code);
+        const auto value = static_cast<int32_t>(code);
         return ((value >= 48) && (value <= 57));
     }
 
-    constexpr byte KeyCodeToDigit(const KeyCode code) noexcept
+    constexpr uint8_t KeyCodeToDigit(const KeyCode code) noexcept
     {
-        constexpr byte zero = static_cast<byte>(Key::D0);
-        return static_cast<byte>(static_cast<int32>(code) - zero);
+        constexpr auto zero = static_cast<uint8_t>(Key::D0);
+        return static_cast<uint8_t>(static_cast<int32_t>(code) - zero);
     }
 
     constexpr bool IsKeyCodeModifier(const KeyCode code) noexcept
     {
-        const auto value = static_cast<int32>(code);
+        const auto value = static_cast<int32_t>(code);
         return ((value >= 340) && (value <= 351));
     }
 
@@ -144,7 +146,7 @@ namespace pTK
         if (IsKeyCodeAlpha(code))
             return KeyCodeToAlpha(code);
         if (IsKeyCodeDigit(code))
-            return static_cast<char>(static_cast<int32>(code));
+            return static_cast<char>(static_cast<int32_t>(code));
         return 0;
     }
 

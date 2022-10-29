@@ -23,7 +23,7 @@ namespace pTK
 
         @return     KeyMap instance
     */
-    PTK_API std::map<int32, Key> KeyMapInit();
+    PTK_API std::map<int32_t, Key> KeyMapInit();
 
     /** Function for creating the application.
 

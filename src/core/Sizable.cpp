@@ -10,19 +10,19 @@
 
 namespace pTK
 {
-    Sizable::Sizable()
+    Sizable::Sizable() noexcept
         : m_minSize{pTK::Size::Min},
           m_size{pTK::Size::Min},
           m_maxSize{pTK::Size::Max}
     {}
 
-    Sizable::Sizable(const Size& size)
+    Sizable::Sizable(const Size& size) noexcept
         : m_minSize{pTK::Size::Min},
           m_size{size},
           m_maxSize{pTK::Size::Max}
     {}
 
-    Sizable::Sizable(const Size& min, const Size& size, const Size& max)
+    Sizable::Sizable(const Size& min, const Size& size, const Size& max) noexcept
         : m_minSize{size},
           m_size{size},
           m_maxSize{size}
@@ -42,7 +42,7 @@ namespace pTK
             return;
 
         // Update minimal sizes.
-        byte status{updateMinWidth(size.width)};
+        uint8_t status{updateMinWidth(size.width)};
         status |= updateMinHeight(size.height);
 
         // Signal a size change.
@@ -64,7 +64,7 @@ namespace pTK
         if (size == getSize())
             return;
 
-        byte bits{updateWidth(size.width)};
+        uint8_t bits{updateWidth(size.width)};
         bits |= updateHeight(size.height);
 
         // Signal size change.
@@ -87,7 +87,7 @@ namespace pTK
             return;
 
         // Update maximum sizes.
-        byte status{updateMaxWidth(size.width)};
+        uint8_t status{updateMaxWidth(size.width)};
         status |= updateMaxHeight(size.height);
 
         // Signal a size change.
@@ -112,11 +112,11 @@ namespace pTK
     void Sizable::setLimits(const Size& min, const Size& max)
     {
         // Update minimal sizes.
-        byte s1{updateMinWidth(min.width)};
+        uint8_t s1{updateMinWidth(min.width)};
         s1 |= updateMinHeight(min.height);
 
         // Update maximum sizes.
-        byte s2{updateMaxWidth(max.width)};
+        uint8_t s2{updateMaxWidth(max.width)};
         s2 |= updateMaxHeight(max.height);
 
         // Signal a size change.
@@ -151,9 +151,9 @@ namespace pTK
         updateMaxHeight(size.height);
     }
 
-    byte Sizable::updateMinWidth(const Size::value_type width)
+    uint8_t Sizable::updateMinWidth(const Size::value_type width)
     {
-        byte status{0};
+        uint8_t status{0};
         const Size::value_type maxWidth{getMaxSize().width};
 
         if ((width >= Size::Limits::Min) && (width <= maxWidth))
@@ -186,9 +186,9 @@ namespace pTK
         return status;
     }
 
-    byte Sizable::updateMinHeight(const Size::value_type height)
+    uint8_t Sizable::updateMinHeight(const Size::value_type height)
     {
-        byte status{0};
+        uint8_t status{0};
         const Size::value_type maxHeight{getMaxSize().height};
 
         if ((height >= Size::Limits::Min) && (height <= maxHeight))
@@ -221,7 +221,7 @@ namespace pTK
         return status;
     }
 
-    byte Sizable::updateWidth(Size::value_type width)
+    uint8_t Sizable::updateWidth(Size::value_type width)
     {
         const Size::value_type minWidth{getMinSize().width};
         const Size::value_type currWidth{getSize().width};
@@ -246,7 +246,7 @@ namespace pTK
             }
             else
             {
-                byte status{0};
+                uint8_t status{0};
 
                 // Min width
                 if (width < minWidth)
@@ -271,7 +271,7 @@ namespace pTK
         }
     }
 
-    byte Sizable::updateHeight(Size::value_type height)
+    uint8_t Sizable::updateHeight(Size::value_type height)
     {
         const Size::value_type minHeight{getMinSize().height};
         const Size::value_type currHeight{getSize().height};
@@ -296,7 +296,7 @@ namespace pTK
             }
             else
             {
-                byte status{0};
+                uint8_t status{0};
 
                 // Min height
                 if (height < minHeight)
@@ -321,9 +321,9 @@ namespace pTK
         }
     }
 
-    byte Sizable::updateMaxWidth(const Size::value_type width)
+    uint8_t Sizable::updateMaxWidth(const Size::value_type width)
     {
-        byte status{0};
+        uint8_t status{0};
         const Size::value_type minWidth{getMinSize().width};
 
         if ((width >= minWidth) && (width <= Size::Limits::Max))
@@ -356,9 +356,9 @@ namespace pTK
         return status;
     }
 
-    byte Sizable::updateMaxHeight(const Size::value_type height)
+    uint8_t Sizable::updateMaxHeight(const Size::value_type height)
     {
-        byte status{0};
+        uint8_t status{0};
         const Size::value_type minHeight{getMinSize().height};
 
         if ((height >= minHeight) && (height <= Size::Limits::Max))

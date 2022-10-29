@@ -27,12 +27,13 @@
 
 namespace pTK::MenuBarUtil_win
 {
-    using MenuMap = std::map<uint, std::tuple<Ref<MenuItem>, uint, bool, HMENU>>;
+    using MenuMap = std::map<uint32_t, std::tuple<Ref<MenuItem>, uint32_t, bool, HMENU>>;
 
-    void CreateMenuStructure(HMENU parent, MenuMap& menus, const pTK::Ref<pTK::Menu>& menu, uint parentId,
+    void CreateMenuStructure(HMENU parent, MenuMap& menus, const pTK::Ref<pTK::Menu>& menu, uint32_t parentId,
                              std::vector<ACCEL>& keys);
-    uint InsertMenuItemToMap(MenuMap& menus, const Ref<MenuItem>& menuItem, uint parentId, bool isMenu, HMENU hmenu);
-    Ref<MenuItem> FindMenuItemById(const MenuMap& menuItems, uint id);
+    uint32_t InsertMenuItemToMap(MenuMap& menus, const Ref<MenuItem>& menuItem, uint32_t parentId, bool isMenu,
+                                 HMENU hmenu);
+    Ref<MenuItem> FindMenuItemById(const MenuMap& menuItems, uint32_t id);
     std::string TranslateKeyCodeToShortcutStr(const KeyCode& key);
     std::optional<std::pair<ACCEL, std::string>> GetShortcutACCEL(const Shortcut& shortcut);
     std::string TranslateKeyCodesToShortcutStr(const Shortcut& shortcut);

@@ -10,8 +10,10 @@
 
 // pTK Headers
 #include "ptk/core/Defines.hpp"
-#include "ptk/core/Types.hpp"
 #include "ptk/util/Vec2.hpp"
+
+// C++ Headers
+#include <cstdint>
 
 namespace pTK
 {
@@ -22,7 +24,7 @@ namespace pTK
     class PTK_API Point
     {
     public:
-        using value_type = int32;
+        using value_type = int32_t;
 
     public:
         /** Constructs Point with default values.
@@ -51,7 +53,7 @@ namespace pTK
             @return    default initialized Point
         */
         template <typename T>
-        constexpr Point(const Vec2<T>& v) noexcept
+        constexpr explicit Point(const Vec2<T>& v) noexcept
             : x{static_cast<Point::value_type>(v.x)},
               y{static_cast<Point::value_type>(v.y)}
         {}

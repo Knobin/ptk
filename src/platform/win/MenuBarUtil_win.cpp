@@ -17,14 +17,14 @@
 
 namespace pTK::MenuBarUtil_win
 {
-    void SetNamedOrCheckboxItem(HMENU hmenu, MenuMap& menus, const Ref<MenuItem>& item, uint menuId,
+    void SetNamedOrCheckboxItem(HMENU hmenu, MenuMap& menus, const Ref<MenuItem>& item, uint32_t menuId,
                                 std::vector<ACCEL>& keys, bool isCheckbox)
     {
-        NamedMenuItem* nItem = dynamic_cast<NamedMenuItem*>(item.get());
+        auto* nItem = dynamic_cast<NamedMenuItem*>(item.get());
         if (!nItem)
             return;
 
-        uint id = MenuBarUtil_win::InsertMenuItemToMap(menus, item, menuId, false, nullptr);
+        uint32_t id = MenuBarUtil_win::InsertMenuItemToMap(menus, item, menuId, false, nullptr);
         std::string menuStr{nItem->name()};
 
         if (auto accelData = MenuBarUtil_win::GetShortcutACCEL(nItem->shortcut()))
@@ -63,12 +63,12 @@ namespace pTK::MenuBarUtil_win
         }
     }
 
-    void CreateMenuStructure(HMENU parent, MenuMap& menus, const pTK::Ref<pTK::Menu>& menu, uint parentId,
+    void CreateMenuStructure(HMENU parent, MenuMap& menus, const pTK::Ref<pTK::Menu>& menu, uint32_t parentId,
                              std::vector<ACCEL>& keys)
     {
         HMENU currentMenu = ::CreateMenu();
         AppendMenu(parent, MF_POPUP, reinterpret_cast<UINT_PTR>(currentMenu), menu->name().c_str());
-        uint currentMenuId = MenuBarUtil_win::InsertMenuItemToMap(menus, menu, parentId, true, currentMenu);
+        uint32_t currentMenuId = MenuBarUtil_win::InsertMenuItemToMap(menus, menu, parentId, true, currentMenu);
 
         for (auto menuItemIt{menu->cbegin()}; menuItemIt != menu->cend(); ++menuItemIt)
         {
@@ -86,7 +86,8 @@ namespace pTK::MenuBarUtil_win
                 }
                 case MenuItemType::Separator:
                 {
-                    uint id = MenuBarUtil_win::InsertMenuItemToMap(menus, *menuItemIt, currentMenuId, false, nullptr);
+                    uint32_t id =
+                        MenuBarUtil_win::InsertMenuItemToMap(menus, *menuItemIt, currentMenuId, false, nullptr);
                     InsertMenu(currentMenu, id, MF_SEPARATOR | MF_BYPOSITION, 0, nullptr);
                     // TODO: Check if separator is enabled and add a callback as well.
                     break;
@@ -106,9 +107,10 @@ namespace pTK::MenuBarUtil_win
         }
     }
 
-    uint InsertMenuItemToMap(MenuMap& menus, const Ref<MenuItem>& menuItem, uint parentId, bool isMenu, HMENU hmenu)
+    uint32_t InsertMenuItemToMap(MenuMap& menus, const Ref<MenuItem>& menuItem, uint32_t parentId, bool isMenu,
+                                 HMENU hmenu)
     {
-        uint uniqueId{1};
+        uint32_t uniqueId{1};
         for (const auto& it : menus)
         {
             if (it.first == uniqueId)
@@ -119,7 +121,7 @@ namespace pTK::MenuBarUtil_win
         return uniqueId;
     }
 
-    Ref<MenuItem> FindMenuItemById(const MenuMap& menuItems, uint id)
+    Ref<MenuItem> FindMenuItemById(const MenuMap& menuItems, uint32_t id)
     {
         MenuMap::const_iterator it{menuItems.find(id)};
         if (it != menuItems.cend())
@@ -161,7 +163,7 @@ namespace pTK::MenuBarUtil_win
 
     std::optional<std::pair<ACCEL, std::string>> GetShortcutACCEL(const Shortcut& shortcut)
     {
-        byte virt{FVIRTKEY};
+        uint8_t virt{FVIRTKEY};
         std::string shortcutStr{};
 
         // static const std::map<int32, KeyCode> s_keyMap{InitKeyCodes()};
@@ -172,11 +174,11 @@ namespace pTK::MenuBarUtil_win
                 std::string str{TranslateKeyCodeToShortcutStr(key)};
                 if (!str.empty())
                 {
-                    constexpr std::pair<std::string_view, int32> alt("Alt", FALT);
-                    constexpr std::pair<std::string_view, int32> ctrl("Ctrl", FCONTROL);
-                    constexpr std::pair<std::string_view, int32> shift("Shift", FSHIFT);
+                    constexpr std::pair<std::string_view, int32_t> alt("Alt", FALT);
+                    constexpr std::pair<std::string_view, int32_t> ctrl("Ctrl", FCONTROL);
+                    constexpr std::pair<std::string_view, int32_t> shift("Shift", FSHIFT);
 
-                    constexpr std::array<std::pair<std::string_view, int32>, 3> virts{alt, ctrl, shift};
+                    constexpr std::array<std::pair<std::string_view, int32_t>, 3> virts{alt, ctrl, shift};
                     const auto foundVirt = std::find_if(virts.cbegin(), virts.cend(), [&](const auto& pair) {
                         return pair.first == str;
                     });
@@ -184,8 +186,8 @@ namespace pTK::MenuBarUtil_win
                     if (foundVirt != virts.cend())
                     {
                         // Multiple virts are supported.
-                        virt |= static_cast<byte>(foundVirt->second);
-                        virt |= static_cast<byte>(std::get<1>(*foundVirt));
+                        virt |= static_cast<uint8_t>(foundVirt->second);
+                        virt |= static_cast<uint8_t>(std::get<1>(*foundVirt));
                         shortcutStr += (!shortcutStr.empty() ? "+" : "") + std::string{foundVirt->first};
                     }
                 }

@@ -45,21 +45,21 @@ namespace pTK
             @param  keycode     Keycode to check
             @return             status
         */
-        [[nodiscard]] static bool KeyCodeExists(int32 keycode);
+        [[nodiscard]] static bool KeyCodeExists(int32_t keycode);
 
         /** Function for converting a keycode to Key.
 
             @param  keycode     Keycode to convert
             @return             Key if found, otherwise Key::Unknown
         */
-        [[nodiscard]] static Key KeyCodeToKey(int32 keycode);
+        [[nodiscard]] static Key KeyCodeToKey(int32_t keycode);
 
         /** Function for converting a Key to keycode.
 
             @param  key     Key to convert
             @return         Keycode if found, otherwise value of Key::Unknown
         */
-        [[nodiscard]] static int32 KeyToKeyCode(Key key);
+        [[nodiscard]] static int32_t KeyToKeyCode(Key key);
 
     private:
         /** Constructs KeyMap with default values.
@@ -75,7 +75,7 @@ namespace pTK
 
     private:
         static KeyMap s_Instance;
-        const std::map<int32, Key> m_keyMap; // TODO(knobin): Change this to std::unordered_map.
+        const std::map<int32_t, Key> m_keyMap; // TODO(knobin): Change this to std::unordered_map.
     };
 
 } // namespace pTK

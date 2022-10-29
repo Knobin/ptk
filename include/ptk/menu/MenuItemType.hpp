@@ -10,14 +10,14 @@
 
 // pTK Headers
 #include "ptk/Log.hpp"
-#include "ptk/core/Types.hpp"
 
 // C++ Headers
+#include <cstdint>
 #include <string_view>
 
 namespace pTK
 {
-    enum class MenuItemType : byte
+    enum class MenuItemType : uint8_t
     {
         Text = 0,  // Text item, can be pressed (button).
         Checkbox,  // Text with a checkbox, can be toggled.
@@ -25,7 +25,7 @@ namespace pTK
         Menu       // Collections of Menus.
     };
 
-    enum class MenuItemStatus : byte
+    enum class MenuItemStatus : uint8_t
     {
         Enabled = 0, // Can be selected.
         Disabled,    // Can not be selected and is "greyed" out.
@@ -33,7 +33,7 @@ namespace pTK
         Unchecked,   // Should only be combined with Type::Checkbox.
     };
 
-    enum class MenuItemEvent : byte
+    enum class MenuItemEvent : uint8_t
     {
         Update = 0, // Something updated.
         Status,     // Status changed.

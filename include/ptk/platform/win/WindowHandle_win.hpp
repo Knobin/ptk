@@ -128,7 +128,7 @@ namespace pTK
             @param pixels   image pixels in a RGBA format.
             @return         true if operation is successful, otherwise false
         */
-        bool setIcon(int32 width, int32 height, byte* pixels) override;
+        bool setIcon(int32_t width, int32_t height, uint8_t* pixels) override;
 
         /** Function for notifying the backend that an event has been pushed from
             a different thread.
@@ -221,7 +221,7 @@ namespace pTK
         {
             WindowHandle_win* window{nullptr};
             bool minimized{false};
-            uint wait{0};
+            uint32_t wait{0};
             MenuBarUtil_win::MenuMap menuItems{};
             bool ignoreSize{false};
             bool hasMenu{false};

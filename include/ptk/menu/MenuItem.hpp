@@ -9,11 +9,11 @@
 #define PTK_MENU_MENUITEM_HPP
 
 // pTK Headers
-#include "ptk/core/Types.hpp"
 #include "ptk/events/KeyCodes.hpp"
 #include "ptk/menu/MenuItemType.hpp"
 
 // C++ Headers
+#include <cstdint>
 #include <functional>
 #include <map>
 #include <string>
@@ -38,7 +38,7 @@ namespace pTK
             @param status   the status of the menu item
             @return         initialized Menu
         */
-        MenuItem(MenuItemType type, MenuItemStatus status);
+        MenuItem(MenuItemType type, MenuItemStatus status) noexcept;
 
         /** Destructor.
 

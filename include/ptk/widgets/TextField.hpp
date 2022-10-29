@@ -104,12 +104,12 @@ namespace pTK
         void updateBounds();
 
         // Handles for keyboard input.
-        void handleKeyPress(KeyCode keycode, byte modifier);
+        void handleKeyPress(KeyCode keycode, uint8_t modifier);
         void removeFromText(int direction);
         void moveCursor(int direction, std::size_t strSize, bool shouldDraw = false);
         void moveCursorToPos(std::size_t pos, std::size_t strSize, bool shouldDraw = false);
 
-        void handleInput(const std::unique_ptr<uint32[]>& data, std::size_t size, Text::Encoding encoding);
+        void handleInput(const std::unique_ptr<uint32_t[]>& data, std::size_t size, Text::Encoding encoding);
 
     private:
         std::string m_placeholderText{};

@@ -38,8 +38,8 @@ namespace pTK
     // Since Windows also can be removed when in the loop, the iterator can be invalidated...
     // Might look into this later since Windows and the App is supposed to run on the same
     // thread, it works and is acceptable behaviour for now.
-    static std::vector<std::pair<int32, WindowHandle_win*>> s_windows{};
-    static std::vector<std::pair<int32, WindowHandle_win*>>::iterator s_windowIter{};
+    static std::vector<std::pair<int32_t, WindowHandle_win*>> s_windows{};
+    static std::vector<std::pair<int32_t, WindowHandle_win*>>::iterator s_windowIter{};
     static bool s_erased{false};
 
     // ApplicationHandle_win class static definitions.
@@ -113,7 +113,7 @@ namespace pTK
         pollEvents();
     }
 
-    void ApplicationHandle_win::waitEventsTimeout(uint ms)
+    void ApplicationHandle_win::waitEventsTimeout(uint32_t ms)
     {
         MsgWaitForMultipleObjects(0, nullptr, FALSE, static_cast<DWORD>(ms), QS_ALLEVENTS);
         pollEvents();
@@ -129,13 +129,13 @@ namespace pTK
         return res;
     }
 
-    void ApplicationHandle_win::onWindowAdd(const std::pair<int32, Window*> item)
+    void ApplicationHandle_win::onWindowAdd(const std::pair<int32_t, Window*> item)
     {
         if (auto wWin = dynamic_cast<WindowHandle_win*>(item.second))
             s_windows.emplace_back(item.first, wWin);
     }
 
-    void ApplicationHandle_win::onWindowRemove(const std::pair<int32, Window*> item)
+    void ApplicationHandle_win::onWindowRemove(const std::pair<int32_t, Window*> item)
     {
         auto it = std::find_if(s_windows.begin(), s_windows.end(), [item](const auto& pair) {
             return pair.first == item.first;

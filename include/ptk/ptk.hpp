@@ -27,7 +27,6 @@
 #include "ptk/core/Shape.hpp"
 #include "ptk/core/Sizable.hpp"
 #include "ptk/core/Text.hpp"
-#include "ptk/core/Types.hpp"
 #include "ptk/core/Widget.hpp"
 #include "ptk/core/WidgetContainer.hpp"
 #include "ptk/core/WidgetInterface.hpp"
