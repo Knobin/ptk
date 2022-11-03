@@ -15,11 +15,11 @@ namespace pTK
     // Will probably rework keyboard input at some point, this works for now.
     //
 
-    std::map<int32, KeyCode> KeyCodeMapInit_unix()
+    std::map<int32_t, KeyCode> KeyCodeMapInit_unix()
     {
         // clang-format off
 
-        std::map<int32, KeyCode> map{};
+        std::map<int32_t, KeyCode> map{};
         map[XK_space] = Key::Space; map[XK_Escape] = Key::Escape;
         map[XK_0] = Key::D0; map[XK_1] = Key::D1; map[XK_2] = Key::D2; map[XK_3] = Key::D3;
         map[XK_4] = Key::D4; map[XK_5] = Key::D5; map[XK_6] = Key::D6; map[XK_7] = Key::D7;

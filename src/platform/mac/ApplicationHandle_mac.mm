@@ -225,7 +225,7 @@ namespace pTK
         }
     }
 
-    void ApplicationHandle_mac::waitEventsTimeout(uint ms)
+    void ApplicationHandle_mac::waitEventsTimeout(uint32_t ms)
     {
         @autoreleasepool {
             NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny

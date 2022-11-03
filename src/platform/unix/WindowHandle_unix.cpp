@@ -18,6 +18,7 @@
 #endif // PTK_OPENGL
 
 // C++ Headers
+#include <cstdint>
 #include <limits>
 
 using App = pTK::ApplicationHandle_unix;
@@ -279,7 +280,7 @@ namespace pTK
         return true;
     }
 
-    bool WindowHandle_unix::setIcon(int32 width, int32 height, byte* pixels)
+    bool WindowHandle_unix::setIcon(int32_t width, int32_t height, uint8_t* pixels)
     {
         Display* display{App::Display()};
         const Atom net_wm_icon = XInternAtom(display, "_NET_WM_ICON", False);
@@ -293,10 +294,10 @@ namespace pTK
         // Expects ARGB, pixel array is RGBA.
         for (std::size_t i{2}; i < longCount; ++i)
         {
-            byte r{pixels[(i * 4)]};
-            byte g{pixels[(i * 4) + 1]};
-            byte b{pixels[(i * 4) + 2]};
-            byte a{pixels[(i * 4) + 3]};
+            uint8_t r{pixels[(i * 4)]};
+            uint8_t g{pixels[(i * 4) + 1]};
+            uint8_t b{pixels[(i * 4) + 2]};
+            uint8_t a{pixels[(i * 4) + 3]};
 
             longData[i] = (static_cast<long>(a) << 24) | (static_cast<long>(r) << 16) | (static_cast<long>(g) << 8) |
                           static_cast<long>(b);
@@ -355,14 +356,14 @@ namespace pTK
 
     bool WindowHandle_unix::isMinimized() const
     {
-        uint32 state{WithdrawnState};
+        uint32_t state{WithdrawnState};
         Atom wm_state{XInternAtom(App::Display(), "WM_STATE", False)};
         auto property = getWindowProperty(wm_state, wm_state);
         if (property.second)
         {
             if (property.first >= 2)
             {
-                state = *reinterpret_cast<uint32*>(property.second);
+                state = *reinterpret_cast<uint32_t*>(property.second);
             }
             XFree(property.second);
         }

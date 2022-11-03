@@ -111,7 +111,7 @@ namespace pTK
         pollEvents();
     }
 
-    void ApplicationHandle_unix::waitEventsTimeout(uint ms)
+    void ApplicationHandle_unix::waitEventsTimeout(uint32_t ms)
     {
         ::Display* display{s_appData.display};
         XEvent event = {};
@@ -275,7 +275,7 @@ namespace pTK
             {
                 auto mods = GetKeyModifiers(static_cast<int>(event->xkey.state));
                 auto keysym = XLookupKeysym(&event->xkey, 0);
-                pTK::Key key{KeyMap::KeyCodeToKey(static_cast<int32>(keysym))};
+                pTK::Key key{KeyMap::KeyCodeToKey(static_cast<int32_t>(keysym))};
                 Event::Type type = (event->type == KeyPress) ? KeyEvent::Pressed : KeyEvent::Released;
                 EventSendHelper<KeyEvent>(window, {type, key, mods});
 
@@ -294,7 +294,7 @@ namespace pTK
                         pTK::InputEvent::data_cont arr(new pTK::InputEvent::data_type[static_cast<std::size_t>(count)]);
 
                         for (std::size_t i{0}; i < static_cast<std::size_t>(count); ++i)
-                            arr[i] = static_cast<uint32>(buffer[i]);
+                            arr[i] = static_cast<uint32_t>(buffer[i]);
 
                         pTK::InputEvent input{arr, static_cast<std::size_t>(count), pTK::Text::Encoding::UTF32};
                         EventSendHelper<pTK::InputEvent>(window, input);

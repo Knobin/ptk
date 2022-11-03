@@ -19,6 +19,7 @@
 #include "ptk/events/KeyMap.hpp"
 #include "ptk/events/WindowEvent.hpp"
 #include "ptk/Application.hpp"
+#include <_types/_uint8_t.h>
 
 // Include Metal backend.
 #ifdef PTK_METAL
@@ -253,14 +254,14 @@ static bool IsValid(uint32 data)
     std::underlying_type<pTK::KeyEvent::Modifier>::type mods{GetModifiers(event.modifierFlags)};
     uint32 data{0};
 
-    pTK::KeyEvent press{pTK::Event::Type::KeyPressed, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode)),
+    pTK::KeyEvent press{pTK::Event::Type::KeyPressed, pTK::KeyMap::KeyCodeToKey(static_cast<uint8_t>(event.keyCode)),
         data, pTK::Text::Encoding::UTF32, mods};
     pTK::EventSendHelper<pTK::KeyEvent>(ptkWindow, press);
 
     if ([event.characters canBeConvertedToEncoding:NSUTF32StringEncoding])
     {
         NSData *utf32Data = [event.characters dataUsingEncoding:NSUTF32StringEncoding];
-        const uint32 *utf32 = static_cast<const uint32*>([utf32Data bytes]);
+        const auto *utf32 = static_cast<const uint32_t*>([utf32Data bytes]);
         NSUInteger count = [utf32Data length] / 4;
 
         if (count > 0)
@@ -291,7 +292,7 @@ static bool IsValid(uint32 data)
 - (void)keyUp:(NSEvent *)event
 {
     std::underlying_type<pTK::KeyEvent::Modifier>::type mods{GetModifiers(event.modifierFlags)};
-    pTK::KeyEvent evt{pTK::Event::Type::KeyReleased, pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode)), mods};
+    pTK::KeyEvent evt{pTK::Event::Type::KeyReleased, pTK::KeyMap::KeyCodeToKey(static_cast<uint8_t>(event.keyCode)), mods};
     pTK::EventSendHelper<pTK::KeyEvent>(ptkWindow, evt);
 }
 
@@ -307,7 +308,7 @@ static bool IsValid(uint32 data)
 
 - (void)flagsChanged:(NSEvent *)event
 {
-    pTK::KeyCode key = pTK::KeyMap::KeyCodeToKey(static_cast<byte>(event.keyCode));
+    pTK::KeyCode key = pTK::KeyMap::KeyCodeToKey(static_cast<uint8_t>(event.keyCode));
     pTK::KeyEvent::Modifier keyMod = pTK::KeyCodeToKeyEventModifier(key);
 
     using utype = std::underlying_type<pTK::KeyEvent::Modifier>::type;
@@ -483,7 +484,7 @@ namespace pTK
         return true;
     }
 
-    bool WindowHandle_mac::setIcon(int32, int32, byte*)
+    bool WindowHandle_mac::setIcon(int32_t, int32_t, uint8_t*)
     {
         PTK_WARN("macOS Windows does not have icons");
         return false;

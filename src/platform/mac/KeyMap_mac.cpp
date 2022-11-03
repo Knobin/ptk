@@ -10,9 +10,9 @@
 
 namespace pTK
 {
-    std::map<int32, KeyCode> KeyCodeMapInit_mac()
+    std::map<int32_t, KeyCode> KeyCodeMapInit_mac()
     {
-        std::map<int32, KeyCode> map{};
+        std::map<int32_t, KeyCode> map{};
         map[0x31] = Key::Space;
         map[0x1D] = Key::D0; map[0x12] = Key::D1; map[0x13] = Key::D2; map[0x14] = Key::D3;
         map[0x15] = Key::D4; map[0x17] = Key::D5; map[0x16] = Key::D6; map[0x1A] = Key::D7;
