@@ -20,8 +20,10 @@ namespace pTK
 {
     /** WidgetContainer class implementation.
 
-        Derived from Container, this class for holding Widgets in
-        order of displaying them.
+        When inheriting from this class be sure to override (if you are implementing a special container):
+            - onAdd
+            - onRemove
+            - onClear
     */
     class PTK_API WidgetContainer : public Widget
     {
@@ -60,10 +62,28 @@ namespace pTK
         */
         virtual ~WidgetContainer();
 
-        // TODO(knobin): Add docs.
+        /** Function for adding a Widget to the WidgetContainer.
+
+            Does this in order:
+                - Will check if the widget already exists and add it if not.
+                - Sets the parent of the widget to this container.
+                - calls onAdd
+                - queues for drawing
+
+            @param widget   widget to add
+        */
         void add(const Ref<Widget>& widget);
 
-        // TODO(knobin): Add docs.
+        /** Function for removing a Widget from the WidgetContainer.
+
+             Does this in order:
+                - Checks if it exists
+                - Sets parent to nullptr.
+                - Calls onRemove
+                - Removes the widget (if exists).
+
+            @param widget   widget to remove
+        */
         void remove(const Ref<Widget>& widget);
 
         /** Function for setting the position of the VBox and its children.
@@ -104,7 +124,10 @@ namespace pTK
         */
         [[nodiscard]] const Color& getBackground() const;
 
-        // TODO(knobin): Add docs.
+        /** Function for retrieving the currently clicked on widget.
+
+            @return    currently selected widget or nullptr
+        */
         [[nodiscard]] Widget* getSelectedWidget() const;
 
         /** Function for retrieving the an iterator that points to the first
@@ -255,29 +278,37 @@ namespace pTK
         }
 
         /** Function for retrieving the first element in the WidgetContainer.
+
             Should in no circumstances be called when the WidgetContainer is empty!
             This is considered to be undefined behavior!
+
             @return    first element in WidgetContainer
         */
         [[nodiscard]] reference front() noexcept { return m_holder.front(); }
 
         /** Function for retrieving the first element in the WidgetContainer.
+
             Should in no circumstances be called when the WidgetContainer is empty!
             This is considered to be undefined behavior!
+
             @return    first element in WidgetContainer
         */
         [[nodiscard]] const_reference front() const noexcept { return m_holder.front(); }
 
         /** Function for retrieving the last element in the WidgetContainer.
+
             Should in no circumstances be called when the WidgetContainer is empty!
             This is considered to be undefined behavior!
+
             @return    last element in WidgetContainer
         */
         [[nodiscard]] reference back() noexcept { return m_holder.back(); }
 
         /** Function for retrieving the last element in the WidgetContainer.
+
             Should in no circumstances be called when the WidgetContainer is empty!
             This is considered to be undefined behavior!
+
             @return    last element in WidgetContainer
         */
         [[nodiscard]] const_reference back() const noexcept { return m_holder.back(); }
@@ -287,6 +318,12 @@ namespace pTK
             @return     number of items in container
         */
         [[nodiscard]] size_type count() const noexcept { return m_holder.size(); }
+
+        /** Function for removing all items in the WidgetContainer.
+
+            Note: Does not call onRemove for all items.
+        */
+        void clear();
 
     protected:
         /** Function for checking if a child has called a parent function.
@@ -298,10 +335,16 @@ namespace pTK
         */
         [[nodiscard]] bool busy() const;
 
-        // TODO(knobin): Add docs.
+        /** Function that paints the background.
+
+            @param canvas   SkCanvas to draw to.
+        */
         void drawBackground(SkCanvas* canvas) const;
 
-        // TODO(knobin): Add docs.
+        /** Function that paints all the children in the WidgetContainer.
+
+            @param canvas   SkCanvas to draw to.
+        */
         void drawChildren(SkCanvas* canvas)
         {
             for (auto it = m_holder.begin(); it != m_holder.end(); ++it)
@@ -326,6 +369,12 @@ namespace pTK
         */
         virtual void onRemove(const Ref<Widget>& UNUSED(widget)) {}
 
+        /** Callback to use when the WidgetContainer is cleared.
+
+            Note: This callback is called before the container is cleared.
+        */
+        virtual void onClear() {}
+
         /** Callback to use when a child has called the parent update function.
 
             @param index   the index of the child
@@ -337,6 +386,13 @@ namespace pTK
             @param index   the index of the child
         */
         virtual void onChildDraw(size_type UNUSED(index)) {}
+
+        /** Function for retrieving the child at a specific position.
+
+            @param pos      position to search
+            @return         iterator to child or cend()
+        */
+        [[nodiscard]] virtual const_iterator findChildAtPos(const Point& pos) const;
 
     private:
         /** Function for handling when a key is pressed or released.
@@ -350,7 +406,7 @@ namespace pTK
 
             @param data         array of display characters
             @param size         amount of characters
-            @param encoding     encoding of the characer data
+            @param encoding     encoding of the character data
         */
         void onInputCallback(const InputEvent& evt);
 
@@ -393,11 +449,35 @@ namespace pTK
         void onReleaseCallback(const ReleaseEvent& evt);
 
     private:
+        /** ContainerEntryPair struct implementation.
+
+            Used to find and validate entries in the container.
+            Helpful to get the shared_ptr to a widget from a raw pointer.
+        */
+        struct PTK_API ContainerEntryPair
+        {
+            Widget* ptr{nullptr};
+            std::size_t index{0};
+        };
+
+        /** Function for checking if the ContainerEntryPair is a valid entry in the container.
+
+            @param val      value to test
+            @return         status
+        */
+        [[nodiscard]] bool validEntryPair(ContainerEntryPair val) const noexcept
+        {
+            if (val.index < m_holder.size())
+                return (m_holder[val.index].get() == val.ptr);
+            return false;
+        }
+
+    private:
         // Variables
         container_type m_holder{};
+        ContainerEntryPair m_lastClickedWidget{};
+        ContainerEntryPair m_currentHoverWidget{};
         Color m_background{0xf5f5f5ff};
-        Widget* m_lastClickedWidget{nullptr};
-        Widget* m_currentHoverWidget{nullptr};
         bool m_busy{false};
     };
 
