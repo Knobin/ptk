@@ -185,6 +185,9 @@ namespace pTK
     void TextField::onTextUpdate()
     {
         updateBounds();
+
+        if (m_text.size() < m_cursorLocation)
+            m_cursorLocation = m_text.size();
     }
 
     void TextField::setPosHint(const Point& pos)
