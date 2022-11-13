@@ -184,7 +184,7 @@ namespace pTK
             if (validEntryPair(lastClicked))
             {
                 const auto work = [lastClicked, &evt]() {
-                    LeaveClickEvent lcEvent{evt.button, evt.pos};
+                    LeaveClickEvent lcEvent{evt.button, evt.value, evt.pos};
                     lastClicked.ptr->handleEvent<LeaveClickEvent>(lcEvent);
                 };
                 DelayDeleteZone(m_holder[lastClicked.index], work);

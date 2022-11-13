@@ -169,16 +169,17 @@ namespace pTK
         else if (type == Event::Type::MouseButtonPressed || type == Event::Type::MouseButtonReleased)
         {
             ButtonEvent* bEvent{static_cast<ButtonEvent*>(event)};
-            Point pos{bEvent->pos};
-            Mouse::Button btn{bEvent->button};
+            const Point pos{bEvent->pos};
+            const int32_t value{bEvent->value};
+            const Mouse::Button btn{bEvent->button};
             if (type == Event::Type::MouseButtonPressed)
             {
-                ClickEvent cEvt{btn, pos};
+                ClickEvent cEvt{btn, value, pos};
                 triggerEvent<ClickEvent>(cEvt);
             }
             else if (type == Event::Type::MouseButtonReleased)
             {
-                ReleaseEvent rEvt{btn, pos};
+                ReleaseEvent rEvt{btn, value, pos};
                 triggerEvent<ReleaseEvent>(rEvt);
             }
         }

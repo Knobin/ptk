@@ -27,7 +27,12 @@ namespace pTK
             NONE = 0,
             Left,
             Middle,
-            Right
+            Right,
+
+            Back,
+            Forward,
+
+            Undefined // Button is not defined here in the enum.
         };
     } // namespace Mouse
 
@@ -88,14 +93,18 @@ namespace pTK
             @param t_pos        associated x and y
             @return             default initialized ButtonEvent
         */
-        constexpr ButtonEvent(Event::Type t_type, Mouse::Button t_button, const Point& t_pos) noexcept
+        constexpr ButtonEvent(Event::Type t_type, Mouse::Button t_button, int32_t t_value, const Point& t_pos) noexcept
             : Event(Event::Category::Mouse, t_type),
               button{t_button},
+              value{t_value},
               pos{t_pos}
         {}
 
         // Button pressed or released.
         Mouse::Button button;
+
+        // Value of the button (Operating System value for the button).
+        int32_t value;
 
         // Location.
         Point pos;
@@ -110,8 +119,8 @@ namespace pTK
             @param t_pos        associated x and y
             @return             default initialized ButtonEvent
         */
-        constexpr ClickEvent(Mouse::Button t_button, const Point& t_pos) noexcept
-            : ButtonEvent(Event::Type::MouseButtonPressed, t_button, t_pos)
+        constexpr ClickEvent(Mouse::Button t_button, int32_t t_value, const Point& t_pos) noexcept
+            : ButtonEvent(Event::Type::MouseButtonPressed, t_button, t_value, t_pos)
         {}
     };
 
@@ -124,8 +133,8 @@ namespace pTK
             @param t_pos        associated x and y
             @return             default initialized ButtonEvent
         */
-        constexpr ReleaseEvent(Mouse::Button t_button, const Point& t_pos) noexcept
-            : ButtonEvent(Event::Type::MouseButtonReleased, t_button, t_pos)
+        constexpr ReleaseEvent(Mouse::Button t_button, int32_t t_value, const Point& t_pos) noexcept
+            : ButtonEvent(Event::Type::MouseButtonReleased, t_button, t_value, t_pos)
         {}
     };
 } // namespace pTK

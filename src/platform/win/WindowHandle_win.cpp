@@ -440,7 +440,7 @@ namespace pTK
     }
 
     static void HandleMouseClick(WindowHandle_win* window, const Vec2f& scale, Event::Type type, Mouse::Button btn,
-                                 LPARAM lParam)
+                                 int32_t value, LPARAM lParam)
     {
         PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
 
@@ -452,12 +452,12 @@ namespace pTK
 
         if (type == Event::Type::MouseButtonPressed)
         {
-            ClickEvent evt{btn, scaledPos};
+            ClickEvent evt{btn, value, scaledPos};
             EventSendHelper<ClickEvent>(window, evt);
         }
         else
         {
-            ReleaseEvent evt{btn, scaledPos};
+            ReleaseEvent evt{btn, value, scaledPos};
             EventSendHelper<ReleaseEvent>(window, evt);
         }
     }
@@ -719,7 +719,8 @@ namespace pTK
             {
                 const Vec2f scale = window->getDPIScale();
                 const Mouse::Button btn = (msg == WM_LBUTTONDOWN) ? Mouse::Button::Left : Mouse::Button::Right;
-                HandleMouseClick(window, scale, Event::Type::MouseButtonPressed, btn, lParam);
+                const int32_t value = (msg == WM_LBUTTONDOWN) ? VK_LBUTTON : VK_RBUTTON;
+                HandleMouseClick(window, scale, Event::Type::MouseButtonPressed, btn, value, lParam);
                 break;
             }
             case WM_LBUTTONUP:
@@ -727,7 +728,8 @@ namespace pTK
             {
                 const Vec2f scale = window->getDPIScale();
                 const Mouse::Button btn = (msg == WM_LBUTTONUP) ? Mouse::Button::Left : Mouse::Button::Right;
-                HandleMouseClick(window, scale, Event::Type::MouseButtonReleased, btn, lParam);
+                const int32_t value = (msg == WM_LBUTTONUP) ? VK_LBUTTON : VK_RBUTTON;
+                HandleMouseClick(window, scale, Event::Type::MouseButtonReleased, btn, value, lParam);
                 break;
             }
             case WM_MOUSEWHEEL:
@@ -742,6 +744,18 @@ namespace pTK
                 const float x_offset =
                     -static_cast<float>(static_cast<SHORT>(HIWORD(wParam))) / static_cast<float>(WHEEL_DELTA);
                 EventSendHelper<ScrollEvent>(window, ScrollEvent{{x_offset, 0.0f}});
+                break;
+            }
+            case WM_XBUTTONUP:
+            case WM_XBUTTONDOWN:
+            {
+                const Vec2f scale = window->getDPIScale();
+                const Event::Type type =
+                    (msg == WM_XBUTTONUP) ? Event::Type::MouseButtonReleased : Event::Type::MouseButtonPressed;
+                const Mouse::Button btn =
+                    (GET_XBUTTON_WPARAM(wParam) == XBUTTON1) ? Mouse::Button::Back : Mouse::Button::Forward;
+                const int32_t value = (btn == Mouse::Button::Back) ? VK_XBUTTON1 : VK_XBUTTON2;
+                HandleMouseClick(window, scale, type, btn, value, lParam);
                 break;
             }
             case WM_SIZING:
