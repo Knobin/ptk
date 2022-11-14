@@ -342,7 +342,7 @@ static bool IsValid(uint32 data)
     NSWindow *nswindow = static_cast<NSWindow*>(ptkWindow->handle());
     const NSPoint pos = [nswindow mouseLocationOutsideOfEventStream];
     const NSRect content = [nswindow.contentView frame];
-    pTK::ClickEvent evt{pTK::Mouse::Button::Left,
+    pTK::ClickEvent evt{pTK::Mouse::Button::Left, -1,
                          {static_cast<pTK::Point::value_type>(pos.x),
                           static_cast<pTK::Point::value_type>(content.size.height - pos.y)}};
     pTK::EventSendHelper<pTK::ClickEvent>(ptkWindow, evt);
@@ -353,7 +353,7 @@ static bool IsValid(uint32 data)
     NSWindow *nswindow = static_cast<NSWindow*>(ptkWindow->handle());
     const NSPoint pos = [nswindow mouseLocationOutsideOfEventStream];
     const NSRect content = [nswindow.contentView frame];
-    pTK::ReleaseEvent evt{pTK::Mouse::Button::Left,
+    pTK::ReleaseEvent evt{pTK::Mouse::Button::Left, -1,
                          {static_cast<pTK::Point::value_type>(pos.x),
                           static_cast<pTK::Point::value_type>(content.size.height - pos.y)}};
     pTK::EventSendHelper<pTK::ReleaseEvent>(ptkWindow, evt);

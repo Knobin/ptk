@@ -91,8 +91,6 @@ namespace pTK
         bool initialized{false};
     } s_appData{};
 
-    ApplicationHandle_mac ApplicationHandle_mac::s_Instance{};
-
     static void SetAppMenu(const std::string& name, NSMenu *menu)
     {
         NSString * const applicationName = [NSString stringWithstring:name];
@@ -148,14 +146,9 @@ namespace pTK
         [menuItem setTarget : NSApp];
     }
 
-    void ApplicationHandle_mac::Init(const std::string& name)
+    ApplicationHandle_mac::ApplicationHandle_mac(std::string_view name)
+        : ApplicationHandle(name)
     {
-        if (s_appData.initialized)
-        {
-            PTK_WARN("ApplicationHandle_mac already initialized!");
-            return;
-        }
-
         @autoreleasepool {
             [NSApplication sharedApplication];
 
@@ -181,7 +174,7 @@ namespace pTK
         PTK_INFO("Initialized ApplicationHandle_mac");
     }
 
-    void ApplicationHandle_mac::Destroy()
+    ApplicationHandle_mac::~ApplicationHandle_mac()
     {
         @autoreleasepool {
             [NSApp setDelegate:nil];
@@ -191,11 +184,6 @@ namespace pTK
         }
 
         PTK_INFO("Destroyed ApplicationHandle_mac");
-    }
-
-    ApplicationHandle *ApplicationHandle_mac::Instance()
-    {
-        return &s_Instance;
     }
 
     void ApplicationHandle_mac::pollEvents()

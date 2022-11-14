@@ -132,7 +132,23 @@ namespace pTK
 
             sk_sp<SkSurface> surface;
             if (m_context)
-                surface = SkSurface::MakeFromCAMetalLayer(m_context.get(), m_metalLayer, kTopLeft_GrSurfaceOrigin, 1, kBGRA_8888_SkColorType, nullptr, nullptr, &m_drawableHandle);
+            {
+                id<CAMetalDrawable> currentDrawable = [m_metalLayer nextDrawable];
+                GrMtlTextureInfo fbInfo;
+                fbInfo.fTexture.retain(currentDrawable.texture);
+                
+                const auto size = getSize();
+                GrBackendRenderTarget backendRT(static_cast<int>(size.width), static_cast<int>(size.height), 1, fbInfo);
+
+                surface = SkSurface::MakeFromBackendRenderTarget(m_context.get(), backendRT,
+                                                             kTopLeft_GrSurfaceOrigin,
+                                                             kBGRA_8888_SkColorType,
+                                                             nullptr,
+                                                             nullptr);
+
+                m_drawableHandle = CFRetain(static_cast<GrMTLHandle>(currentDrawable));
+            }
+                // surface = SkSurface::MakeFromCAMetalLayer(m_context.get(), m_metalLayer, kTopLeft_GrSurfaceOrigin, 1, kBGRA_8888_SkColorType, nullptr, nullptr, &m_drawableHandle);
 
             return surface;
         } // autoreleasepool
@@ -147,13 +163,15 @@ namespace pTK
             }
 
             id<MTLCommandBuffer> commandBuffer = [*m_queue commandBuffer];
+            commandBuffer.label = @"Present";
+            
             id<CAMetalDrawable> drawable = reinterpret_cast<id<CAMetalDrawable>>(m_drawableHandle);
+
+            [commandBuffer presentDrawable:drawable];
+            [commandBuffer commit];
+            
             CFRelease(m_drawableHandle);
             m_drawableHandle = nullptr;
-
-            [commandBuffer commit];
-            [commandBuffer waitUntilScheduled];
-            [drawable present];
         } // autoreleasepool
     }
 }

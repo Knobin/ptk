@@ -9,13 +9,11 @@
 #define PTK_PLATFORM_MAC_APPLICATION_HPP
 
 // pTK Headers
-#include "ptk/platform/base/ApplicationHandle.hpp"
 #include "ptk/menu/MenuBar.hpp"
+#include "ptk/platform/base/ApplicationHandle.hpp"
 
 namespace pTK
 {
-    class WindowHandle_mac;
-
     /** ApplicationHandle_mac class implementation.
 
         Base application implementation for macOS.
@@ -24,9 +22,11 @@ namespace pTK
     class PTK_API ApplicationHandle_mac : public ApplicationHandle
     {
     public:
-        static void Init(const std::string& name);
-        static void Destroy();
-        static ApplicationHandle *Instance();
+        // TODO(knobin): Add documentation.
+        explicit ApplicationHandle_mac(std::string_view name);
+
+        // TODO(knobin): Add documentation.
+        virtual ~ApplicationHandle_mac();
 
         /** Function for polling all the window events.
 
@@ -44,15 +44,9 @@ namespace pTK
         */
         void waitEventsTimeout(uint32_t ms) override;
 
+        // TODO(knobin): Add documentation.
         static void SetMenuBar(const Ref<MenuBar>& menuBar);
-
-    private:
-        ApplicationHandle_mac() = default;
-        virtual ~ApplicationHandle_mac() = default;
-
-    private:
-        static ApplicationHandle_mac s_Instance;
     };
-}
+} // namespace pTK
 
 #endif // PTK_PLATFORM_MAC_APPLICATION_HPP
