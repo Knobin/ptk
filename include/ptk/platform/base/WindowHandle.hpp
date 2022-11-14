@@ -18,8 +18,8 @@
 #include "ptk/widgets/VBox.hpp"
 
 //
-// TODO(knobin): This file needs documentation and possibly changes of
-// functions / thorough check of the necessity of some functions.
+// TODO(knobin): This file needs documentation and possibly a rework.
+// Changes of functions / thorough check of the necessity of some functions.
 //
 
 namespace pTK

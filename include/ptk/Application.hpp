@@ -10,7 +10,7 @@
 
 // pTK Headers
 #include "ptk/Window.hpp"
-#include "ptk/util/SingleObject.hpp"
+#include "ptk/platform/Platform.hpp"
 
 // C++ Headers
 #include <cstdint>
@@ -25,21 +25,8 @@ namespace pTK
         application.
 
     */
-    class PTK_API Application : public SingleObject
+    class PTK_API Application : public PTK_APPLICATION_HANDLE_T
     {
-    public:
-        using key_type = int32_t;
-        using mapped_type = Window*;
-        using value_type = std::pair<key_type, mapped_type>;
-        using container_type = std::map<key_type, mapped_type>;
-        using reference = value_type&;
-        using const_reference = const value_type&;
-        using iterator = typename container_type::iterator;
-        using reverse_iterator = typename container_type::reverse_iterator;
-        using const_iterator = typename container_type::const_iterator;
-        using const_reverse_iterator = typename container_type::const_reverse_iterator;
-        using size_type = typename container_type::size_type;
-
     public:
         /** Constructs Application with default values.
 
@@ -52,7 +39,7 @@ namespace pTK
             @param name    application name
             @return        default initialized Application
         */
-        Application(const std::string& name);
+        explicit Application(std::string_view name);
 
         /** Constructs Event with default values.
 
@@ -61,7 +48,7 @@ namespace pTK
             @param argv    arguments
             @return        default initialized Transformable
         */
-        Application(const std::string& name, int argc, char* argv[]);
+        Application(std::string_view name, int argc, char* argv[]);
 
         /** Destructor for Application
 
@@ -95,152 +82,30 @@ namespace pTK
         */
         bool removeWindow(key_type key);
 
-        // TODO(knobin): Add docs.
-        void removeAllWindows();
+        /** Function for removing all windows in the application.
 
-        // TODO(knobin): Add docs.
-        [[nodiscard]] Window* findByKey(key_type key) const;
+        */
+        void removeAllWindows();
 
         /** Function for executing the application.
 
         */
         int run();
 
-        // TODO(knobin): Add docs.
+        /** Function for closing the application.
+
+            Note: Should only be called if the application should be
+                  stopped but not destructed yet.
+        */
         void close();
-
-        /** Function for retrieving the an iterator that points to the first
-           value in the Application.
-
-           The iterator may be equal to end iterator if the Application is empty.
-
-           @return    iterator
-       */
-        [[nodiscard]] iterator begin() noexcept { return m_holder.begin(); }
-
-        /** Function for retrieving the an iterator that points to the first
-            value in the Application.
-
-            The iterator may be equal to end iterator if the Application is empty.
-
-            @return    const iterator
-        */
-        [[nodiscard]] const_iterator begin() const noexcept { return m_holder.begin(); }
-
-        /** Function for retrieving the an const iterator that points to the first
-            value in the Application.
-
-            The iterator may be equal to end iterator if the Application is empty.
-
-            @return    const iterator
-        */
-        [[nodiscard]] const_iterator cbegin() const noexcept { return m_holder.cbegin(); }
-
-        /** Function for retrieving the special iterator referring to
-            the past-the-end of the Application.
-
-            The iterator should never be de-referenced, due to the fact that the iterator
-            does not point to a value and should therefore only be used for checking.
-
-            @return    iterator
-        */
-        [[nodiscard]] iterator end() noexcept { return m_holder.end(); }
-
-        /** Function for retrieving the special iterator referring to
-            the past-the-end of the Application.
-
-            The iterator should never be de-referenced, due to the fact that the iterator
-            does not point to a value and should therefore only be used for checking.
-
-            @return    const iterator
-        */
-        [[nodiscard]] const_iterator end() const noexcept { return m_holder.end(); }
-
-        /** Function for retrieving the special const iterator referring to
-            the past-the-end of the Application.
-
-            The iterator should never be dereferenced, due to the fact that the iterator
-            does not point to a value and should therefore only be used for checking.
-
-            @return    const iterator
-        */
-        [[nodiscard]] const_iterator cend() const noexcept { return m_holder.cend(); }
-
-        /** Function for retrieving the an iterator that points to the last
-            value in the Application.
-
-            This iterator is working in reverse. Meaning that is starts at the end
-            and is moving to the beginning.
-
-            The iterator may be equal to rend iterator if the Application is empty.
-
-            @return    reverse iterator
-        */
-        [[nodiscard]] reverse_iterator rbegin() noexcept { return m_holder.rbegin(); }
-
-        /** Function for retrieving the an iterator that points to the last
-            value in the Application.
-
-            This iterator is working in reverse. Meaning that is starts at the end
-            and is moving to the beginning.
-
-            The iterator may be equal to rend iterator if the Application is empty.
-
-            @return    const reverse begin iterator
-        */
-        [[nodiscard]] const_reverse_iterator rbegin() const noexcept { return m_holder.rbegin(); }
-
-        /** Function for retrieving the an iterator that points to the last
-            value in the Application.
-
-            This iterator is working in reverse. Meaning that is starts at the end
-            and is moving to the beginning.
-
-            The iterator may be equal to rend iterator if the Application is empty.
-
-            @return    const reverse begin iterator
-        */
-        [[nodiscard]] const_reverse_iterator crbegin() const noexcept { return m_holder.crbegin(); }
-
-        /** Function for retrieving the special const iterator referring to
-            the past-the-end of the Application.
-
-            The iterator should never be de-referenced, due to the fact that the iterator
-            does not point to a value and should therefore only be used for checking.
-
-            @return    reverse reverse end iterator
-        */
-        [[nodiscard]] reverse_iterator rend() noexcept { return m_holder.rend(); }
-
-        /** Function for retrieving the special const iterator referring to
-            the past-the-end of the Application.
-
-            The iterator should never be de-referenced, due to the fact that the iterator
-            does not point to a value and should therefore only be used for checking.
-
-            @return    const reverse end iterator
-        */
-        [[nodiscard]] const_reverse_iterator rend() const noexcept { return m_holder.rend(); }
-
-        /** Function for retrieving the special const iterator referring to
-             the past-the-end of the Application.
-
-             The iterator should never be de-referenced, due to the fact that the iterator
-             does not point to a value and should therefore only be used for checking.
-
-             @return    const reverse end iterator
-         */
-        [[nodiscard]] const_reverse_iterator crend() const noexcept { return m_holder.crend(); }
 
     public:
         static Application* Get();
         static Application* s_Instance;
 
     private:
-        bool init(const std::string& name);
-
-    private:
-        container_type m_holder{};
+        bool init();
+        void eraseWindow(const_iterator it);
     };
 } // namespace pTK
 

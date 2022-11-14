@@ -14,6 +14,8 @@
 // C++ Headers
 #include <string>
 
+// TODO(knobin): Fix documentation in this file.
+
 namespace pTK
 {
     /** ApplicationHandle_win class implementation.
@@ -24,10 +26,12 @@ namespace pTK
     class PTK_API ApplicationHandle_win : public ApplicationHandle
     {
     public:
-        static void Init(const std::string& name);
-        static void Destroy();
+        explicit ApplicationHandle_win(std::string_view name);
 
-        static ApplicationHandle_win* Instance();
+        /** Destructor for ApplicationHandle_win
+
+        */
+        virtual ~ApplicationHandle_win();
 
         /** Function for polling all the window events.
 
@@ -39,7 +43,7 @@ namespace pTK
         */
         void waitEvents() override;
 
-        /** Function for waiting for an event with a timout.
+        /** Function for waiting for an event with a timeout.
 
             @param ms   max time to wait for an event
         */
@@ -57,21 +61,14 @@ namespace pTK
 
             @param key  ptk window id
         */
-        void onWindowAdd(const std::pair<int32_t, Window*> item) override;
+        void onWindowAdd(int32_t key, Window* window) override;
 
         /** Callback that will be called when a window is removed from the
             application.
 
             @param key  ptk window id
         */
-        void onWindowRemove(const std::pair<int32_t, Window*> item) override;
-
-    private:
-        ApplicationHandle_win() = default;
-        virtual ~ApplicationHandle_win() = default;
-
-        static ApplicationHandle_win s_Instance;
-        static bool s_Initialized;
+        void onWindowRemove(int32_t key, Window* window) override;
     };
 } // namespace pTK
 

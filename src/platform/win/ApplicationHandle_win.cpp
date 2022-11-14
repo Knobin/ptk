@@ -42,37 +42,22 @@ namespace pTK
     static std::vector<std::pair<int32_t, WindowHandle_win*>>::iterator s_windowIter{};
     static bool s_erased{false};
 
-    // ApplicationHandle_win class static definitions.
-    ApplicationHandle_win ApplicationHandle_win::s_Instance{};
-    bool ApplicationHandle_win::s_Initialized{false};
-
-    void ApplicationHandle_win::Init(const std::string&)
+    ApplicationHandle_win::ApplicationHandle_win(std::string_view name)
+        : ApplicationHandle(name)
     {
-        if (ApplicationHandle_win::s_Initialized)
-        {
-            PTK_WARN("ApplicationHandle_win already initialized");
-            return;
-        }
-
         ::SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
         if (!RegisterWndClass())
             throw PlatformError("Failed to register class!");
 
-        ApplicationHandle_win::s_Initialized = true;
         PTK_INFO("Initialized ApplicationHandle_win");
     }
 
-    void ApplicationHandle_win::Destroy()
+    ApplicationHandle_win::~ApplicationHandle_win()
     {
         ::UnregisterClassW(L"PTK", GetModuleHandleW(nullptr));
 
         PTK_INFO("Destroyed ApplicationHandle_win");
-    }
-
-    ApplicationHandle_win* ApplicationHandle_win::Instance()
-    {
-        return &s_Instance;
     }
 
     void ApplicationHandle_win::pollEvents()
@@ -129,16 +114,16 @@ namespace pTK
         return res;
     }
 
-    void ApplicationHandle_win::onWindowAdd(const std::pair<int32_t, Window*> item)
+    void ApplicationHandle_win::onWindowAdd(int32_t key, Window* window)
     {
-        if (auto wWin = dynamic_cast<WindowHandle_win*>(item.second))
-            s_windows.emplace_back(item.first, wWin);
+        if (auto wWin = dynamic_cast<WindowHandle_win*>(window))
+            s_windows.emplace_back(key, wWin);
     }
 
-    void ApplicationHandle_win::onWindowRemove(const std::pair<int32_t, Window*> item)
+    void ApplicationHandle_win::onWindowRemove(int32_t key, Window* window)
     {
-        auto it = std::find_if(s_windows.begin(), s_windows.end(), [item](const auto& pair) {
-            return pair.first == item.first;
+        auto it = std::find_if(s_windows.begin(), s_windows.end(), [key, window](const auto& pair) {
+            return pair.first == key || pair.second == window;
         });
         if (it != s_windows.end())
         {

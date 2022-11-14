@@ -16,19 +16,4 @@ namespace pTK
         return PTK_KEYMAP_INIT_FUNC();
     }
 
-    void AppInit(const std::string& name)
-    {
-        PTK_APPLICATION_HANDLE_T::Init(name);
-    }
-
-    void AppDestroy()
-    {
-        PTK_APPLICATION_HANDLE_T::Destroy();
-    }
-
-    ApplicationHandle* AppInstance()
-    {
-        return PTK_APPLICATION_HANDLE_T::Instance();
-    }
-
 } // namespace pTK

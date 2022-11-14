@@ -3,6 +3,7 @@
 #
 
 set(PTK_CORE_FILES core/Alignment.cpp
+        core/ApplicationBase.cpp
         core/CallbackStorage.cpp
         core/EventCallbacks.cpp
         core/Shape.cpp

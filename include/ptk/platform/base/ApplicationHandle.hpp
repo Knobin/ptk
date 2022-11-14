@@ -9,36 +9,27 @@
 #define PTK_CORE_PLATFORM_APPLICATIONHANDLE_HPP
 
 // pTK Headers
-#include "ptk/Core.hpp"
-#include "ptk/util/SingleObject.hpp"
-
-// C++ Header
-#include <cstdint>
-#include <map>
+#include "ptk/core/ApplicationBase.hpp"
 
 namespace pTK
 {
-    class Window;
-
     /** ApplicationHandle class implementation.
 
         This is the implementation for the Application backend.
         An implementation of this class must exist for the target platform.
     */
-    class PTK_API ApplicationHandle : public SingleObject
+    class PTK_API ApplicationHandle : public ApplicationBase
     {
     public:
-        /** Constructs ApplicationBase with default values.
+        // Use constructors from ApplicationBase.
+        using ApplicationBase::ApplicationBase;
 
-            @return        default initialized ApplicationBase
-        */
-        ApplicationHandle() = default;
-
-        /** Destructor for ApplicationBase
+        /** Destructor for ApplicationHandle
 
         */
         virtual ~ApplicationHandle() = default;
 
+    protected:
         /** Function for polling all the window events.
 
         */
@@ -55,7 +46,10 @@ namespace pTK
         */
         virtual void waitEventsTimeout(uint32_t ms) = 0;
 
-        // TODO(knobin): Add docs.
+        /** Callback for when the application should be closed.
+
+            Note: This will not be called on destruction, use destructor for that.
+        */
         virtual void onClose() {}
 
         /** Callback that will be called when a window is added to the
@@ -63,15 +57,15 @@ namespace pTK
 
             @param key  ptk window id
         */
-        virtual void onWindowAdd(const std::pair<int32_t, Window*> UNUSED(item)) {}
+        virtual void onWindowAdd(int32_t UNUSED(key), Window* UNUSED(window)) {}
 
         /** Callback that will be called when a window is removed from the
             application.
 
             @param key  ptk window id
         */
-        virtual void onWindowRemove(const std::pair<int32_t, Window*> UNUSED(item)) {}
+        virtual void onWindowRemove(int32_t UNUSED(key), Window* UNUSED(window)) {}
     };
-}
+} // namespace pTK
 
 #endif // PTK_CORE_PLATFORM_APPLICATIONHANDLE_HPP
