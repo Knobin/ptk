@@ -12,18 +12,15 @@
 #include "ptk/Window.hpp"
 #include "ptk/platform/Platform.hpp"
 
-// C++ Headers
-#include <cstdint>
-#include <map>
-#include <utility>
-
 namespace pTK
 {
     /** Application class implementation.
 
-        This class is to manage windows and handle the whole
-        application.
+        This class is for adding/removing windows and to
+        setup the Application and its runtime environment.
 
+        The actual event handling functions are in the
+        inherited class.
     */
     class PTK_API Application : public PTK_APPLICATION_HANDLE_T
     {
@@ -55,7 +52,9 @@ namespace pTK
         */
         virtual ~Application();
 
-        /** Function for executing the application.
+        /** Function for executing the application with a single window.
+
+            The Window should not have been added with addWindow() before this call.
 
             @param window  start window
         */
@@ -84,11 +83,14 @@ namespace pTK
 
         /** Function for removing all windows in the application.
 
+            Internally calls removeWindow() on all windows.
         */
         void removeAllWindows();
 
         /** Function for executing the application.
 
+            Runs the application with the already added windows.
+            Note: Windowless application is not currently supported.
         */
         int run();
 
@@ -100,12 +102,36 @@ namespace pTK
         void close();
 
     public:
+        /** Function for retrieving a pointer to the Application.
+
+            Should only be called after the Application has been created.
+            Otherwise, no instance exists and is nullptr.
+
+            @return     pointer to application instance
+        */
         static Application* Get();
-        static Application* s_Instance;
 
     private:
+        /** Function for initializing the Application.
+
+            Should only be called once when the Application has been created.
+            More than one call to this function will result in a ApplicationError
+            exception being thrown.
+
+            @return     status
+        */
         bool init();
+
+        /** Helper function for removing a window from the Application.
+
+            Calls the callback for removing a window and the removes it.
+
+            @param it   iterator to be erased
+        */
         void eraseWindow(const_iterator it);
+
+    private:
+        static Application* s_Instance;
     };
 } // namespace pTK
 

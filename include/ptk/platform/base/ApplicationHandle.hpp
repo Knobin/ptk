@@ -42,27 +42,35 @@ namespace pTK
 
         /** Function for waiting for an event with a timeout.
 
-            @param ms   max time to wait for an event
+            @param ms       max time to wait for an event
         */
         virtual void waitEventsTimeout(uint32_t ms) = 0;
 
         /** Callback for when the application should be closed.
 
             Note: This will not be called on destruction, use destructor for that.
+
+            Application will remove all windows after calling this callback.
         */
         virtual void onClose() {}
 
         /** Callback that will be called when a window is added to the
             application.
 
-            @param key  ptk window id
+            Note: Window has been added before calling this callback.
+
+            @param key      window id
+            @param window   pointer to window
         */
         virtual void onWindowAdd(int32_t UNUSED(key), Window* UNUSED(window)) {}
 
         /** Callback that will be called when a window is removed from the
             application.
 
-            @param key  ptk window id
+            Note: Window will be removed after the call to this callback.
+
+            @param key      window id
+            @param window   pointer to window
         */
         virtual void onWindowRemove(int32_t UNUSED(key), Window* UNUSED(window)) {}
     };

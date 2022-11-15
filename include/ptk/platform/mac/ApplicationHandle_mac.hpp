@@ -22,10 +22,15 @@ namespace pTK
     class PTK_API ApplicationHandle_mac : public ApplicationHandle
     {
     public:
-        // TODO(knobin): Add documentation.
+        /** Constructs ApplicationHandle_mac with name.
+
+            @return        default initialized ApplicationHandle_mac with name
+        */
         explicit ApplicationHandle_mac(std::string_view name);
 
-        // TODO(knobin): Add documentation.
+        /** Destructor for ApplicationHandle_mac
+
+        */
         virtual ~ApplicationHandle_mac();
 
         /** Function for polling all the window events.
@@ -38,13 +43,20 @@ namespace pTK
         */
         void waitEvents() override;
 
-        /** Function for waiting for an event with a timout.
+        /** Function for waiting for an event with a timeout.
 
-            @param ms   max time to wait for an event
+            @param ms       max time to wait for an event
         */
         void waitEventsTimeout(uint32_t ms) override;
 
-        // TODO(knobin): Add documentation.
+        /** Function for setting the MenuBar of the Application.
+
+            Since macOS has a common MenuBar for the application (not
+            like windows that has one per window), the MenuBar will be
+            set here using this function.
+
+            @param menuBar      MenuBar to set
+        */
         static void SetMenuBar(const Ref<MenuBar>& menuBar);
     };
 } // namespace pTK

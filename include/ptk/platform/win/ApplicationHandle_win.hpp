@@ -11,11 +11,6 @@
 // pTK Headers
 #include "ptk/platform/base/ApplicationHandle.hpp"
 
-// C++ Headers
-#include <string>
-
-// TODO(knobin): Fix documentation in this file.
-
 namespace pTK
 {
     /** ApplicationHandle_win class implementation.
@@ -26,6 +21,10 @@ namespace pTK
     class PTK_API ApplicationHandle_win : public ApplicationHandle
     {
     public:
+        /** Constructs ApplicationHandle_win with name.
+
+            @return        default initialized ApplicationHandle_win with name
+        */
         explicit ApplicationHandle_win(std::string_view name);
 
         /** Destructor for ApplicationHandle_win
@@ -45,11 +44,11 @@ namespace pTK
 
         /** Function for waiting for an event with a timeout.
 
-            @param ms   max time to wait for an event
+            @param ms       max time to wait for an event
         */
         void waitEventsTimeout(uint32_t ms) override;
 
-        /** Function for converting std::string to UTF16 std::stringw.
+        /** Function for converting std::string to UTF16 std::wstring.
 
             @param str  string to convert
             @return     UTF16 string
@@ -59,14 +58,20 @@ namespace pTK
         /** Callback that will be called when a window is added to the
             application.
 
-            @param key  ptk window id
+            Note: Window has been added before calling this callback.
+
+            @param key      window id
+            @param window   pointer to window
         */
         void onWindowAdd(int32_t key, Window* window) override;
 
         /** Callback that will be called when a window is removed from the
             application.
 
-            @param key  ptk window id
+            Note: Window will be removed after the call to this callback.
+
+            @param key      window id
+            @param window   pointer to window
         */
         void onWindowRemove(int32_t key, Window* window) override;
     };

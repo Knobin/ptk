@@ -12,6 +12,7 @@
 #include "ptk/util/SingleObject.hpp"
 
 // C++ Headers
+#include <cstdint>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -52,7 +53,7 @@ namespace pTK
 
         /** Constructs ApplicationBase with name.
 
-            @return        default initialized Application with name
+            @return        default initialized ApplicationBase with name
         */
         explicit ApplicationBase(std::string_view name);
 

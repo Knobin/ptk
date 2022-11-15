@@ -153,6 +153,7 @@ namespace pTK
 
     void Application::close()
     {
+        onClose();
         removeAllWindows();
     }
 
