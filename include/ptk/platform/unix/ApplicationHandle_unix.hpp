@@ -16,8 +16,6 @@
 
 namespace pTK
 {
-    class WindowHandle_unix;
-
     /** ApplicationHandle_unix class implementation.
 
         Base application implementation for Unix.
@@ -26,10 +24,16 @@ namespace pTK
     class PTK_API ApplicationHandle_unix : public ApplicationHandle
     {
     public:
-        static void Init(const std::string& name);
-        static void Destroy();
+        /** Constructs ApplicationHandle_unix with name.
 
-        static ApplicationHandle_unix* Instance();
+            @return        default initialized ApplicationHandle_unix with name
+        */
+        explicit ApplicationHandle_unix(std::string_view name);
+
+        /** Destructor for ApplicationHandle_unix
+
+        */
+        virtual ~ApplicationHandle_unix();
 
         // TODO: Add documentation.
         void pollEvents() override;
@@ -54,14 +58,7 @@ namespace pTK
         static int Screen();
 
     private:
-        ApplicationHandle_unix() = default;
-        virtual ~ApplicationHandle_unix() = default;
-
-        bool init();
         void handleEvent(XEvent* event);
-
-    private:
-        static ApplicationHandle_unix s_Instance;
     };
 } // namespace pTK
 

@@ -16,6 +16,13 @@
 // C++ Headers
 #include <map>
 
+//
+// TODO(knobin): Go through this file and check that Window events are handled properly.
+//
+// There have been changes to the API that might not have been implemented for UNIX (x11)
+// backend. For example, closing the application (using the app.close() function does not work).
+//
+
 namespace pTK
 {
     // Since the iHandleEvent function is protected in WindowHandle, this is a friend function
@@ -43,26 +50,17 @@ namespace pTK
         XContext xcontext{-1};
         int screen{-1};
         ::Window root;
-        bool initialized{false};
         XIM xim;
         XIC xic;
     };
 
     static AppUnixData s_appData{};
 
-    // ApplicationHandle_unix class static definitions.
-    ApplicationHandle_unix ApplicationHandle_unix::s_Instance{};
-
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void ApplicationHandle_unix::Init(const std::string&)
+    ApplicationHandle_unix::ApplicationHandle_unix(std::string_view name)
+        : ApplicationHandle(name)
     {
-        if (s_appData.initialized)
-        {
-            PTK_ERROR("App already initialized");
-            return;
-        }
-
         XInitThreads();
 
         s_appData.display = XOpenDisplay(nullptr);
@@ -72,22 +70,14 @@ namespace pTK
         s_appData.xim = XOpenIM(s_appData.display, 0, 0, 0);
         s_appData.xic = XCreateIC(s_appData.xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, NULL);
 
-        s_appData.initialized = true;
         PTK_INFO("Initialized ApplicationHandle_unix");
     }
 
-    void ApplicationHandle_unix::Destroy()
+    ApplicationHandle_unix::~ApplicationHandle_unix()
     {
         XCloseDisplay(s_appData.display);
         PTK_INFO("Destroyed ApplicationHandle_unix");
     }
-
-    ApplicationHandle_unix* ApplicationHandle_unix::Instance()
-    {
-        return &s_Instance;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     void ApplicationHandle_unix::pollEvents()
     {
@@ -237,18 +227,19 @@ namespace pTK
                 {
                     case Button1:
                     {
-                        ClickEvent evt{Mouse::Button::Left, {event->xbutton.x, event->xbutton.y}};
+                        // TODO(knobin): Check for Left mouse btn virtual key instead of -1.
+                        ClickEvent evt{Mouse::Button::Left, -1, {event->xbutton.x, event->xbutton.y}};
                         EventSendHelper<ClickEvent>(window, evt);
                         break;
                     }
                     case Button4:
                     {
-                        EventSendHelper<ScrollEvent>(window, {{0.0f, 1.0f}});
+                        EventSendHelper<ScrollEvent>(window, ScrollEvent{{0.0f, 1.0f}});
                         break;
                     }
                     case Button5:
                     {
-                        EventSendHelper<ScrollEvent>(window, {{0.0f, -1.0f}});
+                        EventSendHelper<ScrollEvent>(window, ScrollEvent{{0.0f, -1.0f}});
                         break;
                     }
                 }
@@ -258,7 +249,8 @@ namespace pTK
             {
                 if (event->xbutton.button == Button1)
                 {
-                    ReleaseEvent evt{Mouse::Button::Left, {event->xbutton.x, event->xbutton.y}};
+                    // TODO(knobin): Check for Left mouse btn virtual key instead of -1.
+                    ReleaseEvent evt{Mouse::Button::Left, -1, {event->xbutton.x, event->xbutton.y}};
                     EventSendHelper<ReleaseEvent>(window, evt);
                 }
                 break;
