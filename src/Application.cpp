@@ -156,8 +156,8 @@ namespace pTK
         if (onCloseRequest())
         {
             onClose();
-            onApplicationClose();
             removeAllWindows();
+            onApplicationClose();
         }
     }
 
@@ -169,7 +169,7 @@ namespace pTK
 
     void Application::removeAllWindows()
     {
-        for (auto it = cbegin(); it != cend();)
+        for (auto it = cbegin(); it != cend(); ++it)
             onWindowRemove(it->first, it->second);
 
         container().clear();

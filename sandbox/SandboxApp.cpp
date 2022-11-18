@@ -255,9 +255,11 @@ int main(int argc, char *argv[])
 
     std::cout << "Callback id to auto-remove: " << cb_id << std::endl;
 
-    quitItem->onClick("test click", [&window]() {
+    std::atomic<bool> sRun = true;
+    quitItem->onClick("test click", [&window, &sRun]() {
         std::cout << "Closing window!" << std::endl;
         window.close();
+        sRun = false;
     });
 
     pTK::Ref<pTK::HBox> hbox = pTK::Create<pTK::HBox>();
@@ -395,7 +397,6 @@ int main(int argc, char *argv[])
     pTK::Ref<SpinningRect> sRect = pTK::Create<SpinningRect>();
     sRect->setSize({250, 250});
 
-    std::atomic<bool> sRun = true;
     std::thread sThread{[&](){
         while (sRun)
         {

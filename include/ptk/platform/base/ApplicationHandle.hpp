@@ -52,7 +52,8 @@ namespace pTK
             things to stop the application from running. The app is
             considered "dead" here and no other calls will be done.
 
-            Application will remove all windows after calling this callback.
+            Note: Current Windows will be removed with onWindowRemove callback
+                  before the call to this function.
 
             Note: This will not be called on destruction, use destructor for that.
         */
