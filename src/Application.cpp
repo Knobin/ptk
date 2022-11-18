@@ -153,8 +153,12 @@ namespace pTK
 
     void Application::close()
     {
-        onClose();
-        removeAllWindows();
+        if (onCloseRequest())
+        {
+            onClose();
+            onApplicationClose();
+            removeAllWindows();
+        }
     }
 
     Application* Application::Get()

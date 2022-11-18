@@ -112,6 +112,24 @@ namespace pTK
         static Application* Get();
 
     private:
+        /** Callback for when the application will begin to close.
+
+            If the closing of the application should be halted for whatever
+            reason (some confirmation "are you sure?" for example) return
+            false in this function.
+
+            @return     if the application should close
+        */
+        virtual bool onCloseRequest() { return true; }
+
+        /** Callback for when the application is closing.
+
+            Application is closing here, to halt the stopping use the
+            onCloseRequest callback.
+        */
+        virtual void onClose() {}
+
+    private:
         /** Function for initializing the Application.
 
             Should only be called once when the Application has been created.

@@ -48,11 +48,15 @@ namespace pTK
 
         /** Callback for when the application should be closed.
 
-            Note: This will not be called on destruction, use destructor for that.
+            Use this function to exit event loop and do the necessary
+            things to stop the application from running. The app is
+            considered "dead" here and no other calls will be done.
 
             Application will remove all windows after calling this callback.
+
+            Note: This will not be called on destruction, use destructor for that.
         */
-        virtual void onClose() {}
+        virtual void onApplicationClose() {}
 
         /** Callback that will be called when a window is added to the
             application.
