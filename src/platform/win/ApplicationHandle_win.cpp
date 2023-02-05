@@ -79,7 +79,11 @@ namespace pTK
                 }
 
                 ::TranslateMessage(&msg);
-                DispatchMessage(&msg);
+                if (msg.hwnd)
+                    DispatchMessage(&msg);
+                else if (msg.message == WM_QUIT)
+                    if (Application::Get()->close())
+                        ::PostQuitMessage(0);
 
                 if (s_erased)
                 {
@@ -107,7 +111,7 @@ namespace pTK
     std::wstring ApplicationHandle_win::stringToUTF16(const std::string& str)
     {
         if (str.empty())
-            return std::wstring();
+            return {};
         int sz{::MultiByteToWideChar(CP_ACP, 0, &str[0], static_cast<int>(str.size()), nullptr, 0)};
         std::wstring res(sz, 0);
         ::MultiByteToWideChar(CP_ACP, 0, &str[0], static_cast<int>(str.size()), &res[0], sz);

@@ -19,8 +19,7 @@ namespace pTK
         This class is for adding/removing windows and to
         setup the Application and its runtime environment.
 
-        The actual event handling functions are in the
-        inherited class.
+        The actual event handling functions are in the base class.
     */
     class PTK_API Application : public PTK_APPLICATION_HANDLE_T
     {
@@ -85,12 +84,21 @@ namespace pTK
 
             Internally calls removeWindow() on all windows.
         */
-        void removeAllWindows();
+        void clearWindows();
+
+        /** Function for closing all windows in the application.
+
+            Will close all windows, they might be removed from the application.
+            It is up to the Window implementation.
+        */
+        void closeWindows();
 
         /** Function for executing the application.
 
             Runs the application with the already added windows.
             Note: Windowless application is not currently supported.
+
+            @return     status
         */
         int run();
 
@@ -98,8 +106,34 @@ namespace pTK
 
             Note: Should only be called if the application should be
                   stopped but not destructed yet.
+
+            @return     closing status, true if closing, false if halted
         */
-        void close();
+        bool close();
+
+        /** Function for retrieving if the application is closed.
+
+            @return     closed status
+        */
+        [[nodiscard]] bool isClosed() const noexcept { return m_closed; }
+
+        /** Function for allowing the application to run in headless mode.
+
+            @param value    allowed to run in headless mode
+        */
+        void allowHeadless(bool value) noexcept { m_allowHeadless = value; }
+
+        /** Function for retrieving if the application is allowed to run in headless mode.
+
+            @return     status
+        */
+        [[nodiscard]] bool isHeadlessAllowed() const noexcept { return m_allowHeadless; }
+
+        /** Function for retrieving if the application is running in headless mode.
+
+            @return     status
+        */
+        [[nodiscard]] bool isRunningHeadless() const noexcept { return m_runningHeadless; }
 
     public:
         /** Function for retrieving a pointer to the Application.
@@ -117,6 +151,9 @@ namespace pTK
             If the closing of the application should be halted for whatever
             reason (some confirmation "are you sure?" for example) return
             false in this function.
+
+            Note: This function must eventually return true for the application
+                  to be able to close.
 
             @return     if the application should close
         */
@@ -148,8 +185,42 @@ namespace pTK
         */
         void eraseWindow(const_iterator it);
 
+        /** Message Loop for Headless mode.
+
+            - Requires headless mode be allowed.
+            - Windows should not be present in the application.
+                - Debug will assert, Release will work but Windows wont handle events.
+
+            @return     status
+        */
+        int headlessMessageLoop();
+
+        /** Message Loop for standard mode.
+
+            - Requires that at least one window has been added.
+
+            @return     status
+        */
+        int standardMessageLoop();
+
+        /** Function for selecting the function for event polling.
+
+            Will select between pollEvents, waitEvents & waitEventsTimeout
+            depending on certain conditions.
+
+            For example:
+                - pollEvents: if we need to check for an event and cannot wait.
+                - waitEvents: if we can wait for an event indefinitely.
+                - waitEventsTimeout: if we have some work that must run every x time
+                                     but fine waiting before running that work again.
+        */
+        void fetchEvents();
+
     private:
         static Application* s_Instance;
+        bool m_allowHeadless{false};
+        bool m_runningHeadless{false};
+        bool m_closed{false};
     };
 } // namespace pTK
 

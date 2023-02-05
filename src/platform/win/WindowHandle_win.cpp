@@ -337,7 +337,7 @@ namespace pTK
 
     bool WindowHandle_win::close()
     {
-        return destroyWindow();
+        return ::CloseWindow(m_hwnd);
     }
 
     void WindowHandle_win::show()
@@ -664,11 +664,19 @@ namespace pTK
                 break;
             case WM_CLOSE:
             {
+                // Window close request should be sent here.
+                // To enable the window to halt the closing request.
+
                 // window->handleEvents(); // Handle all events before sending close event.
                 EventSendHelper<CloseEvent>(window, {});
                 if (auto win = dynamic_cast<Window*>(window))
                     Application::Get()->removeWindow(win);
-                ::PostQuitMessage(0);
+                DestroyWindow(hwnd);
+                break;
+            }
+            case WM_DESTROY:
+            {
+                window->destroyWindow();
                 break;
             }
             case WM_SETFOCUS:
