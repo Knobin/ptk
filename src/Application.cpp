@@ -260,12 +260,20 @@ namespace pTK
     void Application::closeWindows()
     {
         auto it = cbegin();
+        std::size_t total{container().size()};
         while (it != cend())
         {
+            it->second->close();
+
             // Window close might remove itself from the application
             // and alter the container (invalidating the iterator).
-            it->second->close();
-            it = cbegin();
+            if (total != container().size())
+            {
+                it = cbegin();
+                total = container().size();
+            }
+            else
+                ++it;
         }
     }
 

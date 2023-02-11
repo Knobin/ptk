@@ -205,6 +205,18 @@ namespace pTK
         // TODO(knobin): Add documentation.
         Platform::WindowHandle* handle() const { return m_handle.get(); }
 
+        /** Function for setting the position of the window.
+
+            @param pos  position to set
+        */
+        void setPosHint(const Point& pos) override { m_handle->setPosHint(pos); }
+
+        /** Function for retrieving the closed status of the window.
+
+            @return     true if closed is focused, otherwise false
+        */
+        [[nodiscard]] bool isClosed() const noexcept { return m_closed; }
+
     private:
         // Event processing (for pointer based event).
         void handleEvent(Event* event);
@@ -242,6 +254,7 @@ namespace pTK
         std::thread::id m_threadID;
         bool m_draw{false};
         bool m_close{false};
+        bool m_closed{false};
     };
 
     template <typename T, typename... Args>

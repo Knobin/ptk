@@ -280,19 +280,6 @@ namespace pTK
         }
     }
 
-    /*
-    void Window::close()
-    {
-        if (!m_close)
-        {
-            m_close = true;
-            m_handle.close();
-            if (m_onClose)
-                m_onClose();
-        }
-    }
-    */
-
     void Window::show()
     {
         if (isHidden())
@@ -301,7 +288,11 @@ namespace pTK
 
     void Window::close()
     {
-        m_handle->close();
+        if (!isClosed())
+        {
+            m_handle->close();
+            m_closed = true;
+        }
     }
 
     void Window::hide()
