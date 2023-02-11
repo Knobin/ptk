@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "ptk/platform/mac/KeyMap_mac.hpp"
+#include "KeyMap_mac.hpp"
 
 namespace pTK
 {

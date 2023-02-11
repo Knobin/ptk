@@ -12,7 +12,7 @@
 #include "ptk/menu/MenuBar.hpp"
 #include "ptk/platform/base/ApplicationHandle.hpp"
 
-namespace pTK
+namespace pTK::Platform
 {
     /** ApplicationHandle_mac class implementation.
 
@@ -26,7 +26,7 @@ namespace pTK
 
             @return        default initialized ApplicationHandle_mac with name
         */
-        explicit ApplicationHandle_mac(std::string_view name);
+        ApplicationHandle_mac(ApplicationBase* appBase, std::string_view name);
 
         /** Destructor for ApplicationHandle_mac
 
@@ -59,6 +59,6 @@ namespace pTK
         */
         static void SetMenuBar(const Ref<MenuBar>& menuBar);
     };
-} // namespace pTK
+} // namespace pTK::Platform
 
 #endif // PTK_PLATFORM_MAC_APPLICATION_HPP

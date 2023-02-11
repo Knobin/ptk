@@ -9,13 +9,13 @@
 #define PTK_WINDOW_HPP
 
 // pTK Headers
-#include "ptk/core/Event.hpp"
+#include "ptk/core/ContextBase.hpp"
 #include "ptk/core/EventQueue.hpp"
+#include "ptk/core/Widget.hpp"
+#include "ptk/core/WindowBase.hpp"
 #include "ptk/core/WindowInfo.hpp"
-#include "ptk/platform/Platform.hpp"
+#include "ptk/platform/base/WindowHandle.hpp"
 #include "ptk/util/SingleObject.hpp"
-#include "ptk/util/Vec2.hpp"
-#include "ptk/widgets/VBox.hpp"
 
 // C++ Headers
 #include <memory>
@@ -33,7 +33,7 @@ namespace pTK
         Currently, it will default to a hardware based backend if no one is specified.
         If that backend is not available, it will fall back to a software based backend.
     */
-    class PTK_API Window : public PTK_WINDOW_HANDLE_T, public SingleObject
+    class PTK_API Window : public WindowBase, public SingleObject
     {
     public:
         /** Constructs Window with default values.
@@ -56,7 +56,7 @@ namespace pTK
         /** Function for handling the window events.
 
         */
-        void handleEvents() override;
+        void handleEvents();
 
         /** Function for sending events to the window to
             be handled directly.
@@ -91,6 +91,120 @@ namespace pTK
             m_draw = true;
         }
 
+        /** Function for showing the window.
+
+        */
+        void show() override;
+
+        /** Function for closing the window.
+
+            @return     true if operation is successful, otherwise false
+        */
+        void close() override;
+
+        /** Function for hiding the window.
+
+        */
+        void hide() override;
+
+        /** Function for checking if the window is visible.
+
+            @return    status
+        */
+        [[nodiscard]] bool visible() const override { return m_handle->visible(); }
+
+        /** Function for retrieving if the window is hidden.
+
+            @return     true if window is hidden, otherwise false
+        */
+        [[nodiscard]] bool isHidden() const { return m_handle->isHidden(); }
+
+        /** Function for setting the title of the window.
+
+            @param name     title to show
+            @return         true if operation is successful, otherwise false
+        */
+        bool setTitle(const std::string& name) { return m_handle->setTitle(name); }
+
+        /** Function for setting the icon of the window.
+
+            Note: The function expects the pixels to be in a RGBA format with size of 32 bits (4 bytes).
+            Therefore, size of the pixel array is width * height * 32.
+            This is why a size parameter is not needed.
+
+            @param width    width of the image
+            @param height   height of the image
+            @param pixels   image pixels in a RGBA format.
+            @return         true if operation is successful, otherwise false
+        */
+        bool setIcon(int32_t width, int32_t height, uint8_t* pixels)
+        {
+            return m_handle->setIcon(width, height, pixels);
+        }
+
+        /** Function for minimizing the window.
+
+            @return     true if operation is successful, otherwise false
+        */
+        bool minimize();
+
+        /** Function for retrieving the minimizing status of the window.
+
+            @return     true if window is minimized, otherwise false
+        */
+        [[nodiscard]] bool isMinimized() const { return m_handle->isMinimized(); }
+
+        /** Function for restoring a window from the minimized state.
+
+            @return     true if operation is successful, otherwise false
+        */
+        bool restore();
+
+        /** Function for retrieving the focus status of the window.
+
+            @return     true if window is focused, otherwise false
+        */
+        [[nodiscard]] bool isFocused() const { return m_handle->isFocused(); }
+
+        /** Function for retrieving the Context of the Backend.
+
+            @return     Context
+        */
+        [[nodiscard]] ContextBase* getContext() const { return m_context.get(); }
+
+        /** Function for retrieving the scaling of the Window.
+
+            @return     scaling
+        */
+        [[nodiscard]] Vec2f getDPIScale() const { return m_handle->getDPIScale(); }
+
+        /** Callback for setting the size limits the window.
+
+            @param min  minimal size of the window
+            @param max  maximum size of the window
+        */
+        void onLimitChange(const Size&, const Size&) final { setLimitsWithSizePolicy(); }
+
+        /** Function for setting the SizePolicy of the Widget.
+
+            @param  policy   policy to set
+        */
+        void setSizePolicy(SizePolicy policy) final
+        {
+            Widget::setSizePolicy(policy);
+            setLimitsWithSizePolicy();
+        }
+
+        // Sets the new window limits based on the SizePolicy.
+        void setLimitsWithSizePolicy()
+        {
+            Limits limits{getLimitsWithSizePolicy()};
+            m_handle->setLimits(limits.min, limits.max);
+        }
+
+        // TODO(knobin): Add documentation.
+        Platform::WindowHandle* handle() const { return m_handle.get(); }
+
     private:
         // Event processing (for pointer based event).
         void handleEvent(Event* event);
@@ -123,7 +237,8 @@ namespace pTK
 
     private:
         EventQueue<std::deque> m_eventQueue{};
-        // PTK_WINDOW_HANDLE_T m_handle;
+        std::unique_ptr<Platform::WindowHandle> m_handle;
+        std::unique_ptr<ContextBase> m_context;
         std::thread::id m_threadID;
         bool m_draw{false};
         bool m_close{false};
@@ -134,13 +249,8 @@ namespace pTK
     {
         m_eventQueue.lock();
         if (m_eventQueue.push<T>(std::forward<Args>(args)...))
-        {
             if (std::this_thread::get_id() != m_threadID)
-            {
-                // m_handle.notifyEvent();
-                notifyEvent();
-            }
-        }
+                m_handle->notifyEvent();
         m_eventQueue.unlock();
     }
 

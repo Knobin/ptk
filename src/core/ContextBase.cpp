@@ -6,13 +6,14 @@
 //
 
 // pTK Headers
-#include "ptk/platform/base/ContextBase.hpp"
+#include "ptk/core/ContextBase.hpp"
 
 namespace pTK
 {
-    ContextBase::ContextBase(const Size& size)
+    ContextBase::ContextBase(ContextBackendType type, const Size& size)
         : SingleObject(),
-          m_size{size}
+          m_size{size},
+          m_type{type}
     {}
 
     const Size& ContextBase::getSize() const

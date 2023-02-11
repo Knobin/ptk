@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "ptk/platform/mac/MetalContext_mac.hpp"
+#include "MetalContext_mac.hpp"
 
 // pTK Headers
 #include "ptk/core/Exception.hpp"
@@ -28,9 +28,11 @@ PTK_DISABLE_WARN_END()
 namespace pTK
 {
     MetalContext_mac::MetalContext_mac(void* mainView, const Size& size, const Vec2f& scale)
-        : ContextBase(size),
-            m_props{0, kRGB_H_SkPixelGeometry}, m_context{nullptr}, m_GrContextOptions{},
-            m_drawableHandle{nullptr}
+        : ContextBase(ContextBackendType::Metal, size),
+          m_props{0, kRGB_H_SkPixelGeometry},
+          m_context{nullptr},
+          m_GrContextOptions{},
+          m_drawableHandle{nullptr}
     {
         init(mainView, size, scale);
     }

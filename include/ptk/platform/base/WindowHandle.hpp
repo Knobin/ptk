@@ -9,27 +9,34 @@
 #define PTK_PLATFORM_BASE_WINDOWHANDLE_HPP
 
 // pTK Headers
-#include "ptk/Core.hpp"
-#include "ptk/core/Event.hpp"
+#include "ptk/core/WindowBase.hpp"
 #include "ptk/core/WindowInfo.hpp"
-#include "ptk/platform/base/ContextBase.hpp"
-#include "ptk/util/Point.hpp"
-#include "ptk/util/Size.hpp"
-#include "ptk/widgets/VBox.hpp"
+#include "ptk/util/SingleObject.hpp"
+
+// C++ Headers
+#include <memory>
 
 //
 // TODO(knobin): This file needs documentation and possibly a rework.
 // Changes of functions / thorough check of the necessity of some functions.
 //
 
-namespace pTK
+namespace pTK::Platform
 {
     /** WindowHandle class implementation
 
         Specifies the backend API that the platform must implement.
     */
-    class PTK_API WindowHandle : public VBox
+    class PTK_API WindowHandle : public SingleObject
     {
+    public:
+        /** Function for creating the platform specific WindowHandle.
+
+            @return pointer to platform specific WindowHandle
+        */
+        static std::unique_ptr<WindowHandle> Make(WindowBase* winBase, const std::string& name, const Size& size,
+                                                  const WindowInfo& flags);
+
     public:
         /** Constructs WindowHandle with default values.
 
@@ -37,37 +44,26 @@ namespace pTK
         */
         WindowHandle() = delete;
 
-        /** Constructs WindowHandle with values.
+        /** Constructs WindowHandle with WindowBase.
 
-            @return    initialized WindowHandle with values
+            @param app      pointer to WindowHandle
+            @return         default initialized WindowHandle
         */
-        WindowHandle(const Size& size, const WindowInfo& flags)
-        {
-            setSizePolicy(flags.sizePolicy);
-            updateSize(size);
-        }
-
-        /** Move Constructor for WindowHandle.
-
-            @return    initialized WindowHandle from value
-        */
-        WindowHandle(WindowHandle&& other) = default;
-
-        /** Move Assignment operator for WindowHandle.
-
-            @return    WindowHandle with value
-        */
-        WindowHandle& operator=(WindowHandle&& other) = default;
+        explicit WindowHandle(WindowBase* win)
+            : SingleObject(),
+              m_winBase{win}
+        {}
 
         /** Destructor for WindowHandle.
 
         */
         virtual ~WindowHandle() = default;
 
+    public:
         /** Function for showing the window.
 
         */
-        void show() override {}
+        virtual void show() = 0;
 
         /** Function for closing the window.
 
@@ -78,13 +74,13 @@ namespace pTK
         /** Function for hiding the window.
 
         */
-        void hide() override {}
+        virtual void hide() = 0;
 
         /** Function for checking if the window is visible.
 
             @return    status
         */
-        [[nodiscard]] bool visible() const final { return !isHidden(); }
+        [[nodiscard]] bool visible() const { return !isHidden(); }
 
         /** Function for retrieving if the window is hidden.
 
@@ -97,8 +93,7 @@ namespace pTK
             @param pos  position to set
             @return     true if operation is successful, otherwise false
         */
-        // virtual bool setPosHint(const Point& UNUSED(pos)) = 0;
-        void setPosHint(const Point& UNUSED(pos)) override{};
+        virtual bool setPosHint(const Point& UNUSED(pos)) = 0;
 
         /** Function for resizing the window.
 
@@ -106,23 +101,6 @@ namespace pTK
             @return     true if operation is successful, otherwise false
         */
         virtual bool resize(const Size& UNUSED(size)) = 0;
-
-        /** Function for swapping the buffers.
-
-        */
-        virtual void swapBuffers() = 0;
-
-        /** Function for retrieving the Context of the Backend.
-
-            @return     Context
-        */
-        [[nodiscard]] virtual ContextBase* getContext() const = 0;
-
-        /** Function for retrieving the scaling of the Window.
-
-            @return     scaling
-        */
-        [[nodiscard]] virtual Vec2f getDPIScale() const { return {1.0f, 1.0f}; }
 
         /** Function for initiating the drawing.
 
@@ -164,19 +142,19 @@ namespace pTK
             Depending on the implementation, pollEvents() might need to be exited.
             This function will notify when that is needed.
         */
-        virtual void notifyEvent(){};
+        virtual void notifyEvent() {}
 
         /** Function for retrieving the window position.
 
             @return     Window Position
         */
-        [[nodiscard]] virtual Point getWinPos() const = 0;
+        [[nodiscard]] virtual Point getPosition() const = 0;
 
         /** Function for retrieving the window size.
 
             @return     Window Size
         */
-        [[nodiscard]] virtual Size getWinSize() const = 0;
+        [[nodiscard]] virtual Size getSize() const = 0;
 
         /** Function for minimizing the window.
 
@@ -209,133 +187,42 @@ namespace pTK
         */
         virtual bool setScaleHint(const Vec2f& UNUSED(scale)) { return true; }
 
-        // Gets called when the window needs to handle (if any) posted events.
-        virtual void handleEvents() = 0;
-
-        /** Function for setting the SizePolicy of the Widget.
-
-            @param  policy   policy to set
-        */
-        void setSizePolicy(SizePolicy policy) final
-        {
-            Widget::setSizePolicy(policy);
-            setLimitsWithSizePolicy();
-        }
-
-    protected:
-        /** Function for invalidating the window.
-
-        */
-        virtual void inval() {}
-
-        // Use this function to send events.
-        template <typename Event>
-        void iHandleEvent(const Event& evt);
-
-    private:
-        // Window specific callbacks.
-        // TODO(knobin): Add docs.
-        virtual void onCloseEvent() {}
-        virtual void onMoveEvent(const Point& UNUSED(pos)) {}
-        virtual void onResizeEvent(const Size& UNUSED(size)) {}
-        virtual void onFocusEvent() {}
-        virtual void onLostFocusEvent() {}
-        virtual void onMinimizeEvent() {}
-        virtual void onRestoreEvent() {}
-
-    private:
-        // Gets called when drawing the window is needed (only from a window backend).
-        virtual void regionInvalidated(const PaintEvent&) = 0;
-
-        // Sets the new window limits based on the SizePolicy.
-        void setLimitsWithSizePolicy()
-        {
-            Limits limits{getLimitsWithSizePolicy()};
-            setWindowLimits(limits.min, limits.max);
-        }
-
-        /** Callback for setting the size limits the window.
-
-            @param min  minimal size of the window
-            @param max  maximum size of the window
-        */
-        void onLimitChange(const Size&, const Size&) final { setLimitsWithSizePolicy(); }
-
         /** Function for setting the size limits the window.
 
             @param min  minimal size of the window
             @param max  maximum size of the window
         */
-        virtual void setWindowLimits(const Size& UNUSED(min), const Size& UNUSED(max)) {}
+        virtual void setLimits(const Size& UNUSED(min), const Size& UNUSED(max)) {}
+
+        /** Function for retrieving the scaling of the Window.
+
+            @return     scaling
+        */
+        [[nodiscard]] virtual Vec2f getDPIScale() const { return {1.0f, 1.0f}; }
+
+        /** Function for invalidating the window.
+
+        */
+        virtual void inval() {}
+
+    protected:
+        /** Function for retrieving the ApplicationBase.
+
+            @return pointer to ApplicationBase
+        */
+        WindowBase* winBase() const { return m_winBase; }
+
+        // Forwarding of events from platform handler to window.
+        template <typename Event>
+        void HandlePlatformEvent(const Event& evt)
+        {
+            m_winBase->HandlePlatformEvent<Event>(evt);
+        }
+
+    private:
+        WindowBase* m_winBase{nullptr};
     };
 
-    // Default event that is not handled by the window.
-    template <typename Event>
-    void WindowHandle::iHandleEvent(const Event& evt)
-    {
-        handleEvent<Event>(evt);
-    }
-
-    template <>
-    inline void WindowHandle::iHandleEvent<CloseEvent>(const CloseEvent& evt)
-    {
-        close();
-        onCloseEvent();
-        handleEvent<CloseEvent>(evt);
-    }
-
-    template <>
-    inline void WindowHandle::iHandleEvent<ResizeEvent>(const ResizeEvent& evt)
-    {
-        setSize(evt.size);
-        onResizeEvent(evt.size);
-        handleEvent<ResizeEvent>(evt);
-    }
-
-    template <>
-    inline void WindowHandle::iHandleEvent<MoveEvent>(const MoveEvent& evt)
-    {
-        setPosHint(evt.pos);
-        onMoveEvent(evt.pos);
-        handleEvent<MoveEvent>(evt);
-    }
-
-    template <>
-    inline void WindowHandle::iHandleEvent<PaintEvent>(const PaintEvent& evt)
-    {
-        // This paint event is from the backend and is only called when the platform
-        // wants a redraw.
-        handleEvent<PaintEvent>(evt);
-        regionInvalidated(evt);
-    }
-
-    template <>
-    inline void WindowHandle::iHandleEvent<FocusEvent>(const FocusEvent& evt)
-    {
-        onFocusEvent();
-        handleEvent<FocusEvent>(evt);
-    }
-
-    template <>
-    inline void WindowHandle::iHandleEvent<LostFocusEvent>(const LostFocusEvent& evt)
-    {
-        onLostFocusEvent();
-        handleEvent<LostFocusEvent>(evt);
-    }
-
-    template <>
-    inline void WindowHandle::iHandleEvent<MinimizeEvent>(const MinimizeEvent& evt)
-    {
-        onMinimizeEvent();
-        handleEvent<MinimizeEvent>(evt);
-    }
-
-    template <>
-    inline void WindowHandle::iHandleEvent<RestoreEvent>(const RestoreEvent& evt)
-    {
-        onRestoreEvent();
-        handleEvent<RestoreEvent>(evt);
-    }
 } // namespace pTK
 
 #endif // PTK_PLATFORM_BASE_WINDOWHANDLE_HPP

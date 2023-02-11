@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "ptk/platform/PlatformInit.hpp"
+#include "../platform/KeyMapInit.hpp"
 
 // pTK Headers
 #include "ptk/events/KeyMap.hpp"
@@ -21,7 +21,7 @@ namespace pTK
 
     KeyMap::KeyMap()
         : SingleObject(),
-          m_keyMap{KeyMapInit()}
+          m_keyMap{Platform::KeyMapInit()}
     {}
 
     KeyMap& KeyMap::Get()

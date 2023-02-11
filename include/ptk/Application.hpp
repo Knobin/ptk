@@ -10,7 +10,10 @@
 
 // pTK Headers
 #include "ptk/Window.hpp"
-#include "ptk/platform/Platform.hpp"
+#include "ptk/core/ApplicationBase.hpp"
+
+// Temp.
+#include "ptk/platform/base/ApplicationHandle.hpp"
 
 namespace pTK
 {
@@ -18,10 +21,8 @@ namespace pTK
 
         This class is for adding/removing windows and to
         setup the Application and its runtime environment.
-
-        The actual event handling functions are in the base class.
     */
-    class PTK_API Application : public PTK_APPLICATION_HANDLE_T
+    class PTK_API Application : public ApplicationBase
     {
     public:
         /** Constructs Application with default values.
@@ -173,9 +174,10 @@ namespace pTK
             More than one call to this function will result in a ApplicationError
             exception being thrown.
 
-            @return     status
+            @param name     application name
+            @return         status
         */
-        bool init();
+        bool init(std::string_view name);
 
         /** Helper function for removing a window from the Application.
 
@@ -218,6 +220,7 @@ namespace pTK
 
     private:
         static Application* s_Instance;
+        Platform::ApplicationHandle* m_handle{nullptr};
         bool m_allowHeadless{false};
         bool m_runningHeadless{false};
         bool m_closed{false};

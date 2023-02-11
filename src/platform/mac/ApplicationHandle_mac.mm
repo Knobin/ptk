@@ -6,9 +6,9 @@
 //
 
 // Local Headers
-#include "ptk/platform/mac/ApplicationHandle_mac.hpp"
-#include "ptk/platform/mac/WindowHandle_mac.hpp"
-#include "ptk/platform/mac/Utility_mac.hpp"
+#include "ApplicationHandle_mac.hpp"
+#include "Utility_mac.hpp"
+#include "WindowHandle_mac.hpp"
 
 // pTK Headers
 #include "ptk/Application.hpp"
@@ -80,7 +80,7 @@
 
 @end
 
-namespace pTK
+namespace pTK::Platform
 {
     static struct AppData_mac
     {
@@ -146,8 +146,8 @@ namespace pTK
         [menuItem setTarget : NSApp];
     }
 
-    ApplicationHandle_mac::ApplicationHandle_mac(std::string_view name)
-        : ApplicationHandle(name)
+    ApplicationHandle_mac::ApplicationHandle_mac(ApplicationBase* appBase, std::string_view name)
+        : ApplicationHandle(appBase)
     {
         @autoreleasepool {
             [NSApplication sharedApplication];

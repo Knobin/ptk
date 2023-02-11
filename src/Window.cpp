@@ -8,6 +8,7 @@
 // pTK Headers
 #include "ptk/Window.hpp"
 #include "ptk/Application.hpp"
+#include "ptk/platform/base/ContextFactory.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
@@ -17,14 +18,27 @@ PTK_DISABLE_WARN_END()
 namespace pTK
 {
     Window::Window(const std::string& name, const Size& size, const WindowInfo& flags)
-        : PTK_WINDOW_HANDLE_T(name, size, flags),
+        : WindowBase(),
           SingleObject(),
           m_threadID{std::this_thread::get_id()}
     {
+        // Create handle and context for platform.
+        m_handle = Platform::WindowHandle::Make(this, name, size, flags);
+
+        PTK_INFO("ContextBackendType Available:");
+        PTK_INFO("\tRaster: {}", (Platform::ContextFactory::IsAvailable(ContextBackendType::Raster)) ? "Yes" : "No");
+        PTK_INFO("\tGL:     {}", (Platform::ContextFactory::IsAvailable(ContextBackendType::GL)) ? "Yes" : "No");
+        PTK_INFO("\tMetal:  {}", (Platform::ContextFactory::IsAvailable(ContextBackendType::Metal)) ? "Yes" : "No");
+
+        m_context = Platform::ContextFactory::Make(this, size, getDPIScale(), flags);
+
+        // Size policy.
+        setSizePolicy(flags.sizePolicy);
+        updateSize(size);
+
         // Set Widget properties.
         setName(name);
 
-        // m_handle = std::make_unique<PTK_WINDOW_HANDLE_T>(this, name, size, flags);
         PTK_INFO("Initialized Window");
     }
 
@@ -86,7 +100,14 @@ namespace pTK
 
     void Window::onSizeChange(const Size& size)
     {
-        resize(size);
+        m_handle->resize(size);
+
+        auto scale = getDPIScale();
+        const Size scaledSize{static_cast<Size::value_type>(size.width * scale.x),
+                              static_cast<Size::value_type>(size.height * scale.y)};
+        if (scaledSize != m_context->getSize())
+            m_context->resize(scaledSize);
+
         refitContent(size);
 
         paint();
@@ -102,13 +123,13 @@ namespace pTK
 
     void Window::paint()
     {
-        beginPaint();
-        
+        m_handle->beginPaint();
+
         ContextBase* context{getContext()};
         sk_sp<SkSurface> surface = context->surface();
         SkCanvas* canvas{surface->getCanvas()};
 
-        inval();
+        m_handle->inval();
 
         // Apply monitor scale.
         SkMatrix matrix{};
@@ -120,9 +141,9 @@ namespace pTK
         onDraw(canvas);
         
         surface->flushAndSubmit();
-        swapBuffers();
-        
-        endPaint();
+        m_context->swapBuffers();
+
+        m_handle->endPaint();
     }
 
     void Window::handleEvent(Event* event)
@@ -218,13 +239,13 @@ namespace pTK
             {
                 ScaleEvent* sEvent{static_cast<ScaleEvent*>(event)};
                 // m_handle.setScaleHint(sEvent->scale);
-                setScaleHint(sEvent->scale);
+                m_handle->setScaleHint(sEvent->scale);
                 m_draw = true;
                 break;
             }
             case Event::Type::WindowClose:
             {
-                close();
+                m_handle->close();
                 break;
             }
             case Event::Type::WindowFocus:
@@ -243,12 +264,12 @@ namespace pTK
             }
             case Event::Type::WindowMinimize:
             {
-                minimize();
+                m_handle->minimize();
                 break;
             }
             case Event::Type::WindowRestore:
             {
-                restore();
+                m_handle->restore();
                 break;
             }
             default:
@@ -272,6 +293,39 @@ namespace pTK
     }
     */
 
+    void Window::show()
+    {
+        if (isHidden())
+            m_handle->show();
+    }
+
+    void Window::close()
+    {
+        m_handle->close();
+    }
+
+    void Window::hide()
+    {
+        if (!isHidden())
+            m_handle->hide();
+    }
+
+    bool Window::minimize()
+    {
+        if (!isMinimized())
+            return m_handle->minimize();
+
+        return false;
+    }
+
+    bool Window::restore()
+    {
+        if (isMinimized())
+            return m_handle->restore();
+
+        return false;
+    }
+
     bool Window::setIconFromFile(const std::string& path)
     {
         // Load file.
@@ -288,8 +342,8 @@ namespace pTK
                 std::unique_ptr<uint8_t[]> pixelData{std::make_unique<uint8_t[]>(storageSize)};
 
                 if (image->readPixels(imageInfo, pixelData.get(), imageInfo.minRowBytes(), 0, 0))
-                    return setIcon(static_cast<int32_t>(image->width()), static_cast<int32_t>(image->height()),
-                                   pixelData.get());
+                    return m_handle->setIcon(static_cast<int32_t>(image->width()),
+                                             static_cast<int32_t>(image->height()), pixelData.get());
 #ifdef PTK_DEBUG
                 else
                 {

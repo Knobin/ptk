@@ -9,27 +9,57 @@
 #define PTK_CORE_PLATFORM_APPLICATIONHANDLE_HPP
 
 // pTK Headers
-#include "ptk/core/ApplicationBase.hpp"
+#include "ptk/util/SingleObject.hpp"
 
+// C++ Headers
+#include <memory>
+
+// Forward declarations.
 namespace pTK
+{
+    class ApplicationBase;
+    class Window;
+} // namespace pTK
+
+namespace pTK::Platform
 {
     /** ApplicationHandle class implementation.
 
         This is the implementation for the Application backend.
         An implementation of this class must exist for the target platform.
     */
-    class PTK_API ApplicationHandle : public ApplicationBase
+    class PTK_API ApplicationHandle : public SingleObject
     {
     public:
-        // Use constructors from ApplicationBase.
-        using ApplicationBase::ApplicationBase;
+        /** Function for creating the platform specific ApplicationHandle.
+
+            Note: Throws ApplicationError if already created and returns
+                    nullptr if there is a problem in the creation.
+
+            @return pointer to platform specific ApplicationHandle
+        */
+        static ApplicationHandle* Make(ApplicationBase* appBase, std::string_view name);
+
+    public:
+        // Deleted default constructor, needs an ApplicationBase to initialize.
+        ApplicationHandle() = delete;
+
+        /** Constructs ApplicationHandle with ApplicationBase.
+
+            @param app      pointer to ApplicationBase
+            @return         default initialized ApplicationBase
+        */
+        explicit ApplicationHandle(ApplicationBase* app)
+            : SingleObject(),
+              m_app{app}
+        {}
 
         /** Destructor for ApplicationHandle
 
         */
         virtual ~ApplicationHandle() = default;
 
-    protected:
+    public:
         /** Function for polling all the window events.
 
         */
@@ -78,6 +108,17 @@ namespace pTK
             @param window   pointer to window
         */
         virtual void onWindowRemove(int32_t UNUSED(key), Window* UNUSED(window)) {}
+
+    protected:
+        /** Function for retrieving the ApplicationBase.
+
+            @return pointer to ApplicationBase
+        */
+        ApplicationBase* appBase() const { return m_app; }
+
+    private:
+        static std::unique_ptr<ApplicationHandle> s_handle;
+        ApplicationBase* m_app{nullptr};
     };
 } // namespace pTK
 

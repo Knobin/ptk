@@ -9,12 +9,12 @@
 #define PTK_PlATFORM_MAC_METALCONTEXT_HPP
 
 // pTK Headers
-#include "ptk/platform/base/ContextBase.hpp"
+#include "ptk/core/ContextBase.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
-#include "include/ports/SkCFObject.h"
 #include "include/gpu/GrDirectContext.h"
+#include "include/ports/SkCFObject.h"
 PTK_DISABLE_WARN_END()
 
 #import <Metal/Metal.h>
@@ -75,7 +75,6 @@ namespace pTK
         GrContextOptions m_GrContextOptions;
         mutable GrMTLHandle m_drawableHandle = nil;
     };
-}
-
+} // namespace pTK
 
 #endif // PTK_PlATFORM_MAC_METALCONTEXT_HPP

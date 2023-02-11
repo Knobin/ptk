@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "ptk/platform/mac/RasterPolicy_mac.hpp"
+#include "RasterPolicy_mac.hpp"
 
 // macOS Headers
 #import <Cocoa/Cocoa.h>

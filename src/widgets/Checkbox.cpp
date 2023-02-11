@@ -7,9 +7,11 @@
 
 // pTK Headers
 #include "ptk/widgets/Checkbox.hpp"
+#include "ptk/core/ContextBase.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
+#include "include/core/SkCanvas.h"
 #include "include/core/SkPath.h"
 #include "include/core/SkRRect.h"
 PTK_DISABLE_WARN_END()

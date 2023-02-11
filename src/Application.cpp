@@ -16,23 +16,26 @@ namespace pTK
     Application* Application::s_Instance{nullptr};
 
     Application::Application(std::string_view name)
-        : PTK_APPLICATION_HANDLE_T(name)
+        : ApplicationBase(name)
     {
-        init();
+        init(name);
     }
 
     Application::Application(std::string_view name, int, char*[])
-        : PTK_APPLICATION_HANDLE_T(name)
+        : ApplicationBase(name)
     {
-        init();
+        init(name);
         // TODO: Check arguments.
     }
 
-    bool Application::init()
+    bool Application::init(std::string_view name)
     {
         if (s_Instance)
             throw ApplicationError("Application already initialized");
+
         s_Instance = this;
+        m_handle = Platform::ApplicationHandle::Make(this, name);
+        PTK_ASSERT(m_handle, "Undefined Platform::ApplicationHandle");
 
         PTK_INFO("Initialized Application");
         return true;
@@ -71,7 +74,7 @@ namespace pTK
         try
         {
             if (uniqueInsert(id, window))
-                onWindowAdd(id, window);
+                m_handle->onWindowAdd(id, window);
             else
                 return -1;
         }
@@ -113,7 +116,7 @@ namespace pTK
 
     void Application::eraseWindow(const_iterator it)
     {
-        onWindowRemove(it->first, it->second);
+        m_handle->onWindowRemove(it->first, it->second);
         eraseByIter(it);
 
         if (container().empty() && !m_allowHeadless)
@@ -180,7 +183,7 @@ namespace pTK
     void Application::fetchEvents()
     {
         // Waiting for events is default for now.
-        waitEvents();
+        m_handle->waitEvents();
 
         // This function should check which function to use.
         // (pollEvents, waitEvents, waitEventsTimeout).
@@ -230,7 +233,7 @@ namespace pTK
             onClose();
             closeWindows();
             clearWindows();
-            onApplicationClose();
+            m_handle->onApplicationClose();
             m_closed = true;
             PTK_INFO("Application closed");
             return true;
@@ -249,7 +252,7 @@ namespace pTK
     void Application::clearWindows()
     {
         for (auto it = cbegin(); it != cend(); ++it)
-            onWindowRemove(it->first, it->second);
+            m_handle->onWindowRemove(it->first, it->second);
 
         container().clear();
     }

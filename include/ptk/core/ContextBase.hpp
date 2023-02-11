@@ -1,12 +1,12 @@
 //
-//  core/platform/ContextBase.hpp
+//  core/ContextBase.hpp
 //  pTK
 //
-//  Created by Robin Gustafsson on 2020-02-09.
+//  Created by Robin Gustafsson on 2023-02-11.
 //
 
-#ifndef PTK_CORE_PLATFORM_CONTEXTBASE_HPP
-#define PTK_CORE_PLATFORM_CONTEXTBASE_HPP
+#ifndef PTK_CORE_CONTEXTBASE_HPP
+#define PTK_CORE_CONTEXTBASE_HPP
 
 // pTK Headers
 #include "ptk/Core.hpp"
@@ -28,6 +28,18 @@ PTK_DISABLE_WARN_END()
 
 namespace pTK
 {
+    /** ContextBackendType enum class implementation.
+
+        Available backend types for ContextBase.
+        Additional types in the future must be added here.
+    */
+    enum class ContextBackendType : uint8_t
+    {
+        Raster = 0,
+        GL,
+        Metal
+    };
+
     /** ContextBase class implementation.
 
         This class handles the drawing.
@@ -38,9 +50,11 @@ namespace pTK
     public:
         /** Constructs ContextBase with default values.
 
-            @return    default initialized ContextBase
+            @param type     backend type of the context
+            @param size     size of the context
+            @return         default initialized ContextBase
         */
-        explicit ContextBase(const Size& size);
+        ContextBase(ContextBackendType type, const Size& size);
 
         /** Destructor for ContextBase.
 
@@ -69,7 +83,13 @@ namespace pTK
         /** Function for swapping the buffers.
 
         */
-        virtual void swapBuffers(){};
+        virtual void swapBuffers() {}
+
+        /** Function for retrieving the backend type of the context.
+
+            @return    backend type of the context
+        */
+        [[nodiscard]] ContextBackendType type() const noexcept { return m_type; }
 
     protected:
         /** Function for setting the size of the context.
@@ -82,6 +102,7 @@ namespace pTK
 
     private:
         Size m_size;
+        ContextBackendType m_type{};
     };
 
     // Functions for converting utility classes to SkPoint for drawing.

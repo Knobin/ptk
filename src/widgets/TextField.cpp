@@ -7,6 +7,7 @@
 
 // pTK Headers
 #include "ptk/widgets/TextField.hpp"
+#include "ptk/core/ContextBase.hpp"
 #include "ptk/util/Math.hpp"
 
 // C++ Headers
@@ -14,6 +15,7 @@
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
+#include "include/core/SkCanvas.h"
 #include "include/core/SkFontMetrics.h"
 PTK_DISABLE_WARN_END()
 

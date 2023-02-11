@@ -41,39 +41,39 @@ namespace pTK
 
          */
         RasterPolicy_mac() = delete;
-        
+
         /** Constructs RasterPolicy_mac with default values.
 
             @param window   NSWindow pointer
             @return         default initialized RasterPolicy_mac
         */
-        RasterPolicy_mac(NSWindow *window);
-        
+        RasterPolicy_mac(NSWindow* window);
+
         /** Destructor for RasterPolicy_mac.
 
         */
         ~RasterPolicy_mac();
-        
+
         /** Function for resizing the context.
 
             @param size   New width and height of canvas
         */
         bool resize(const Size& newSize);
-        
+
         /** Function for swapping the buffers.
 
         */
         void swapBuffers() const;
-        
+
     public:
-        std::size_t size{0}; // Size of the buffer
-        void *pixels{nullptr}; // Pointer to buffer
+        std::size_t size{0};   // Size of the buffer
+        void* pixels{nullptr}; // Pointer to buffer
         const SkColorType colorType{kN32_SkColorType};
-        
+
     private:
-        NSWindow *m_window;
+        NSWindow* m_window;
         CGContextRef m_gc;
     };
-}
+} // namespace pTK
 
 #endif // PTK_PlATFORM_MAC_RASTERPOLICY_HPP

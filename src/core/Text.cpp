@@ -7,11 +7,12 @@
 
 // pTK Headers
 #include "ptk/core/Text.hpp"
-
+#include "ptk/core/ContextBase.hpp"
 #include "ptk/widgets/Rectangle.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
+#include "include/core/SkCanvas.h"
 #include "include/core/SkFontMetrics.h"
 PTK_DISABLE_WARN_END()
 

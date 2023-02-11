@@ -7,9 +7,11 @@
 
 // pTK Headers
 #include "ptk/widgets/Image.hpp"
+#include "ptk/core/ContextBase.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
+#include "include/core/SkCanvas.h"
 #include "include/core/SkData.h"
 PTK_DISABLE_WARN_END()
 

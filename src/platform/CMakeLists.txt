@@ -1,12 +1,25 @@
 # CMakeLists.txt
 # File used to add the platform specific files to pTK.
 
+# Core files
+set(PTK_PLATFORM_CORE_FILES Platform.hpp
+    KeyMapInit.hpp
+    KeyMapInit.cpp
+    base/ApplicationHandle.cpp
+    base/ContextFactory.cpp
+    base/WindowHandle.cpp)
+
 # MacOS files
-set(PTK_PLATFORM_FILES_MAC mac/ApplicationHandle_mac.mm
+set(PTK_PLATFORM_FILES_MAC mac/ApplicationHandle_mac.hpp
+    mac/ApplicationHandle_mac.mm
+    mac/WindowHandle_mac.hpp
     mac/WindowHandle_mac.mm
+    mac/KeyMap_mac.hpp
     mac/KeyMap_mac.cpp
-    mac/RasterPolicy_mac.mm)
-set(PTK_PLATFORM_FILES_MAC_METAL mac/MetalContext_mac.mm)
+    mac/RasterPolicy_mac.hpp
+    mac/RasterPolicy_mac.mm
+    mac/ContextFactory_mac.mm)
+set(PTK_PLATFORM_FILES_MAC_METAL mac/MetalContext_mac.hpp mac/MetalContext_mac.mm)
 
 # Windows files
 set(PTK_PLATFORM_FILES_WIN win/ApplicationHandle_win.cpp
@@ -24,10 +37,10 @@ set(PTK_PLATFORM_FILES_UNIX unix/ApplicationHandle_unix.cpp
 set(PTK_PLATFORM_FILES_UNIX_OPENGL unix/GLContext_unix.cpp)
 
 # Set platform files
-set(PTK_PLATFORM_FILES PlatformInit.cpp base/ContextBase.cpp)
+set(PTK_PLATFORM_FILES ${PTK_PLATFORM_CORE_FILES})
 if (PTK_PLATFORM STREQUAL "Unix")
     set(PTK_PLATFORM_FILES ${PTK_PLATFORM_FILES} ${PTK_PLATFORM_FILES_UNIX})
-    set(PTK_PLATFORM_OPENGL_FILES ${PTK_PLATFORM_OPENGL_FILES} 
+    set(PTK_PLATFORM_OPENGL_FILES ${PTK_PLATFORM_OPENGL_FILES}
         ${PTK_PLATFORM_FILES_UNIX_OPENGL})
     message(STATUS "pTK Window: X11")
 elseif (PTK_PLATFORM STREQUAL "Windows")
@@ -62,6 +75,7 @@ set(PTK_PLATFORM_FILES ${PTK_PLATFORM_FILES} PARENT_SCOPE)
 
 # All platform files
 set(PTK_PLATFORM_FILES_ALL
+    ${PTK_PLATFORM_CORE_FILES}
     ${PTK_PLATFORM_FILES_MAC}
     ${PTK_PLATFORM_FILES_MAC_METAL}
     ${PTK_PLATFORM_FILES_WIN}

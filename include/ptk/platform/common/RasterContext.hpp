@@ -9,8 +9,8 @@
 #define PTK_PlATFORM_COMMON_RASTERCONTEXT_HPP
 
 // pTK Headers
+#include "ptk/core/ContextBase.hpp"
 #include "ptk/core/Exception.hpp"
-#include "ptk/platform/base/ContextBase.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
@@ -33,7 +33,7 @@ namespace pTK
             @return    default initialized RasterContext
         */
         RasterContext(const Size& size, const Policy& policy)
-            : ContextBase(size),
+            : ContextBase(ContextBackendType::Raster, size),
               m_policy{policy}
         {
             PTK_INFO("Initialized RasterContext");

@@ -9,14 +9,12 @@
 #define PTK_PlATFORM_MAC_WINDOWHANDLE_HPP
 
 // pTK Headers
-#include "ptk/platform/base/WindowHandle.hpp"
 #include "ptk/core/Event.hpp"
+#include "ptk/core/WindowBase.hpp"
 #include "ptk/events/MouseEvent.hpp"
+#include "ptk/platform/base/WindowHandle.hpp"
 
-// C++ Headers
-#include <map>
-
-namespace pTK
+namespace pTK::Platform
 {
     /** WindowHandle_mac class implementation.
 
@@ -33,7 +31,7 @@ namespace pTK
             @param flags    setup flags for the window
             @return         default initialized MainWindow_mac
         */
-        WindowHandle_mac(const std::string& name, const Size& size, const WindowInfo& flags);
+        WindowHandle_mac(WindowBase* base, const std::string& name, const Size& size, const WindowInfo& flags);
 
         /** Destructor for MainWindow_win.
 
@@ -69,18 +67,7 @@ namespace pTK
             @param pos  position to set
             @return     true if operation is successful, otherwise false
         */
-        void setPosHint(const Point& pos) override;
-
-        /** Function for retrieving the Context.
-
-            @return context
-        */
-        [[nodiscard]] ContextBase *getContext() const override;
-
-        /** Function for swapping the buffers.
-
-        */
-        void swapBuffers() override;
+        bool setPosHint(const Point& pos) override;
 
         /** Function for retrieving the scaling of the Window.
 
@@ -127,13 +114,13 @@ namespace pTK
 
            @return     Window Position
        */
-        [[nodiscard]] Point getWinPos() const override;
+        [[nodiscard]] Point getPosition() const override;
 
         /** Function for retrieving the window size.
 
             @return     Window Size
         */
-        [[nodiscard]] Size getWinSize() const override;
+        [[nodiscard]] Size getSize() const override;
 
         /** Function for minimizing the window.
 
@@ -177,7 +164,7 @@ namespace pTK
 
             @return     pointer to NSWindow
         */
-        [[nodiscard]] void *handle() const;
+        [[nodiscard]] void* handle() const;
 
     private:
         /** Function for setting the size limits the window.
@@ -185,20 +172,25 @@ namespace pTK
             @param min  minimal size of the window
             @param max  maximum size of the window
         */
-        void setWindowLimits(const Size& min, const Size& max) override;
+        void setLimits(const Size& min, const Size& max) override;
 
     private:
         void init(const std::string& name, const Size& size, const WindowInfo& flags);
 
-        template<typename Event>
+        template <typename Event>
+        void sendEvent(const Event& evt)
+        {
+            HandlePlatformEvent<Event>(evt);
+        }
+
+        template <typename Event>
         friend void EventSendHelper(WindowHandle_mac*, const Event&);
 
     private:
-        std::unique_ptr<ContextBase> m_context{nullptr};
         Vec2f m_scale;
-        void *m_NSWindow{nullptr};
+        void* m_NSWindow{nullptr};
         long m_id{};
     };
-}
+} // namespace pTK::Platform
 
 #endif // PTK_PlATFORM_MAC_WINDOWHANDLE_HPP
