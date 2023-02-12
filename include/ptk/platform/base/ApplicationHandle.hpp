@@ -1,12 +1,12 @@
 //
-//  core/platform/ApplicationHandle.hpp
+//  platform/base/ApplicationHandle.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-08-21.
 //
 
-#ifndef PTK_CORE_PLATFORM_APPLICATIONHANDLE_HPP
-#define PTK_CORE_PLATFORM_APPLICATIONHANDLE_HPP
+#ifndef PTK_PLATFORM_BASE_APPLICATIONHANDLE_HPP
+#define PTK_PLATFORM_BASE_APPLICATIONHANDLE_HPP
 
 // pTK Headers
 #include "ptk/util/SingleObject.hpp"

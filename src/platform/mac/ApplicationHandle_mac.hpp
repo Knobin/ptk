@@ -1,5 +1,5 @@
 //
-//  platform/mac/ApplicationHandle_mac.hpp
+//  src/platform/mac/ApplicationHandle_mac.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-08-21.

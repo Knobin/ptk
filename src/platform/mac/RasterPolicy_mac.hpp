@@ -1,12 +1,12 @@
 //
-//  platform/mac/RasterPolicy_mac.cpp
+//  src/platform/mac/RasterPolicy_mac.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-10-10.
 //
 
-#ifndef PTK_PlATFORM_MAC_RASTERPOLICY_HPP
-#define PTK_PlATFORM_MAC_RASTERPOLICY_HPP
+#ifndef PTK_PLATFORM_MAC_RASTERPOLICY_HPP
+#define PTK_PLATFORM_MAC_RASTERPOLICY_HPP
 
 // pTK Headers
 #include "ptk/core/Defines.hpp"
@@ -76,4 +76,4 @@ namespace pTK::Platform
     };
 } // namespace pTK
 
-#endif // PTK_PlATFORM_MAC_RASTERPOLICY_HPP
+#endif // PTK_PLATFORM_MAC_RASTERPOLICY_HPP

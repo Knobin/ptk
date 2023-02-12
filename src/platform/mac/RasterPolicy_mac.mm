@@ -1,5 +1,5 @@
 //
-//  platform/mac/RasterPolicy_mac.mm
+//  src/platform/mac/RasterPolicy_mac.mm
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-10-10.

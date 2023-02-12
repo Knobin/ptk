@@ -1,5 +1,5 @@
 //
-//  events/EventCallbacks.hpp
+//  core/EventCallbacks.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2019-06-12.

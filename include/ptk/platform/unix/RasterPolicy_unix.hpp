@@ -5,8 +5,8 @@
 //  Created by Robin Gustafsson on 2020-10-17.
 //
 
-#ifndef PTK_PlATFORM_UNIX_RASTERPOLICY_HPP
-#define PTK_PlATFORM_UNIX_RASTERPOLICY_HPP
+#ifndef PTK_PLATFORM_UNIX_RASTERPOLICY_HPP
+#define PTK_PLATFORM_UNIX_RASTERPOLICY_HPP
 
 // Local Headers
 #include "ptk/platform/unix/x11.hpp"
@@ -80,4 +80,4 @@ namespace pTK
     };
 } // namespace pTK
 
-#endif // PTK_PlATFORM_WIN_RASTERPOLICY_HPP
+#endif // PTK_PLATFORM_UNIX_RASTERPOLICY_HPP

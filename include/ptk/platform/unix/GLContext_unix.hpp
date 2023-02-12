@@ -5,8 +5,8 @@
 //  Created by Robin Gustafsson on 2020-12-26.
 //
 
-#ifndef PTK_PlATFORM_UNIX_GLCONTEXT_HPP
-#define PTK_PlATFORM_UNIX_GLCONTEXT_HPP
+#ifndef PTK_PLATFORM_UNIX_GLCONTEXT_HPP
+#define PTK_PLATFORM_UNIX_GLCONTEXT_HPP
 
 // Local Headers
 #include "ptk/platform/unix/x11.hpp"
@@ -81,4 +81,4 @@ namespace pTK
     };
 } // namespace pTK
 
-#endif // PTK_PlATFORM_UNIX_GLCONTEXT_HPP
+#endif // PTK_PLATFORM_UNIX_GLCONTEXT_HPP

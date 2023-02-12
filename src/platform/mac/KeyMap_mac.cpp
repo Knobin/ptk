@@ -1,5 +1,5 @@
 //
-//  platform/win/KeyMap_mac.cpp
+//  src/platform/mac/KeyMap_mac.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2021-01-19.

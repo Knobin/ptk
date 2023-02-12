@@ -1,12 +1,12 @@
 //
-//  platform/mac/MainWindow_win.hpp
+//  src/platform/mac/WindowHandle_mac.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-08-20.
 //
 
-#ifndef PTK_PlATFORM_MAC_WINDOWHANDLE_HPP
-#define PTK_PlATFORM_MAC_WINDOWHANDLE_HPP
+#ifndef PTK_PLATFORM_MAC_WINDOWHANDLE_HPP
+#define PTK_PLATFORM_MAC_WINDOWHANDLE_HPP
 
 // pTK Headers
 #include "ptk/core/Event.hpp"
@@ -193,4 +193,4 @@ namespace pTK::Platform
     };
 } // namespace pTK::Platform
 
-#endif // PTK_PlATFORM_MAC_WINDOWHANDLE_HPP
+#endif // PTK_PLATFORM_MAC_WINDOWHANDLE_HPP

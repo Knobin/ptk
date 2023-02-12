@@ -5,8 +5,8 @@
 //  Created by Robin Gustafsson on 2020-08-21.
 //
 
-#ifndef PTK_PlATFORM_COMMON_RASTERCONTEXT_HPP
-#define PTK_PlATFORM_COMMON_RASTERCONTEXT_HPP
+#ifndef PTK_PLATFORM_COMMON_RASTERCONTEXT_HPP
+#define PTK_PLATFORM_COMMON_RASTERCONTEXT_HPP
 
 // pTK Headers
 #include "ptk/core/ContextBase.hpp"
@@ -87,4 +87,4 @@ namespace pTK::Platform
     };
 } // namespace pTK
 
-#endif // PTK_PlATFORM_COMMON_RASTERCONTEXT_HPP
+#endif // PTK_PLATFORM_COMMON_RASTERCONTEXT_HPP

@@ -101,13 +101,13 @@ namespace pTK
         {
             if (uniqueInsert(id, window))
             {
-                PTK_INFO("Added window \"{}\"", window->getName());
+                PTK_INFO("Added window \"{}\" with key {}.", window->getName(), id);
                 m_handle->onWindowAdd(id, window);
             }
             else
             {
                 PTK_WARN("Could not insert window \"{}\" with key {}. Either key or window already exists.",
-                         window->getName());
+                         window->getName(), id);
                 return -1;
             }
         }

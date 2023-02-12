@@ -1,5 +1,5 @@
 //
-//  platform/win/MainWindow_win.cpp
+//  src/platform/mac/WindowHandle_mac.mm
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-02-07.

@@ -5,8 +5,8 @@
 //  Created by Robin Gustafsson on 2020-12-28.
 //
 
-#ifndef PTK_PlATFORM_UNIX_X11_HPP
-#define PTK_PlATFORM_UNIX_X11_HPP
+#ifndef PTK_PLATFORM_UNIX_X11_HPP
+#define PTK_PLATFORM_UNIX_X11_HPP
 
 extern "C"
 {
@@ -26,4 +26,4 @@ namespace x11
     using Status = int;
 } // namespace x11
 
-#endif // PTK_PlATFORM_UNIX_X11_HPP
+#endif // PTK_PLATFORM_UNIX_X11_HPP

@@ -1,5 +1,5 @@
 //
-//  platform/mac/MetalContext_mac.mm
+//  src/platform/mac/MetalContext_mac.mm
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-09-12.

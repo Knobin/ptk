@@ -1,12 +1,12 @@
 //
-//  platform/win/KeyMap_mac.hpp
+//  src/platform/mac/KeyMap_mac.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2021-01-19.
 //
 
-#ifndef PTK_PlATFORM_MAC_KEYMAP_HPP
-#define PTK_PlATFORM_MAC_KEYMAP_HPP
+#ifndef PTK_PLATFORM_MAC_KEYMAP_HPP
+#define PTK_PLATFORM_MAC_KEYMAP_HPP
 
 // pTK Headers
 #include "ptk/events/KeyCodes.hpp"
@@ -20,4 +20,4 @@ namespace pTK::Platform
 
 } // namespace pTK
 
-#endif // PTK_PlATFORM_MAC_KEYMAP_HPP
+#endif // PTK_PLATFORM_MAC_KEYMAP_HPP

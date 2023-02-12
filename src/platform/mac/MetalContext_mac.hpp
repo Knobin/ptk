@@ -1,12 +1,12 @@
 //
-//  platform/mac/MetalContext_mac.h
+//  src/platform/mac/MetalContext_mac.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-09-12.
 //
 
-#ifndef PTK_PlATFORM_MAC_METALCONTEXT_HPP
-#define PTK_PlATFORM_MAC_METALCONTEXT_HPP
+#ifndef PTK_PLATFORM_MAC_METALCONTEXT_HPP
+#define PTK_PLATFORM_MAC_METALCONTEXT_HPP
 
 // pTK Headers
 #include "ptk/core/ContextBase.hpp"
@@ -77,4 +77,4 @@ namespace pTK::Platform
     };
 } // namespace pTK
 
-#endif // PTK_PlATFORM_MAC_METALCONTEXT_HPP
+#endif // PTK_PLATFORM_MAC_METALCONTEXT_HPP
