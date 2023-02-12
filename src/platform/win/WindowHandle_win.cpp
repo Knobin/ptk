@@ -117,22 +117,6 @@ namespace pTK::Platform
 
         SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)&m_data);
 
-        switch (flags.visibility)
-        {
-            case WindowInfo::Visibility::Windowed:
-            {
-                ::ShowWindow(m_hwnd, SW_SHOW);
-                break;
-            }
-            case WindowInfo::Visibility::Hidden:
-            {
-                ::ShowWindow(m_hwnd, SW_HIDE);
-                break;
-            }
-            default:
-                break;
-        }
-
         if (m_data.hasMenu)
         {
             HMENU menuBar = ::CreateMenu();

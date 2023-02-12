@@ -419,17 +419,6 @@ namespace pTK::Platform
                              static_cast<Vec2f::value_type>(pRect.size.height / fRect.size.height)};
             PTK_INFO("System DPI scale is {0:0.2f}x{1:0.2f}", static_cast<double>(m_scale.x), static_cast<double>(m_scale.y));
 
-            // m_context = CreateMacContext(flags.backend, nswindow, size, m_scale);
-
-            switch (flags.visibility)
-            {
-                case WindowInfo::Visibility::Windowed:
-                    show();
-                    break;
-                case WindowInfo::Visibility::Hidden: // Window is started hidden.
-                    break;
-            }
-
             setTitle(name);
             Platform::ApplicationHandle_mac::SetMenuBar(flags.menus);
         }

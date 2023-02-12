@@ -39,6 +39,11 @@ namespace pTK
         // Set Widget properties.
         setName(name);
 
+        // Show/Hide Window depending on flag.
+        // Window should be created hidden by default!
+        if (flags.visibility == WindowInfo::Visibility::Windowed)
+            m_handle->show();
+
         PTK_INFO("Initialized Window");
     }
 
@@ -136,10 +141,10 @@ namespace pTK
         Vec2f scale{getDPIScale()};
         matrix.setScale(scale.x, scale.y);
         canvas->setMatrix(matrix);
-        
+
         // Will paint background and then children.
         onDraw(canvas);
-        
+
         surface->flushAndSubmit();
         m_context->swapBuffers();
 
