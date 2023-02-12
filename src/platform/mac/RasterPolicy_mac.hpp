@@ -20,7 +20,7 @@ PTK_DISABLE_WARN_END()
 // macOS Headers
 #include <Cocoa/Cocoa.h>
 
-namespace pTK
+namespace pTK::Platform
 {
     /** RasterPolicy_mac class implementation.
 

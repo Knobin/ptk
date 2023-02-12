@@ -14,7 +14,7 @@
 // C++ Headers
 #include <map>
 
-namespace pTK
+namespace pTK::Platform
 {
     PTK_API std::map<int32_t, KeyCode> KeyCodeMapInit_mac();
 

@@ -22,7 +22,7 @@ PTK_DISABLE_WARN_END()
 
 @class NSView;
 
-namespace pTK
+namespace pTK::Platform
 {
     /** GLContext_win class implementation.
 

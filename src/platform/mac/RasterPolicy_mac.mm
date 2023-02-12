@@ -11,7 +11,7 @@
 // macOS Headers
 #import <Cocoa/Cocoa.h>
 
-namespace pTK
+namespace pTK::Platform
 {
     RasterPolicy_mac::RasterPolicy_mac(NSWindow *window)
         : m_window{window}

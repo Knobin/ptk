@@ -25,7 +25,7 @@ PTK_DISABLE_WARN_BEGIN()
 #include "include/gpu/GrContextOptions.h"
 PTK_DISABLE_WARN_END()
 
-namespace pTK
+namespace pTK::Platform
 {
     MetalContext_mac::MetalContext_mac(void* mainView, const Size& size, const Vec2f& scale)
         : ContextBase(ContextBackendType::Metal, size),

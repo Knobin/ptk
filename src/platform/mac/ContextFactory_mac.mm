@@ -24,7 +24,7 @@
 // macOS Headers
 #include <Cocoa/Cocoa.h>
 
-namespace pTK::Platform
+namespace pTK::Platform::ContextFactoryImpl
 {
     static Size ScaleSize(const Size& size, const Vec2f& scale)
     {

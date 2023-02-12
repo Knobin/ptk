@@ -8,7 +8,7 @@
 // Local Headers
 #include "KeyMap_mac.hpp"
 
-namespace pTK
+namespace pTK::Platform
 {
     std::map<int32_t, KeyCode> KeyCodeMapInit_mac()
     {
