@@ -6,12 +6,12 @@
 //
 
 // Local Headers
-#include "ptk/platform/win/RasterPolicy_win.hpp"
+#include "RasterPolicy_win.hpp"
 
 // pTK Headers
 #include "ptk/Log.hpp"
 
-namespace pTK
+namespace pTK::Platform
 {
     RasterPolicy_win::RasterPolicy_win(HWND hwnd)
         : m_hwnd{hwnd}

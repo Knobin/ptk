@@ -6,14 +6,14 @@
 //
 
 // Local Headers
-#include "ptk/platform/win/ApplicationHandle_win.hpp"
-#include "ptk/platform/win/WindowHandle_win.hpp"
+#include "ApplicationHandle_win.hpp"
+#include "WindowHandle_win.hpp"
 
 // pTK Headers
 #include "ptk/Application.hpp"
 #include "ptk/core/Exception.hpp"
 
-namespace pTK
+namespace pTK::Platform
 {
     static bool RegisterWndClass()
     {
@@ -42,8 +42,8 @@ namespace pTK
     static std::vector<std::pair<int32_t, WindowHandle_win*>>::iterator s_windowIter{};
     static bool s_erased{false};
 
-    ApplicationHandle_win::ApplicationHandle_win(std::string_view name)
-        : ApplicationHandle(name)
+    ApplicationHandle_win::ApplicationHandle_win(ApplicationBase* base, std::string_view)
+        : ApplicationHandle(base)
     {
         ::SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
@@ -120,14 +120,14 @@ namespace pTK
 
     void ApplicationHandle_win::onWindowAdd(int32_t key, Window* window)
     {
-        if (auto wWin = dynamic_cast<WindowHandle_win*>(window))
-            s_windows.emplace_back(key, wWin);
+        if (auto handle = dynamic_cast<WindowHandle_win*>(window->handle()))
+            s_windows.emplace_back(key, handle);
     }
 
     void ApplicationHandle_win::onWindowRemove(int32_t key, Window* window)
     {
         auto it = std::find_if(s_windows.begin(), s_windows.end(), [key, window](const auto& pair) {
-            return pair.first == key || pair.second == window;
+            return pair.first == key || pair.second == static_cast<WindowHandle_win*>(window->handle());
         });
         if (it != s_windows.end())
         {

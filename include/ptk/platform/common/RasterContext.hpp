@@ -17,7 +17,7 @@ PTK_DISABLE_WARN_BEGIN()
 #include "src/core/SkAutoMalloc.h"
 PTK_DISABLE_WARN_END()
 
-namespace pTK
+namespace pTK::Platform
 {
     /** RasterContext class implementation.
 

@@ -15,20 +15,20 @@
 
 #if defined(PTK_PLATFORM_WINDOWS)
     #include "win/ApplicationHandle_win.hpp"
-    using PTK_APPLICATION_HANDLE_T = pTK::ApplicationHandle_win;
+    using PTK_APPLICATION_HANDLE_T = pTK::Platform::ApplicationHandle_win;
     #include "win/WindowHandle_win.hpp"
-    using PTK_WINDOW_HANDLE_T = pTK::WindowHandle_win;
+    using PTK_WINDOW_HANDLE_T = pTK::Platform::WindowHandle_win;
     #define PTK_PLATFORM_STR "Windows"
     #include "win/KeyMap_win.hpp"
-    #define PTK_KEYMAP_INIT_FUNC pTK::KeyCodeMapInit_win
+    #define PTK_KEYMAP_INIT_FUNC pTK::Platform::KeyCodeMapInit_win
 #elif defined(PTK_PLATFORM_UNIX)
     #include "unix/ApplicationHandle_unix.hpp"
-    using PTK_APPLICATION_HANDLE_T = pTK::ApplicationHandle_unix;
+    using PTK_APPLICATION_HANDLE_T = pTK::Platform::ApplicationHandle_unix;
     #include "unix/WindowHandle_unix.hpp"
-    using PTK_WINDOW_HANDLE_T = pTK::WindowHandle_unix;
+    using PTK_WINDOW_HANDLE_T = pTK::Platform::WindowHandle_unix;
     #define PTK_PLATFORM_STR "Unix"
     #include "unix/KeyMap_unix.hpp"
-    #define PTK_KEYMAP_INIT_FUNC pTK::KeyCodeMapInit_unix
+    #define PTK_KEYMAP_INIT_FUNC pTK::Platform::KeyCodeMapInit_unix
 #elif defined(PTK_PLATFORM_APPLE)
     #include "mac/ApplicationHandle_mac.hpp"
     using PTK_APPLICATION_HANDLE_T = pTK::Platform::ApplicationHandle_mac;
@@ -36,7 +36,7 @@
     using PTK_WINDOW_HANDLE_T = pTK::Platform::WindowHandle_mac;
     #define PTK_PLATFORM_STR "Apple"
     #include "mac/KeyMap_mac.hpp"
-    #define PTK_KEYMAP_INIT_FUNC pTK::KeyCodeMapInit_mac
+    #define PTK_KEYMAP_INIT_FUNC pTK::Platform::KeyCodeMapInit_mac
 #else
     #error "Unsupported platform!"
 #endif

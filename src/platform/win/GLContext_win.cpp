@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "ptk/platform/win/GLContext_win.hpp"
+#include "GLContext_win.hpp"
 
 // OpenGL Windows Headers
 #include <GL/gl.h>
@@ -22,10 +22,10 @@ PTK_DISABLE_WARN_BEGIN()
 #include "src/utils/win/SkWGL.h"
 PTK_DISABLE_WARN_END()
 
-namespace pTK
+namespace pTK::Platform
 {
     GLContext_win::GLContext_win(HWND hwnd, const Size& size)
-        : ContextBase(size),
+        : ContextBase(ContextBackendType::GL, size),
           m_hwnd{hwnd},
           m_hglrc{},
           m_backendContext{nullptr},

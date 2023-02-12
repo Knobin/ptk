@@ -9,7 +9,7 @@
 #define PTK_PlATFORM_WIN_RASTERPOLICY_HPP
 
 // pTK Headers
-#include "ptk/Core.hpp"
+#include "ptk/core/Defines.hpp"
 #include "ptk/util/Size.hpp"
 
 // Skia Headers
@@ -21,7 +21,7 @@ PTK_DISABLE_WARN_END()
 #define NOMINMAX
 #include <windows.h>
 
-namespace pTK
+namespace pTK::Platform
 {
     /** RasterPolicy_win class implementation.
 
@@ -77,6 +77,6 @@ namespace pTK
         HWND m_hwnd;
         Size wSize{};
     };
-} // namespace pTK
+} // namespace pTK::Platform
 
 #endif // PTK_PlATFORM_WIN_RASTERPOLICY_HPP

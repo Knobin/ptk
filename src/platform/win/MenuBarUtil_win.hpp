@@ -25,7 +25,7 @@
 #define NOMINMAX
 #include <windows.h>
 
-namespace pTK::MenuBarUtil_win
+namespace pTK::Platform::MenuBarUtil_win
 {
     using MenuMap = std::map<uint32_t, std::tuple<Ref<MenuItem>, uint32_t, bool, HMENU>>;
 
@@ -59,6 +59,6 @@ namespace pTK::MenuBarUtil_win
         return flag;
     }
 
-} // namespace pTK::MenuBarUtil_win
+} // namespace pTK::Platform::MenuBarUtil_win
 
 #endif // PTK_PlATFORM_WIN_MENUBARUTIL_HPP

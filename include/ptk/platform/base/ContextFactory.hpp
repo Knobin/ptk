@@ -31,7 +31,7 @@ namespace pTK
             The user can call any of these independent of platform, if the backend is
             not supported, the function will return nullptr.
 
-            The platform must implement these in the pTK::Platform namespace for the linker:
+            The platform must implement these in the pTK::Platform::ContextFactoryImpl namespace for the linker:
                 - std::unique_ptr<ContextBase> MakeContext(Window*, const Size&, const Vec2f&, const WindowInfo&);
                 - std::unique_ptr<ContextBase> MakeRasterContext(Window*, const Size&, const Vec2f&);
                 - IsContextAvailable(ContextBackendType type);

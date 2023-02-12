@@ -14,10 +14,10 @@
 // C++ Headers
 #include <map>
 
-namespace pTK
+namespace pTK::Platform
 {
-    std::map<int32_t, KeyCode> KeyCodeMapInit_win();
+    PTK_API std::map<int32_t, KeyCode> KeyCodeMapInit_win();
 
-} // namespace pTK
+} // namespace pTK::Platform
 
 #endif // PTK_PlATFORM_WIN_KEYMAP_HPP

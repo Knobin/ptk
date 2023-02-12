@@ -8,20 +8,17 @@
 #ifndef PTK_PlATFORM_WIN_WINDOWHANDLE_HPP
 #define PTK_PlATFORM_WIN_WINDOWHANDLE_HPP
 
-// pTK Headers
-#include "ptk/core/Event.hpp"
-#include "ptk/events/MouseEvent.hpp"
-#include "ptk/platform/base/WindowHandle.hpp"
-#include "ptk/platform/win/MenuBarUtil_win.hpp"
+// Local Headers
+#include "MenuBarUtil_win.hpp"
 
-// C++ Headers
-#include <map>
+// pTK Headers
+#include "ptk/platform/base/WindowHandle.hpp"
 
 // Windows Headers
 #define NOMINMAX
 #include <windows.h>
 
-namespace pTK
+namespace pTK::Platform
 {
     /** WindowHandle_win class implementation.
 
@@ -32,12 +29,13 @@ namespace pTK
     public:
         /** Constructs WindowHandle_win with default values.
 
+            @param base     pointer to WindowBase
             @param name     name of the window
             @param size     size of the window
             @param backend  type of backend
-            @return         default initialized MainWindow_win
+            @return         default initialized WindowHandle_win
         */
-        WindowHandle_win(const std::string& name, const Size& size, const WindowInfo& flags);
+        WindowHandle_win(WindowBase* base, const std::string& name, const Size& size, const WindowInfo& flags);
 
         /** Destructor for WindowHandle_win.
 
@@ -71,19 +69,9 @@ namespace pTK
         /** Function for setting the position of the window.
 
             @param pos  position to set
+            @return     true if operation is successful, otherwise false
         */
-        void setPosHint(const Point& pos) override;
-
-        /** Function for retrieving the Context.
-
-            @return context
-        */
-        [[nodiscard]] ContextBase* getContext() const override;
-
-        /** Function for swapping the buffers.
-
-        */
-        void swapBuffers() override;
+        bool setPosHint(const Point& pos) override;
 
         /** Function for retrieving the scaling of the Window.
 
@@ -142,13 +130,13 @@ namespace pTK
 
            @return     Window Position
        */
-        [[nodiscard]] Point getWinPos() const override;
+        [[nodiscard]] Point getPosition() const override;
 
         /** Function for retrieving the window size.
 
             @return     Window Size
         */
-        [[nodiscard]] Size getWinSize() const override;
+        [[nodiscard]] Size getSize() const override;
 
         /** Function for retrieving the current Windows style of the Window.
 
@@ -186,6 +174,18 @@ namespace pTK
         */
         bool setScaleHint(const Vec2f& scale) override;
 
+        /** Function for invalidating the window.
+
+        */
+        void inval() override;
+
+        /** Function for setting the size limits the window.
+
+            @param min  minimal size of the window
+            @param max  maximum size of the window
+        */
+        void setLimits(const Size& min, const Size& max) override;
+
         /** Function for retrieving HWND from the window.
 
             @return    HWND
@@ -200,20 +200,6 @@ namespace pTK
 
         // WndPro callback.
         static LRESULT CALLBACK WndPro(HWND hwnd, UINT msg, WPARAM wParam, ::LPARAM lParam);
-
-    protected:
-        /** Function for invalidating the window.
-
-        */
-        void inval() override;
-
-    private:
-        /** Function for setting the size limits the window.
-
-            @param min  minimal size of the window
-            @param max  maximum size of the window
-        */
-        void setWindowLimits(const Size& min, const Size& max) override;
 
     public:
         // Data struct that the static Win32 functions can manipulate freely.
@@ -241,13 +227,12 @@ namespace pTK
 
     private:
         HWND m_hwnd;
-        std::unique_ptr<ContextBase> m_context;
         PAINTSTRUCT m_ps{};
         [[maybe_unused]] HDC m_hdc{};
         Vec2f m_scale{};
         HACCEL m_accelTable{nullptr};
         Data m_data{};
     };
-} // namespace pTK
+} // namespace pTK::Platform
 
 #endif // PTK_PlATFORM_WIN_WINDOWHANDLE_HPP

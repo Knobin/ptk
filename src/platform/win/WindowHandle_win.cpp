@@ -6,20 +6,20 @@
 //
 
 // Local Headers
-#include "ptk/platform/win/WindowHandle_win.hpp"
-#include "ptk/platform/common/RasterContext.hpp"
-#include "ptk/platform/win/ApplicationHandle_win.hpp"
-#include "ptk/platform/win/RasterPolicy_win.hpp"
+#include "WindowHandle_win.hpp"
+#include "ApplicationHandle_win.hpp"
+#include "RasterPolicy_win.hpp"
+
+// Include OpenGL backend if HW Acceleration is enabled.
+#ifdef PTK_OPENGL
+    #include "GLContext_win.hpp"
+#endif // PTK_OPENGL
 
 // pTK Headers
 #include "ptk/Application.hpp"
 #include "ptk/events/KeyMap.hpp"
 #include "ptk/menu/NamedMenuItem.hpp"
-
-// Include OpenGL backend if HW Acceleration is enabled.
-#ifdef PTK_OPENGL
-    #include "ptk/platform/win/GLContext_win.hpp"
-#endif // PTK_OPENGL
+#include "ptk/platform/common/RasterContext.hpp"
 
 // Windows Headers
 #include <Dwmapi.h>
@@ -31,7 +31,7 @@
 #include <mutex>
 #include <tuple>
 
-namespace pTK
+namespace pTK::Platform
 {
     // Since the iHandleEvent function is protected in WindowHandle, this is a friend function
     // to get around that issue. Maybe another way is better in the future, but this works
@@ -40,26 +40,12 @@ namespace pTK
     template <typename Event>
     void EventSendHelper(WindowHandle_win* window, const Event& evt)
     {
-        window->iHandleEvent<Event>(evt);
+        window->HandlePlatformEvent<Event>(evt);
     }
 
     Limits GetWindowLimits(WindowHandle_win* window)
     {
-        return window->getLimitsWithSizePolicy();
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////
-
-    static std::unique_ptr<ContextBase> CreateContextForWin32([[maybe_unused]] WindowInfo::Backend type, HWND hwnd,
-                                                              const Size& size)
-    {
-#ifdef PTK_OPENGL
-        if (type == WindowInfo::Backend::Hardware)
-            return std::make_unique<GLContext_win>(hwnd, size);
-#endif // PTK_OPENGL
-
-        // Software backend is always available.
-        return std::make_unique<RasterContext<RasterPolicy_win>>(size, RasterPolicy_win{hwnd});
+        return window->winBase()->getLimitsWithSizePolicy();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -95,8 +81,9 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    WindowHandle_win::WindowHandle_win(const std::string& name, const Size& size, const WindowInfo& flags)
-        : WindowHandle(size, flags)
+    WindowHandle_win::WindowHandle_win(WindowBase* base, const std::string& name, const Size& size,
+                                       const WindowInfo& flags)
+        : WindowHandle(base)
     {
         m_data.window = this;
 
@@ -128,7 +115,6 @@ namespace pTK
         if (!m_hwnd)
             throw WindowError("Failed to create window!");
 
-        m_context = CreateContextForWin32(flags.backend, m_hwnd, scaledSize);
         SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)&m_data);
 
         switch (flags.visibility)
@@ -191,9 +177,6 @@ namespace pTK
             m_accelTable = nullptr;
         }
 
-        if (m_context)
-            m_context.reset();
-
         if (m_hwnd)
         {
             ret = ::DestroyWindow(m_hwnd);
@@ -203,11 +186,13 @@ namespace pTK
         return ret;
     }
 
-    void WindowHandle_win::setPosHint(const Point& pos)
+    bool WindowHandle_win::setPosHint(const Point& pos)
     {
         RECT rc{};
         if (::GetWindowRect(m_hwnd, &rc))
-            ::MoveWindow(m_hwnd, pos.x, pos.y, rc.right - rc.left, rc.bottom - rc.top, FALSE);
+            return ::MoveWindow(m_hwnd, pos.x, pos.y, rc.right - rc.left, rc.bottom - rc.top, FALSE);
+
+        return false;
     }
 
     void WindowHandle_win::beginPaint()
@@ -305,11 +290,6 @@ namespace pTK
         return m_data.style;
     }
 
-    void WindowHandle_win::swapBuffers()
-    {
-        m_context->swapBuffers();
-    }
-
     bool WindowHandle_win::resize(const Size& size)
     {
         // Apply the DPI scaling.
@@ -318,10 +298,8 @@ namespace pTK
         const Size adjSize{CalcAdjustedWindowSize(scaledSize, getWindowStyle(), m_data.hasMenu, scale.x * 96.0f)};
 
         // Apply the new size to the context and window.
-        if (scaledSize != m_context->getSize())
+        if (scaledSize != getSize())
         {
-            m_context->resize(scaledSize);
-
             if (!m_data.ignoreSize)
             {
                 const int width{static_cast<int>(adjSize.width)};
@@ -356,24 +334,19 @@ namespace pTK
         return !static_cast<bool>(::IsWindowVisible(m_hwnd));
     }
 
-    ContextBase* WindowHandle_win::getContext() const
-    {
-        return m_context.get();
-    }
-
     Vec2f WindowHandle_win::getDPIScale() const
     {
         return m_scale;
     }
 
-    Point WindowHandle_win::getWinPos() const
+    Point WindowHandle_win::getPosition() const
     {
         RECT rect{};
         ::GetWindowRect(m_hwnd, &rect);
         return {static_cast<Point::value_type>(rect.left), static_cast<Point::value_type>(rect.top)};
     }
 
-    Size WindowHandle_win::getWinSize() const
+    Size WindowHandle_win::getSize() const
     {
         RECT rect{};
         ::GetWindowRect(m_hwnd, &rect);
@@ -381,7 +354,7 @@ namespace pTK
                 static_cast<Size::value_type>(rect.bottom - rect.top)};
     }
 
-    void WindowHandle_win::setWindowLimits([[maybe_unused]] const Size& min, [[maybe_unused]] const Size& max)
+    void WindowHandle_win::setLimits([[maybe_unused]] const Size& min, [[maybe_unused]] const Size& max)
     {
         PTK_INFO("Updating Window limits to: min: {}x{} max: {}x{}", min.width, min.height, max.width, max.height);
         RECT rect{};
@@ -534,7 +507,7 @@ namespace pTK
         if (::GetClientRect(hwnd, &rc) && (rc.right != 0 && rc.bottom != 0))
         {
             const Vec2f scale = window->getDPIScale();
-            const Size size = window->getWinSize();
+            const Size size = window->getSize();
             if (static_cast<Size::value_type>(rc.right) != size.width ||
                 static_cast<Size::value_type>(rc.bottom) != size.height)
             {
@@ -669,7 +642,7 @@ namespace pTK
 
                 // window->handleEvents(); // Handle all events before sending close event.
                 EventSendHelper<CloseEvent>(window, {});
-                if (auto win = dynamic_cast<Window*>(window))
+                if (auto win = dynamic_cast<Window*>(window->winBase()))
                     Application::Get()->removeWindow(win);
                 DestroyWindow(hwnd);
                 break;
@@ -832,7 +805,8 @@ namespace pTK
             case WM_TIMER:
             {
                 if (wParam == 1)
-                    window->handleEvents();
+                    if (auto win = reinterpret_cast<Window*>(window->winBase()))
+                        win->handleEvents();
                 break;
             }
             case WM_COMMAND:

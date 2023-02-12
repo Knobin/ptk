@@ -9,7 +9,7 @@
 #define PTK_PlATFORM_WIN_WINGLCONTEXT_HPP
 
 // pTK Headers
-#include "ptk/platform/base/ContextBase.hpp"
+#include "ptk/core/ContextBase.hpp"
 
 // Windows Headers
 #define NOMINMAX
@@ -21,7 +21,7 @@ PTK_DISABLE_WARN_BEGIN()
 #include "include/gpu/GrDirectContext.h"
 PTK_DISABLE_WARN_END()
 
-namespace pTK
+namespace pTK::Platform
 {
     /** GLContext_win class implementation.
 
@@ -75,6 +75,6 @@ namespace pTK
         int m_stencilBits{8};
         int m_sampleCount{1};
     };
-} // namespace pTK
+} // namespace pTK::Platform
 
 #endif // PTK_PlATFORM_WIN_WINGLCONTEXT_HPP

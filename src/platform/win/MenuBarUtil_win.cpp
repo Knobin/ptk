@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "ptk/platform/win/MenuBarUtil_win.hpp"
+#include "MenuBarUtil_win.hpp"
 
 // pTK Headers
 #include "ptk/events/KeyMap.hpp"
@@ -15,7 +15,7 @@
 // C++ Headers
 #include <array>
 
-namespace pTK::MenuBarUtil_win
+namespace pTK::Platform::MenuBarUtil_win
 {
     void SetNamedOrCheckboxItem(HMENU hmenu, MenuMap& menus, const Ref<MenuItem>& item, uint32_t menuId,
                                 std::vector<ACCEL>& keys, bool isCheckbox)

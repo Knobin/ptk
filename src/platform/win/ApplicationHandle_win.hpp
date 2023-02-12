@@ -11,7 +11,7 @@
 // pTK Headers
 #include "ptk/platform/base/ApplicationHandle.hpp"
 
-namespace pTK
+namespace pTK::Platform
 {
     /** ApplicationHandle_win class implementation.
 
@@ -25,7 +25,7 @@ namespace pTK
 
             @return        default initialized ApplicationHandle_win with name
         */
-        explicit ApplicationHandle_win(std::string_view name);
+        ApplicationHandle_win(ApplicationBase* base, std::string_view name);
 
         /** Destructor for ApplicationHandle_win
 
@@ -75,6 +75,6 @@ namespace pTK
         */
         void onWindowRemove(int32_t key, Window* window) override;
     };
-} // namespace pTK
+} // namespace pTK::Platform
 
 #endif // PTK_PLATFORM_WIN_APPLICATIONHANDLE_HPP

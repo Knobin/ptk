@@ -22,12 +22,18 @@ set(PTK_PLATFORM_FILES_MAC mac/ApplicationHandle_mac.hpp
 set(PTK_PLATFORM_FILES_MAC_METAL mac/MetalContext_mac.hpp mac/MetalContext_mac.mm)
 
 # Windows files
-set(PTK_PLATFORM_FILES_WIN win/ApplicationHandle_win.cpp
+set(PTK_PLATFORM_FILES_WIN win/ApplicationHandle_win.hpp
+    win/ApplicationHandle_win.cpp
+    win/KeyMap_win.hpp
     win/KeyMap_win.cpp
+    win/WindowHandle_win.hpp
     win/WindowHandle_win.cpp
+    win/MenuBarUtil_win.hpp
     win/MenuBarUtil_win.cpp
-    win/RasterPolicy_win.cpp)
-set(PTK_PLATFORM_FILES_WIN_OPENGL win/GLContext_win.cpp)
+    win/RasterPolicy_win.hpp
+    win/RasterPolicy_win.cpp
+    win/ContextFactory_win.cpp)
+set(PTK_PLATFORM_FILES_WIN_OPENGL win/GLContext_win.hpp win/GLContext_win.cpp)
 
 # Unix files
 set(PTK_PLATFORM_FILES_UNIX unix/ApplicationHandle_unix.cpp
