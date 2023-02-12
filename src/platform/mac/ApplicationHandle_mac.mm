@@ -73,9 +73,19 @@
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *) __unused sender {
-    pTK::Application::Get()->close();
-    _run = FALSE;
+    pTK::Application* app = pTK::Application::Get();
+
+    // Perform closing action, if already closed or closing stop the event handling.
+    if (app->isClosed() || app->close())
+        [NSApp stop:sender];
+
+    // Application will call terminate later.
     return NSTerminateCancel;
+}
+
+- (void)applicationWillTerminate:(NSNotification*)__unused notification
+{
+    _run = FALSE;
 }
 
 @end
@@ -390,6 +400,11 @@ namespace pTK::Platform
 
         [NSApp setMainMenu : s_appData.menuBar];
         [NSMenu setMenuBarVisible : YES];
+    }
+
+    void ApplicationHandle_mac::terminate()
+    {
+        [NSApp terminate:nullptr];
     }
 
 } // namespace pTK

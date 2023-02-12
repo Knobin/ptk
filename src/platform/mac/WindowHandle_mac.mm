@@ -502,8 +502,6 @@ namespace pTK::Platform
                 [nswindow close];
                 nswindow = nil;
                 m_NSWindow = nullptr;
-                if (auto win = dynamic_cast<Window*>(this))
-                    Application::Get()->removeWindow(win);
             }
 
             PTK_INFO("bool WindowHandle_mac::close()");

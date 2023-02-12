@@ -51,7 +51,33 @@ namespace pTK
         // Otherwise, remove them here.
         clearWindows();
 
+        // Terminate if not already done.
+        if (!m_terminated && isAutoTerminationAllowed())
+        {
+            PTK_INFO("Auto terminating Application...");
+            m_handle->terminate();
+            PTK_INFO("Application terminated.");
+        }
+
         PTK_INFO("Destroyed Application");
+    }
+
+    void Application::terminate()
+    {
+        PTK_INFO("Terminating Application...");
+
+        // macOS metal context gives access violation if no event polling has
+        // happen before it is destroyed. It might also be a good idea to poll
+        // existing events before terminating as well. Although it can also be
+        // considered that "terminating" should terminate instantly. This is fine
+        // for now since this function should allow for the ability to cleanup before
+        // actually terminating.
+        m_handle->pollEvents();
+
+        closeHelper();
+        m_handle->terminate();
+        m_terminated = true;
+        PTK_INFO("Application terminated.");
     }
 
     int Application::exec(Window* window)
@@ -74,9 +100,16 @@ namespace pTK
         try
         {
             if (uniqueInsert(id, window))
+            {
+                PTK_INFO("Added window \"{}\"", window->getName());
                 m_handle->onWindowAdd(id, window);
+            }
             else
+            {
+                PTK_WARN("Could not insert window \"{}\" with key {}. Either key or window already exists.",
+                         window->getName());
                 return -1;
+            }
         }
         catch (const std::exception&)
         {
@@ -116,6 +149,7 @@ namespace pTK
 
     void Application::eraseWindow(const_iterator it)
     {
+        PTK_INFO("Removing window \"{}\"", it->second->getName());
         m_handle->onWindowRemove(it->first, it->second);
         eraseByIter(it);
 
@@ -222,25 +256,33 @@ namespace pTK
     bool Application::close()
     {
         if (isClosed())
-        {
-            PTK_WARN("Application is already closed");
             return true;
-        }
 
         if (onCloseRequest())
         {
-            PTK_INFO("Application is closing...");
-            onClose();
-            closeWindows();
-            clearWindows();
-            m_handle->onApplicationClose();
-            m_closed = true;
-            PTK_INFO("Application closed");
+            closeHelper();
             return true;
         }
 
         PTK_INFO("Application halted close request");
         return false;
+    }
+
+    void Application::closeHelper()
+    {
+        if (isClosed())
+        {
+            PTK_WARN("Application is already closed");
+            return;
+        }
+
+        PTK_INFO("Application is closing...");
+        onClose();
+        closeWindows();
+        clearWindows();
+        m_handle->onApplicationClose();
+        m_closed = true;
+        PTK_INFO("Application closed.");
     }
 
     Application* Application::Get()
@@ -252,7 +294,10 @@ namespace pTK
     void Application::clearWindows()
     {
         for (auto it = cbegin(); it != cend(); ++it)
+        {
+            PTK_INFO("Removing window \"{}\"", it->second->getName());
             m_handle->onWindowRemove(it->first, it->second);
+        }
 
         container().clear();
     }
@@ -263,6 +308,7 @@ namespace pTK
         std::size_t total{container().size()};
         while (it != cend())
         {
+            PTK_INFO("Closing window \"{}\"", it->second->getName());
             it->second->close();
 
             // Window close might remove itself from the application

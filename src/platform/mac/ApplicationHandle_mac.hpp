@@ -58,6 +58,13 @@ namespace pTK::Platform
             @param menuBar      MenuBar to set
         */
         static void SetMenuBar(const Ref<MenuBar>& menuBar);
+
+        /** Callback for when the application is terminating.
+
+            Application has been closed and is exiting.
+            Use this function to terminate at the platform level if necessary.
+        */
+        void terminate() override;
     };
 } // namespace pTK::Platform
 

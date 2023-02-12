@@ -53,6 +53,9 @@ namespace pTK
         if (auto app = Application::Get())
             app->removeWindow(this);
 
+        m_context.reset();
+        m_handle.reset();
+
         PTK_INFO("Destroyed Window");
     }
 

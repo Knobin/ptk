@@ -90,6 +90,13 @@ namespace pTK::Platform
         */
         virtual void onApplicationClose() {}
 
+        /** Callback for when the application is terminating.
+
+            Application has been closed and is exiting.
+            Use this function to terminate at the platform level if necessary.
+        */
+        virtual void terminate() {}
+
         /** Callback that will be called when a window is added to the
             application.
 

@@ -112,6 +112,16 @@ namespace pTK
         */
         bool close();
 
+        /** Function for terminating the application.
+
+            Application will close and exit.
+            Use this function to terminate the whole applicaion.
+
+            Further execution beyond this function may or may not be
+            possible depending on the platform implementation.
+        */
+        void terminate();
+
         /** Function for retrieving if the application is closed.
 
             @return     closed status
@@ -135,6 +145,24 @@ namespace pTK
             @return     status
         */
         [[nodiscard]] bool isRunningHeadless() const noexcept { return m_runningHeadless; }
+
+        /** Function for allowing the application to terminate in destructor.
+
+            @param value    allowed to terminate in destructor
+        */
+        void allowAutoTermination(bool value) noexcept { m_allowAutoTermination = value; }
+
+        /** Function for retrieving if the application is allowed to terminate in destructor.
+
+            @return     status
+        */
+        [[nodiscard]] bool isAutoTerminationAllowed() const noexcept { return m_allowAutoTermination; }
+
+        /** Function for retrieving if the application is terminated.
+
+            @return     terminated status
+        */
+        [[nodiscard]] bool isTerminated() const noexcept { return m_terminated; }
 
     public:
         /** Function for retrieving a pointer to the Application.
@@ -218,12 +246,17 @@ namespace pTK
         */
         void fetchEvents();
 
+        // Calls all closing functions.
+        void closeHelper();
+
     private:
         static Application* s_Instance;
         Platform::ApplicationHandle* m_handle{nullptr};
         bool m_allowHeadless{false};
         bool m_runningHeadless{false};
         bool m_closed{false};
+        bool m_terminated{false};
+        bool m_allowAutoTermination{true};
     };
 } // namespace pTK
 
