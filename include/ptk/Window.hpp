@@ -86,9 +86,11 @@ namespace pTK
         // TODO(knobin): Add docs.
         void invalidate()
         {
-            // Setting m_draw to true will result in a call to paint()
-            // after all events have been handled in handleEvents().
-            m_draw = true;
+            if (!m_contentInvalidated)
+            {
+                m_contentInvalidated = true;
+                m_handle->inval();
+            }
         }
 
         /** Function for showing the window.
@@ -255,6 +257,7 @@ namespace pTK
         bool m_draw{false};
         bool m_close{false};
         bool m_closed{false};
+        bool m_contentInvalidated{false};
     };
 
     template <typename T, typename... Args>

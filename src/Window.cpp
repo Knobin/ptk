@@ -91,7 +91,7 @@ namespace pTK
 
         if (m_draw && !m_close)
         {
-            paint();
+            invalidate();
             m_draw = false;
         }
     }
@@ -118,7 +118,7 @@ namespace pTK
 
         refitContent(size);
 
-        paint();
+        invalidate();
         // postEvent<PaintEvent>(Point{0, 0}, getSize());
     }
 
@@ -131,13 +131,9 @@ namespace pTK
 
     void Window::paint()
     {
-        m_handle->beginPaint();
-
         ContextBase* context{getContext()};
         sk_sp<SkSurface> surface = context->surface();
         SkCanvas* canvas{surface->getCanvas()};
-
-        m_handle->inval();
 
         // Apply monitor scale.
         SkMatrix matrix{};
@@ -151,7 +147,8 @@ namespace pTK
         surface->flushAndSubmit();
         m_context->swapBuffers();
 
-        m_handle->endPaint();
+        // Painting is done, enable invalidation again.
+        m_contentInvalidated = false;
     }
 
     void Window::handleEvent(Event* event)

@@ -179,17 +179,6 @@ namespace pTK::Platform
         return false;
     }
 
-    void WindowHandle_win::beginPaint()
-    {
-        m_ps = PAINTSTRUCT();
-        m_hdc = BeginPaint(m_hwnd, &m_ps);
-    }
-
-    void WindowHandle_win::endPaint()
-    {
-        ::EndPaint(m_hwnd, &m_ps);
-    }
-
     bool WindowHandle_win::setTitle(const std::string& name)
     {
         return ::SetWindowTextW(m_hwnd, ApplicationHandle_win::stringToUTF16(name).c_str());
@@ -305,7 +294,6 @@ namespace pTK::Platform
     void WindowHandle_win::show()
     {
         ::ShowWindow(m_hwnd, SW_SHOW);
-        EventSendHelper<PaintEvent>(this, {{0, 0}, getSize()});
     }
 
     void WindowHandle_win::hide()
@@ -381,9 +369,7 @@ namespace pTK::Platform
 
     void WindowHandle_win::inval()
     {
-        if (!m_data.invalidated)
-            InvalidateRect(m_hwnd, nullptr, false);
-        m_data.invalidated = false;
+        InvalidateRect(m_hwnd, nullptr, false);
     }
 
     HWND WindowHandle_win::handle() const
@@ -646,10 +632,29 @@ namespace pTK::Platform
                 EventSendHelper<LostFocusEvent>(window, {});
                 break;
             }
+            case WM_ERASEBKGND:
+            {
+                HDC hdc = (HDC)(wParam);
+                RECT rc;
+                GetClientRect(hwnd, &rc);
+
+                const Color color = window->winBase()->getBackground();
+
+                auto abgr = static_cast<uint32_t>(color.r);
+                abgr |= static_cast<uint32_t>(color.g << 8);
+                abgr |= static_cast<uint32_t>(color.b << 16);
+
+                COLORREF cr = SetBkColor(hdc, abgr);
+                ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rc, "", 0, nullptr);
+                SetBkColor(hdc, cr);
+                return TRUE;
+            }
             case WM_PAINT:
             {
-                data->invalidated = true;
+                PAINTSTRUCT ps;
+                ::BeginPaint(hwnd, &ps);
                 EventSendHelper<PaintEvent>(window, {{0, 0}, window->getSize()});
+                ::EndPaint(hwnd, &ps);
                 break;
             }
             case WM_CHAR:

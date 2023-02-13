@@ -86,18 +86,6 @@ namespace pTK::Platform
         */
         bool resize(const Size& size) override;
 
-        /** Function for initiating the drawing.
-
-            This function will be called before any drawing is supposed to be done.
-        */
-        void beginPaint() override;
-
-        /** Function for ending the drawing.
-
-            This function will be called after the drawing is completed.
-        */
-        void endPaint() override;
-
         /** Function for setting the title of the window.
 
             @param name     title to show
@@ -211,7 +199,6 @@ namespace pTK::Platform
             MenuBarUtil_win::MenuMap menuItems{};
             bool ignoreSize{false};
             bool hasMenu{false};
-            bool invalidated{false};
             DWORD style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX |
                         WS_MAXIMIZEBOX};
         };
@@ -227,8 +214,6 @@ namespace pTK::Platform
 
     private:
         HWND m_hwnd;
-        PAINTSTRUCT m_ps{};
-        [[maybe_unused]] HDC m_hdc{};
         Vec2f m_scale{};
         HACCEL m_accelTable{nullptr};
         Data m_data{};

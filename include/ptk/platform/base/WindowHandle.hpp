@@ -102,20 +102,6 @@ namespace pTK::Platform
         */
         virtual bool resize(const Size& UNUSED(size)) = 0;
 
-        /** Function for initiating the drawing.
-
-            This function will be called before any drawing is supposed to be done.
-            Note: It is not mandatory to implement this function, every platform may not need it.
-        */
-        virtual void beginPaint() {}
-
-        /** Function for ending the drawing.
-
-            This function will be called after the drawing is completed.
-            Note: It is not mandatory to implement this function, every platform may not need it.
-        */
-        virtual void endPaint() {}
-
         /** Function for setting the title of the window.
 
             @param name     title to show
@@ -210,7 +196,7 @@ namespace pTK::Platform
 
             @return pointer to ApplicationBase
         */
-        WindowBase* winBase() const { return m_winBase; }
+        [[nodiscard]] WindowBase* winBase() const { return m_winBase; }
 
         // Forwarding of events from platform handler to window.
         template <typename Event>
