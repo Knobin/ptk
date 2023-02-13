@@ -152,6 +152,11 @@ namespace pTK::Platform
         */
         bool setScaleHint(const Vec2f& scale) override;
 
+        /** Function for invalidating the window.
+
+        */
+        void inval() override;
+
         /** Function for retrieving the NSWindow id.
 
             @return     id of the NSWindow
@@ -176,12 +181,6 @@ namespace pTK::Platform
 
     private:
         void init(const std::string& name, const Size& size, const WindowInfo& flags);
-
-        template <typename Event>
-        void sendEvent(const Event& evt)
-        {
-            HandlePlatformEvent<Event>(evt);
-        }
 
         template <typename Event>
         friend void EventSendHelper(WindowHandle_mac*, const Event&);

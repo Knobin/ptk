@@ -36,9 +36,7 @@ namespace pTK::Platform
     template<typename Event>
     void EventSendHelper(WindowHandle_mac* window, const Event& evt)
     {
-        window->sendEvent<Event>(evt);
-        // window->winBase()->HandlePlatformEvent<Event>(evt);
-        // window->iHandleEvent<Event>(evt);
+        window->HandlePlatformEvent<Event>(evt);
     }
 }
 
@@ -625,6 +623,11 @@ namespace pTK::Platform
             return true;
         }
         return false;
+    }
+
+    void WindowHandle_mac::inval()
+    {
+        HandlePlatformEvent<PaintEvent>({{0, 0}, getSize()});
     }
 
     long WindowHandle_mac::windowID() const
