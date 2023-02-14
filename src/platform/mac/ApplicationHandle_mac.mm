@@ -76,11 +76,16 @@
     pTK::Application* app = pTK::Application::Get();
 
     // Perform closing action, if already closed or closing stop the event handling.
-    if (app->isClosed() || app->close())
-        [NSApp stop:sender];
+    if (!app->isClosed() && app->close())
+    {
+        [NSApp stop:self];
+        [NSApp abortModal];
 
-    // Application will call terminate later.
-    return NSTerminateCancel;
+        // Application will call terminate later.
+        return NSTerminateCancel;
+    }
+
+    return NSTerminateNow;
 }
 
 - (void)applicationWillTerminate:(NSNotification*)__unused notification
