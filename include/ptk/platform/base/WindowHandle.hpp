@@ -16,11 +16,6 @@
 // C++ Headers
 #include <memory>
 
-//
-// TODO(knobin): This file needs documentation and possibly a rework.
-// Changes of functions / thorough check of the necessity of some functions.
-//
-
 namespace pTK::Platform
 {
     /** WindowHandle class implementation
@@ -188,15 +183,19 @@ namespace pTK::Platform
 
         /** Function for invalidating the window.
 
+            When this is called the window needs to be redrawn.
+            This is accomplished by sending a PaintEvent to the window.
+            The event does not have to be sent in this function, but it
+            should result in that event being sent as soon as possible.
         */
-        virtual void inval() {}
+        virtual void invalidate() {}
 
     protected:
-        /** Function for retrieving the ApplicationBase.
+        /** Function for retrieving the window.
 
-            @return pointer to ApplicationBase
+            @return pointer to WindowBase
         */
-        [[nodiscard]] WindowBase* winBase() const { return m_winBase; }
+        [[nodiscard]] WindowBase* window() const { return m_winBase; }
 
         // Forwarding of events from platform handler to window.
         template <typename Event>

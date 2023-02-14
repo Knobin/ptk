@@ -39,10 +39,11 @@ namespace pTK::Platform::ContextFactoryImpl
 
     static NSWindow* GetNSWindow(Window* window)
     {
-        // Could use reinterpret_cast here, but the handle should always be for macOS when
-        // this function gets called.
-        auto handle = static_cast<WindowHandle_mac*>(window->handle());
-        return static_cast<NSWindow*>(handle->handle());
+        if (auto platformHandle = dynamic_cast<WindowHandle_mac*>(window->platformHandle()))
+            return static_cast<NSWindow*>(platformHandle->nswindow());
+
+        PTK_ASSERT(nullptr, "Window ptr is not of type WindowHandle_mac");
+        return nullptr;
     }
 
     std::unique_ptr<ContextBase> MakeRasterContext(Window* window, const Size& size, const Vec2f& scale)

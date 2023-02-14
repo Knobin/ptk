@@ -89,7 +89,7 @@ namespace pTK
             if (!m_contentInvalidated)
             {
                 m_contentInvalidated = true;
-                m_handle->inval();
+                m_handle->invalidate();
             }
         }
 
@@ -204,8 +204,11 @@ namespace pTK
             m_handle->setLimits(limits.min, limits.max);
         }
 
-        // TODO(knobin): Add documentation.
-        Platform::WindowHandle* handle() const { return m_handle.get(); }
+        /** Function for retrieving the platform specific handle to the window.
+
+            @return     window handle
+        */
+        [[nodiscard]] Platform::WindowHandle* platformHandle() const { return m_handle.get(); }
 
         /** Function for setting the position of the window.
 

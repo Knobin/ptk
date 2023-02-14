@@ -28,7 +28,7 @@ namespace pTK::Platform
         extern std::unique_ptr<ContextBase> MakeGLContext(Window*, const Size&, const Vec2f&);
 #endif
 
-        // OpenGL (macOS).
+        // Metal (macOS).
 #ifdef PTK_METAL
         extern std::unique_ptr<ContextBase> MakeMetalContext(Window*, const Size&, const Vec2f&);
 #endif

@@ -154,8 +154,12 @@ namespace pTK::Platform
 
         /** Function for invalidating the window.
 
+            When this is called the window needs to be redrawn.
+            This is accomplished by sending a PaintEvent to the window.
+            The event does not have to be sent in this function, but it
+            should result in that event being sent as soon as possible.
         */
-        void inval() override;
+        void invalidate() override;
 
         /** Function for retrieving the NSWindow id.
 
@@ -169,7 +173,7 @@ namespace pTK::Platform
 
             @return     pointer to NSWindow
         */
-        [[nodiscard]] void* handle() const;
+        [[nodiscard]] void* nswindow() const;
 
     private:
         /** Function for setting the size limits the window.

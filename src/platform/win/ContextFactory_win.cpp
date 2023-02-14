@@ -36,9 +36,7 @@ namespace pTK::Platform::ContextFactoryImpl
 
     static HWND GetHWND(Window* window)
     {
-        // Could use reinterpret_cast here, but the handle should always be for macOS when
-        // this function gets called.
-        if (auto platformHandle = reinterpret_cast<WindowHandle_win*>(window->handle()))
+        if (auto platformHandle = dynamic_cast<WindowHandle_win*>(window->handle()))
             return platformHandle->handle();
 
         PTK_ASSERT(nullptr, "Window ptr is not of type WindowHandle_win");
