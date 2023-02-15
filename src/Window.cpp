@@ -61,49 +61,45 @@ namespace pTK
 
     void Window::onChildDraw([[maybe_unused]] size_type index)
     {
-        // onChildDraw is not a thread safe function...
-        postEvent<PaintEvent>(Point{0, 0}, getSize());
+        invalidate();
     }
 
-    void Window::handleEvents()
+    void Window::runCommands()
     {
-        m_eventQueue.lock();
-        std::size_t eventCount{m_eventQueue.size()};
-        m_eventQueue.unlock();
+        // More commands might be pushed while being in here.
+        // Therefore, the lock has to be acquired multiple times
+        // to be safe that no deadlocks will occur.
 
-        while (eventCount > 0)
+        // Number of commands to run.
+        m_commandBuffer.lock();
+        std::size_t cmdCount{m_commandBuffer.size()};
+        m_commandBuffer.unlock();
+
+        // Run commands.
+        while (cmdCount > 0)
         {
-            m_eventQueue.lock();
-            std::unique_ptr<Event> event = std::move(m_eventQueue.front());
-            m_eventQueue.pop();
-            m_eventQueue.unlock();
-
-            handleEvent(event.get());
-
-            --eventCount;
-            if (eventCount == 0)
-            {
-                m_eventQueue.lock();
-                eventCount = m_eventQueue.size();
-                m_eventQueue.unlock();
-            }
+            m_commandBuffer.lock();
+            std::function<void()> command = std::move(m_commandBuffer.front());
+            m_commandBuffer.pop();
+            m_commandBufferSize = m_commandBuffer.size();
+            m_commandBuffer.unlock();
+            command();
+            --cmdCount;
         }
-
-        if (m_draw && !m_close)
-        {
-            invalidate();
-            m_draw = false;
-        }
-    }
-
-    void Window::sendEvent(Event* event)
-    {
-        handleEvent(event);
     }
 
     bool Window::shouldClose() const
     {
         return m_close;
+    }
+
+    void Window::invalidate()
+    {
+        if (!m_contentInvalidated)
+        {
+            m_contentInvalidated = true;
+            m_handle->invalidate();
+        }
     }
 
     void Window::onSizeChange(const Size& size)
@@ -117,17 +113,28 @@ namespace pTK
             m_context->resize(scaledSize);
 
         refitContent(size);
-
         invalidate();
-        // postEvent<PaintEvent>(Point{0, 0}, getSize());
     }
 
-    /*void Window::onLimitChange(const Size& min, const Size& max)
+    void Window::regionInvalidated(const PaintEvent&)
     {
-        setLimits(min, max);
-        // m_handle.setLimits(min, max);
-        // setLimits(min, max);
-    }*/
+        // Just assume that the entire window needs to be painted here (for now).
+        // Another (better) solution would be to find what children needs to be
+        // painted and just paint those. But currently there isn't any support
+        // for rendering individual widgets anyway.
+        paint();
+    }
+
+    void Window::onLimitChange(const Size&, const Size&)
+    {
+        setLimitsWithSizePolicy();
+    }
+
+    void Window::setLimitsWithSizePolicy()
+    {
+        Limits limits{getLimitsWithSizePolicy()};
+        m_handle->setLimits(limits.min, limits.max);
+    }
 
     void Window::paint()
     {
@@ -148,141 +155,13 @@ namespace pTK
         m_context->swapBuffers();
 
         // Painting is done, enable invalidation again.
-        m_contentInvalidated = false;
+        markContentValid();
     }
 
-    void Window::handleEvent(Event* event)
+    void Window::setSizePolicy(SizePolicy policy)
     {
-        PTK_ASSERT(event, "Undefined Event");
-
-        if (event->category == Event::Category::Window)
-            handleWindowEvent(event);
-        else if (event->category == Event::Category::Keyboard)
-            handleKeyboardEvent(event);
-        else if (event->category == Event::Category::Mouse)
-            handleMouseEvent(event);
-#ifdef PTK_DEBUG
-        else
-            PTK_WARN("Unknown event");
-#endif
-    }
-
-    void Window::handleKeyboardEvent(Event* event)
-    {
-        PTK_ASSERT(event, "Undefined Event");
-
-        if (event->type == Event::Type::KeyPressed || event->type == Event::Type::KeyReleased)
-        {
-            KeyEvent* kEvent{static_cast<KeyEvent*>(event)};
-            triggerEvent<KeyEvent>(*kEvent);
-        }
-        else if (event->type == Event::Type::KeyInput)
-        {
-            InputEvent* iEvent{static_cast<InputEvent*>(event)};
-            triggerEvent<InputEvent>(*iEvent);
-        }
-    }
-
-    void Window::handleMouseEvent(Event* event)
-    {
-        PTK_ASSERT(event, "Undefined Event");
-        Event::Type type{event->type};
-        if (type == Event::Type::MouseMoved)
-        {
-            MotionEvent* mEvent{static_cast<MotionEvent*>(event)};
-            triggerEvent<MotionEvent>(*mEvent);
-        }
-        else if (type == Event::Type::MouseButtonPressed || type == Event::Type::MouseButtonReleased)
-        {
-            ButtonEvent* bEvent{static_cast<ButtonEvent*>(event)};
-            const Point pos{bEvent->pos};
-            const int32_t value{bEvent->value};
-            const Mouse::Button btn{bEvent->button};
-            if (type == Event::Type::MouseButtonPressed)
-            {
-                ClickEvent cEvt{btn, value, pos};
-                triggerEvent<ClickEvent>(cEvt);
-            }
-            else if (type == Event::Type::MouseButtonReleased)
-            {
-                ReleaseEvent rEvt{btn, value, pos};
-                triggerEvent<ReleaseEvent>(rEvt);
-            }
-        }
-        else if (type == Event::Type::MouseScrolled)
-        {
-            ScrollEvent* sEvent{static_cast<ScrollEvent*>(event)};
-            triggerEvent<ScrollEvent>(*sEvent);
-        }
-    }
-
-    void Window::handleWindowEvent(Event* event)
-    {
-        PTK_ASSERT(event, "Undefined Event");
-        Event::Type type{event->type};
-        switch (type)
-        {
-            case Event::Type::WindowPaint:
-            {
-                m_draw = true;
-                break;
-            }
-            case Event::Type::WindowResize:
-            {
-                ResizeEvent* rEvent{static_cast<ResizeEvent*>(event)};
-                setSize(rEvent->size);
-                m_draw = true;
-                break;
-            }
-            case Event::Type::WindowMove:
-            {
-                MoveEvent* mEvent{static_cast<MoveEvent*>(event)};
-                setPosHint(mEvent->pos);
-                break;
-            }
-            case Event::Type::WindowScale:
-            {
-                ScaleEvent* sEvent{static_cast<ScaleEvent*>(event)};
-                // m_handle.setScaleHint(sEvent->scale);
-                m_handle->setScaleHint(sEvent->scale);
-                m_draw = true;
-                break;
-            }
-            case Event::Type::WindowClose:
-            {
-                m_handle->close();
-                break;
-            }
-            case Event::Type::WindowFocus:
-            {
-                // if (m_onFocus) // Nullptr for some reason.
-                // m_onFocus();
-                break;
-            }
-            case Event::Type::WindowLostFocus:
-            {
-                // if (m_onLostFocus)
-                // m_onLostFocus();
-                // handleLeaveClickEvent();
-                //  TODO: Fix handleLeaveClickEvent()
-                break;
-            }
-            case Event::Type::WindowMinimize:
-            {
-                m_handle->minimize();
-                break;
-            }
-            case Event::Type::WindowRestore:
-            {
-                m_handle->restore();
-                break;
-            }
-            default:
-            {
-                PTK_WARN("Unknown Window event");
-                break;
-            }
-        }
+        Widget::setSizePolicy(policy);
+        setLimitsWithSizePolicy();
     }
 
     void Window::show()

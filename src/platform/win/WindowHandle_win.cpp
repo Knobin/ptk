@@ -255,7 +255,7 @@ namespace pTK::Platform
     void WindowHandle_win::notifyEvent()
     {
         // Signal the window to exit the event wait.
-        PostMessage(m_hwnd, WM_NULL, 0, 0);
+        ::PostMessage(m_hwnd, WM_NULL, 0, 0);
     }
 
     DWORD WindowHandle_win::getWindowStyle() const
@@ -288,7 +288,7 @@ namespace pTK::Platform
 
     bool WindowHandle_win::close()
     {
-        return ::CloseWindow(m_hwnd);
+        return ::PostMessage(m_hwnd, WM_CLOSE, 0, 0);
     }
 
     void WindowHandle_win::show()
@@ -795,7 +795,7 @@ namespace pTK::Platform
             {
                 if (wParam == 1)
                     if (auto win = dynamic_cast<Window*>(handle->window()))
-                        win->handleEvents();
+                        win->runCommands();
                 break;
             }
             case WM_COMMAND:

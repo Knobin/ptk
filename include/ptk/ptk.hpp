@@ -15,14 +15,16 @@
 
 // --- Core --------------------------
 #include "ptk/core/Alignment.hpp"
+#include "ptk/core/ApplicationBase.hpp"
 #include "ptk/core/CallbackStorage.hpp"
+#include "ptk/core/CommandBuffer.hpp"
+#include "ptk/core/ContextBase.hpp"
 #include "ptk/core/Defines.hpp"
 #include "ptk/core/Drawable.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/core/EventCallbacks.hpp"
 #include "ptk/core/EventFunctions.hpp"
 #include "ptk/core/EventHandling.hpp"
-#include "ptk/core/EventQueue.hpp"
 #include "ptk/core/Exception.hpp"
 #include "ptk/core/Shape.hpp"
 #include "ptk/core/Sizable.hpp"
@@ -30,6 +32,7 @@
 #include "ptk/core/Widget.hpp"
 #include "ptk/core/WidgetContainer.hpp"
 #include "ptk/core/WidgetInterface.hpp"
+#include "ptk/core/WindowBase.hpp"
 #include "ptk/core/WindowInfo.hpp"
 
 // --- Events ------------------------

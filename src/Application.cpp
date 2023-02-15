@@ -198,7 +198,7 @@ namespace pTK
             if (window->visible())
                 window->invalidate();
 
-            window->handleEvents();
+            window->runCommands();
         }
 
         // Maybe do some setup things here?
@@ -208,7 +208,7 @@ namespace pTK
         {
             fetchEvents();
             for (const auto& pair : *this)
-                pair.second->handleEvents();
+                pair.second->runCommands();
         }
 
         return 0;
