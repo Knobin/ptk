@@ -43,9 +43,9 @@ namespace pTK::Platform
         window->HandlePlatformEvent<Event>(evt);
     }
 
-    Limits GetWindowLimits(WindowHandle_win* window)
+    Limits GetWindowLimits(WindowHandle_win* handle)
     {
-        return window->winBase()->getLimitsWithSizePolicy();
+        return handle->window()->getLimitsWithSizePolicy();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -367,7 +367,7 @@ namespace pTK::Platform
         return false;
     }
 
-    void WindowHandle_win::inval()
+    void WindowHandle_win::invalidate()
     {
         InvalidateRect(m_hwnd, nullptr, false);
     }
@@ -598,8 +598,8 @@ namespace pTK::Platform
         if (!data)
             return ::DefWindowProcW(hwnd, msg, wParam, lParam);
 
-        WindowHandle_win* window = data->window;
-        PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
+        WindowHandle_win* handle = data->window;
+        PTK_ASSERT(handle, "WindowHandle_win pointer is undefined");
 
         switch (msg)
         {
@@ -611,25 +611,25 @@ namespace pTK::Platform
                 // To enable the window to halt the closing request.
 
                 // window->handleEvents(); // Handle all events before sending close event.
-                EventSendHelper<CloseEvent>(window, {});
-                if (auto win = dynamic_cast<Window*>(window->winBase()))
+                EventSendHelper<CloseEvent>(handle, {});
+                if (auto win = dynamic_cast<Window*>(handle->window()))
                     Application::Get()->removeWindow(win);
                 DestroyWindow(hwnd);
                 break;
             }
             case WM_DESTROY:
             {
-                window->destroyWindow();
+                handle->destroyWindow();
                 break;
             }
             case WM_SETFOCUS:
             {
-                EventSendHelper<FocusEvent>(window, {});
+                EventSendHelper<FocusEvent>(handle, {});
                 break;
             }
             case WM_KILLFOCUS:
             {
-                EventSendHelper<LostFocusEvent>(window, {});
+                EventSendHelper<LostFocusEvent>(handle, {});
                 break;
             }
             case WM_ERASEBKGND:
@@ -638,7 +638,7 @@ namespace pTK::Platform
                 RECT rc;
                 GetClientRect(hwnd, &rc);
 
-                const Color color = window->winBase()->getBackground();
+                const Color color = handle->window()->getBackground();
 
                 auto abgr = static_cast<uint32_t>(color.r);
                 abgr |= static_cast<uint32_t>(color.g << 8);
@@ -653,79 +653,79 @@ namespace pTK::Platform
             {
                 PAINTSTRUCT ps;
                 ::BeginPaint(hwnd, &ps);
-                EventSendHelper<PaintEvent>(window, {{0, 0}, window->getSize()});
+                EventSendHelper<PaintEvent>(handle, {{0, 0}, handle->getSize()});
                 ::EndPaint(hwnd, &ps);
                 break;
             }
             case WM_CHAR:
             {
-                HandleCharInput(window, wParam, lParam);
+                HandleCharInput(handle, wParam, lParam);
                 break;
             }
             case WM_SYSKEYDOWN:
             case WM_KEYDOWN:
             {
-                HandleKeyEvent(window, KeyEvent::Pressed, wParam, lParam);
+                HandleKeyEvent(handle, KeyEvent::Pressed, wParam, lParam);
                 break;
             }
             case WM_SYSKEYUP:
             case WM_KEYUP:
             {
-                HandleKeyEvent(window, KeyEvent::Released, wParam, lParam);
+                HandleKeyEvent(handle, KeyEvent::Released, wParam, lParam);
                 break;
             }
             case WM_MOUSEMOVE:
             {
                 const auto fX = static_cast<float>(GET_X_LPARAM(lParam));
                 const auto fY = static_cast<float>(GET_Y_LPARAM(lParam));
-                const Vec2f scale = window->getDPIScale();
+                const Vec2f scale = handle->getDPIScale();
                 MotionEvent evt{{static_cast<Point::value_type>(fX * (1 / scale.x)),
                                  static_cast<Point::value_type>(fY * (1 / scale.y))}};
-                EventSendHelper<MotionEvent>(window, evt);
+                EventSendHelper<MotionEvent>(handle, evt);
                 break;
             }
             case WM_LBUTTONDOWN:
             case WM_RBUTTONDOWN:
             {
-                const Vec2f scale = window->getDPIScale();
+                const Vec2f scale = handle->getDPIScale();
                 const Mouse::Button btn = (msg == WM_LBUTTONDOWN) ? Mouse::Button::Left : Mouse::Button::Right;
                 const int32_t value = (msg == WM_LBUTTONDOWN) ? VK_LBUTTON : VK_RBUTTON;
-                HandleMouseClick(window, scale, Event::Type::MouseButtonPressed, btn, value, lParam);
+                HandleMouseClick(handle, scale, Event::Type::MouseButtonPressed, btn, value, lParam);
                 break;
             }
             case WM_LBUTTONUP:
             case WM_RBUTTONUP:
             {
-                const Vec2f scale = window->getDPIScale();
+                const Vec2f scale = handle->getDPIScale();
                 const Mouse::Button btn = (msg == WM_LBUTTONUP) ? Mouse::Button::Left : Mouse::Button::Right;
                 const int32_t value = (msg == WM_LBUTTONUP) ? VK_LBUTTON : VK_RBUTTON;
-                HandleMouseClick(window, scale, Event::Type::MouseButtonReleased, btn, value, lParam);
+                HandleMouseClick(handle, scale, Event::Type::MouseButtonReleased, btn, value, lParam);
                 break;
             }
             case WM_MOUSEWHEEL:
             {
                 const float y_offset =
                     static_cast<float>(static_cast<SHORT>(HIWORD(wParam))) / static_cast<float>(WHEEL_DELTA);
-                EventSendHelper<ScrollEvent>(window, ScrollEvent{{0.0f, y_offset}});
+                EventSendHelper<ScrollEvent>(handle, ScrollEvent{{0.0f, y_offset}});
                 break;
             }
             case WM_MOUSEHWHEEL:
             {
                 const float x_offset =
                     -static_cast<float>(static_cast<SHORT>(HIWORD(wParam))) / static_cast<float>(WHEEL_DELTA);
-                EventSendHelper<ScrollEvent>(window, ScrollEvent{{x_offset, 0.0f}});
+                EventSendHelper<ScrollEvent>(handle, ScrollEvent{{x_offset, 0.0f}});
                 break;
             }
             case WM_XBUTTONUP:
             case WM_XBUTTONDOWN:
             {
-                const Vec2f scale = window->getDPIScale();
+                const Vec2f scale = handle->getDPIScale();
                 const Event::Type type =
                     (msg == WM_XBUTTONUP) ? Event::Type::MouseButtonReleased : Event::Type::MouseButtonPressed;
                 const Mouse::Button btn =
                     (GET_XBUTTON_WPARAM(wParam) == XBUTTON1) ? Mouse::Button::Back : Mouse::Button::Forward;
                 const int32_t value = (btn == Mouse::Button::Back) ? VK_XBUTTON1 : VK_XBUTTON2;
-                HandleMouseClick(window, scale, type, btn, value, lParam);
+                HandleMouseClick(handle, scale, type, btn, value, lParam);
                 break;
             }
             case WM_SIZING:
@@ -733,8 +733,8 @@ namespace pTK::Platform
                 RECT* rect = reinterpret_cast<RECT*>(lParam);
                 const Size size = {static_cast<Size::value_type>(rect->right - rect->left),
                                    static_cast<Size::value_type>(rect->bottom - rect->top)};
-                const Vec2f scale = window->getDPIScale();
-                DWORD style = window->getWindowStyle();
+                const Vec2f scale = handle->getDPIScale();
+                const DWORD style = handle->getWindowStyle();
                 ResizeEvent evt{ScaleSize(CalcAdjustedReverseWindowSize(size, style, data->hasMenu, scale.x * 96.0f),
                                           Vec2f{1.0f / scale.x, 1.0f / scale.y})};
 
@@ -744,14 +744,14 @@ namespace pTK::Platform
             }
             case WM_GETMINMAXINFO:
             {
-                const Vec2f scale = window->getDPIScale();
-                DWORD style = window->getWindowStyle();
-                HandleWindowLimits(window, lParam, scale, data->hasMenu, style);
+                const Vec2f scale = handle->getDPIScale();
+                const DWORD style = handle->getWindowStyle();
+                HandleWindowLimits(handle, lParam, scale, data->hasMenu, style);
                 break;
             }
             case WM_DPICHANGED:
             {
-                HandleDPIChange(window, wParam, lParam);
+                HandleDPIChange(handle, wParam, lParam);
                 break;
             }
             case WM_WINDOWPOSCHANGED:
@@ -762,22 +762,22 @@ namespace pTK::Platform
                 if (!(winData->flags & SWP_NOMOVE))
                 {
                     MoveEvent evt{{winData->x, winData->y}};
-                    EventSendHelper<MoveEvent>(window, evt);
+                    EventSendHelper<MoveEvent>(handle, evt);
                 }
 
                 // Window was resized.
                 if (!(winData->flags & SWP_NOSIZE))
-                    HandleWindowResize(window, data, hwnd);
+                    HandleWindowResize(handle, data, hwnd);
 
                 // Window was shown.
                 if (!(winData->flags & SWP_SHOWWINDOW))
-                    if (!window->isMinimized() && data->minimized)
-                        HandleWindowMinimize(window, data, false);
+                    if (!handle->isMinimized() && data->minimized)
+                        HandleWindowMinimize(handle, data, false);
 
                 // Window was hidden.
                 if (!(winData->flags & SWP_HIDEWINDOW))
-                    if (window->isMinimized() && !data->minimized)
-                        HandleWindowMinimize(window, data, true);
+                    if (handle->isMinimized() && !data->minimized)
+                        HandleWindowMinimize(handle, data, true);
 
                 break;
             }
@@ -794,19 +794,18 @@ namespace pTK::Platform
             case WM_TIMER:
             {
                 if (wParam == 1)
-                    if (auto win = reinterpret_cast<Window*>(window->winBase()))
+                    if (auto win = dynamic_cast<Window*>(handle->window()))
                         win->handleEvents();
                 break;
             }
             case WM_COMMAND:
             {
                 uint32_t wmId{LOWORD(wParam)};
-                Ref<MenuItem> item{MenuBarUtil_win::FindMenuItemById(data->menuItems, wmId)};
+                const Ref<MenuItem> item{MenuBarUtil_win::FindMenuItemById(data->menuItems, wmId)};
 
                 if (item)
                 {
-                    auto* nItem = dynamic_cast<NamedMenuItem*>(item.get());
-                    if (nItem)
+                    if (auto nItem = dynamic_cast<NamedMenuItem*>(item.get()))
                         nItem->notifyClick();
                 }
                 else

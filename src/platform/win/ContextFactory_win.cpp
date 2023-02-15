@@ -36,7 +36,7 @@ namespace pTK::Platform::ContextFactoryImpl
 
     static HWND GetHWND(Window* window)
     {
-        if (auto platformHandle = dynamic_cast<WindowHandle_win*>(window->handle()))
+        if (auto platformHandle = dynamic_cast<WindowHandle_win*>(window->platformHandle()))
             return platformHandle->handle();
 
         PTK_ASSERT(nullptr, "Window ptr is not of type WindowHandle_win");

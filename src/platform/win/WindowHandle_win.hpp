@@ -164,8 +164,9 @@ namespace pTK::Platform
 
         /** Function for invalidating the window.
 
+            Sends a WM_PAINT event to the window.
         */
-        void inval() override;
+        void invalidate() override;
 
         /** Function for setting the size limits the window.
 
@@ -199,8 +200,7 @@ namespace pTK::Platform
             MenuBarUtil_win::MenuMap menuItems{};
             bool ignoreSize{false};
             bool hasMenu{false};
-            DWORD style{WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX |
-                        WS_MAXIMIZEBOX};
+            DWORD style{WS_OVERLAPPEDWINDOW};
         };
 
     private:

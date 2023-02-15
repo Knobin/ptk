@@ -120,14 +120,15 @@ namespace pTK::Platform
 
     void ApplicationHandle_win::onWindowAdd(int32_t key, Window* window)
     {
-        if (auto handle = dynamic_cast<WindowHandle_win*>(window->handle()))
+        if (auto handle = dynamic_cast<WindowHandle_win*>(window->platformHandle()))
             s_windows.emplace_back(key, handle);
     }
 
     void ApplicationHandle_win::onWindowRemove(int32_t key, Window* window)
     {
         auto it = std::find_if(s_windows.begin(), s_windows.end(), [key, window](const auto& pair) {
-            return pair.first == key || pair.second == static_cast<WindowHandle_win*>(window->handle());
+            const auto handle = window->platformHandle();
+            return pair.first == key || pair.second == static_cast<WindowHandle_win*>(handle);
         });
         if (it != s_windows.end())
         {
