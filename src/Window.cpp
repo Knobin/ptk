@@ -66,26 +66,15 @@ namespace pTK
 
     void Window::runCommands()
     {
-        // More commands might be pushed while being in here.
-        // Therefore, the lock has to be acquired multiple times
-        // to be safe that no deadlocks will occur.
-
-        // Number of commands to run.
-        m_commandBuffer.lock();
-        std::size_t cmdCount{m_commandBuffer.size()};
-        m_commandBuffer.unlock();
+        // Switch buffer.
+        const std::size_t currentIndex = m_activeCmdBufferIndex;
+        if (m_activeCmdBufferIndex == 0)
+            m_activeCmdBufferIndex = 1;
+        else
+            m_activeCmdBufferIndex = 0;
 
         // Run commands.
-        while (cmdCount > 0)
-        {
-            m_commandBuffer.lock();
-            std::function<void()> command = std::move(m_commandBuffer.front());
-            m_commandBuffer.pop();
-            m_commandBufferSize = m_commandBuffer.size();
-            m_commandBuffer.unlock();
-            command();
-            --cmdCount;
-        }
+        m_commandBuffers[currentIndex].batchInvoke();
     }
 
     bool Window::shouldClose() const

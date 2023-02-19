@@ -58,28 +58,6 @@ namespace pTK
         */
         void runCommands();
 
-        /** Function for retrieving the command buffer.
-
-            Note: Be sure to use lock/unlock if necessary.
-
-            @return     const reference to command buffer
-        */
-        [[nodiscard]] const CommandBuffer<std::deque>& commandBuffer() const noexcept { return m_commandBuffer; }
-
-        /** Function for retrieving the command buffer.
-
-            Note: Be sure to use lock/unlock if necessary.
-
-            @return     reference to command buffer
-        */
-        [[nodiscard]] CommandBuffer<std::deque>& commandBuffer() noexcept { return m_commandBuffer; }
-
-        /** Function for retrieving the command buffer size without locking buffer.
-
-            @return     command buffer size
-        */
-        [[nodiscard]] std::size_t commandBufferSize() const noexcept { return m_commandBufferSize; }
-
         /** Function for sending commands to the window.
 
             Commands will be put on a queue (FIFO) and the function returns instantly.
@@ -265,11 +243,11 @@ namespace pTK
         void setLimitsWithSizePolicy();
 
     private:
-        CommandBuffer<std::deque> m_commandBuffer{};
+        std::array<CommandBuffer<void()>, 2> m_commandBuffers{};
         std::chrono::time_point<std::chrono::steady_clock> m_lastDrawTime;
         std::unique_ptr<Platform::WindowHandle> m_handle;
         std::unique_ptr<ContextBase> m_context;
-        std::atomic<std::size_t> m_commandBufferSize{0};
+        std::atomic<std::size_t> m_activeCmdBufferIndex{0};
         std::thread::id m_threadID;
         std::atomic<bool> m_contentInvalidated{false};
         bool m_close{false};
@@ -279,10 +257,7 @@ namespace pTK
     template <typename Command>
     void Window::postCommand(Command cmd)
     {
-        m_commandBuffer.lock();
-        m_commandBuffer.push(std::move(cmd));
-        m_commandBufferSize = m_commandBuffer.size();
-        m_commandBuffer.unlock();
+        m_commandBuffers[m_activeCmdBufferIndex].add(std::move(cmd));
         if (std::this_thread::get_id() != m_threadID)
             m_handle->notifyEvent();
     }

@@ -8,13 +8,10 @@
 #ifndef PTK_CORE_COMMMANDBUFFER_HPP
 #define PTK_CORE_COMMMANDBUFFER_HPP
 
-// pTK Headers
-#include "ptk/util/SingleObject.hpp"
-
 // C++ Headers
-#include <deque>
 #include <functional>
 #include <mutex>
+#include <vector>
 
 namespace pTK
 {
@@ -25,12 +22,12 @@ namespace pTK
         Most functions are non blocking and therefore not thread safe.
         It's up to the user to lock & unlock when needed.
     */
-    template <template <typename, typename> class Container = std::deque,
+    template <typename Signature, template <typename, typename> class Container = std::vector,
               template <typename> class alloc = std::allocator>
-    class CommandBuffer : public SingleObject
+    class CommandBuffer
     {
     public:
-        using container_type = Container<std::function<void()>, alloc<std::function<void()>>>;
+        using container_type = Container<std::function<Signature>, alloc<std::function<Signature>>>;
         using value_type = typename container_type::value_type;
         using reference = typename container_type::reference;
         using const_reference = typename container_type::const_reference;
@@ -43,50 +40,59 @@ namespace pTK
         */
         CommandBuffer() = default;
 
-        /** Destructor for CommandBuffer.
-
-        */
-        virtual ~CommandBuffer() = default;
-
-        /** Function for adding a command (function) to the queue (non block).
+        /** Function for adding a command to the end of the buffer (block).
 
             @param func     callback
         */
         template <typename Func>
-        void push(Func func)
+        void add(Func func)
         {
-            m_queue.push_back(std::move(func));
+        std:
+            std::lock_guard<std::mutex> lock{m_mutex};
+            m_container.push_back(std::move(func));
         }
 
-        /** Function for removing a command from the front of the queue (non block).
+        /** Function for invoking the first callback in the buffer (block).
 
-            @param func     callback
+            Will invoke and remove the first callback.
+
+            @param args     function arguments
         */
-        void pop() { m_queue.pop_front(); }
+        template <typename... Args>
+        void invoke(Args&&... args)
+        {
+        std:
+            std::lock_guard<std::mutex> lock{m_mutex};
+            m_container.front()(std::forward<Args>(args)...);
+            m_container.erase(m_container.begin());
+        }
+
+        /** Function for invoking all the added commands (block).
+
+            Will use the same arguments for all commands.
+
+            @param args     function arguments
+        */
+        template <typename... Args>
+        void batchInvoke(Args&&... args)
+        {
+            std::lock_guard<std::mutex> lock{m_mutex};
+            for (auto it{m_container.cbegin()}; it != m_container.cend(); ++it)
+                (*it)(std::forward<Args>(args)...);
+            m_container.clear();
+        }
 
         /** Function for retrieving the size of the queue (non block).
 
             @return    elements in queue
         */
-        [[nodiscard]] std::size_t size() const { return m_queue.size(); }
-
-        /** Function for retrieving the item at the front in the queue (non block).
-
-            @return    reference to item at the front
-        */
-        [[nodiscard]] reference front() { return m_queue.front(); }
-
-        /** Function for retrieving the item at the front in the queue (non block).
-
-            @return    const reference to item at the front
-        */
-        [[nodiscard]] const_reference front() const { return m_queue.front(); }
+        [[nodiscard]] std::size_t size() const { return m_container.size(); }
 
         /** Function for checking if the queue is empty (non block).
 
             @return    status
         */
-        [[nodiscard]] bool empty() const { return m_queue.empty(); }
+        [[nodiscard]] bool empty() const { return m_container.empty(); }
 
         /** Function for locking the queue.
 
@@ -108,7 +114,7 @@ namespace pTK
         void unlock() { m_mutex.unlock(); }
 
     private:
-        container_type m_queue{};
+        container_type m_container{};
         mutable std::mutex m_mutex;
     };
 } // namespace pTK
