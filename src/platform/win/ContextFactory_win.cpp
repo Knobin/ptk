@@ -6,7 +6,9 @@
 //
 
 // Local Headers
-#include "RasterPolicy_win.hpp"
+#include "../../Log.hpp"
+#include "../../core/Assert.hpp"
+#include "RasterContext_win.hpp"
 #include "WindowHandle_win.hpp"
 
 // Include GL backend.
@@ -15,7 +17,6 @@
 #endif
 
 // pTK Headers
-#include "ptk/Log.hpp"
 #include "ptk/Window.hpp"
 #include "ptk/core/Defines.hpp"
 #include "ptk/platform/base/ContextFactory.hpp"
@@ -46,8 +47,7 @@ namespace pTK::Platform::ContextFactoryImpl
     std::unique_ptr<ContextBase> MakeRasterContext(Window* window, const Size& size, const Vec2f& scale)
     {
         // Software backend is always available.
-        return std::make_unique<RasterContext<RasterPolicy_win>>(ScaleSize(size, scale),
-                                                                 RasterPolicy_win{GetHWND(window)});
+        return std::make_unique<RasterContext_win>(GetHWND(window), ScaleSize(size, scale));
     }
 
     std::unique_ptr<ContextBase> MakeGLContext(Window* window, const Size& size, const Vec2f& scale)

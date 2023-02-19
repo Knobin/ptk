@@ -7,7 +7,8 @@ set(PTK_PLATFORM_CORE_FILES Platform.hpp
     KeyMapInit.cpp
     base/ApplicationHandle.cpp
     base/ContextFactory.cpp
-    base/WindowHandle.cpp)
+    base/WindowHandle.cpp
+    common/RasterContext.cpp)
 
 # MacOS files
 set(PTK_PLATFORM_FILES_MAC mac/ApplicationHandle_mac.hpp
@@ -30,8 +31,8 @@ set(PTK_PLATFORM_FILES_WIN win/ApplicationHandle_win.hpp
     win/WindowHandle_win.cpp
     win/MenuBarUtil_win.hpp
     win/MenuBarUtil_win.cpp
-    win/RasterPolicy_win.hpp
-    win/RasterPolicy_win.cpp
+    win/RasterContext_win.hpp
+    win/RasterContext_win.cpp
     win/ContextFactory_win.cpp)
 set(PTK_PLATFORM_FILES_WIN_OPENGL win/GLContext_win.hpp win/GLContext_win.cpp)
 

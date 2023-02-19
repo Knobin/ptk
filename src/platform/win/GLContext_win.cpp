@@ -7,6 +7,8 @@
 
 // Local Headers
 #include "GLContext_win.hpp"
+#include "../../Log.hpp"
+#include "../../core/Assert.hpp"
 
 // OpenGL Windows Headers
 #include <GL/gl.h>

@@ -7,6 +7,7 @@
 
 // Local Headers
 #include "MenuBarUtil_win.hpp"
+#include "../../Log.hpp"
 
 // pTK Headers
 #include "ptk/events/KeyMap.hpp"

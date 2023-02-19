@@ -5,10 +5,12 @@
 //  Created by Robin Gustafsson on 2023-02-11.
 //
 
+// Local Headers
+#include "../../Log.hpp"
+
 // pTK Headers
-#include "ptk/platform/base/ContextFactory.hpp"
-#include "ptk/Log.hpp"
 #include "ptk/core/Defines.hpp"
+#include "ptk/platform/base/ContextFactory.hpp"
 
 namespace pTK::Platform
 {

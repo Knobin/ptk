@@ -5,9 +5,11 @@
 //  Created by Robin Gustafsson on 2022-11-14.
 //
 
+// Local Headers
+#include "../Log.hpp"
+
 // pTK Headers
 #include "ptk/core/ApplicationBase.hpp"
-#include "ptk/Log.hpp"
 
 // C++ Headers
 #include <algorithm>

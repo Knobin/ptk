@@ -1,31 +1,31 @@
 //
-//  platform/win/RasterPolicy_win.cpp
+//  platform/win/RasterContext_win.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-10-07.
 //
 
 // Local Headers
-#include "RasterPolicy_win.hpp"
-
-// pTK Headers
-#include "ptk/Log.hpp"
+#include "RasterContext_win.hpp"
+#include "../../Log.hpp"
 
 namespace pTK::Platform
 {
-    RasterPolicy_win::RasterPolicy_win(HWND hwnd)
-        : m_hwnd{hwnd}
+    RasterContext_win::RasterContext_win(HWND hwnd, const Size& size)
+        : RasterContext(kN32_SkColorType, size),
+          m_hwnd{hwnd}
     {
-        PTK_INFO("Initialized RasterPolicy_win");
+        resize(size);
+        PTK_INFO("Initialized RasterContext_win");
     }
 
-    RasterPolicy_win::~RasterPolicy_win()
+    RasterContext_win::~RasterContext_win()
     {
         std::free(bmpInfo);
-        PTK_INFO("Destroyed RasterPolicy_win");
+        PTK_INFO("Destroyed RasterContext_win");
     }
 
-    bool RasterPolicy_win::resize(const Size& nSize)
+    void* RasterContext_win::onResize(const Size& nSize)
     {
         std::free(bmpInfo);
         bmpInfo = nullptr;
@@ -36,7 +36,7 @@ namespace pTK::Platform
 
         void* bmpPtr{std::malloc(bmpSize)};
         if (!bmpPtr)
-            return false;
+            return nullptr;
 
         bmpInfo = static_cast<BITMAPINFO*>(bmpPtr);
         ZeroMemory(bmpInfo, sizeof(BITMAPINFO));
@@ -46,22 +46,24 @@ namespace pTK::Platform
         bmpInfo->bmiHeader.biPlanes = 1;
         bmpInfo->bmiHeader.biBitCount = 32;
         bmpInfo->bmiHeader.biCompression = BI_RGB;
-        pixels = bmpInfo->bmiColors;
-        size = sizeof(uint32_t) * width * height;
 
-        wSize = nSize;
-        PTK_INFO("Sized RasterPolicy_win to {}x{}", width, height);
-        return true;
+        // size = sizeof(uint32_t) * width * height;
+        // wSize = nSize;
+
+        PTK_INFO("Sized RasterContext_win to {}x{}", width, height);
+        return bmpInfo->bmiColors;
     }
 
-    void RasterPolicy_win::swapBuffers() const
+    void RasterContext_win::swapBuffers()
     {
+        const auto size{getSize()};
+
         HRGN hrgn{CreateRectRgn(0, 0, 0, 0)};
         GetWindowRgn(m_hwnd, hrgn);
         HDC dc{GetDCEx(m_hwnd, hrgn, DCX_PARENTCLIP)};
-        StretchDIBits(dc, 0, 0, wSize.width, wSize.height, 0, 0, wSize.width, wSize.height, bmpInfo->bmiColors, bmpInfo,
+        StretchDIBits(dc, 0, 0, size.width, size.height, 0, 0, size.width, size.height, bmpInfo->bmiColors, bmpInfo,
                       DIB_RGB_COLORS, SRCCOPY);
         DeleteObject(hrgn);
         ReleaseDC(m_hwnd, dc);
     }
-} // namespace pTK
+} // namespace pTK::Platform

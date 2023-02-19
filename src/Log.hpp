@@ -10,6 +10,9 @@
 #ifndef PTK_LOG_HPP
 #define PTK_LOG_HPP
 
+// pTK Headers
+#include "ptk/core/Defines.hpp"
+
 // Enable Logging
 #ifdef PTK_DEBUG
 

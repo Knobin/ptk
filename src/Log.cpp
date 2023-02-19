@@ -5,8 +5,8 @@
 //  Created by Robin Gustafsson on 2019-07-17.
 //
 
-// pTK Headers
-#include "ptk/Log.hpp"
+// Local Headers
+#include "Log.hpp"
 
 namespace pTK
 {

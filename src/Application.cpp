@@ -6,6 +6,10 @@
 //  Created by Robin Gustafsson on 2019-06-13.
 //
 
+// Local Headers
+#include "Log.hpp"
+#include "core/Assert.hpp"
+
 // pTK Headers
 #include "ptk/Application.hpp"
 #include "ptk/core/Exception.hpp"

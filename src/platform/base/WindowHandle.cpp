@@ -6,6 +6,8 @@
 //
 
 // Local Headers
+#include "../../Log.hpp"
+#include "../../core/Assert.hpp"
 #include "../Platform.hpp"
 
 // pTK Headers

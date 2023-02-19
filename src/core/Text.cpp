@@ -5,6 +5,9 @@
 //  Created by Robin Gustafsson on 2019-10-09.
 //
 
+// Local Headers
+#include "../Log.hpp"
+
 // pTK Headers
 #include "ptk/core/Text.hpp"
 #include "ptk/core/ContextBase.hpp"

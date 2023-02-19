@@ -5,6 +5,9 @@
 //  Created by Robin Gustafsson on 2019-11-25.
 //
 
+// Local Headers
+#include "../Log.hpp"
+
 // pTK Headers
 #include "ptk/widgets/Image.hpp"
 #include "ptk/core/ContextBase.hpp"

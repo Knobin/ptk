@@ -87,13 +87,6 @@
     #define UNUSED(x)
 #endif
 
-// Enable Asserts
-#if defined(PTK_ENABLE_ASSERT)
-    #define PTK_ASSERT(x, ...) do { if(!(x)) { PTK_ERROR("Assertion Failed: {0}", __VA_ARGS__); abort(); } } while(false)
-#else
-    #define PTK_ASSERT(...)
-#endif
-
 // Ignore all warnings (Begin)
 #if !defined(PTK_DISABLE_WARN_BEGIN)
     #if defined(PTK_COMPILER_GCC)

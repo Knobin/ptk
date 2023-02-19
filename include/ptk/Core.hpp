@@ -9,7 +9,6 @@
 #define PTK_CORE_HPP
 
 // pTK Headers
-#include "ptk/Log.hpp"
 #include "ptk/core/Defines.hpp"
 #include "ptk/util/Size.hpp"
 #include "ptk/util/Vec2.hpp"

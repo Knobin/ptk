@@ -7,8 +7,10 @@
 
 // Local Headers
 #include "WindowHandle_win.hpp"
+#include "../../Log.hpp"
+#include "../../core/Assert.hpp"
 #include "ApplicationHandle_win.hpp"
-#include "RasterPolicy_win.hpp"
+#include "RasterContext_win.hpp"
 
 // Include OpenGL backend if HW Acceleration is enabled.
 #ifdef PTK_OPENGL

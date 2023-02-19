@@ -36,7 +36,7 @@ set(PTK_WIDGET_FILES widgets/Button.cpp
         widgets/VBox.cpp)
 
 if (PTK_BUILD_TYPE MATCHES Debug)
-    set(PTK_LOG_FILES Log.cpp)
+    set(PTK_LOG_FILES Log.hpp Log.cpp)
 endif()
 
 # Get platform files

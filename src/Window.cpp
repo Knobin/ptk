@@ -5,6 +5,9 @@
 //  Created by Robin Gustafsson on 2020-03-04.
 //
 
+// Local Headers
+#include "Log.hpp"
+
 // pTK Headers
 #include "ptk/Window.hpp"
 #include "ptk/Application.hpp"
