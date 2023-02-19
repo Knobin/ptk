@@ -243,8 +243,10 @@ namespace pTK
                 - waitEvents: if we can wait for an event indefinitely.
                 - waitEventsTimeout: if we have some work that must run every x time
                                      but fine waiting before running that work again.
+
+            @param allowedTime  time allotted for the function (-1 = infinite).
         */
-        void fetchEvents();
+        void fetchEvents(int allowedTime);
 
         // Calls all closing functions.
         void closeHelper();

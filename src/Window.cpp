@@ -97,9 +97,28 @@ namespace pTK
     {
         if (!m_contentInvalidated)
         {
+            // Check time since last draw here.
             m_contentInvalidated = true;
-            m_handle->invalidate();
+            m_handle->notifyEvent();
         }
+    }
+
+    bool Window::drawContent()
+    {
+        if (!isContentValid())
+        {
+            m_handle->invalidate();
+            return true;
+        }
+
+        return false;
+    }
+
+    std::size_t Window::timeSinceLastDraw() const
+    {
+        using namespace std::chrono;
+        const time_point<steady_clock> now = steady_clock::now();
+        return duration_cast<milliseconds>(now - m_lastDrawTime).count();
     }
 
     void Window::onSizeChange(const Size& size)
@@ -156,6 +175,29 @@ namespace pTK
 
         // Painting is done, enable invalidation again.
         markContentValid();
+    }
+
+    void Window::markContentValid()
+    {
+        m_contentInvalidated = false;
+        m_lastDrawTime = std::chrono::steady_clock::now();
+
+#if 1
+        using namespace std::chrono;
+        static time_point<steady_clock> last = steady_clock::now();
+        time_point<steady_clock> now = std::chrono::steady_clock::now();
+
+        std::size_t elapsed = duration_cast<milliseconds>(now - last).count();
+        static int fps = 1;
+        if (elapsed >= 1000)
+        {
+            PTK_INFO("Window: \"{}\" [DRAWING] FPS = {}", getName(), fps);
+            last = m_lastDrawTime;
+            fps = 1;
+        }
+        else
+            ++fps;
+#endif
     }
 
     void Window::setSizePolicy(SizePolicy policy)

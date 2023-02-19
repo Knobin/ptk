@@ -334,6 +334,27 @@ namespace pTK::Platform
         ::MoveWindow(m_hwnd, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, FALSE);
     }
 
+    static int GetMonitorRefreshRate()
+    {
+        // display device structure .
+        DEVMODEW deviceMode{};
+        ZeroMemory(&deviceMode, sizeof(deviceMode));
+        deviceMode.dmSize = sizeof(DEVMODEW);
+        deviceMode.dmDriverExtra = 0;
+
+        // Get the information.
+        if (::EnumDisplaySettingsW(nullptr, ENUM_CURRENT_SETTINGS, &deviceMode))
+            return deviceMode.dmDisplayFrequency;
+
+        return -1;
+    }
+
+    std::size_t WindowHandle_win::targetRefreshRate()
+    {
+        static std::size_t rate = GetMonitorRefreshRate();
+        return (rate > 0) ? rate : WindowHandle::targetRefreshRate();
+    }
+
     bool WindowHandle_win::minimize()
     {
         ::ShowWindow(m_hwnd, SW_MINIMIZE);
@@ -369,7 +390,8 @@ namespace pTK::Platform
 
     void WindowHandle_win::invalidate()
     {
-        InvalidateRect(m_hwnd, nullptr, false);
+        // InvalidateRect(m_hwnd, nullptr, false);
+        ::RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
     }
 
     HWND WindowHandle_win::handle() const

@@ -175,6 +175,12 @@ namespace pTK::Platform
         */
         void setLimits(const Size& min, const Size& max) override;
 
+        /** Function for retrieving the target refresh rate of the window.
+
+            @return     refresh rate
+        */
+        std::size_t targetRefreshRate() override;
+
         /** Function for retrieving HWND from the window.
 
             @return    HWND

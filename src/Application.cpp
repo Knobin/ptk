@@ -12,6 +12,14 @@
 
 namespace pTK
 {
+    // Event polling helpers.
+    constexpr int WaitForEvents = -1;
+    constexpr int PollEvents = 0;
+    constexpr int WaitTimeoutForEvents(int ms) noexcept
+    {
+        return ms;
+    }
+
     // Application class static definitions.
     Application* Application::s_Instance{nullptr};
 
@@ -179,12 +187,32 @@ namespace pTK
             // can be changed later in the runtime).
             PTK_INFO("Running Headless Message Loop");
             while (m_allowHeadless && container().empty() && !isClosed())
-                fetchEvents();
+                fetchEvents(-1);
 
             m_runningHeadless = false;
         }
 
         return 0;
+    }
+
+    static int WindowEventFrame(Window* window)
+    {
+        window->runCommands();
+
+        if (window->isContentValid())
+            return WaitForEvents; // Window can wait indefinitely here.
+
+        const std::size_t timeSinceDraw = window->timeSinceLastDraw();
+        const std::size_t frameTime = 1000 / window->targetRefreshRate();
+
+        if (timeSinceDraw >= frameTime)
+        {
+            window->drawContent();
+            return WaitForEvents; // Window can wait indefinitely here.
+        }
+
+        int delay = static_cast<int>(frameTime) - timeSinceDraw; // Time before drawing should happen.
+        return WaitTimeoutForEvents(delay);                      // Can only wait maximum on "delay" time.
     }
 
     int Application::standardMessageLoop()
@@ -196,7 +224,10 @@ namespace pTK
         for (const auto& [key, window] : *this)
         {
             if (window->visible())
+            {
                 window->invalidate();
+                window->draw();
+            }
 
             window->runCommands();
         }
@@ -204,26 +235,42 @@ namespace pTK
         // Maybe do some setup things here?
 
         // Standard message loop for now.
+        int eventPollTime = -1;
         while (!container().empty() && !isClosed())
         {
-            fetchEvents();
+            fetchEvents(eventPollTime);
+
+            // Run Window functions and drawing.
+            int nextPollTime = -1;
             for (const auto& pair : *this)
-                pair.second->runCommands();
+            {
+                int delay = WindowEventFrame(pair.second);
+                if (delay < eventPollTime || eventPollTime < 0)
+                    nextPollTime = delay;
+            }
+            eventPollTime = nextPollTime;
         }
 
         return 0;
     }
 
-    void Application::fetchEvents()
+    void Application::fetchEvents(int allowedTime)
     {
-        // Waiting for events is default for now.
-        m_handle->waitEvents();
-
-        // This function should check which function to use.
-        // (pollEvents, waitEvents, waitEventsTimeout).
-
-        // Application might implement a command queue in the future,
-        // so a selection is needed.
+        if (allowedTime < 0)
+        {
+            // Waiting indefinitely is fine.
+            m_handle->waitEvents();
+        }
+        else if (allowedTime == 0)
+        {
+            // Can not wait at all.
+            m_handle->pollEvents();
+        }
+        else
+        {
+            // Can not wait for a specified amount of time.
+            m_handle->waitEventsTimeout(allowedTime);
+        }
     }
 
     int Application::run()

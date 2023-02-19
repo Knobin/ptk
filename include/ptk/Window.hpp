@@ -18,6 +18,7 @@
 #include "ptk/util/SingleObject.hpp"
 
 // C++ Headers
+#include <chrono>
 #include <memory>
 #include <string>
 #include <thread>
@@ -93,6 +94,30 @@ namespace pTK
             a draw event will be queued and drawing will happen a bit later.
         */
         void invalidate();
+
+        /** Function for checking if the content is valid.
+
+            @return     status
+        */
+        [[nodiscard]] bool isContentValid() const noexcept { return !m_contentInvalidated; }
+
+        /** Function for drawing the content, if the content has been invalidated.
+
+            @return     status
+        */
+        bool drawContent();
+
+        /** Function for retrieving the target refresh rate of the window.
+
+            @return     refresh rate
+        */
+        std::size_t targetRefreshRate() const { return m_handle->targetRefreshRate(); }
+
+        /** Function for retrieving the time past since last draw.
+
+            @return     milliseconds since last draw
+        */
+        std::size_t timeSinceLastDraw() const;
 
         /** Function for showing the window.
 
@@ -227,7 +252,7 @@ namespace pTK
         void regionInvalidated(const PaintEvent&) override;
 
         // Helper for setting the content as valid (does not need to be redrawn).
-        void markContentValid() { m_contentInvalidated = false; }
+        void markContentValid();
 
         /** Callback for setting the size limits the window.
 
@@ -241,11 +266,12 @@ namespace pTK
 
     private:
         CommandBuffer<std::deque> m_commandBuffer{};
+        std::chrono::time_point<std::chrono::steady_clock> m_lastDrawTime;
         std::unique_ptr<Platform::WindowHandle> m_handle;
         std::unique_ptr<ContextBase> m_context;
         std::atomic<std::size_t> m_commandBufferSize{0};
         std::thread::id m_threadID;
-        bool m_contentInvalidated{false};
+        std::atomic<bool> m_contentInvalidated{false};
         bool m_close{false};
         bool m_closed{false};
     };

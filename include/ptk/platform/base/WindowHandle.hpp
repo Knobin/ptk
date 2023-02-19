@@ -190,6 +190,12 @@ namespace pTK::Platform
         */
         virtual void invalidate() {}
 
+        /** Function for retrieving the target refresh rate of the window.
+
+            @return     refresh rate
+        */
+        virtual std::size_t targetRefreshRate() { return 60; }
+
     protected:
         /** Function for retrieving the window.
 
