@@ -5,13 +5,17 @@
 //  Created by Robin Gustafsson on 2020-10-10.
 //
 
+// Local Headers
+#include "ApplicationHandle_unix.hpp"
+#include "../../Log.hpp"
+#include "../../core/Assert.hpp"
+#include "WindowHandle_unix.hpp"
+
 // pTK Headers
-#include "ptk/platform/unix/ApplicationHandle_unix.hpp"
 #include "ptk/Application.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/core/Exception.hpp"
 #include "ptk/events/KeyMap.hpp"
-#include "ptk/platform/unix/WindowHandle_unix.hpp"
 
 // C++ Headers
 #include <map>
@@ -23,25 +27,25 @@
 // backend. For example, closing the application (using the app.close() function does not work).
 //
 
-namespace pTK
+namespace pTK::Platform
 {
     // Since the iHandleEvent function is protected in WindowHandle, this is a friend function
     // to get around that issue. Maybe another way is better in the future, but this works
     // for now.
     template <typename Event>
-    void EventSendHelper(WindowHandle_unix* window, const Event& evt)
+    void EventSendHelper(WindowHandle_unix* handle, const Event& evt)
     {
-        window->iHandleEvent<Event>(evt);
+        handle->HandlePlatformEvent<Event>(evt);
     }
 
-    Size& WindowLastSize(WindowHandle_unix* window)
+    Size& WindowLastSize(WindowHandle_unix* handle)
     {
-        return window->m_lastSize;
+        return handle->m_lastSize;
     }
 
-    Point& WindowLastPos(WindowHandle_unix* window)
+    Point& WindowLastPos(WindowHandle_unix* handle)
     {
-        return window->m_lastPos;
+        return handle->m_lastPos;
     }
 
     struct AppUnixData
@@ -58,8 +62,8 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ApplicationHandle_unix::ApplicationHandle_unix(std::string_view name)
-        : ApplicationHandle(name)
+    ApplicationHandle_unix::ApplicationHandle_unix(ApplicationBase* base, std::string_view)
+        : ApplicationHandle(base)
     {
         XInitThreads();
 
@@ -190,35 +194,30 @@ namespace pTK
     {
         PTK_ASSERT(event, "Undefined XEvent!");
 
-        WindowHandle_unix* window{nullptr};
+        WindowHandle_unix* handle{nullptr};
         if (XFindContext(s_appData.display, event->xany.window, s_appData.xcontext,
-                         reinterpret_cast<XPointer*>(&window)) != 0)
+                         reinterpret_cast<XPointer*>(&handle)) != 0)
             return;
 
         switch (event->type)
         {
             case Expose:
             {
-                PaintEvent evt{Point{0, 0}, window->getSize()};
-                EventSendHelper<PaintEvent>(window, evt);
+                PaintEvent evt{Point{0, 0}, handle->getSize()};
+                EventSendHelper<PaintEvent>(handle, evt);
                 break;
             }
             case DestroyNotify:
             {
-                window->handleEvents(); // Handle all events before sending close event.
-                if (auto win = dynamic_cast<Window*>(window))
+                if (auto win = dynamic_cast<Window*>(handle->window()))
                     Application::Get()->removeWindow(win); // Remove window from Application.
                 break;
             }
             case ClientMessage:
             {
-                WindowHandle_unix* uWindow = static_cast<WindowHandle_unix*>(window);
                 XClientMessageEvent* cEvent = reinterpret_cast<XClientMessageEvent*>(event);
-                if (cEvent && static_cast<Atom>(cEvent->data.l[0]) == uWindow->deleteAtom())
-                {
-                    window->handleEvents(); // Handle all events before sending close event.
-                    EventSendHelper<CloseEvent>(window, {});
-                }
+                if (cEvent && static_cast<Atom>(cEvent->data.l[0]) == handle->deleteAtom())
+                    EventSendHelper<CloseEvent>(handle, {});
                 break;
             }
             case ButtonPress:
@@ -229,17 +228,17 @@ namespace pTK
                     {
                         // TODO(knobin): Check for Left mouse btn virtual key instead of -1.
                         ClickEvent evt{Mouse::Button::Left, -1, {event->xbutton.x, event->xbutton.y}};
-                        EventSendHelper<ClickEvent>(window, evt);
+                        EventSendHelper<ClickEvent>(handle, evt);
                         break;
                     }
                     case Button4:
                     {
-                        EventSendHelper<ScrollEvent>(window, ScrollEvent{{0.0f, 1.0f}});
+                        EventSendHelper<ScrollEvent>(handle, ScrollEvent{{0.0f, 1.0f}});
                         break;
                     }
                     case Button5:
                     {
-                        EventSendHelper<ScrollEvent>(window, ScrollEvent{{0.0f, -1.0f}});
+                        EventSendHelper<ScrollEvent>(handle, ScrollEvent{{0.0f, -1.0f}});
                         break;
                     }
                 }
@@ -251,7 +250,7 @@ namespace pTK
                 {
                     // TODO(knobin): Check for Left mouse btn virtual key instead of -1.
                     ReleaseEvent evt{Mouse::Button::Left, -1, {event->xbutton.x, event->xbutton.y}};
-                    EventSendHelper<ReleaseEvent>(window, evt);
+                    EventSendHelper<ReleaseEvent>(handle, evt);
                 }
                 break;
             }
@@ -259,7 +258,7 @@ namespace pTK
             {
                 MotionEvent mEvt{{static_cast<Point::value_type>(event->xbutton.x),
                                   static_cast<Point::value_type>(event->xbutton.y)}};
-                EventSendHelper<MotionEvent>(window, mEvt);
+                EventSendHelper<MotionEvent>(handle, mEvt);
                 break;
             }
             case KeyPress:
@@ -269,11 +268,13 @@ namespace pTK
                 auto keysym = XLookupKeysym(&event->xkey, 0);
                 pTK::Key key{KeyMap::KeyCodeToKey(static_cast<int32_t>(keysym))};
                 Event::Type type = (event->type == KeyPress) ? KeyEvent::Pressed : KeyEvent::Released;
-                EventSendHelper<KeyEvent>(window, {type, key, mods});
+                EventSendHelper<KeyEvent>(handle, {type, key, mods});
 
                 // Send Input event.
+                // TODO(knobin): Should these keys send an InputEvent?
+                // Maybe add some blocklist to hinder these.
                 if ((type == KeyEvent::Pressed) && (key != Key::Delete) && // Quick fix for now.
-                    (key != Key::Backspace))
+                    (key != Key::Backspace) && (key != Key::Enter))
                 {
                     char buffer[32];
                     KeySym ignore;
@@ -289,7 +290,7 @@ namespace pTK
                             arr[i] = static_cast<uint32_t>(buffer[i]);
 
                         pTK::InputEvent input{arr, static_cast<std::size_t>(count), pTK::Text::Encoding::UTF32};
-                        EventSendHelper<pTK::InputEvent>(window, input);
+                        EventSendHelper<pTK::InputEvent>(handle, input);
                     }
                 }
 
@@ -298,34 +299,34 @@ namespace pTK
             case FocusIn:
             {
                 if (!((event->xfocus.mode == NotifyGrab) || ((event->xfocus.mode == NotifyUngrab))))
-                    EventSendHelper<FocusEvent>(window, {});
+                    EventSendHelper<FocusEvent>(handle, {});
                 break;
             }
             case FocusOut:
             {
                 if (!((event->xfocus.mode == NotifyGrab) || ((event->xfocus.mode == NotifyUngrab))))
-                    EventSendHelper<LostFocusEvent>(window, {});
+                    EventSendHelper<LostFocusEvent>(handle, {});
                 break;
             }
             case ConfigureNotify:
             {
                 // Size change
-                Size& wSize{WindowLastSize(window)};
+                Size& wSize{WindowLastSize(handle)};
                 if (static_cast<Size::value_type>(event->xconfigure.width) != wSize.width ||
                     static_cast<Size::value_type>(event->xconfigure.height) != wSize.height)
                 {
                     wSize.width = static_cast<Size::value_type>(event->xconfigure.width);
                     wSize.height = static_cast<Size::value_type>(event->xconfigure.height);
-                    EventSendHelper<ResizeEvent>(window, ResizeEvent{wSize});
+                    EventSendHelper<ResizeEvent>(handle, ResizeEvent{wSize});
                 }
 
                 // Position change
-                Point& wPos{WindowLastPos(window)};
+                Point& wPos{WindowLastPos(handle)};
                 if (event->xconfigure.x != wPos.x || event->xconfigure.y != wPos.y)
                 {
                     wPos.x = static_cast<Point::value_type>(event->xconfigure.x);
                     wPos.y = static_cast<Point::value_type>(event->xconfigure.y);
-                    EventSendHelper<MoveEvent>(window, MoveEvent{wPos});
+                    EventSendHelper<MoveEvent>(handle, MoveEvent{wPos});
                 }
 
                 break;

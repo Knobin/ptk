@@ -9,10 +9,10 @@
 #define PTK_PLATFORM_UNIX_GLCONTEXT_HPP
 
 // Local Headers
-#include "ptk/platform/unix/x11.hpp"
+#include "x11.hpp"
 
 // pTK Headers
-#include "ptk/platform/base/ContextBase.hpp"
+#include "ptk/core/ContextBase.hpp"
 
 // OpenGL Headers
 extern "C"
@@ -30,7 +30,7 @@ PTK_DISABLE_WARN_BEGIN()
 #include "include/gpu/gl/GrGLInterface.h"
 PTK_DISABLE_WARN_END()
 
-namespace pTK
+namespace pTK::Platform
 {
     /** GLContext_unix class implementation.
 
@@ -44,7 +44,7 @@ namespace pTK
 
             @return    default initialized GLContext_unix
         */
-        GLContext_unix(::Window* window, const Size& size);
+        GLContext_unix(::Window window, const Size& size);
 
         /** Win32RasterCanvas for GLCanvas.
 
@@ -70,7 +70,7 @@ namespace pTK
         void swapBuffers() override;
 
     private:
-        ::Window* m_window;
+        ::Window m_window;
         XVisualInfo* m_visual;
         GLXContext m_GLContext;
         sk_sp<SkSurface> m_surface;
@@ -79,6 +79,6 @@ namespace pTK
         GrContextOptions m_GrContextOptions;
         SkSurfaceProps m_props;
     };
-} // namespace pTK
+} // namespace pTK::Platform
 
 #endif // PTK_PLATFORM_UNIX_GLCONTEXT_HPP

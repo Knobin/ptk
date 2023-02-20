@@ -9,15 +9,12 @@
 #define PTK_PLATFORM_UNIX_WINDOWHANDLE_HPP
 
 // Local Headers
-#include "ptk/platform/unix/x11.hpp"
+#include "x11.hpp"
 
 // pTK Headers
 #include "ptk/platform/base/WindowHandle.hpp"
 
-// C++ Headers
-#include <map>
-
-namespace pTK
+namespace pTK::Platform
 {
     /** MainWindow_unix class implementation.
 
@@ -28,12 +25,13 @@ namespace pTK
     public:
         /** Constructs MainWindow_unix with default values.
 
+            @param base     pointer to WindowBase
             @param name     name of the window
             @param size     size of the window
             @param backend  type of backend
             @return         default initialized MainWindow_unix
         */
-        WindowHandle_unix(const std::string& name, const Size& size, const WindowInfo& flags);
+        WindowHandle_unix(WindowBase* base, const std::string& name, const Size& size, const WindowInfo& flags);
 
         /** Destructor for MainWindow_unix.
 
@@ -69,18 +67,7 @@ namespace pTK
             @param pos  position to set
             @return     true if operation is successful, otherwise false
         */
-        void setPosHint(const Point& pos) override;
-
-        /** Function for retrieving the Context.
-
-            @return context
-        */
-        [[nodiscard]] ContextBase* getContext() const override;
-
-        /** Function for swapping the buffers.
-
-        */
-        void swapBuffers() override;
+        bool setPosHint(const Point& pos) override;
 
         /** Function for retrieving the scaling of the Window.
 
@@ -127,13 +114,13 @@ namespace pTK
 
            @return     Window Position
        */
-        [[nodiscard]] Point getWinPos() const override;
+        [[nodiscard]] Point getPosition() const override;
 
         /** Function for retrieving the window size.
 
             @return     Window Size
         */
-        [[nodiscard]] Size getWinSize() const override;
+        [[nodiscard]] Size getSize() const override;
 
         /** Function for minimizing the window.
 
@@ -165,26 +152,42 @@ namespace pTK
         */
         bool setScaleHint(const Vec2f& scale) override;
 
+        /** Function for invalidating the window.
+
+            Sends a WM_PAINT event to the window.
+        */
+        void invalidate() override;
+
+        /** Function for setting the size limits the window.
+
+            @param min  minimal size of the window
+            @param max  maximum size of the window
+        */
+        void setLimits(const Size& min, const Size& max) override;
+
+        /** Function for retrieving the target refresh rate of the window.
+
+            @return     refresh rate
+        */
+        std::size_t targetRefreshRate() override;
+
         /** Function for retrieving the XWindow struct of the window.
 
             @return     XWindow struct
         */
         ::Window xWindow() const;
 
+        /** Function for retrieving the XVisualInfo struct of the window.
+
+            @return     XVisualInfo struct
+        */
+        XVisualInfo xVisualInfo() const;
+
         /** Function for retrieving the delelte Atom of the window.
 
             @return     XWindow struct
         */
         Atom deleteAtom() const;
-
-    private:
-        /** Callback for setting the size limits the window.
-
-            @param min  minimal size of the window
-            @param max  maximum size of the window
-            @return     true if operation is successful, otherwise false
-        */
-        void setWindowLimits(const Size& min, const Size& max) override;
 
     private:
         std::pair<unsigned long, unsigned char*> getWindowProperty(Atom property, Atom type) const;
@@ -196,11 +199,6 @@ namespace pTK
         friend Point& WindowLastPos(WindowHandle_unix*);
 
     private:
-        std::unique_ptr<ContextBase> m_context;
-
-        sk_sp<SkSurface> m_surface;
-        // GC m_gc;
-
         Size m_lastSize;
         Point m_lastPos{};
 
@@ -210,6 +208,6 @@ namespace pTK
         Atom m_atomWmDeleteWindow;
         XVisualInfo m_info;
     };
-} // namespace pTK
+} // namespace pTK::Platform
 
 #endif // PTK_PLATFORM_UNIX_WINDOWHANDLE_HPP

@@ -5,11 +5,14 @@
 //  Created by Robin Gustafsson on 2020-04-20.
 //
 
+// Local Headers
+#include "GLContext_unix.hpp"
+#include "../../Log.hpp"
+#include "../../core/Assert.hpp"
+#include "ApplicationHandle_unix.hpp"
+
 // pTK Headers
-#include "ptk/platform/unix/GLContext_unix.hpp"
-#include "ptk/Log.hpp"
 #include "ptk/core/Exception.hpp"
-#include "ptk/platform/unix/ApplicationHandle_unix.hpp"
 
 // C++ Headers
 #include <optional>
@@ -25,7 +28,6 @@ PTK_DISABLE_WARN_BEGIN()
 #include "src/gpu/gl/GrGLDefines.h"
 PTK_DISABLE_WARN_END()
 
-using App = pTK::ApplicationHandle_unix;
 typedef GLXContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,8 +72,10 @@ static bool isExtensionSupported(const char* extList, const char* extension)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace pTK
+namespace pTK::Platform
 {
+    using App = ApplicationHandle_unix;
+
     static std::pair<GLint, GLint> GLXVersion(Display* display)
     {
         GLint major{0}, minor{0};
@@ -156,8 +160,8 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    GLContext_unix::GLContext_unix(::Window* window, const Size& size)
-        : ContextBase(size),
+    GLContext_unix::GLContext_unix(::Window window, const Size& size)
+        : ContextBase(ContextBackendType::GL, size),
           m_window{window},
           m_context{nullptr},
           m_GrContextOptions{},
@@ -212,7 +216,7 @@ namespace pTK
         {
             PTK_INFO("Direct GLX rendering context obtained");
         }
-        glXMakeCurrent(display, *m_window, m_GLContext);
+        glXMakeCurrent(display, m_window, m_GLContext);
 
         auto glInterface = GrGLMakeNativeInterface();
         PTK_ASSERT(glInterface, "Failed to create interface!");
@@ -276,6 +280,6 @@ namespace pTK
 
     void GLContext_unix::swapBuffers()
     {
-        glXSwapBuffers(App::Display(), *m_window);
+        glXSwapBuffers(App::Display(), m_window);
     }
 } // namespace pTK

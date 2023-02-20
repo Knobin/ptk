@@ -5,26 +5,24 @@
 //  Created by Robin Gustafsson on 2020-10-10.
 //
 
+// Local Headers
+#include "WindowHandle_unix.hpp"
+#include "../../Log.hpp"
+#include "../../core/Assert.hpp"
+#include "ApplicationHandle_unix.hpp"
+
 // pTK Headers
-#include "ptk/platform/unix/WindowHandle_unix.hpp"
 #include "ptk/Window.hpp"
 #include "ptk/core/Exception.hpp"
-#include "ptk/platform//common/RasterContext.hpp"
-#include "ptk/platform/unix/ApplicationHandle_unix.hpp"
-#include "ptk/platform/unix/RasterPolicy_unix.hpp"
-
-#ifdef PTK_OPENGL
-    #include "ptk/platform/unix/GLContext_unix.hpp"
-#endif // PTK_OPENGL
 
 // C++ Headers
 #include <cstdint>
 #include <limits>
 
-using App = pTK::ApplicationHandle_unix;
-
-namespace pTK
+namespace pTK::Platform
 {
+    using App = ApplicationHandle_unix;
+
     static float SystemDPI()
     {
         char* rString{XResourceManagerString(App::Display())};
@@ -48,49 +46,10 @@ namespace pTK
         return 96.0f;
     }
 
-    static Size ScaleSize(const Size& size, const Vec2f& scale)
-    {
-        const float width{static_cast<float>(size.width)};
-        const float height{static_cast<float>(size.height)};
-        return {static_cast<Size::value_type>(width * scale.x), static_cast<Size::value_type>(height * scale.y)};
-    }
-
-    static std::unique_ptr<ContextBase> CreateContext([[maybe_unused]] WindowInfo::Backend backend, ::Window* window,
-                                                      const Size& size, [[maybe_unused]] XVisualInfo info)
-    {
-        std::unique_ptr<ContextBase> context{nullptr};
-#ifdef PTK_OPENGL
-        if (backend == WindowInfo::Backend::Hardware)
-        {
-            try
-            {
-                context = std::make_unique<GLContext_unix>(window, size);
-            }
-            catch (ContextError& err)
-            {
-                PTK_ERROR("Failed to create GLContext_unix with msg: {}", err.what());
-            }
-
-            if (context)
-                return context;
-
-            PTK_ERROR("Failed to create GLContext_unix");
-        }
-#endif // PTK_OPENGL
-
-        RasterPolicy_unix policy{window, info};
-        context = std::make_unique<RasterContext<RasterPolicy_unix>>(size, policy);
-
-        if (!context)
-            throw ContextError("Failed to create RasterContext with RasterPolicy_unix");
-
-        return context;
-    }
-
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    WindowHandle_unix::WindowHandle_unix(const std::string& name, const Size& size, const WindowInfo& flags)
-        : WindowHandle(size, flags) //, m_lastSize{size}
+    WindowHandle_unix::WindowHandle_unix(WindowBase* base, const std::string& name, const Size& size, const WindowInfo&)
+        : WindowHandle(base) //, m_lastSize{size}
     {
         ::Window root{App::Root()};
         Display* display{App::Display()};
@@ -130,11 +89,8 @@ namespace pTK
         const float scale{SystemDPI()};
         PTK_INFO("System DPI is {}", scale);
         m_scale = Vec2f{scale / 96.0f, scale / 96.0f};
-        const Size scaledSize{ScaleSize(size, m_scale)};
 
-        m_context = CreateContext(flags.backend, &m_window, scaledSize, m_info);
-
-        m_lastPos = getWinPos();
+        m_lastPos = getPosition();
         PTK_INFO("Initialized WindowHandle_unix");
     }
 
@@ -167,24 +123,16 @@ namespace pTK
         return !(xwa.map_state == IsViewable);
     }
 
-    void WindowHandle_unix::setPosHint(const Point& pos)
+    bool WindowHandle_unix::setPosHint(const Point& pos)
     {
-        if (pos != getWinPos())
+        if (pos != getPosition())
         {
             Display* display{App::Display()};
             XMoveWindow(display, m_window, pos.x, pos.y);
             XFlush(display);
+            return true;
         }
-    }
-
-    ContextBase* WindowHandle_unix::getContext() const
-    {
-        return m_context.get();
-    }
-
-    void WindowHandle_unix::swapBuffers()
-    {
-        m_context->swapBuffers();
+        return false;
     }
 
     Vec2f WindowHandle_unix::getDPIScale() const
@@ -196,14 +144,7 @@ namespace pTK
     {
         bool status{false};
 
-        const Size scaledSize{ScaleSize(size, m_scale)};
-        if (scaledSize != m_context->getSize())
-        {
-            m_context->resize(scaledSize);
-            status = true;
-        }
-
-        if (size != getWinSize())
+        if (size != getSize())
         {
             PTK_INFO("bool WindowHandle_unix::resize(const Size& size)");
             const unsigned int width{static_cast<unsigned int>(size.width)};
@@ -216,7 +157,7 @@ namespace pTK
         return status;
     }
 
-    void WindowHandle_unix::setWindowLimits(const Size& min, const Size& max)
+    void WindowHandle_unix::setLimits(const Size& min, const Size& max)
     {
         XSizeHints* hints{XAllocSizeHints()};
         PTK_ASSERT(hints, "Unable to allocate memory for XSizeHints");
@@ -329,7 +270,7 @@ namespace pTK
         }
     }
 
-    Point WindowHandle_unix::getWinPos() const
+    Point WindowHandle_unix::getPosition() const
     {
         int x{-1}, y{-1};
         ::Window child;
@@ -338,7 +279,7 @@ namespace pTK
         return Point{static_cast<Point::value_type>(x), static_cast<Point::value_type>(y)};
     }
 
-    Size WindowHandle_unix::getWinSize() const
+    Size WindowHandle_unix::getSize() const
     {
         XWindowAttributes xwa;
         XGetWindowAttributes(App::Display(), m_window, &xwa);
@@ -399,6 +340,17 @@ namespace pTK
         return true;
     }
 
+    void WindowHandle_unix::invalidate()
+    {
+        HandlePlatformEvent<PaintEvent>({{0, 0}, getSize()});
+    }
+
+    std::size_t WindowHandle_unix::targetRefreshRate()
+    {
+        // TODO(knobin): Read Monitor refresh rate here.
+        return 60;
+    }
+
     std::pair<unsigned long, unsigned char*> WindowHandle_unix::getWindowProperty(Atom property, Atom type) const
     {
         Atom realType;
@@ -413,6 +365,11 @@ namespace pTK
     ::Window WindowHandle_unix::xWindow() const
     {
         return m_window;
+    }
+
+    XVisualInfo WindowHandle_unix::xVisualInfo() const
+    {
+        return m_info;
     }
 
     Atom WindowHandle_unix::deleteAtom() const

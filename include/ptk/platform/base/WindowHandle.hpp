@@ -196,7 +196,6 @@ namespace pTK::Platform
         */
         virtual std::size_t targetRefreshRate() { return 60; }
 
-    protected:
         /** Function for retrieving the window.
 
             @return pointer to WindowBase

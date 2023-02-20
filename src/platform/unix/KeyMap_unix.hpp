@@ -14,10 +14,10 @@
 // C++ Headers
 #include <map>
 
-namespace pTK
+namespace pTK::Platform
 {
-    std::map<int32_t, KeyCode> KeyCodeMapInit_unix();
+    PTK_API std::map<int32_t, KeyCode> KeyCodeMapInit_unix();
 
-} // namespace pTK
+} // namespace pTK::Platform
 
 #endif // PTK_PLATFORM_UNIX_KEYMAP_HPP

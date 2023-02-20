@@ -9,12 +9,12 @@
 #define PTK_PLATFORM_UNIX_APPLICATIONHANDLE_HPP
 
 // Local Headers
-#include "ptk/platform/unix/x11.hpp"
+#include "x11.hpp"
 
 // pTK Headers
 #include "ptk/platform/base/ApplicationHandle.hpp"
 
-namespace pTK
+namespace pTK::Platform
 {
     /** ApplicationHandle_unix class implementation.
 
@@ -28,20 +28,27 @@ namespace pTK
 
             @return        default initialized ApplicationHandle_unix with name
         */
-        explicit ApplicationHandle_unix(std::string_view name);
+        ApplicationHandle_unix(ApplicationBase* base, std::string_view name);
 
         /** Destructor for ApplicationHandle_unix
 
         */
         virtual ~ApplicationHandle_unix();
 
-        // TODO: Add documentation.
+        /** Function for polling all the window events.
+
+        */
         void pollEvents() override;
 
-        // TODO: Add documentation.
+        /** Function for waiting for an event.
+
+        */
         void waitEvents() override;
 
-        // TODO: Add documentation.
+        /** Function for waiting for an event with a timeout.
+
+            @param ms       max time to wait for an event
+        */
         void waitEventsTimeout(uint32_t ms) override;
 
     public:
@@ -60,6 +67,6 @@ namespace pTK
     private:
         void handleEvent(XEvent* event);
     };
-} // namespace pTK
+} // namespace pTK::Platform
 
 #endif // PTK_PLATFORM_UNIX_APPLICATIONHANDLE_HPP

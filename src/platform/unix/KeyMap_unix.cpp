@@ -6,10 +6,10 @@
 //
 
 // Local Headers
-#include "ptk/platform/unix/KeyMap_unix.hpp"
-#include "ptk/platform/unix/x11.hpp"
+#include "KeyMap_unix.hpp"
+#include "x11.hpp"
 
-namespace pTK
+namespace pTK::Platform
 {
     //
     // Will probably rework keyboard input at some point, this works for now.
@@ -20,7 +20,7 @@ namespace pTK
         // clang-format off
 
         std::map<int32_t, KeyCode> map{};
-        map[XK_space] = Key::Space; map[XK_Escape] = Key::Escape;
+        map[XK_space] = Key::Space;
         map[XK_0] = Key::D0; map[XK_1] = Key::D1; map[XK_2] = Key::D2; map[XK_3] = Key::D3;
         map[XK_4] = Key::D4; map[XK_5] = Key::D5; map[XK_6] = Key::D6; map[XK_7] = Key::D7;
         map[XK_8] = Key::D8; map[XK_9] = Key::D9;
@@ -36,8 +36,8 @@ namespace pTK
         map[XK_u] = Key::U; map[XK_v] = Key::V; map[XK_w] = Key::W; map[XK_x] = Key::X;
         map[XK_y] = Key::Y; map[XK_z] = Key::Z;
 
-        map[XK_BackSpace] = Key::Backspace;
-        map[XK_Delete] = Key::Delete;
+        map[XK_Escape] = Key::Escape; map[XK_Return] = Key::Enter; map[XK_Tab] = Key::Tab;
+        map[XK_BackSpace] = Key::Backspace; map[XK_Delete] = Key::Delete;
 
         map[XK_Right] = Key::Right; map[XK_Left] = Key::Left; map[XK_Down] = Key::Down; map[XK_Up] = Key::Up;
 
