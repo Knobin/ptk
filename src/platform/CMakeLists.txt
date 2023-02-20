@@ -17,8 +17,8 @@ set(PTK_PLATFORM_FILES_MAC mac/ApplicationHandle_mac.hpp
     mac/WindowHandle_mac.mm
     mac/KeyMap_mac.hpp
     mac/KeyMap_mac.cpp
-    mac/RasterPolicy_mac.hpp
-    mac/RasterPolicy_mac.mm
+    mac/RasterContext_mac.hpp
+    mac/RasterContext_mac.mm
     mac/ContextFactory_mac.mm)
 set(PTK_PLATFORM_FILES_MAC_METAL mac/MetalContext_mac.hpp mac/MetalContext_mac.mm)
 

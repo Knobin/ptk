@@ -110,7 +110,7 @@ namespace pTK
     {
         using namespace std::chrono;
         const time_point<steady_clock> now = steady_clock::now();
-        return duration_cast<milliseconds>(now - m_lastDrawTime).count();
+        return static_cast<std::size_t>(duration_cast<milliseconds>(now - m_lastDrawTime).count());
     }
 
     void Window::onSizeChange(const Size& size)
@@ -179,7 +179,7 @@ namespace pTK
         static time_point<steady_clock> last = steady_clock::now();
         time_point<steady_clock> now = std::chrono::steady_clock::now();
 
-        std::size_t elapsed = duration_cast<milliseconds>(now - last).count();
+        auto elapsed = duration_cast<milliseconds>(now - last).count();
         static int fps = 1;
         if (elapsed >= 1000)
         {

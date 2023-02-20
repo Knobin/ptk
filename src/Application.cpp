@@ -17,9 +17,9 @@
 namespace pTK
 {
     // Event polling helpers.
-    constexpr int WaitForEvents = -1;
-    constexpr int PollEvents = 0;
-    constexpr int WaitTimeoutForEvents(int ms) noexcept
+    [[maybe_unused]] static constexpr int WaitForEvents = -1;
+    [[maybe_unused]] static constexpr int PollEvents = 0;
+    [[maybe_unused]] static constexpr int WaitTimeoutForEvents(int ms) noexcept
     {
         return ms;
     }
@@ -215,7 +215,7 @@ namespace pTK
             return WaitForEvents; // Window can wait indefinitely here.
         }
 
-        int delay = static_cast<int>(frameTime) - timeSinceDraw; // Time before drawing should happen.
+        int delay = static_cast<int>(frameTime - timeSinceDraw); // Time before drawing should happen.
         return WaitTimeoutForEvents(delay);                      // Can only wait maximum on "delay" time.
     }
 
@@ -273,7 +273,7 @@ namespace pTK
         else
         {
             // Can not wait for a specified amount of time.
-            m_handle->waitEventsTimeout(allowedTime);
+            m_handle->waitEventsTimeout(static_cast<uint32_t>(allowedTime));
         }
     }
 

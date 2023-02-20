@@ -6,7 +6,9 @@
 //
 
 // Local Headers
-#include "RasterPolicy_mac.hpp"
+#include "../../Log.hpp"
+#include "../../core/Assert.hpp"
+#include "RasterContext_mac.hpp"
 #include "WindowHandle_mac.hpp"
 
 // Include Metal backend.
@@ -15,7 +17,6 @@
 #endif
 
 // pTK Headers
-#include "ptk/Log.hpp"
 #include "ptk/Window.hpp"
 #include "ptk/core/Defines.hpp"
 #include "ptk/platform/base/ContextFactory.hpp"
@@ -51,8 +52,7 @@ namespace pTK::Platform::ContextFactoryImpl
         // Software backend is always available.
         // Altough, it is slow on macOS and should be avoided.
         PTK_WARN("Software rendering on macOS is slow and should not be used");
-        RasterPolicy_mac policy(GetNSWindow(window));
-        return std::make_unique<RasterContext<RasterPolicy_mac>>(ScaleSize(size, scale), policy);
+        return std::make_unique<RasterContext_mac>(GetNSWindow(window), ScaleSize(size, scale));
     }
 
     std::unique_ptr<ContextBase> MakeMetalContext(Window* window, const Size& size, const Vec2f& scale)

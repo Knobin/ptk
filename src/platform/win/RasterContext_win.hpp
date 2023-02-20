@@ -37,6 +37,7 @@ namespace pTK::Platform
         /** Constructs RasterContext_win with default values.
 
             @param hwnd   HWND
+            @param size   context size
             @return       default initialized RasterContext_win
         */
         RasterContext_win(HWND hwnd, const Size& size);
@@ -57,10 +58,6 @@ namespace pTK::Platform
 
         */
         void swapBuffers() override;
-
-    public:
-        // std::size_t size{0};
-        // void* pixels{nullptr};
 
     private:
         BITMAPINFO* bmpInfo{nullptr};

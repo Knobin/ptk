@@ -7,6 +7,7 @@
 
 // Local Headers
 #include "ApplicationHandle_mac.hpp"
+#include "../../Log.hpp"
 #include "Utility_mac.hpp"
 #include "WindowHandle_mac.hpp"
 
@@ -14,7 +15,6 @@
 #include "ptk/Application.hpp"
 #include "ptk/Window.hpp"
 #include "ptk/core/Exception.hpp"
-#include "ptk/Log.hpp"
 #include "ptk/menu/NamedMenuItem.hpp"
 
 // macOS Headers

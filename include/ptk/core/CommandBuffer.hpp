@@ -47,7 +47,6 @@ namespace pTK
         template <typename Func>
         void add(Func func)
         {
-        std:
             std::lock_guard<std::mutex> lock{m_mutex};
             m_container.push_back(std::move(func));
         }
@@ -61,7 +60,6 @@ namespace pTK
         template <typename... Args>
         void invoke(Args&&... args)
         {
-        std:
             std::lock_guard<std::mutex> lock{m_mutex};
             m_container.front()(std::forward<Args>(args)...);
             m_container.erase(m_container.begin());

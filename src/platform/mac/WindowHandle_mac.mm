@@ -7,8 +7,8 @@
 
 // Local Headers
 #include "WindowHandle_mac.hpp"
+#include "../../Log.hpp"
 #include "ApplicationHandle_mac.hpp"
-#include "RasterPolicy_mac.hpp"
 
 // pTK Headers
 #include "ptk/Application.hpp"
@@ -18,7 +18,6 @@
 #include "ptk/events/KeyMap.hpp"
 #include "ptk/events/MouseEvent.hpp"
 #include "ptk/events/WindowEvent.hpp"
-#include "ptk/platform/common/RasterContext.hpp"
 
 // macOS Headers
 #include <Cocoa/Cocoa.h>
@@ -293,8 +292,8 @@ static bool IsValid(uint32 data)
 - (void)scrollWheel:(NSEvent *)event
 {
     const double delta{([event hasPreciseScrollingDeltas]) ? 0.1 : 1.0};
-    const pTK::ScrollEvent scrollEvent{{static_cast<float>([event scrollingDeltaX] * delta), 
-                                        static_cast<float>([event scrollingDeltaY] * delta)}};
+    const pTK::ScrollEvent scrollEvent{
+        {static_cast<float>([event scrollingDeltaX] * delta), static_cast<float>([event scrollingDeltaY] * delta)}};
 
     if (std::fabs(scrollEvent.offset.x) > 0.0f || std::fabs(scrollEvent.offset.y) > 0.0f)
         pTK::Platform::EventSendHelper<pTK::ScrollEvent>(ptkWindow, scrollEvent);

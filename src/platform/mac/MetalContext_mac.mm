@@ -7,6 +7,7 @@
 
 // Local Headers
 #include "MetalContext_mac.hpp"
+#include "../../Log.hpp"
 
 // pTK Headers
 #include "ptk/core/Exception.hpp"
@@ -50,7 +51,7 @@ namespace pTK::Platform
             m_mainView.wantsLayer = NO;
 
             m_metalLayer = nil;
-            
+
             m_queue.reset(); // [m_queue release];
             m_device.reset(); // [m_device release];
 
@@ -93,7 +94,7 @@ namespace pTK::Platform
             m_metalLayer.contentsScale = static_cast<double>(scale.x);
             m_mainView.wantsLayer = YES;
             m_mainView.layer = m_metalLayer;
-            
+
             GrMtlBackendContext backendContext = {};
             backendContext.fDevice.retain(static_cast<GrMTLHandle>(m_device.get()));
             backendContext.fQueue.retain(static_cast<GrMTLHandle>(m_queue.get()));
@@ -138,7 +139,7 @@ namespace pTK::Platform
                 id<CAMetalDrawable> currentDrawable = [m_metalLayer nextDrawable];
                 GrMtlTextureInfo fbInfo;
                 fbInfo.fTexture.retain(currentDrawable.texture);
-                
+
                 const auto size = getSize();
                 GrBackendRenderTarget backendRT(static_cast<int>(size.width), static_cast<int>(size.height), 1, fbInfo);
 
@@ -166,12 +167,12 @@ namespace pTK::Platform
 
             id<MTLCommandBuffer> commandBuffer = [*m_queue commandBuffer];
             commandBuffer.label = @"Present";
-            
+
             id<CAMetalDrawable> drawable = reinterpret_cast<id<CAMetalDrawable>>(m_drawableHandle);
 
             [commandBuffer presentDrawable:drawable];
             [commandBuffer commit];
-            
+
             CFRelease(m_drawableHandle);
             m_drawableHandle = nullptr;
         } // autoreleasepool
