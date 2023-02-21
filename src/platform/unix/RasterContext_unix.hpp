@@ -12,7 +12,7 @@
 #include "x11.hpp"
 
 // pTK Headers
-#include "ptk/platform/common/RasterContext.hpp"
+#include "ptk/platform/RasterContext.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()

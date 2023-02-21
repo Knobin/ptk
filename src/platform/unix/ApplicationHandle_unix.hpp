@@ -12,7 +12,7 @@
 #include "x11.hpp"
 
 // pTK Headers
-#include "ptk/platform/base/ApplicationHandle.hpp"
+#include "ptk/platform/ApplicationHandle.hpp"
 
 namespace pTK::Platform
 {

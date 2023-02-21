@@ -39,7 +39,6 @@ namespace pTK::Platform
         std::unique_ptr<WindowHandle> Make(WindowBase* base, const std::string& name, const Size& size,
                                            const WindowInfo& info)
         {
-            // Software backend is always available.
             return std::make_unique<WindowHandle_win>(base, name, size, info);
         }
     } // namespace WindowHandleFactoryImpl

@@ -6,16 +6,21 @@
 //
 
 // Local Headers
-#include "KeyMap_unix.hpp"
 #include "x11.hpp"
 
-namespace pTK::Platform
+// pTK Headers
+#include "ptk/events/KeyCodes.hpp"
+
+// C++ Headers
+#include <map>
+
+namespace pTK::Platform::KeyMapFactoryImpl
 {
     //
     // Will probably rework keyboard input at some point, this works for now.
     //
 
-    std::map<int32_t, KeyCode> KeyCodeMapInit_unix()
+    std::map<int32_t, KeyCode> Make()
     {
         // clang-format off
 

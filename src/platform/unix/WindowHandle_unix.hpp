@@ -12,7 +12,7 @@
 #include "x11.hpp"
 
 // pTK Headers
-#include "ptk/platform/base/WindowHandle.hpp"
+#include "ptk/platform/WindowHandle.hpp"
 
 namespace pTK::Platform
 {
@@ -191,9 +191,6 @@ namespace pTK::Platform
 
     private:
         std::pair<unsigned long, unsigned char*> getWindowProperty(Atom property, Atom type) const;
-
-        template <typename Event>
-        friend void EventSendHelper(WindowHandle_unix*, const Event&);
 
         friend Size& WindowLastSize(WindowHandle_unix*);
         friend Point& WindowLastPos(WindowHandle_unix*);

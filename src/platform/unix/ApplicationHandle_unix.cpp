@@ -29,14 +29,13 @@
 
 namespace pTK::Platform
 {
-    // Since the iHandleEvent function is protected in WindowHandle, this is a friend function
-    // to get around that issue. Maybe another way is better in the future, but this works
-    // for now.
-    template <typename Event>
-    void EventSendHelper(WindowHandle_unix* handle, const Event& evt)
+    namespace AppFactoryImpl
     {
-        handle->HandlePlatformEvent<Event>(evt);
-    }
+        std::unique_ptr<ApplicationHandle> Make(ApplicationBase* base, std::string_view name)
+        {
+            return std::make_unique<ApplicationHandle_unix>(base, name);
+        }
+    } // namespace AppFactoryImpl
 
     Size& WindowLastSize(WindowHandle_unix* handle)
     {
@@ -204,7 +203,7 @@ namespace pTK::Platform
             case Expose:
             {
                 PaintEvent evt{Point{0, 0}, handle->getSize()};
-                EventSendHelper<PaintEvent>(handle, evt);
+                handle->HandlePlatformEvent<PaintEvent>(evt);
                 break;
             }
             case DestroyNotify:
@@ -217,7 +216,7 @@ namespace pTK::Platform
             {
                 XClientMessageEvent* cEvent = reinterpret_cast<XClientMessageEvent*>(event);
                 if (cEvent && static_cast<Atom>(cEvent->data.l[0]) == handle->deleteAtom())
-                    EventSendHelper<CloseEvent>(handle, {});
+                    handle->HandlePlatformEvent<CloseEvent>({});
                 break;
             }
             case ButtonPress:
@@ -228,17 +227,17 @@ namespace pTK::Platform
                     {
                         // TODO(knobin): Check for Left mouse btn virtual key instead of -1.
                         ClickEvent evt{Mouse::Button::Left, -1, {event->xbutton.x, event->xbutton.y}};
-                        EventSendHelper<ClickEvent>(handle, evt);
+                        handle->HandlePlatformEvent<ClickEvent>(evt);
                         break;
                     }
                     case Button4:
                     {
-                        EventSendHelper<ScrollEvent>(handle, ScrollEvent{{0.0f, 1.0f}});
+                        handle->HandlePlatformEvent<ScrollEvent>(ScrollEvent{{0.0f, 1.0f}});
                         break;
                     }
                     case Button5:
                     {
-                        EventSendHelper<ScrollEvent>(handle, ScrollEvent{{0.0f, -1.0f}});
+                        handle->HandlePlatformEvent<ScrollEvent>(ScrollEvent{{0.0f, -1.0f}});
                         break;
                     }
                 }
@@ -250,7 +249,7 @@ namespace pTK::Platform
                 {
                     // TODO(knobin): Check for Left mouse btn virtual key instead of -1.
                     ReleaseEvent evt{Mouse::Button::Left, -1, {event->xbutton.x, event->xbutton.y}};
-                    EventSendHelper<ReleaseEvent>(handle, evt);
+                    handle->HandlePlatformEvent<ReleaseEvent>(evt);
                 }
                 break;
             }
@@ -258,7 +257,7 @@ namespace pTK::Platform
             {
                 MotionEvent mEvt{{static_cast<Point::value_type>(event->xbutton.x),
                                   static_cast<Point::value_type>(event->xbutton.y)}};
-                EventSendHelper<MotionEvent>(handle, mEvt);
+                handle->HandlePlatformEvent<MotionEvent>(mEvt);
                 break;
             }
             case KeyPress:
@@ -268,7 +267,7 @@ namespace pTK::Platform
                 auto keysym = XLookupKeysym(&event->xkey, 0);
                 pTK::Key key{KeyMap::KeyCodeToKey(static_cast<int32_t>(keysym))};
                 Event::Type type = (event->type == KeyPress) ? KeyEvent::Pressed : KeyEvent::Released;
-                EventSendHelper<KeyEvent>(handle, {type, key, mods});
+                handle->HandlePlatformEvent<KeyEvent>({type, key, mods});
 
                 // Send Input event.
                 // TODO(knobin): Should these keys send an InputEvent?
@@ -290,7 +289,7 @@ namespace pTK::Platform
                             arr[i] = static_cast<uint32_t>(buffer[i]);
 
                         pTK::InputEvent input{arr, static_cast<std::size_t>(count), pTK::Text::Encoding::UTF32};
-                        EventSendHelper<pTK::InputEvent>(handle, input);
+                        handle->HandlePlatformEvent<pTK::InputEvent>(input);
                     }
                 }
 
@@ -299,13 +298,13 @@ namespace pTK::Platform
             case FocusIn:
             {
                 if (!((event->xfocus.mode == NotifyGrab) || ((event->xfocus.mode == NotifyUngrab))))
-                    EventSendHelper<FocusEvent>(handle, {});
+                    handle->HandlePlatformEvent<FocusEvent>({});
                 break;
             }
             case FocusOut:
             {
                 if (!((event->xfocus.mode == NotifyGrab) || ((event->xfocus.mode == NotifyUngrab))))
-                    EventSendHelper<LostFocusEvent>(handle, {});
+                    handle->HandlePlatformEvent<LostFocusEvent>({});
                 break;
             }
             case ConfigureNotify:
@@ -317,7 +316,7 @@ namespace pTK::Platform
                 {
                     wSize.width = static_cast<Size::value_type>(event->xconfigure.width);
                     wSize.height = static_cast<Size::value_type>(event->xconfigure.height);
-                    EventSendHelper<ResizeEvent>(handle, ResizeEvent{wSize});
+                    handle->HandlePlatformEvent<ResizeEvent>(ResizeEvent{wSize});
                 }
 
                 // Position change
@@ -326,7 +325,7 @@ namespace pTK::Platform
                 {
                     wPos.x = static_cast<Point::value_type>(event->xconfigure.x);
                     wPos.y = static_cast<Point::value_type>(event->xconfigure.y);
-                    EventSendHelper<MoveEvent>(handle, MoveEvent{wPos});
+                    handle->HandlePlatformEvent<MoveEvent>(MoveEvent{wPos});
                 }
 
                 break;

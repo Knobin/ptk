@@ -23,6 +23,15 @@ namespace pTK::Platform
 {
     using App = ApplicationHandle_unix;
 
+    namespace WindowHandleFactoryImpl
+    {
+        std::unique_ptr<WindowHandle> Make(WindowBase* base, const std::string& name, const Size& size,
+                                           const WindowInfo& info)
+        {
+            return std::make_unique<WindowHandle_unix>(base, name, size, info);
+        }
+    } // namespace WindowHandleFactoryImpl
+
     static float SystemDPI()
     {
         char* rString{XResourceManagerString(App::Display())};
