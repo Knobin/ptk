@@ -1,5 +1,5 @@
 //
-//  platform/KeyMapInit.hpp
+//  platform/KeyMapFactory.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2023-02-11.
@@ -16,11 +16,15 @@
 
 namespace pTK::Platform
 {
-    /** Function for creating a map for mapping keycodes to Key.
-        Creates the map depending on the function of PTK_KEYMAP_INIT_FUNC.
-        @return     KeyMap instance
-    */
-    PTK_API std::map<int32_t, Key> KeyMapInit();
+    class KeyMapFactory
+    {
+    public:
+        /** Function for creating a map for mapping keycodes to Key.
+
+            @return     KeyMap instance
+        */
+        PTK_API static std::map<int32_t, Key> Make();
+    };
 
 } // namespace pTK::Platform
 

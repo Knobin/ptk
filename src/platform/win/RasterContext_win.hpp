@@ -9,7 +9,7 @@
 #define PTK_PlATFORM_WIN_RASTERCONTEXT_HPP
 
 // pTK Headers
-#include "ptk/platform/common/RasterContext.hpp"
+#include "ptk/platform/RasterContext.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()

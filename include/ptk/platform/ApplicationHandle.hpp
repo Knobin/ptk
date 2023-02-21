@@ -1,12 +1,12 @@
 //
-//  platform/base/ApplicationHandle.hpp
+//  platform/ApplicationHandle.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-08-21.
 //
 
-#ifndef PTK_PLATFORM_BASE_APPLICATIONHANDLE_HPP
-#define PTK_PLATFORM_BASE_APPLICATIONHANDLE_HPP
+#ifndef PTK_PLATFORM_APPLICATIONHANDLE_HPP
+#define PTK_PLATFORM_APPLICATIONHANDLE_HPP
 
 // pTK Headers
 #include "ptk/util/SingleObject.hpp"
@@ -122,12 +122,12 @@ namespace pTK::Platform
 
             @return pointer to ApplicationBase
         */
-        ApplicationBase* appBase() const { return m_app; }
+        [[nodiscard]] ApplicationBase* appBase() const { return m_app; }
 
     private:
         static std::unique_ptr<ApplicationHandle> s_handle;
         ApplicationBase* m_app{nullptr};
     };
-} // namespace pTK
+} // namespace pTK::Platform
 
-#endif // PTK_CORE_PLATFORM_APPLICATIONHANDLE_HPP
+#endif // PTK_PLATFORM_APPLICATIONHANDLE_HPP

@@ -9,7 +9,7 @@
 #define PTK_PLATFORM_WIN_APPLICATIONHANDLE_HPP
 
 // pTK Headers
-#include "ptk/platform/base/ApplicationHandle.hpp"
+#include "ptk/platform/ApplicationHandle.hpp"
 
 namespace pTK::Platform
 {

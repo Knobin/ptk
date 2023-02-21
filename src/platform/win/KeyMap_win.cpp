@@ -5,16 +5,19 @@
 //  Created by Robin Gustafsson on 2021-01-18.
 //
 
-// Local Headers
-#include "KeyMap_win.hpp"
+// pTK Headers
+#include "ptk/events/KeyCodes.hpp"
+
+// C++ Headers
+#include <map>
 
 // Windows Headers
 #define NOMINMAX
 #include <windows.h>
 
-namespace pTK::Platform
+namespace pTK::Platform::KeyMapFactoryImpl
 {
-    std::map<int32_t, KeyCode> KeyCodeMapInit_win()
+    std::map<int32_t, KeyCode> Make()
     {
         // clang-format off
 

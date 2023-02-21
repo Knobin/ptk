@@ -14,7 +14,7 @@
 #include "ptk/core/Widget.hpp"
 #include "ptk/core/WindowBase.hpp"
 #include "ptk/core/WindowInfo.hpp"
-#include "ptk/platform/base/WindowHandle.hpp"
+#include "ptk/platform/WindowHandle.hpp"
 #include "ptk/util/SingleObject.hpp"
 
 // C++ Headers

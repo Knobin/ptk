@@ -10,7 +10,6 @@
 #include "../../Log.hpp"
 #include "../../core/Assert.hpp"
 #include "ApplicationHandle_win.hpp"
-#include "RasterContext_win.hpp"
 
 // Include OpenGL backend if HW Acceleration is enabled.
 #ifdef PTK_OPENGL
@@ -19,9 +18,9 @@
 
 // pTK Headers
 #include "ptk/Application.hpp"
+#include "ptk/core/Exception.hpp"
 #include "ptk/events/KeyMap.hpp"
 #include "ptk/menu/NamedMenuItem.hpp"
-#include "ptk/platform/common/RasterContext.hpp"
 
 // Windows Headers
 #include <Dwmapi.h>
@@ -35,6 +34,18 @@
 
 namespace pTK::Platform
 {
+    namespace WindowHandleFactoryImpl
+    {
+        std::unique_ptr<WindowHandle> Make(WindowBase* base, const std::string& name, const Size& size,
+                                           const WindowInfo& info)
+        {
+            // Software backend is always available.
+            return std::make_unique<WindowHandle_win>(base, name, size, info);
+        }
+    } // namespace WindowHandleFactoryImpl
+
+    ///////////////////////////////////////////////////////////////////////////////
+
     // Since the iHandleEvent function is protected in WindowHandle, this is a friend function
     // to get around that issue. Maybe another way is better in the future, but this works
     // for now. This must be done since the win32 WndPro is a static function and only a

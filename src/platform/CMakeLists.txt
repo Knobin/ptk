@@ -2,20 +2,19 @@
 # File used to add the platform specific files to pTK.
 
 # Core files
-set(PTK_PLATFORM_CORE_FILES Platform.hpp
-    KeyMapInit.hpp
-    KeyMapInit.cpp
-    base/ApplicationHandle.cpp
-    base/ContextFactory.cpp
-    base/WindowHandle.cpp
-    common/RasterContext.cpp)
+set(PTK_PLATFORM_CORE_FILES Platform.cpp
+    KeyMapFactory.hpp
+    KeyMapFactory.cpp
+    ApplicationHandle.cpp
+    ContextFactory.cpp
+    WindowHandle.cpp
+    RasterContext.cpp)
 
 # MacOS files
 set(PTK_PLATFORM_FILES_MAC mac/ApplicationHandle_mac.hpp
     mac/ApplicationHandle_mac.mm
     mac/WindowHandle_mac.hpp
     mac/WindowHandle_mac.mm
-    mac/KeyMap_mac.hpp
     mac/KeyMap_mac.cpp
     mac/RasterContext_mac.hpp
     mac/RasterContext_mac.mm
@@ -25,7 +24,6 @@ set(PTK_PLATFORM_FILES_MAC_METAL mac/MetalContext_mac.hpp mac/MetalContext_mac.m
 # Windows files
 set(PTK_PLATFORM_FILES_WIN win/ApplicationHandle_win.hpp
     win/ApplicationHandle_win.cpp
-    win/KeyMap_win.hpp
     win/KeyMap_win.cpp
     win/WindowHandle_win.hpp
     win/WindowHandle_win.cpp
@@ -39,7 +37,6 @@ set(PTK_PLATFORM_FILES_WIN_OPENGL win/GLContext_win.hpp win/GLContext_win.cpp)
 # Unix files
 set(PTK_PLATFORM_FILES_UNIX unix/ApplicationHandle_unix.hpp
     unix/ApplicationHandle_unix.cpp
-    unix/KeyMap_unix.hpp
     unix/KeyMap_unix.cpp
     unix/WindowHandle_unix.hpp
     unix/WindowHandle_unix.cpp

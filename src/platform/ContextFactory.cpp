@@ -1,16 +1,16 @@
 //
-//  src/platform/base/ContextFactory.cpp
+//  src/platform/ContextFactory.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2023-02-11.
 //
 
 // Local Headers
-#include "../../Log.hpp"
+#include "../Log.hpp"
 
 // pTK Headers
 #include "ptk/core/Defines.hpp"
-#include "ptk/platform/base/ContextFactory.hpp"
+#include "ptk/platform/ContextFactory.hpp"
 
 namespace pTK::Platform
 {

@@ -16,6 +16,15 @@
 
 namespace pTK::Platform
 {
+    namespace AppFactoryImpl
+    {
+        std::unique_ptr<ApplicationHandle> Make(ApplicationBase* base, std::string_view name)
+        {
+            // Software backend is always available.
+            return std::make_unique<ApplicationHandle_win>(base, name);
+        }
+    } // namespace AppFactoryImpl
+
     static bool RegisterWndClass()
     {
         WNDCLASSEXW wcx{};

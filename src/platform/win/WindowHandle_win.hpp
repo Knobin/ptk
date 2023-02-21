@@ -12,7 +12,7 @@
 #include "MenuBarUtil_win.hpp"
 
 // pTK Headers
-#include "ptk/platform/base/WindowHandle.hpp"
+#include "ptk/platform/WindowHandle.hpp"
 
 // Windows Headers
 #define NOMINMAX

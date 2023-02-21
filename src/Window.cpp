@@ -9,9 +9,9 @@
 #include "Log.hpp"
 
 // pTK Headers
-#include "ptk/Window.hpp"
 #include "ptk/Application.hpp"
-#include "ptk/platform/base/ContextFactory.hpp"
+#include "ptk/Window.hpp"
+#include "ptk/platform/ContextFactory.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()

@@ -1,15 +1,15 @@
 //
-//  platform/common/RasterContext.cpp
+//  platform/RasterContext.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-08-21.
 //
 
 // Local Headers
-#include "../../Log.hpp"
+#include "../Log.hpp"
 
 // pTK Headers
-#include "ptk/platform/common/RasterContext.hpp"
+#include "ptk/platform/RasterContext.hpp"
 
 namespace pTK::Platform
 {

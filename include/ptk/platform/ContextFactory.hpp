@@ -1,12 +1,12 @@
 //
-//  platform/base/ContextFactory.hpp
+//  platform/ContextFactory.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2023-02-11.
 //
 
-#ifndef PTK_PLATFORM_BASE_CONTEXTFACTORY_HPP
-#define PTK_PLATFORM_BASE_CONTEXTFACTORY_HPP
+#ifndef PTK_PLATFORM_CONTEXTFACTORY_HPP
+#define PTK_PLATFORM_CONTEXTFACTORY_HPP
 
 // pTK Headers
 #include "ptk/core/ContextBase.hpp"
@@ -88,4 +88,4 @@ namespace pTK
     } // namespace Platform
 } // namespace pTK
 
-#endif // PTK_PLATFORM_BASE_CONTEXTFACTORY_HPP
+#endif // PTK_PLATFORM_CONTEXTFACTORY_HPP

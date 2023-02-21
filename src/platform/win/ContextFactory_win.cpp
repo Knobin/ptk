@@ -19,8 +19,8 @@
 // pTK Headers
 #include "ptk/Window.hpp"
 #include "ptk/core/Defines.hpp"
-#include "ptk/platform/base/ContextFactory.hpp"
-#include "ptk/platform/common/RasterContext.hpp"
+#include "ptk/platform/ContextFactory.hpp"
+#include "ptk/platform/RasterContext.hpp"
 
 namespace pTK::Platform::ContextFactoryImpl
 {

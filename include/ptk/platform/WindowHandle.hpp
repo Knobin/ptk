@@ -1,12 +1,12 @@
 //
-//  platform/base/WindowHandle.hpp
+//  platform/WindowHandle.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-03-13.
 //
 
-#ifndef PTK_PLATFORM_BASE_WINDOWHANDLE_HPP
-#define PTK_PLATFORM_BASE_WINDOWHANDLE_HPP
+#ifndef PTK_PLATFORM_WINDOWHANDLE_HPP
+#define PTK_PLATFORM_WINDOWHANDLE_HPP
 
 // pTK Headers
 #include "ptk/core/WindowBase.hpp"
@@ -213,6 +213,6 @@ namespace pTK::Platform
         WindowBase* m_winBase{nullptr};
     };
 
-} // namespace pTK
+} // namespace pTK::Platform
 
-#endif // PTK_PLATFORM_BASE_WINDOWHANDLE_HPP
+#endif // PTK_PLATFORM_WINDOWHANDLE_HPP
