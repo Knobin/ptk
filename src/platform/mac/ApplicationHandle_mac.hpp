@@ -10,7 +10,7 @@
 
 // pTK Headers
 #include "ptk/menu/MenuBar.hpp"
-#include "ptk/platform/base/ApplicationHandle.hpp"
+#include "ptk/platform/ApplicationHandle.hpp"
 
 namespace pTK::Platform
 {

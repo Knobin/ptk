@@ -17,22 +17,22 @@ namespace pTK::Platform
     namespace ContextFactoryImpl
     {
         // Availability check.
-        extern bool IsContextAvailable(ContextBackendType type);
+        bool IsContextAvailable(ContextBackendType type);
 
         // Best match creator.
-        extern std::unique_ptr<ContextBase> MakeContext(Window*, const Size&, const Vec2f&, const WindowInfo&);
+        std::unique_ptr<ContextBase> MakeContext(Window*, const Size&, const Vec2f&, const WindowInfo&);
 
         // Raster.
-        extern std::unique_ptr<ContextBase> MakeRasterContext(Window*, const Size&, const Vec2f&);
+        std::unique_ptr<ContextBase> MakeRasterContext(Window*, const Size&, const Vec2f&);
 
         // OpenGL (Windows, Unix).
 #ifdef PTK_OPENGL
-        extern std::unique_ptr<ContextBase> MakeGLContext(Window*, const Size&, const Vec2f&);
+        std::unique_ptr<ContextBase> MakeGLContext(Window*, const Size&, const Vec2f&);
 #endif
 
         // Metal (macOS).
 #ifdef PTK_METAL
-        extern std::unique_ptr<ContextBase> MakeMetalContext(Window*, const Size&, const Vec2f&);
+        std::unique_ptr<ContextBase> MakeMetalContext(Window*, const Size&, const Vec2f&);
 #endif
     } // namespace ContextFactoryImpl
 

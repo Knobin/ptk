@@ -17,7 +17,7 @@ namespace pTK::Platform
     namespace WindowHandleFactoryImpl
     {
         // Function to implement.
-        extern std::unique_ptr<WindowHandle> Make(WindowBase*, const std::string&, const Size&, const WindowInfo&);
+        std::unique_ptr<WindowHandle> Make(WindowBase*, const std::string&, const Size&, const WindowInfo&);
     } // namespace WindowHandleFactoryImpl
 
     std::unique_ptr<WindowHandle> WindowHandle::Make(WindowBase* winBase, const std::string& name, const Size& size,

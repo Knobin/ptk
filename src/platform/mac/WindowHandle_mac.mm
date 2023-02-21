@@ -25,6 +25,15 @@
 // C++ Headers
 #include <cmath>
 
+namespace pTK::Platform::WindowHandleFactoryImpl
+{
+    std::unique_ptr<WindowHandle> Make(WindowBase* base, const std::string& name, const Size& size,
+                                       const WindowInfo& info)
+    {
+        return std::make_unique<WindowHandle_mac>(base, name, size, info);
+    }
+} // namespace pTK::Platform::WindowHandleFactoryImpl
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace pTK::Platform

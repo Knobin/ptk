@@ -21,7 +21,7 @@ namespace pTK::Platform
     namespace AppFactoryImpl
     {
         // Function to implement.
-        extern std::unique_ptr<ApplicationHandle> Make(ApplicationBase*, std::string_view);
+        std::unique_ptr<ApplicationHandle> Make(ApplicationBase*, std::string_view);
     } // namespace AppFactoryImpl
 
     ApplicationHandle* ApplicationHandle::Make(ApplicationBase* appBase, std::string_view name)

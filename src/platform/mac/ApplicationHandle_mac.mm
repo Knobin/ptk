@@ -23,6 +23,14 @@
 // C++ Headers
 #include <map>
 
+namespace pTK::Platform::AppFactoryImpl
+{
+    std::unique_ptr<ApplicationHandle> Make(ApplicationBase* base, std::string_view name)
+    {
+        return std::make_unique<ApplicationHandle_mac>(base, name);
+    }
+} // namespace pTK::Platform::AppFactoryImpl
+
 @interface AppDelegate : NSObject<NSApplicationDelegate, NSWindowDelegate>
 {
     std::map<void*, pTK::NamedMenuItem*> *clickItemMap;

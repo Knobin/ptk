@@ -5,12 +5,15 @@
 //  Created by Robin Gustafsson on 2021-01-19.
 //
 
-// Local Headers
-#include "KeyMap_mac.hpp"
+// pTK Headers
+#include "ptk/events/KeyCodes.hpp"
 
-namespace pTK::Platform
+// C++ Headers
+#include <map>
+
+namespace pTK::Platform::KeyMapFactoryImpl
 {
-    std::map<int32_t, KeyCode> KeyCodeMapInit_mac()
+    std::map<int32_t, KeyCode> Make()
     {
         std::map<int32_t, KeyCode> map{};
         map[0x31] = Key::Space;

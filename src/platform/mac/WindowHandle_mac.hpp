@@ -12,7 +12,7 @@
 #include "ptk/core/Event.hpp"
 #include "ptk/core/WindowBase.hpp"
 #include "ptk/events/MouseEvent.hpp"
-#include "ptk/platform/base/WindowHandle.hpp"
+#include "ptk/platform/WindowHandle.hpp"
 
 namespace pTK::Platform
 {
