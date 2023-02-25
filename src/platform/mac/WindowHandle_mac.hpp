@@ -186,9 +186,6 @@ namespace pTK::Platform
     private:
         void init(const std::string& name, const Size& size, const WindowInfo& flags);
 
-        template <typename Event>
-        friend void EventSendHelper(WindowHandle_mac*, const Event&);
-
     private:
         Vec2f m_scale;
         void* m_NSWindow{nullptr};
