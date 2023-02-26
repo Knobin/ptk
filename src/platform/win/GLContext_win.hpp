@@ -1,12 +1,12 @@
 //
-//  platform/win/WinRasterContext.hpp
+//  platform/win/GLContext_win.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-04-20.
 //
 
-#ifndef PTK_PlATFORM_WIN_WINGLCONTEXT_HPP
-#define PTK_PlATFORM_WIN_WINGLCONTEXT_HPP
+#ifndef PTK_PlATFORM_WIN_GLCONTEXT_HPP
+#define PTK_PlATFORM_WIN_GLCONTEXT_HPP
 
 // pTK Headers
 #include "ptk/core/ContextBase.hpp"
@@ -31,11 +31,13 @@ namespace pTK::Platform
     class PTK_API GLContext_win : public ContextBase
     {
     public:
-        /** Constructs GLContext_win with default values.
+        /** Constructs GLContext_win with hwnd and size.
 
-            @return    default initialized GLContext_win
+            @param hwnd     win32 window handle
+            @param size     size of the context
+            @return         initialized GLContext_win
         */
-        GLContext_win(HWND handle, const Size& size);
+        GLContext_win(HWND hwnd, const Size& size);
 
         /** Win32RasterCanvas for GLCanvas.
 
@@ -44,8 +46,7 @@ namespace pTK::Platform
 
         /** Function for resizing the context.
 
-            @param width   New width of canvas
-            @param width   New height of canvas
+            @param size     new size
         */
         void resize(const Size& size) override;
 
@@ -77,4 +78,4 @@ namespace pTK::Platform
     };
 } // namespace pTK::Platform
 
-#endif // PTK_PlATFORM_WIN_WINGLCONTEXT_HPP
+#endif // PTK_PlATFORM_WIN_GLCONTEXT_HPP

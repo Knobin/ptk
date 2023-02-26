@@ -23,7 +23,9 @@ namespace pTK::Platform
     public:
         /** Constructs ApplicationHandle_win with name.
 
-            @return        default initialized ApplicationHandle_win with name
+            @param base     valid pointer to application base
+            @param name     name of the application
+            @return         default initialized ApplicationHandle_win with base and name
         */
         ApplicationHandle_win(ApplicationBase* base, std::string_view name);
 
@@ -55,8 +57,7 @@ namespace pTK::Platform
         */
         static std::wstring stringToUTF16(const std::string& str);
 
-        /** Callback that will be called when a window is added to the
-            application.
+        /** Callback that will be called when a window is added to the application.
 
             Note: Window has been added before calling this callback.
 
@@ -65,8 +66,7 @@ namespace pTK::Platform
         */
         void onWindowAdd(int32_t key, Window* window) override;
 
-        /** Callback that will be called when a window is removed from the
-            application.
+        /** Callback that will be called when a window is removed from the application.
 
             Note: Window will be removed after the call to this callback.
 

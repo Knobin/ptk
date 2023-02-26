@@ -1,5 +1,5 @@
 //
-//  platform/win/Platform_win.cpp
+//  platform/win/ApplicationHandle_win.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-04-26.
@@ -80,7 +80,7 @@ namespace pTK::Platform
                 WindowHandle_win* window = it->second;
                 if (HACCEL accel = window->accelTable())
                 {
-                    if (TranslateAccelerator(window->handle(), accel, &msg))
+                    if (TranslateAccelerator(window->hwnd(), accel, &msg))
                     {
                         ++it;
                         continue;

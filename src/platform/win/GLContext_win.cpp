@@ -1,5 +1,5 @@
 //
-//  platform/win/WinRasterContext.cpp
+//  platform/win/GLContext_win.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-04-20.

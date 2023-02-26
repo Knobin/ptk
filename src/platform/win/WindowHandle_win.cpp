@@ -45,17 +45,7 @@ namespace pTK::Platform
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    // Since the iHandleEvent function is protected in WindowHandle, this is a friend function
-    // to get around that issue. Maybe another way is better in the future, but this works
-    // for now. This must be done since the win32 WndPro is a static function and only a
-    // pointer to window can be used (in this implementation anyway).
-    template <typename Event>
-    void EventSendHelper(WindowHandle_win* window, const Event& evt)
-    {
-        window->HandlePlatformEvent<Event>(evt);
-    }
-
-    Limits GetWindowLimits(WindowHandle_win* handle)
+    static Limits GetWindowLimits(WindowHandle_win* handle)
     {
         return handle->window()->getLimitsWithSizePolicy();
     }
@@ -406,20 +396,20 @@ namespace pTK::Platform
         ::RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
     }
 
-    HWND WindowHandle_win::handle() const
+    HWND WindowHandle_win::hwnd() const noexcept
     {
         return m_hwnd;
     }
 
-    HACCEL WindowHandle_win::accelTable() const
+    HACCEL WindowHandle_win::accelTable() const noexcept
     {
         return m_accelTable;
     }
 
-    static void HandleMouseClick(WindowHandle_win* window, const Vec2f& scale, Event::Type type, Mouse::Button btn,
+    static void HandleMouseClick(WindowHandle_win* handle, const Vec2f& scale, Event::Type type, Mouse::Button btn,
                                  int32_t value, LPARAM lParam)
     {
-        PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
+        PTK_ASSERT(handle, "WindowHandle_win pointer is undefined");
 
         const Point pos{GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
         const auto fX = static_cast<float>(pos.x);
@@ -430,23 +420,23 @@ namespace pTK::Platform
         if (type == Event::Type::MouseButtonPressed)
         {
             ClickEvent evt{btn, value, scaledPos};
-            EventSendHelper<ClickEvent>(window, evt);
+            handle->HandlePlatformEvent<ClickEvent>(evt);
         }
         else
         {
             ReleaseEvent evt{btn, value, scaledPos};
-            EventSendHelper<ReleaseEvent>(window, evt);
+            handle->HandlePlatformEvent<ReleaseEvent>(evt);
         }
     }
 
-    static void HandleDPIChange(WindowHandle_win* window, WPARAM wParam, LPARAM lParam)
+    static void HandleDPIChange(WindowHandle_win* handle, WPARAM wParam, LPARAM lParam)
     {
-        PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
+        PTK_ASSERT(handle, "WindowHandle_win pointer is undefined");
 
         // Change Window position.
         RECT* rect = reinterpret_cast<RECT*>(lParam);
         MoveEvent mEvt{{static_cast<Point::value_type>(rect->left), static_cast<Point::value_type>(rect->top)}};
-        EventSendHelper<MoveEvent>(window, mEvt);
+        handle->HandlePlatformEvent<MoveEvent>(mEvt);
 
         // Scale Window.
         const auto dpiX{static_cast<uint32_t>(GET_X_LPARAM(wParam))};
@@ -454,19 +444,19 @@ namespace pTK::Platform
         const Vec2f scale{static_cast<float>(dpiX) / 96.0f, static_cast<float>(dpiY) / 96.0f};
         PTK_INFO("DPI CHANGED {0}x{1} SCALING {2:0.2f}x{3:0.2f}", dpiX, dpiY, scale.x, scale.y);
         ScaleEvent sEvt{scale};
-        EventSendHelper<ScaleEvent>(window, sEvt);
+        handle->HandlePlatformEvent<ScaleEvent>(sEvt);
     }
 
-    static void HandleWindowLimits(WindowHandle_win* window, LPARAM lParam, const Vec2f& scale, bool hasMenu,
+    static void HandleWindowLimits(WindowHandle_win* handle, LPARAM lParam, const Vec2f& scale, bool hasMenu,
                                    DWORD style)
     {
-        PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
+        PTK_ASSERT(handle, "WindowHandle_win pointer is undefined");
 
         LPMINMAXINFO lpMMI{reinterpret_cast<LPMINMAXINFO>(lParam)};
-        const Limits limits{GetWindowLimits(window)};
+        const Limits limits{GetWindowLimits(handle)};
 
         const Size adjMinSize{
-            CalcAdjustedWindowSize(ScaleSize(limits.min, scale), window->getWindowStyle(), hasMenu, scale.x * 96.0f)};
+            CalcAdjustedWindowSize(ScaleSize(limits.min, scale), handle->getWindowStyle(), hasMenu, scale.x * 96.0f)};
         lpMMI->ptMinTrackSize.x = static_cast<int>(adjMinSize.width);
         lpMMI->ptMinTrackSize.y = static_cast<int>(adjMinSize.height);
 
@@ -483,42 +473,43 @@ namespace pTK::Platform
             lpMMI->ptMaxTrackSize.y = ::GetSystemMetrics(SM_CYMAXTRACK);
         }
 
+        HWND hwnd = handle->hwnd();
         if (limits.min == limits.max)
-            ::SetWindowLong(window->handle(), GWL_STYLE, GetWindowLong(window->handle(), GWL_STYLE) & ~WS_SIZEBOX);
+            ::SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SIZEBOX);
         else
-            ::SetWindowLong(window->handle(), GWL_STYLE, GetWindowLong(window->handle(), GWL_STYLE) | WS_SIZEBOX);
+            ::SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) | WS_SIZEBOX);
     }
 
-    static void HandleWindowMinimize(WindowHandle_win* window, WindowHandle_win::Data* data, bool minimize)
+    static void HandleWindowMinimize(WindowHandle_win* handle, WindowHandle_win::Data* data, bool minimize)
     {
-        PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
+        PTK_ASSERT(handle, "WindowHandle_win pointer is undefined");
         PTK_ASSERT(data, "WindowHandle_win data pointer is undefined");
 
         data->minimized = minimize;
 
         if (minimize)
-            EventSendHelper<MinimizeEvent>(window, {});
+            handle->HandlePlatformEvent<MinimizeEvent>({});
         else
-            EventSendHelper<RestoreEvent>(window, {});
+            handle->HandlePlatformEvent<RestoreEvent>({});
     }
 
-    static void HandleWindowResize(WindowHandle_win* window, WindowHandle_win::Data* data, HWND hwnd)
+    static void HandleWindowResize(WindowHandle_win* handle, WindowHandle_win::Data* data, HWND hwnd)
     {
-        PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
+        PTK_ASSERT(handle, "WindowHandle_win pointer is undefined");
         PTK_ASSERT(data, "WindowHandle_win data pointer is undefined");
 
         RECT rc{};
         if (::GetClientRect(hwnd, &rc) && (rc.right != 0 && rc.bottom != 0))
         {
-            const Vec2f scale = window->getDPIScale();
-            const Size size = window->getSize();
+            const Vec2f scale = handle->getDPIScale();
+            const Size size = handle->getSize();
             if (static_cast<Size::value_type>(rc.right) != size.width ||
                 static_cast<Size::value_type>(rc.bottom) != size.height)
             {
                 const Size rSize{static_cast<Size::value_type>(rc.right), static_cast<Size::value_type>(rc.bottom)};
                 ResizeEvent evt{ScaleSize(rSize, Vec2f{1.0f / scale.x, 1.0f / scale.y})};
                 data->ignoreSize = true;
-                EventSendHelper<ResizeEvent>(window, evt);
+                handle->HandlePlatformEvent<ResizeEvent>(evt);
             }
         }
     }
@@ -573,9 +564,9 @@ namespace pTK::Platform
         return mods;
     }
 
-    static void HandleKeyEvent(WindowHandle_win* window, const Event::Type& type, WPARAM wParam, LPARAM lParam)
+    static void HandleKeyEvent(WindowHandle_win* handle, const Event::Type& type, WPARAM wParam, LPARAM lParam)
     {
-        PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
+        PTK_ASSERT(handle, "WindowHandle_win pointer is undefined");
 
         const auto data{static_cast<int32_t>(wParam)};
         KeyCode key{KeyMap::KeyCodeToKey(data)};
@@ -587,12 +578,12 @@ namespace pTK::Platform
         }
 
         KeyEvent evt{type, key, static_cast<uint32_t>(data), GetKeyModifiers()};
-        EventSendHelper<KeyEvent>(window, evt);
+        handle->HandlePlatformEvent<KeyEvent>(evt);
     }
 
-    static void HandleCharInput(WindowHandle_win* window, WPARAM wParam, LPARAM UNUSED(lParam))
+    static void HandleCharInput(WindowHandle_win* handle, WPARAM wParam, LPARAM UNUSED(lParam))
     {
-        PTK_ASSERT(window, "WindowHandle_win pointer is undefined");
+        PTK_ASSERT(handle, "WindowHandle_win pointer is undefined");
 
         uint32_t data{0};
 
@@ -622,7 +613,7 @@ namespace pTK::Platform
             arr[0] = data;
 
             InputEvent evt{arr, 1, Text::Encoding::UTF16};
-            EventSendHelper<InputEvent>(window, evt);
+            handle->HandlePlatformEvent<InputEvent>(evt);
         }
     }
 
@@ -645,7 +636,7 @@ namespace pTK::Platform
                 // To enable the window to halt the closing request.
 
                 // window->handleEvents(); // Handle all events before sending close event.
-                EventSendHelper<CloseEvent>(handle, {});
+                handle->HandlePlatformEvent<CloseEvent>({});
                 if (auto win = dynamic_cast<Window*>(handle->window()))
                     Application::Get()->removeWindow(win);
                 DestroyWindow(hwnd);
@@ -658,12 +649,12 @@ namespace pTK::Platform
             }
             case WM_SETFOCUS:
             {
-                EventSendHelper<FocusEvent>(handle, {});
+                handle->HandlePlatformEvent<FocusEvent>({});
                 break;
             }
             case WM_KILLFOCUS:
             {
-                EventSendHelper<LostFocusEvent>(handle, {});
+                handle->HandlePlatformEvent<LostFocusEvent>({});
                 break;
             }
             case WM_ERASEBKGND:
@@ -687,7 +678,7 @@ namespace pTK::Platform
             {
                 PAINTSTRUCT ps;
                 ::BeginPaint(hwnd, &ps);
-                EventSendHelper<PaintEvent>(handle, {{0, 0}, handle->getSize()});
+                handle->HandlePlatformEvent<PaintEvent>({{0, 0}, handle->getSize()});
                 ::EndPaint(hwnd, &ps);
                 break;
             }
@@ -715,7 +706,7 @@ namespace pTK::Platform
                 const Vec2f scale = handle->getDPIScale();
                 MotionEvent evt{{static_cast<Point::value_type>(fX * (1 / scale.x)),
                                  static_cast<Point::value_type>(fY * (1 / scale.y))}};
-                EventSendHelper<MotionEvent>(handle, evt);
+                handle->HandlePlatformEvent<MotionEvent>(evt);
                 break;
             }
             case WM_LBUTTONDOWN:
@@ -740,14 +731,14 @@ namespace pTK::Platform
             {
                 const float y_offset =
                     static_cast<float>(static_cast<SHORT>(HIWORD(wParam))) / static_cast<float>(WHEEL_DELTA);
-                EventSendHelper<ScrollEvent>(handle, ScrollEvent{{0.0f, y_offset}});
+                handle->HandlePlatformEvent<ScrollEvent>(ScrollEvent{{0.0f, y_offset}});
                 break;
             }
             case WM_MOUSEHWHEEL:
             {
                 const float x_offset =
                     -static_cast<float>(static_cast<SHORT>(HIWORD(wParam))) / static_cast<float>(WHEEL_DELTA);
-                EventSendHelper<ScrollEvent>(handle, ScrollEvent{{x_offset, 0.0f}});
+                handle->HandlePlatformEvent<ScrollEvent>(ScrollEvent{{x_offset, 0.0f}});
                 break;
             }
             case WM_XBUTTONUP:
@@ -773,7 +764,7 @@ namespace pTK::Platform
                                           Vec2f{1.0f / scale.x, 1.0f / scale.y})};
 
                 data->ignoreSize = true;
-                // EventSendHelper<ResizeEvent>(window, evt);
+                // handle->HandlePlatformEvent<ResizeEvent>(evt);
                 break;
             }
             case WM_GETMINMAXINFO:
@@ -796,7 +787,7 @@ namespace pTK::Platform
                 if (!(winData->flags & SWP_NOMOVE))
                 {
                     MoveEvent evt{{winData->x, winData->y}};
-                    EventSendHelper<MoveEvent>(handle, evt);
+                    handle->HandlePlatformEvent<MoveEvent>(evt);
                 }
 
                 // Window was resized.

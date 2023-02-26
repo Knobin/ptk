@@ -1,5 +1,5 @@
 //
-//  platform/win/MainWindow_win.hpp
+//  platform/win/WindowHandle_win.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-02-07.
@@ -22,18 +22,18 @@ namespace pTK::Platform
 {
     /** WindowHandle_win class implementation.
 
-        This class handles the Windows Window.
+        This class handles the win32 Window.
     */
     class PTK_API WindowHandle_win : public WindowHandle
     {
     public:
-        /** Constructs WindowHandle_win with default values.
+        /** Constructs WindowHandle_win with values.
 
-            @param base     pointer to WindowBase
+            @param base     valid pointer to window base
             @param name     name of the window
             @param size     size of the window
-            @param backend  type of backend
-            @return         default initialized WindowHandle_win
+            @param flags    initial window settings
+            @return         initialized WindowHandle_win
         */
         WindowHandle_win(WindowBase* base, const std::string& name, const Size& size, const WindowInfo& flags);
 
@@ -81,8 +81,8 @@ namespace pTK::Platform
 
         /** Function for resizing the window.
 
-            @param size  size to set
-            @return     true if operation is successful, otherwise false
+            @param size     new size
+            @return         true if operation is successful, otherwise false
         */
         bool resize(const Size& size) override;
 
@@ -179,19 +179,19 @@ namespace pTK::Platform
 
             @return     refresh rate
         */
-        std::size_t targetRefreshRate() override;
+        [[nodiscard]] std::size_t targetRefreshRate() override;
 
         /** Function for retrieving HWND from the window.
 
             @return    HWND
         */
-        [[nodiscard]] HWND handle() const;
+        [[nodiscard]] HWND hwnd() const noexcept;
 
         /** Function for retrieving HACCEL from the window.
 
             @return    HACCEL
         */
-        [[nodiscard]] HACCEL accelTable() const;
+        [[nodiscard]] HACCEL accelTable() const noexcept;
 
         // WndPro callback.
         static LRESULT CALLBACK WndPro(HWND hwnd, UINT msg, WPARAM wParam, ::LPARAM lParam);
@@ -208,12 +208,6 @@ namespace pTK::Platform
             bool hasMenu{false};
             DWORD style{WS_OVERLAPPEDWINDOW};
         };
-
-    private:
-        template <typename Event>
-        friend void EventSendHelper(WindowHandle_win*, const Event&);
-
-        friend Limits GetWindowLimits(WindowHandle_win*);
 
     private:
         bool destroyWindow();

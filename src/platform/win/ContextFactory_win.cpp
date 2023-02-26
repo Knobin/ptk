@@ -1,5 +1,5 @@
 //
-//  platform/win/ContextFactory.cpp
+//  platform/win/ContextFactory_win.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2023-02-12.
@@ -38,7 +38,7 @@ namespace pTK::Platform::ContextFactoryImpl
     static HWND GetHWND(Window* window)
     {
         if (auto platformHandle = dynamic_cast<WindowHandle_win*>(window->platformHandle()))
-            return platformHandle->handle();
+            return platformHandle->hwnd();
 
         PTK_ASSERT(nullptr, "Window ptr is not of type WindowHandle_win");
         return nullptr;
