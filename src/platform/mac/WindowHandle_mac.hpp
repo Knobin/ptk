@@ -161,6 +161,12 @@ namespace pTK::Platform
         */
         void invalidate() override;
 
+        /** Function for retrieving the target refresh rate of the window.
+
+            @return     refresh rate
+        */
+        [[nodiscard]] std::size_t targetRefreshRate() override;
+
         /** Function for retrieving the NSWindow id.
 
             @return     id of the NSWindow

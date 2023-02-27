@@ -630,6 +630,24 @@ namespace pTK::Platform
         HandlePlatformEvent<PaintEvent>({{0, 0}, getSize()});
     }
 
+    static long GetMonitorRefreshRate()
+    {
+        if (auto screen = [NSScreen mainScreen])
+        {
+            const long refreshRate = screen.maximumFramesPerSecond;
+            PTK_INFO("[macOS] Found (main) monitor refresh rate as {}Hz", refreshRate);
+            return refreshRate;
+        }
+
+        return -1;
+    }
+
+    std::size_t WindowHandle_mac::targetRefreshRate()
+    {
+        static auto rate = static_cast<std::size_t>(GetMonitorRefreshRate());
+        return (rate > 0) ? rate : WindowHandle::targetRefreshRate();
+    }
+
     long WindowHandle_mac::windowID() const
     {
         return m_id;
