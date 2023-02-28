@@ -354,10 +354,21 @@ namespace pTK::Platform
         handlePlatformEvent<PaintEvent>({{0, 0}, getSize()});
     }
 
+    static short GetMonitorRefreshRate() noexcept
+    {
+        ::Display* display{App::Display()};
+        ::Window root{RootWindow(display, 0)};
+
+        XRRScreenConfiguration* conf{XRRGetScreenInfo(display, root)};
+        short refreshRate{XRRConfigCurrentRate(conf)};
+        PTK_INFO("[x11] Found monitor refresh rate as {}Hz.", refreshRate);
+        return refreshRate;
+    }
+
     std::size_t WindowHandleUnix::targetRefreshRate() const noexcept
     {
-        // TODO(knobin): Read Monitor refresh rate here.
-        return 60;
+        static const auto rate = static_cast<std::size_t>(GetMonitorRefreshRate());
+        return (rate > 0) ? rate : WindowHandle::targetRefreshRate();
     }
 
     std::pair<unsigned long, unsigned char*> WindowHandleUnix::getWindowProperty(Atom property, Atom type) const
