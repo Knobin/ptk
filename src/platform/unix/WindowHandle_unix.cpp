@@ -354,7 +354,7 @@ namespace pTK::Platform
         handlePlatformEvent<PaintEvent>({{0, 0}, getSize()});
     }
 
-    std::size_t WindowHandle_unix::targetRefreshRate()
+    std::size_t WindowHandle_unix::targetRefreshRate() const noexcept
     {
         // TODO(knobin): Read Monitor refresh rate here.
         return 60;

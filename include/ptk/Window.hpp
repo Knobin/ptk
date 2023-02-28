@@ -89,7 +89,7 @@ namespace pTK
 
             @return     refresh rate
         */
-        std::size_t targetRefreshRate() const { return m_handle->targetRefreshRate(); }
+        [[nodiscard]] std::size_t targetRefreshRate() const { return m_handle->targetRefreshRate(); }
 
         /** Function for retrieving the time past since last draw.
 

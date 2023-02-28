@@ -331,7 +331,7 @@ namespace pTK::Platform
         ::MoveWindow(m_hwnd, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, FALSE);
     }
 
-    static int GetMonitorRefreshRate()
+    static int GetMonitorRefreshRate() noexcept
     {
         // display device structure .
         DEVMODEW deviceMode{};
@@ -346,7 +346,7 @@ namespace pTK::Platform
         return -1;
     }
 
-    std::size_t WindowHandleWin::targetRefreshRate()
+    std::size_t WindowHandleWin::targetRefreshRate() const noexcept
     {
         static std::size_t rate = GetMonitorRefreshRate();
         return (rate > 0) ? rate : WindowHandle::targetRefreshRate();

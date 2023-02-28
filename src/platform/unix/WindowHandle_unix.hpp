@@ -169,7 +169,7 @@ namespace pTK::Platform
 
             @return     refresh rate
         */
-        std::size_t targetRefreshRate() override;
+        [[nodiscard]] std::size_t targetRefreshRate() const noexcept override;
 
         /** Function for retrieving the XWindow struct of the window.
 

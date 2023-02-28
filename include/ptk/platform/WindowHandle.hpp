@@ -194,7 +194,7 @@ namespace pTK::Platform
 
             @return     refresh rate
         */
-        virtual std::size_t targetRefreshRate() { return 60; }
+        [[nodiscard]] virtual std::size_t targetRefreshRate() const noexcept { return 60; }
 
         /** Function for retrieving the window.
 

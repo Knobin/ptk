@@ -657,7 +657,7 @@ namespace pTK::Platform
         handlePlatformEvent<PaintEvent>({{0, 0}, getSize()});
     }
 
-    static long GetMonitorRefreshRate()
+    static long GetMonitorRefreshRate() noexcept
     {
         if (auto screen = [NSScreen mainScreen])
         {
@@ -669,7 +669,7 @@ namespace pTK::Platform
         return -1;
     }
 
-    std::size_t WindowHandleMac::targetRefreshRate()
+    std::size_t WindowHandleMac::targetRefreshRate() const noexcept
     {
         static auto rate = static_cast<std::size_t>(GetMonitorRefreshRate());
         return (rate > 0) ? rate : WindowHandle::targetRefreshRate();
