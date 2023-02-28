@@ -203,7 +203,7 @@ namespace pTK::Platform
             case Expose:
             {
                 PaintEvent evt{Point{0, 0}, handle->getSize()};
-                handle->HandlePlatformEvent<PaintEvent>(evt);
+                handle->handlePlatformEvent<PaintEvent>(evt);
                 break;
             }
             case DestroyNotify:
@@ -216,7 +216,7 @@ namespace pTK::Platform
             {
                 XClientMessageEvent* cEvent = reinterpret_cast<XClientMessageEvent*>(event);
                 if (cEvent && static_cast<Atom>(cEvent->data.l[0]) == handle->deleteAtom())
-                    handle->HandlePlatformEvent<CloseEvent>({});
+                    handle->handlePlatformEvent<CloseEvent>({});
                 break;
             }
             case ButtonPress:
@@ -227,17 +227,17 @@ namespace pTK::Platform
                     {
                         // TODO(knobin): Check for Left mouse btn virtual key instead of -1.
                         ClickEvent evt{Mouse::Button::Left, -1, {event->xbutton.x, event->xbutton.y}};
-                        handle->HandlePlatformEvent<ClickEvent>(evt);
+                        handle->handlePlatformEvent<ClickEvent>(evt);
                         break;
                     }
                     case Button4:
                     {
-                        handle->HandlePlatformEvent<ScrollEvent>(ScrollEvent{{0.0f, 1.0f}});
+                        handle->handlePlatformEvent<ScrollEvent>(ScrollEvent{{0.0f, 1.0f}});
                         break;
                     }
                     case Button5:
                     {
-                        handle->HandlePlatformEvent<ScrollEvent>(ScrollEvent{{0.0f, -1.0f}});
+                        handle->handlePlatformEvent<ScrollEvent>(ScrollEvent{{0.0f, -1.0f}});
                         break;
                     }
                 }
@@ -249,7 +249,7 @@ namespace pTK::Platform
                 {
                     // TODO(knobin): Check for Left mouse btn virtual key instead of -1.
                     ReleaseEvent evt{Mouse::Button::Left, -1, {event->xbutton.x, event->xbutton.y}};
-                    handle->HandlePlatformEvent<ReleaseEvent>(evt);
+                    handle->handlePlatformEvent<ReleaseEvent>(evt);
                 }
                 break;
             }
@@ -257,7 +257,7 @@ namespace pTK::Platform
             {
                 MotionEvent mEvt{{static_cast<Point::value_type>(event->xbutton.x),
                                   static_cast<Point::value_type>(event->xbutton.y)}};
-                handle->HandlePlatformEvent<MotionEvent>(mEvt);
+                handle->handlePlatformEvent<MotionEvent>(mEvt);
                 break;
             }
             case KeyPress:
@@ -267,7 +267,7 @@ namespace pTK::Platform
                 auto keysym = XLookupKeysym(&event->xkey, 0);
                 pTK::Key key{KeyMap::KeyCodeToKey(static_cast<int32_t>(keysym))};
                 Event::Type type = (event->type == KeyPress) ? KeyEvent::Pressed : KeyEvent::Released;
-                handle->HandlePlatformEvent<KeyEvent>({type, key, mods});
+                handle->handlePlatformEvent<KeyEvent>({type, key, mods});
 
                 // Send Input event.
                 // TODO(knobin): Should these keys send an InputEvent?
@@ -289,7 +289,7 @@ namespace pTK::Platform
                             arr[i] = static_cast<uint32_t>(buffer[i]);
 
                         pTK::InputEvent input{arr, static_cast<std::size_t>(count), pTK::Text::Encoding::UTF32};
-                        handle->HandlePlatformEvent<pTK::InputEvent>(input);
+                        handle->handlePlatformEvent<pTK::InputEvent>(input);
                     }
                 }
 
@@ -298,13 +298,13 @@ namespace pTK::Platform
             case FocusIn:
             {
                 if (!((event->xfocus.mode == NotifyGrab) || ((event->xfocus.mode == NotifyUngrab))))
-                    handle->HandlePlatformEvent<FocusEvent>({});
+                    handle->handlePlatformEvent<FocusEvent>({});
                 break;
             }
             case FocusOut:
             {
                 if (!((event->xfocus.mode == NotifyGrab) || ((event->xfocus.mode == NotifyUngrab))))
-                    handle->HandlePlatformEvent<LostFocusEvent>({});
+                    handle->handlePlatformEvent<LostFocusEvent>({});
                 break;
             }
             case ConfigureNotify:
@@ -316,7 +316,7 @@ namespace pTK::Platform
                 {
                     wSize.width = static_cast<Size::value_type>(event->xconfigure.width);
                     wSize.height = static_cast<Size::value_type>(event->xconfigure.height);
-                    handle->HandlePlatformEvent<ResizeEvent>(ResizeEvent{wSize});
+                    handle->handlePlatformEvent<ResizeEvent>(ResizeEvent{wSize});
                 }
 
                 // Position change
@@ -325,7 +325,7 @@ namespace pTK::Platform
                 {
                     wPos.x = static_cast<Point::value_type>(event->xconfigure.x);
                     wPos.y = static_cast<Point::value_type>(event->xconfigure.y);
-                    handle->HandlePlatformEvent<MoveEvent>(MoveEvent{wPos});
+                    handle->handlePlatformEvent<MoveEvent>(MoveEvent{wPos});
                 }
 
                 break;
