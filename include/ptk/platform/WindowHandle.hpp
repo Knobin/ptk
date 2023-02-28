@@ -204,9 +204,9 @@ namespace pTK::Platform
 
         // Forwarding of events from platform handler to window.
         template <typename Event>
-        void HandlePlatformEvent(const Event& evt)
+        void handlePlatformEvent(const Event& evt)
         {
-            m_winBase->HandlePlatformEvent<Event>(evt);
+            m_winBase->handlePlatformEvent<Event>(evt);
         }
 
     private:

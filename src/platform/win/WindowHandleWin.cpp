@@ -415,12 +415,12 @@ namespace pTK::Platform
         if (type == Event::Type::MouseButtonPressed)
         {
             ClickEvent evt{btn, value, scaledPos};
-            handle->HandlePlatformEvent<ClickEvent>(evt);
+            handle->handlePlatformEvent<ClickEvent>(evt);
         }
         else
         {
             ReleaseEvent evt{btn, value, scaledPos};
-            handle->HandlePlatformEvent<ReleaseEvent>(evt);
+            handle->handlePlatformEvent<ReleaseEvent>(evt);
         }
     }
 
@@ -431,7 +431,7 @@ namespace pTK::Platform
         // Change Window position.
         RECT* rect = reinterpret_cast<RECT*>(lParam);
         MoveEvent mEvt{{static_cast<Point::value_type>(rect->left), static_cast<Point::value_type>(rect->top)}};
-        handle->HandlePlatformEvent<MoveEvent>(mEvt);
+        handle->handlePlatformEvent<MoveEvent>(mEvt);
 
         // Scale Window.
         const auto dpiX{static_cast<uint32_t>(GET_X_LPARAM(wParam))};
@@ -439,7 +439,7 @@ namespace pTK::Platform
         const Vec2f scale{static_cast<float>(dpiX) / 96.0f, static_cast<float>(dpiY) / 96.0f};
         PTK_INFO("DPI CHANGED {0}x{1} SCALING {2:0.2f}x{3:0.2f}", dpiX, dpiY, scale.x, scale.y);
         ScaleEvent sEvt{scale};
-        handle->HandlePlatformEvent<ScaleEvent>(sEvt);
+        handle->handlePlatformEvent<ScaleEvent>(sEvt);
     }
 
     static void HandleWindowLimits(WindowHandleWin* handle, LPARAM lParam, const Vec2f& scale, bool hasMenu,
@@ -483,9 +483,9 @@ namespace pTK::Platform
         data->minimized = minimize;
 
         if (minimize)
-            handle->HandlePlatformEvent<MinimizeEvent>({});
+            handle->handlePlatformEvent<MinimizeEvent>({});
         else
-            handle->HandlePlatformEvent<RestoreEvent>({});
+            handle->handlePlatformEvent<RestoreEvent>({});
     }
 
     static void HandleWindowResize(WindowHandleWin* handle, WindowHandleWin::Data* data, HWND hwnd)
@@ -504,7 +504,7 @@ namespace pTK::Platform
                 const Size rSize{static_cast<Size::value_type>(rc.right), static_cast<Size::value_type>(rc.bottom)};
                 ResizeEvent evt{ScaleSize(rSize, Vec2f{1.0f / scale.x, 1.0f / scale.y})};
                 data->ignoreSize = true;
-                handle->HandlePlatformEvent<ResizeEvent>(evt);
+                handle->handlePlatformEvent<ResizeEvent>(evt);
             }
         }
     }
@@ -573,7 +573,7 @@ namespace pTK::Platform
         }
 
         KeyEvent evt{type, key, static_cast<uint32_t>(data), GetKeyModifiers()};
-        handle->HandlePlatformEvent<KeyEvent>(evt);
+        handle->handlePlatformEvent<KeyEvent>(evt);
     }
 
     static void HandleCharInput(WindowHandleWin* handle, WPARAM wParam, LPARAM UNUSED(lParam))
@@ -608,7 +608,7 @@ namespace pTK::Platform
             arr[0] = data;
 
             InputEvent evt{arr, 1, Text::Encoding::UTF16};
-            handle->HandlePlatformEvent<InputEvent>(evt);
+            handle->handlePlatformEvent<InputEvent>(evt);
         }
     }
 
@@ -631,7 +631,7 @@ namespace pTK::Platform
                 // To enable the window to halt the closing request.
 
                 // window->handleEvents(); // Handle all events before sending close event.
-                handle->HandlePlatformEvent<CloseEvent>({});
+                handle->handlePlatformEvent<CloseEvent>({});
                 if (auto win = dynamic_cast<Window*>(handle->window()))
                     Application::Get()->removeWindow(win);
                 DestroyWindow(hwnd);
@@ -644,12 +644,12 @@ namespace pTK::Platform
             }
             case WM_SETFOCUS:
             {
-                handle->HandlePlatformEvent<FocusEvent>({});
+                handle->handlePlatformEvent<FocusEvent>({});
                 break;
             }
             case WM_KILLFOCUS:
             {
-                handle->HandlePlatformEvent<LostFocusEvent>({});
+                handle->handlePlatformEvent<LostFocusEvent>({});
                 break;
             }
             case WM_ERASEBKGND:
@@ -673,7 +673,7 @@ namespace pTK::Platform
             {
                 PAINTSTRUCT ps;
                 ::BeginPaint(hwnd, &ps);
-                handle->HandlePlatformEvent<PaintEvent>({{0, 0}, handle->getSize()});
+                handle->handlePlatformEvent<PaintEvent>({{0, 0}, handle->getSize()});
                 ::EndPaint(hwnd, &ps);
                 break;
             }
@@ -701,7 +701,7 @@ namespace pTK::Platform
                 const Vec2f scale = handle->getDPIScale();
                 MotionEvent evt{{static_cast<Point::value_type>(fX * (1 / scale.x)),
                                  static_cast<Point::value_type>(fY * (1 / scale.y))}};
-                handle->HandlePlatformEvent<MotionEvent>(evt);
+                handle->handlePlatformEvent<MotionEvent>(evt);
                 break;
             }
             case WM_LBUTTONDOWN:
@@ -726,14 +726,14 @@ namespace pTK::Platform
             {
                 const float y_offset =
                     static_cast<float>(static_cast<SHORT>(HIWORD(wParam))) / static_cast<float>(WHEEL_DELTA);
-                handle->HandlePlatformEvent<ScrollEvent>(ScrollEvent{{0.0f, y_offset}});
+                handle->handlePlatformEvent<ScrollEvent>(ScrollEvent{{0.0f, y_offset}});
                 break;
             }
             case WM_MOUSEHWHEEL:
             {
                 const float x_offset =
                     -static_cast<float>(static_cast<SHORT>(HIWORD(wParam))) / static_cast<float>(WHEEL_DELTA);
-                handle->HandlePlatformEvent<ScrollEvent>(ScrollEvent{{x_offset, 0.0f}});
+                handle->handlePlatformEvent<ScrollEvent>(ScrollEvent{{x_offset, 0.0f}});
                 break;
             }
             case WM_XBUTTONUP:
@@ -759,7 +759,7 @@ namespace pTK::Platform
                                           Vec2f{1.0f / scale.x, 1.0f / scale.y})};
 
                 data->ignoreSize = true;
-                // handle->HandlePlatformEvent<ResizeEvent>(evt);
+                // handle->handlePlatformEvent<ResizeEvent>(evt);
                 break;
             }
             case WM_GETMINMAXINFO:
@@ -782,7 +782,7 @@ namespace pTK::Platform
                 if (!(winData->flags & SWP_NOMOVE))
                 {
                     MoveEvent evt{{winData->x, winData->y}};
-                    handle->HandlePlatformEvent<MoveEvent>(evt);
+                    handle->handlePlatformEvent<MoveEvent>(evt);
                 }
 
                 // Window was resized.

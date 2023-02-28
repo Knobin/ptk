@@ -13,7 +13,7 @@ namespace pTK::Platform
     namespace KeyMapFactoryImpl
     {
         // Function to implement by the platform.
-        extern std::map<int32_t, KeyCode> Make();
+        std::map<int32_t, KeyCode> Make();
     } // namespace KeyMapFactoryImpl
 
     std::map<int32_t, KeyCode> KeyMapFactory::Make()

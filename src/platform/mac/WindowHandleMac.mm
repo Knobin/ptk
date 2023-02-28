@@ -61,7 +61,7 @@ namespace pTK::Platform::WindowHandleFactoryImpl
 - (BOOL)windowShouldClose:(NSWindow*)__unused sender
 {
     pTK::CloseEvent evt{};
-    ptkWindow->HandlePlatformEvent<pTK::CloseEvent>(evt);
+    ptkWindow->handlePlatformEvent<pTK::CloseEvent>(evt);
     return NO;
 }
 
@@ -73,44 +73,44 @@ namespace pTK::Platform::WindowHandleFactoryImpl
                          static_cast<pTK::Size::value_type>(rect.size.height)};
 
     pTK::ResizeEvent rEvt{size};
-    ptkWindow->HandlePlatformEvent<pTK::ResizeEvent>(rEvt);
+    ptkWindow->handlePlatformEvent<pTK::ResizeEvent>(rEvt);
 
     // Window did not paint until resize was fully completed.
     // This will ensure that it will paint after every size change.
     // TODO(knobin): This might be macOS specific in this implementation, if not this can be moved to
     // WindowBase handler for ResizeEvent.
     pTK::PaintEvent pEvt{pTK::Point{0, 0}, ptkWindow->getSize()};
-    ptkWindow->HandlePlatformEvent<pTK::PaintEvent>(pEvt);
+    ptkWindow->handlePlatformEvent<pTK::PaintEvent>(pEvt);
 }
 
 - (void)windowDidMove:(NSNotification*)__unused notification
 {
     pTK::MoveEvent evt{ptkWindow->getPosition()};
-    ptkWindow->HandlePlatformEvent<pTK::MoveEvent>(evt);
+    ptkWindow->handlePlatformEvent<pTK::MoveEvent>(evt);
 }
 
 - (void)windowDidMiniaturize:(NSNotification*)__unused notification
 {
     pTK::MinimizeEvent evt{};
-    ptkWindow->HandlePlatformEvent<pTK::MinimizeEvent>(evt);
+    ptkWindow->handlePlatformEvent<pTK::MinimizeEvent>(evt);
 }
 
 - (void)windowDidDeminiaturize:(NSNotification*)__unused notification
 {
     pTK::RestoreEvent evt{};
-    ptkWindow->HandlePlatformEvent<pTK::RestoreEvent>(evt);
+    ptkWindow->handlePlatformEvent<pTK::RestoreEvent>(evt);
 }
 
 - (void)windowDidBecomeKey:(NSNotification*)__unused notification
 {
     pTK::FocusEvent evt{};
-    ptkWindow->HandlePlatformEvent<pTK::FocusEvent>(evt);
+    ptkWindow->handlePlatformEvent<pTK::FocusEvent>(evt);
 }
 
 - (void)windowDidResignKey:(NSNotification*)__unused notification
 {
     pTK::LostFocusEvent evt{};
-    ptkWindow->HandlePlatformEvent<pTK::LostFocusEvent>(evt);
+    ptkWindow->handlePlatformEvent<pTK::LostFocusEvent>(evt);
 }
 
 @end
@@ -210,13 +210,13 @@ static std::underlying_type<pTK::KeyEvent::Modifier>::type GetModifiers(NSEventM
 - (void)updateLayer
 {
     pTK::PaintEvent evt{pTK::Point{0, 0}, ptkWindow->getSize()};
-    ptkWindow->HandlePlatformEvent<pTK::PaintEvent>(evt);
+    ptkWindow->handlePlatformEvent<pTK::PaintEvent>(evt);
 }
 
 - (void)drawRect:(NSRect)__unused rect
 {
     pTK::PaintEvent evt{pTK::Point{0, 0}, ptkWindow->getSize()};
-    ptkWindow->HandlePlatformEvent<pTK::PaintEvent>(evt);
+    ptkWindow->handlePlatformEvent<pTK::PaintEvent>(evt);
 }
 
 static bool IsValid(uint32 data)
@@ -253,7 +253,7 @@ static bool IsValid(uint32 data)
 
     pTK::KeyEvent press{pTK::Event::Type::KeyPressed, pTK::KeyMap::KeyCodeToKey(static_cast<uint8_t>(event.keyCode)),
                         data, pTK::Text::Encoding::UTF32, mods};
-    ptkWindow->HandlePlatformEvent<pTK::KeyEvent>(press);
+    ptkWindow->handlePlatformEvent<pTK::KeyEvent>(press);
 
     if ([event.characters canBeConvertedToEncoding:NSUTF32StringEncoding])
     {
@@ -278,7 +278,7 @@ static bool IsValid(uint32 data)
 
                 // Trigger event.
                 pTK::InputEvent input{arr, validCount, pTK::Text::Encoding::UTF32};
-                ptkWindow->HandlePlatformEvent<pTK::InputEvent>(input);
+                ptkWindow->handlePlatformEvent<pTK::InputEvent>(input);
             }
         }
     }
@@ -291,7 +291,7 @@ static bool IsValid(uint32 data)
     std::underlying_type<pTK::KeyEvent::Modifier>::type mods{GetModifiers(event.modifierFlags)};
     pTK::KeyEvent evt{pTK::Event::Type::KeyReleased, pTK::KeyMap::KeyCodeToKey(static_cast<uint8_t>(event.keyCode)),
                       mods};
-    ptkWindow->HandlePlatformEvent<pTK::KeyEvent>(evt);
+    ptkWindow->handlePlatformEvent<pTK::KeyEvent>(evt);
 }
 
 - (void)scrollWheel:(NSEvent*)event
@@ -301,7 +301,7 @@ static bool IsValid(uint32 data)
         {static_cast<float>([event scrollingDeltaX] * delta), static_cast<float>([event scrollingDeltaY] * delta)}};
 
     if (std::fabs(scrollEvent.offset.x) > 0.0f || std::fabs(scrollEvent.offset.y) > 0.0f)
-        ptkWindow->HandlePlatformEvent<pTK::ScrollEvent>(scrollEvent);
+        ptkWindow->handlePlatformEvent<pTK::ScrollEvent>(scrollEvent);
 }
 
 - (void)flagsChanged:(NSEvent*)event
@@ -327,7 +327,7 @@ static bool IsValid(uint32 data)
     }
 
     pTK::KeyEvent evt{type, key, mods};
-    ptkWindow->HandlePlatformEvent<pTK::KeyEvent>(evt);
+    ptkWindow->handlePlatformEvent<pTK::KeyEvent>(evt);
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent*)__unused event
@@ -344,7 +344,7 @@ static bool IsValid(uint32 data)
         pTK::Mouse::Button::Left,
         -1,
         {static_cast<pTK::Point::value_type>(pos.x), static_cast<pTK::Point::value_type>(content.size.height - pos.y)}};
-    ptkWindow->HandlePlatformEvent<pTK::ClickEvent>(evt);
+    ptkWindow->handlePlatformEvent<pTK::ClickEvent>(evt);
 }
 
 - (void)mouseUp:(NSEvent*)__unused event
@@ -356,7 +356,7 @@ static bool IsValid(uint32 data)
         pTK::Mouse::Button::Left,
         -1,
         {static_cast<pTK::Point::value_type>(pos.x), static_cast<pTK::Point::value_type>(content.size.height - pos.y)}};
-    ptkWindow->HandlePlatformEvent<pTK::ReleaseEvent>(evt);
+    ptkWindow->handlePlatformEvent<pTK::ReleaseEvent>(evt);
 }
 
 - (void)mouseMoved:(NSEvent*)event
@@ -366,7 +366,7 @@ static bool IsValid(uint32 data)
     const NSRect content = [nswindow.contentView frame];
     pTK::MotionEvent evt{
         {static_cast<pTK::Point::value_type>(pos.x), static_cast<pTK::Point::value_type>(content.size.height - pos.y)}};
-    ptkWindow->HandlePlatformEvent<pTK::MotionEvent>(evt);
+    ptkWindow->handlePlatformEvent<pTK::MotionEvent>(evt);
 }
 
 @end
@@ -654,7 +654,7 @@ namespace pTK::Platform
 
     void WindowHandleMac::invalidate()
     {
-        HandlePlatformEvent<PaintEvent>({{0, 0}, getSize()});
+        handlePlatformEvent<PaintEvent>({{0, 0}, getSize()});
     }
 
     static long GetMonitorRefreshRate()

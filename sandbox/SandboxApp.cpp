@@ -2,6 +2,7 @@
 #include "ptk/ptk.hpp"
 
 // C++ Headers
+#include <iostream>
 #include <random>
 
 // Window Size.

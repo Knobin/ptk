@@ -67,7 +67,7 @@ namespace pTK
     protected:
         // Use this function to send events.
         template <typename Event>
-        void HandlePlatformEvent(const Event& evt);
+        void handlePlatformEvent(const Event& evt);
 
         friend class Platform::WindowHandle;
 
@@ -92,13 +92,13 @@ namespace pTK
 
     // Default event that is not handled by the window.
     template <typename Event>
-    void WindowBase::HandlePlatformEvent(const Event& evt)
+    void WindowBase::handlePlatformEvent(const Event& evt)
     {
         handleEvent<Event>(evt);
     }
 
     template <>
-    inline void WindowBase::HandlePlatformEvent<CloseEvent>(const CloseEvent& evt)
+    inline void WindowBase::handlePlatformEvent<CloseEvent>(const CloseEvent& evt)
     {
         close();
         onCloseEvent();
@@ -106,7 +106,7 @@ namespace pTK
     }
 
     template <>
-    inline void WindowBase::HandlePlatformEvent<ResizeEvent>(const ResizeEvent& evt)
+    inline void WindowBase::handlePlatformEvent<ResizeEvent>(const ResizeEvent& evt)
     {
         setSize(evt.size);
         onResizeEvent(evt.size);
@@ -114,7 +114,7 @@ namespace pTK
     }
 
     template <>
-    inline void WindowBase::HandlePlatformEvent<MoveEvent>(const MoveEvent& evt)
+    inline void WindowBase::handlePlatformEvent<MoveEvent>(const MoveEvent& evt)
     {
         setPosHint(evt.pos);
         onMoveEvent(evt.pos);
@@ -122,7 +122,7 @@ namespace pTK
     }
 
     template <>
-    inline void WindowBase::HandlePlatformEvent<PaintEvent>(const PaintEvent& evt)
+    inline void WindowBase::handlePlatformEvent<PaintEvent>(const PaintEvent& evt)
     {
         // This paint event is from the backend and is only called when the platform
         // wants a redraw.
@@ -131,28 +131,28 @@ namespace pTK
     }
 
     template <>
-    inline void WindowBase::HandlePlatformEvent<FocusEvent>(const FocusEvent& evt)
+    inline void WindowBase::handlePlatformEvent<FocusEvent>(const FocusEvent& evt)
     {
         onFocusEvent();
         handleEvent<FocusEvent>(evt);
     }
 
     template <>
-    inline void WindowBase::HandlePlatformEvent<LostFocusEvent>(const LostFocusEvent& evt)
+    inline void WindowBase::handlePlatformEvent<LostFocusEvent>(const LostFocusEvent& evt)
     {
         onLostFocusEvent();
         handleEvent<LostFocusEvent>(evt);
     }
 
     template <>
-    inline void WindowBase::HandlePlatformEvent<MinimizeEvent>(const MinimizeEvent& evt)
+    inline void WindowBase::handlePlatformEvent<MinimizeEvent>(const MinimizeEvent& evt)
     {
         onMinimizeEvent();
         handleEvent<MinimizeEvent>(evt);
     }
 
     template <>
-    inline void WindowBase::HandlePlatformEvent<RestoreEvent>(const RestoreEvent& evt)
+    inline void WindowBase::handlePlatformEvent<RestoreEvent>(const RestoreEvent& evt)
     {
         onRestoreEvent();
         handleEvent<RestoreEvent>(evt);

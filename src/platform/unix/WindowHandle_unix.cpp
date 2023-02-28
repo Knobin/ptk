@@ -351,7 +351,7 @@ namespace pTK::Platform
 
     void WindowHandle_unix::invalidate()
     {
-        HandlePlatformEvent<PaintEvent>({{0, 0}, getSize()});
+        handlePlatformEvent<PaintEvent>({{0, 0}, getSize()});
     }
 
     std::size_t WindowHandle_unix::targetRefreshRate()
