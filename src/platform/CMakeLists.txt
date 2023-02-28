@@ -35,16 +35,16 @@ set(PTK_PLATFORM_FILES_WIN win/ApplicationHandleWin.hpp
 set(PTK_PLATFORM_FILES_WIN_OPENGL win/GLContextWin.hpp win/GLContextWin.cpp)
 
 # Unix files
-set(PTK_PLATFORM_FILES_UNIX unix/ApplicationHandle_unix.hpp
-    unix/ApplicationHandle_unix.cpp
-    unix/KeyMap_unix.cpp
-    unix/WindowHandle_unix.hpp
-    unix/WindowHandle_unix.cpp
-    unix/RasterContext_unix.hpp
-    unix/RasterContext_unix.cpp
-    unix/ContextFactory_unix.cpp
+set(PTK_PLATFORM_FILES_UNIX unix/ApplicationHandleUnix.hpp
+    unix/ApplicationHandleUnix.cpp
+    unix/KeyMapUnix.cpp
+    unix/WindowHandleUnix.hpp
+    unix/WindowHandleUnix.cpp
+    unix/RasterContextUnix.hpp
+    unix/RasterContextUnix.cpp
+    unix/ContextFactoryUnix.cpp
     unix/x11.hpp)
-set(PTK_PLATFORM_FILES_UNIX_OPENGL unix/GLContext_unix.hpp unix/GLContext_unix.cpp)
+set(PTK_PLATFORM_FILES_UNIX_OPENGL unix/GLContextUnix.hpp unix/GLContextUnix.cpp)
 
 # Set platform files
 set(PTK_PLATFORM_FILES ${PTK_PLATFORM_CORE_FILES})

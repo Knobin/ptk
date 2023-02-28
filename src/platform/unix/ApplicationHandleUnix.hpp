@@ -1,5 +1,5 @@
 //
-//  platform/unix/ApplicationHandle_unix.hpp
+//  platform/unix/ApplicationHandleUnix.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-10-10.
@@ -16,24 +16,26 @@
 
 namespace pTK::Platform
 {
-    /** ApplicationHandle_unix class implementation.
+    /** ApplicationHandleUnix class implementation.
 
         Base application implementation for Unix.
         This class will be instantiated when the Application is created.
     */
-    class PTK_API ApplicationHandle_unix : public ApplicationHandle
+    class PTK_API ApplicationHandleUnix : public ApplicationHandle
     {
     public:
-        /** Constructs ApplicationHandle_unix with name.
+        /** Constructs ApplicationHandleUnix with name.
 
-            @return        default initialized ApplicationHandle_unix with name
+            @param base     valid pointer to application base
+            @param name     name of the application
+            @return         default initialized ApplicationHandleUnix with base and name
         */
-        ApplicationHandle_unix(ApplicationBase* base, std::string_view name);
+        ApplicationHandleUnix(ApplicationBase* base, std::string_view name);
 
-        /** Destructor for ApplicationHandle_unix
+        /** Destructor for ApplicationHandleUnix
 
         */
-        virtual ~ApplicationHandle_unix();
+        virtual ~ApplicationHandleUnix();
 
         /** Function for polling all the window events.
 
@@ -52,19 +54,32 @@ namespace pTK::Platform
         void waitEventsTimeout(uint32_t ms) override;
 
     public:
-        // TODO: Add documentation.
+        /** Function for retrieving the xlib Display structure.
+
+            @return     pointer to xlib Display structure
+        */
         static ::Display* Display();
 
-        // TODO: Add documentation.
+        /** Function for retrieving the xlib XContext.
+
+            @return     xlib XContext
+        */
         static ::XContext Context();
 
-        // TODO: Add documentation.
+        /** Function for retrieving the xlib Window.
+
+            @return     xlib Window
+        */
         static ::Window Root();
 
-        // TODO: Add documentation.
+        /** Function for retrieving the xlib screen number.
+
+            @return     xlib screen number
+        */
         static int Screen();
 
     private:
+        // Helper for handling a XEvent.
         void handleEvent(XEvent* event);
     };
 } // namespace pTK::Platform

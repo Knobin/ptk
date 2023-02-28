@@ -8,12 +8,12 @@
 // Local Headers
 #include "../../Log.hpp"
 #include "../../core/Assert.hpp"
-#include "RasterContext_unix.hpp"
-#include "WindowHandle_unix.hpp"
+#include "RasterContextUnix.hpp"
+#include "WindowHandleUnix.hpp"
 
 // Include GL backend.
 #ifdef PTK_OPENGL
-    #include "GLContext_unix.hpp"
+    #include "GLContextUnix.hpp"
 #endif
 
 // pTK Headers
@@ -38,15 +38,15 @@ namespace pTK::Platform::ContextFactoryImpl
     std::unique_ptr<ContextBase> MakeRasterContext(Window* window, const Size& size, const Vec2f& scale)
     {
         // Software backend is always available.
-        auto handle = dynamic_cast<WindowHandle_unix*>(window->platformHandle());
-        return std::make_unique<RasterContext_unix>(handle->xWindow(), ScaleSize(size, scale), handle->xVisualInfo());
+        auto handle = dynamic_cast<WindowHandleUnix*>(window->platformHandle());
+        return std::make_unique<RasterContextUnix>(handle->xWindow(), ScaleSize(size, scale), handle->xVisualInfo());
     }
 
     std::unique_ptr<ContextBase> MakeGLContext(Window* window, const Size& size, const Vec2f& scale)
     {
 #ifdef PTK_OPENGL
-        auto handle = dynamic_cast<WindowHandle_unix*>(window->platformHandle());
-        return std::make_unique<GLContext_unix>(handle->xWindow(), ScaleSize(size, scale));
+        auto handle = dynamic_cast<WindowHandleUnix*>(window->platformHandle());
+        return std::make_unique<GLContextUnix>(handle->xWindow(), ScaleSize(size, scale));
 #else
         return nullptr;
 #endif

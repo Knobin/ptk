@@ -1,5 +1,5 @@
 //
-//  platform/unix/GLContext_unix.hpp
+//  platform/unix/GLContextUnix.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-12-26.
@@ -32,29 +32,30 @@ PTK_DISABLE_WARN_END()
 
 namespace pTK::Platform
 {
-    /** GLContext_unix class implementation.
+    /** GLContextUnix class implementation.
 
         Context for a hardware based OpenGL Unix backend.
         All drawings will be done using the GPU.
     */
-    class PTK_API GLContext_unix : public ContextBase
+    class PTK_API GLContextUnix : public ContextBase
     {
     public:
-        /** Constructs GLContext_unix with default values.
+        /** Constructs GLContextUnix with xlib window and size.
 
-            @return    default initialized GLContext_unix
+            @param window   xlib window
+            @param size     size of the context
+            @return         initialized GLContextUnix with values
         */
-        GLContext_unix(::Window window, const Size& size);
+        GLContextUnix(::Window window, const Size& size);
 
-        /** Win32RasterCanvas for GLCanvas.
+        /** Destructor for GLContextUnix.
 
         */
-        virtual ~GLContext_unix();
+        virtual ~GLContextUnix();
 
         /** Function for resizing the context.
 
-            @param width   New width of canvas
-            @param width   New height of canvas
+            @param size     new size
         */
         void resize(const Size& size) override;
 

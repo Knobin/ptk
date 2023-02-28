@@ -1,5 +1,5 @@
 //
-//  platform/unix/WindowHandle_unix.hpp
+//  platform/unix/WindowHandleUnix.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-10-10.
@@ -16,27 +16,27 @@
 
 namespace pTK::Platform
 {
-    /** MainWindow_unix class implementation.
+    /** WindowHandleUnix class implementation.
 
-        This class handles the Windows Window.
+        This class handles the Unix x11 Window.
     */
-    class PTK_API WindowHandle_unix : public WindowHandle
+    class PTK_API WindowHandleUnix : public WindowHandle
     {
     public:
-        /** Constructs MainWindow_unix with default values.
+        /** Constructs WindowHandleUnix with values.
 
-            @param base     pointer to WindowBase
+            @param base     valid pointer to window base
             @param name     name of the window
             @param size     size of the window
-            @param backend  type of backend
-            @return         default initialized MainWindow_unix
+            @param flags    initial window settings
+            @return         initialized WindowHandleUnix with values
         */
-        WindowHandle_unix(WindowBase* base, const std::string& name, const Size& size, const WindowInfo& flags);
+        WindowHandleUnix(WindowBase* base, const std::string& name, const Size& size, const WindowInfo& flags);
 
-        /** Destructor for MainWindow_unix.
+        /** Destructor for WindowHandleUnix.
 
         */
-        virtual ~WindowHandle_unix();
+        virtual ~WindowHandleUnix();
 
         /** Function for closing the window.
 
@@ -192,8 +192,8 @@ namespace pTK::Platform
     private:
         std::pair<unsigned long, unsigned char*> getWindowProperty(Atom property, Atom type) const;
 
-        friend Size& WindowLastSize(WindowHandle_unix*);
-        friend Point& WindowLastPos(WindowHandle_unix*);
+        friend Size& WindowLastSize(WindowHandleUnix*);
+        friend Point& WindowLastPos(WindowHandleUnix*);
 
     private:
         Size m_lastSize;

@@ -1,13 +1,13 @@
 //
-//  platform/unix/RasterContext_unix.cpp
+//  platform/unix/RasterContextUnix.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-10-17.
 //
 
 // Local Headers
-#include "RasterContext_unix.hpp"
-#include "ApplicationHandle_unix.hpp"
+#include "RasterContextUnix.hpp"
+#include "ApplicationHandleUnix.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
@@ -16,9 +16,9 @@ PTK_DISABLE_WARN_END()
 
 namespace pTK::Platform
 {
-    using App = ApplicationHandle_unix;
+    using App = ApplicationHandleUnix;
 
-    RasterContext_unix::RasterContext_unix(::Window window, const Size& size, XVisualInfo info)
+    RasterContextUnix::RasterContextUnix(::Window window, const Size& size, XVisualInfo info)
         : RasterContext(kBGRA_8888_SkColorType, size),
           m_window{window},
           m_info{info},
@@ -28,12 +28,12 @@ namespace pTK::Platform
         resize(size);
     }
 
-    RasterContext_unix::~RasterContext_unix()
+    RasterContextUnix::~RasterContextUnix()
     {
         delete[] static_cast<uint32_t*>(m_buffer);
     }
 
-    void* RasterContext_unix::onResize(const Size& size)
+    void* RasterContextUnix::onResize(const Size& size)
     {
         if (m_image)
         {
@@ -59,7 +59,7 @@ namespace pTK::Platform
         return m_buffer;
     }
 
-    void RasterContext_unix::swapBuffers()
+    void RasterContextUnix::swapBuffers()
     {
         const auto size{getSize()};
         const auto width = static_cast<unsigned int>(size.width);

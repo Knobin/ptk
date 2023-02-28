@@ -1,5 +1,5 @@
 //
-//  platform/unix/RasterContext_unix.hpp
+//  platform/unix/RasterContextUnix.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-10-17.
@@ -21,31 +21,31 @@ PTK_DISABLE_WARN_END()
 
 namespace pTK::Platform
 {
-    /** RasterContext_unix class implementation.
+    /** RasterContextUnix class implementation.
 
-        Raster Context for the Windows backend.
+        Raster Context for the Unix backend.
     */
-    class PTK_API RasterContext_unix : public RasterContext
+    class PTK_API RasterContextUnix : public RasterContext
     {
     public:
-        /** Deleted constructor for RasterContext_unix
+        /** Deleted constructor for RasterContextUnix
 
         */
-        RasterContext_unix() = delete;
+        RasterContextUnix() = delete;
 
-        /** Constructs RasterContext_unix with default values.
+        /** Constructs RasterContextUnix with values.
 
-            @param window   xwindow pointer
-            @param size     context size
+            @param window   xlib window
+            @param size     size of the context
             @param info     xvisualinfo pointer
-            @return         default initialized RasterContext_unix
+            @return         initialized RasterContextUnix with values
         */
-        RasterContext_unix(::Window window, const Size& size, XVisualInfo info);
+        RasterContextUnix(::Window window, const Size& size, XVisualInfo info);
 
-        /** Destructor for RasterContext_unix.
+        /** Destructor for RasterContextUnix.
 
         */
-        ~RasterContext_unix();
+        ~RasterContextUnix();
 
         /** Function for resizing.
 

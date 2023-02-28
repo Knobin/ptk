@@ -6,19 +6,16 @@
 //
 
 // Local Headers
-#include "ApplicationHandle_unix.hpp"
+#include "ApplicationHandleUnix.hpp"
 #include "../../Log.hpp"
 #include "../../core/Assert.hpp"
-#include "WindowHandle_unix.hpp"
+#include "WindowHandleUnix.hpp"
 
 // pTK Headers
 #include "ptk/Application.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/core/Exception.hpp"
 #include "ptk/events/KeyMap.hpp"
-
-// C++ Headers
-#include <map>
 
 //
 // TODO(knobin): Go through this file and check that Window events are handled properly.
@@ -33,16 +30,16 @@ namespace pTK::Platform
     {
         std::unique_ptr<ApplicationHandle> Make(ApplicationBase* base, std::string_view name)
         {
-            return std::make_unique<ApplicationHandle_unix>(base, name);
+            return std::make_unique<ApplicationHandleUnix>(base, name);
         }
     } // namespace AppFactoryImpl
 
-    Size& WindowLastSize(WindowHandle_unix* handle)
+    Size& WindowLastSize(WindowHandleUnix* handle)
     {
         return handle->m_lastSize;
     }
 
-    Point& WindowLastPos(WindowHandle_unix* handle)
+    Point& WindowLastPos(WindowHandleUnix* handle)
     {
         return handle->m_lastPos;
     }
@@ -61,7 +58,7 @@ namespace pTK::Platform
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ApplicationHandle_unix::ApplicationHandle_unix(ApplicationBase* base, std::string_view)
+    ApplicationHandleUnix::ApplicationHandleUnix(ApplicationBase* base, std::string_view)
         : ApplicationHandle(base)
     {
         XInitThreads();
@@ -73,16 +70,16 @@ namespace pTK::Platform
         s_appData.xim = XOpenIM(s_appData.display, 0, 0, 0);
         s_appData.xic = XCreateIC(s_appData.xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, NULL);
 
-        PTK_INFO("Initialized ApplicationHandle_unix");
+        PTK_INFO("Initialized ApplicationHandleUnix");
     }
 
-    ApplicationHandle_unix::~ApplicationHandle_unix()
+    ApplicationHandleUnix::~ApplicationHandleUnix()
     {
         XCloseDisplay(s_appData.display);
-        PTK_INFO("Destroyed ApplicationHandle_unix");
+        PTK_INFO("Destroyed ApplicationHandleUnix");
     }
 
-    void ApplicationHandle_unix::pollEvents()
+    void ApplicationHandleUnix::pollEvents()
     {
         XPending(s_appData.display);
 
@@ -96,7 +93,7 @@ namespace pTK::Platform
         XFlush(s_appData.display);
     }
 
-    void ApplicationHandle_unix::waitEvents()
+    void ApplicationHandleUnix::waitEvents()
     {
         XEvent event = {};
         XNextEvent(s_appData.display, &event);
@@ -104,7 +101,7 @@ namespace pTK::Platform
         pollEvents();
     }
 
-    void ApplicationHandle_unix::waitEventsTimeout(uint32_t ms)
+    void ApplicationHandleUnix::waitEventsTimeout(uint32_t ms)
     {
         ::Display* display{s_appData.display};
         XEvent event = {};
@@ -141,22 +138,22 @@ namespace pTK::Platform
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Display* ApplicationHandle_unix::Display()
+    Display* ApplicationHandleUnix::Display()
     {
         return s_appData.display;
     }
 
-    XContext ApplicationHandle_unix::Context()
+    XContext ApplicationHandleUnix::Context()
     {
         return s_appData.xcontext;
     }
 
-    ::Window ApplicationHandle_unix::Root()
+    ::Window ApplicationHandleUnix::Root()
     {
         return s_appData.root;
     }
 
-    int ApplicationHandle_unix::Screen()
+    int ApplicationHandleUnix::Screen()
     {
         return s_appData.screen;
     }
@@ -189,11 +186,11 @@ namespace pTK::Platform
         return mods;
     }
 
-    void ApplicationHandle_unix::handleEvent(XEvent* event)
+    void ApplicationHandleUnix::handleEvent(XEvent* event)
     {
         PTK_ASSERT(event, "Undefined XEvent!");
 
-        WindowHandle_unix* handle{nullptr};
+        WindowHandleUnix* handle{nullptr};
         if (XFindContext(s_appData.display, event->xany.window, s_appData.xcontext,
                          reinterpret_cast<XPointer*>(&handle)) != 0)
             return;
@@ -334,4 +331,4 @@ namespace pTK::Platform
                 break;
         }
     }
-} // namespace pTK
+} // namespace pTK::Platform

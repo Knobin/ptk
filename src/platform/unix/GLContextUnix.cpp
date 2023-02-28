@@ -1,15 +1,15 @@
 //
-//  platform/win/WinRasterContext.cpp
+//  platform/win/GLContextUnix.cpp
 //  pTK
 //
-//  Created by Robin Gustafsson on 2020-04-20.
+//  Created by Robin Gustafsson on 2020-12-26.
 //
 
 // Local Headers
-#include "GLContext_unix.hpp"
+#include "GLContextUnix.hpp"
 #include "../../Log.hpp"
 #include "../../core/Assert.hpp"
-#include "ApplicationHandle_unix.hpp"
+#include "ApplicationHandleUnix.hpp"
 
 // pTK Headers
 #include "ptk/core/Exception.hpp"
@@ -74,7 +74,7 @@ static bool isExtensionSupported(const char* extList, const char* extension)
 
 namespace pTK::Platform
 {
-    using App = ApplicationHandle_unix;
+    using App = ApplicationHandleUnix;
 
     static std::pair<GLint, GLint> GLXVersion(Display* display)
     {
@@ -160,7 +160,7 @@ namespace pTK::Platform
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    GLContext_unix::GLContext_unix(::Window window, const Size& size)
+    GLContextUnix::GLContextUnix(::Window window, const Size& size)
         : ContextBase(ContextBackendType::GL, size),
           m_window{window},
           m_context{nullptr},
@@ -232,17 +232,17 @@ namespace pTK::Platform
         resize(size);
     }
 
-    GLContext_unix::~GLContext_unix()
+    GLContextUnix::~GLContextUnix()
     {
         // Apparently, surface needs to be destroyed before context.
         // Otherwise, SkRefCount will give a nice assert.
         m_surface.reset();
         m_context.reset();
 
-        PTK_INFO("Destroyed GLContext_unix");
+        PTK_INFO("Destroyed GLContextUnix");
     }
 
-    void GLContext_unix::resize(const Size& size)
+    void GLContextUnix::resize(const Size& size)
     {
         if (m_context)
         {
@@ -268,18 +268,18 @@ namespace pTK::Platform
             m_surface.reset(surface);
 
             // clear(Color{0xFFFFFFFF});
-            PTK_INFO("Sized GLContext_unix to {}x{}", size.width, size.height);
+            PTK_INFO("Sized GLContextUnix to {}x{}", size.width, size.height);
             setSize(size);
         }
     }
 
-    sk_sp<SkSurface> GLContext_unix::surface() const
+    sk_sp<SkSurface> GLContextUnix::surface() const
     {
         return m_surface;
     }
 
-    void GLContext_unix::swapBuffers()
+    void GLContextUnix::swapBuffers()
     {
         glXSwapBuffers(App::Display(), m_window);
     }
-} // namespace pTK
+} // namespace pTK::Platform

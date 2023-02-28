@@ -39,7 +39,7 @@ namespace pTK::Platform
         */
         GLContextWin(HWND hwnd, const Size& size);
 
-        /** Win32RasterCanvas for GLCanvas.
+        /** Destructor for GLCanvas.
 
         */
         virtual ~GLContextWin();

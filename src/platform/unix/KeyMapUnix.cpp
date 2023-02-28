@@ -59,4 +59,4 @@ namespace pTK::Platform::KeyMapFactoryImpl
         return map;
     }
 
-} // namespace pTK
+} // namespace pTK::Platform::KeyMapFactoryImpl

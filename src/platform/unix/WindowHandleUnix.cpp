@@ -1,15 +1,15 @@
 //
-//  platform/unix/WindowHandle_unix.cpp
+//  platform/unix/WindowHandleUnix.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-10-10.
 //
 
 // Local Headers
-#include "WindowHandle_unix.hpp"
+#include "WindowHandleUnix.hpp"
 #include "../../Log.hpp"
 #include "../../core/Assert.hpp"
-#include "ApplicationHandle_unix.hpp"
+#include "ApplicationHandleUnix.hpp"
 
 // pTK Headers
 #include "ptk/Window.hpp"
@@ -21,14 +21,14 @@
 
 namespace pTK::Platform
 {
-    using App = ApplicationHandle_unix;
+    using App = ApplicationHandleUnix;
 
     namespace WindowHandleFactoryImpl
     {
         std::unique_ptr<WindowHandle> Make(WindowBase* base, const std::string& name, const Size& size,
                                            const WindowInfo& info)
         {
-            return std::make_unique<WindowHandle_unix>(base, name, size, info);
+            return std::make_unique<WindowHandleUnix>(base, name, size, info);
         }
     } // namespace WindowHandleFactoryImpl
 
@@ -57,7 +57,7 @@ namespace pTK::Platform
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    WindowHandle_unix::WindowHandle_unix(WindowBase* base, const std::string& name, const Size& size, const WindowInfo&)
+    WindowHandleUnix::WindowHandleUnix(WindowBase* base, const std::string& name, const Size& size, const WindowInfo&)
         : WindowHandle(base) //, m_lastSize{size}
     {
         ::Window root{App::Root()};
@@ -100,39 +100,39 @@ namespace pTK::Platform
         m_scale = Vec2f{scale / 96.0f, scale / 96.0f};
 
         m_lastPos = getPosition();
-        PTK_INFO("Initialized WindowHandle_unix");
+        PTK_INFO("Initialized WindowHandleUnix");
     }
 
-    WindowHandle_unix::~WindowHandle_unix()
+    WindowHandleUnix::~WindowHandleUnix()
     {
-        PTK_INFO("Destroyed WindowHandle_unix");
+        PTK_INFO("Destroyed WindowHandleUnix");
     }
 
-    bool WindowHandle_unix::close()
+    bool WindowHandleUnix::close()
     {
         XDestroyWindow(App::Display(), m_window);
         m_window = x11::None;
         return true;
     }
 
-    void WindowHandle_unix::show()
+    void WindowHandleUnix::show()
     {
         XMapWindow(App::Display(), m_window);
     }
 
-    void WindowHandle_unix::hide()
+    void WindowHandleUnix::hide()
     {
         XUnmapWindow(App::Display(), m_window);
     }
 
-    bool WindowHandle_unix::isHidden() const
+    bool WindowHandleUnix::isHidden() const
     {
         XWindowAttributes xwa;
         XGetWindowAttributes(App::Display(), m_window, &xwa);
         return !(xwa.map_state == IsViewable);
     }
 
-    bool WindowHandle_unix::setPosHint(const Point& pos)
+    bool WindowHandleUnix::setPosHint(const Point& pos)
     {
         if (pos != getPosition())
         {
@@ -144,18 +144,18 @@ namespace pTK::Platform
         return false;
     }
 
-    Vec2f WindowHandle_unix::getDPIScale() const
+    Vec2f WindowHandleUnix::getDPIScale() const
     {
         return m_scale;
     }
 
-    bool WindowHandle_unix::resize(const Size& size)
+    bool WindowHandleUnix::resize(const Size& size)
     {
         bool status{false};
 
         if (size != getSize())
         {
-            PTK_INFO("bool WindowHandle_unix::resize(const Size& size)");
+            PTK_INFO("bool WindowHandleUnix::resize(const Size& size)");
             const unsigned int width{static_cast<unsigned int>(size.width)};
             const unsigned int height{static_cast<unsigned int>(size.height)};
 
@@ -166,15 +166,15 @@ namespace pTK::Platform
         return status;
     }
 
-    void WindowHandle_unix::setLimits(const Size& min, const Size& max)
+    void WindowHandleUnix::setLimits(const Size& min, const Size& max)
     {
         XSizeHints* hints{XAllocSizeHints()};
         PTK_ASSERT(hints, "Unable to allocate memory for XSizeHints");
         long err;
         XGetWMNormalHints(App::Display(), m_window, hints, &err);
-        PTK_INFO("WindowHandle_unix: Trying to set new Window Limits, min: {}x{} & max: {}x{}", min.width, min.height,
+        PTK_INFO("WindowHandleUnix: Trying to set new Window Limits, min: {}x{} & max: {}x{}", min.width, min.height,
                  max.width, max.height);
-        PTK_INFO("WindowHandle_unix: Current Window Limits: min: {}x{} & max: {}x{}", hints->min_width,
+        PTK_INFO("WindowHandleUnix: Current Window Limits: min: {}x{} & max: {}x{}", hints->min_width,
                  hints->min_height, hints->max_width, hints->max_height);
 
         constexpr int int_max = std::numeric_limits<int>::max();
@@ -186,7 +186,7 @@ namespace pTK::Platform
 
         if (hints->min_width != min_width || hints->min_height != min_height)
         {
-            PTK_INFO("WindowHandle_unix: Setting Min Size: {}x{}", min_width, min_height);
+            PTK_INFO("WindowHandleUnix: Setting Min Size: {}x{}", min_width, min_height);
             hints->flags |= PMinSize;
             hints->min_width = min_width;
             hints->min_height = min_height;
@@ -199,7 +199,7 @@ namespace pTK::Platform
 
         if (hints->max_width != max_width || hints->max_height != max_height)
         {
-            PTK_INFO("WindowHandle_unix: Setting Max Size: {}x{}", max_width, max_height);
+            PTK_INFO("WindowHandleUnix: Setting Max Size: {}x{}", max_width, max_height);
             hints->flags |= PMaxSize;
             hints->max_width = max_width;
             hints->max_height = max_height;
@@ -214,7 +214,7 @@ namespace pTK::Platform
         XFlush(App::Display());
     }
 
-    bool WindowHandle_unix::setTitle(const std::string& name)
+    bool WindowHandleUnix::setTitle(const std::string& name)
     {
         Display* display{App::Display()};
         const Atom utf8_string = XInternAtom(display, "UTF8_STRING", False);
@@ -230,7 +230,7 @@ namespace pTK::Platform
         return true;
     }
 
-    bool WindowHandle_unix::setIcon(int32_t width, int32_t height, uint8_t* pixels)
+    bool WindowHandleUnix::setIcon(int32_t width, int32_t height, uint8_t* pixels)
     {
         Display* display{App::Display()};
         const Atom net_wm_icon = XInternAtom(display, "_NET_WM_ICON", False);
@@ -261,7 +261,7 @@ namespace pTK::Platform
         return true;
     }
 
-    void WindowHandle_unix::notifyEvent()
+    void WindowHandleUnix::notifyEvent()
     {
         // notifyEvent is not thread safe, so m_window can already be destroyed.
         if (m_window != x11::None)
@@ -279,7 +279,7 @@ namespace pTK::Platform
         }
     }
 
-    Point WindowHandle_unix::getPosition() const
+    Point WindowHandleUnix::getPosition() const
     {
         int x{-1}, y{-1};
         ::Window child;
@@ -288,7 +288,7 @@ namespace pTK::Platform
         return Point{static_cast<Point::value_type>(x), static_cast<Point::value_type>(y)};
     }
 
-    Size WindowHandle_unix::getSize() const
+    Size WindowHandleUnix::getSize() const
     {
         XWindowAttributes xwa;
         XGetWindowAttributes(App::Display(), m_window, &xwa);
@@ -296,7 +296,7 @@ namespace pTK::Platform
         return Size{static_cast<Size::value_type>(xwa.width), static_cast<Size::value_type>(xwa.height)};
     }
 
-    bool WindowHandle_unix::minimize()
+    bool WindowHandleUnix::minimize()
     {
         Display* display{App::Display()};
         XIconifyWindow(display, m_window, m_info.screen);
@@ -304,7 +304,7 @@ namespace pTK::Platform
         return true;
     }
 
-    bool WindowHandle_unix::isMinimized() const
+    bool WindowHandleUnix::isMinimized() const
     {
         uint32_t state{WithdrawnState};
         Atom wm_state{XInternAtom(App::Display(), "WM_STATE", False)};
@@ -321,7 +321,7 @@ namespace pTK::Platform
         return state == IconicState;
     }
 
-    bool WindowHandle_unix::restore()
+    bool WindowHandleUnix::restore()
     {
         Display* display{App::Display()};
         XMapWindow(display, m_window);
@@ -329,7 +329,7 @@ namespace pTK::Platform
         return true;
     }
 
-    bool WindowHandle_unix::isFocused() const
+    bool WindowHandleUnix::isFocused() const
     {
         ::Window focusedWindow;
         int focusState;
@@ -338,7 +338,7 @@ namespace pTK::Platform
         return m_window == focusedWindow;
     }
 
-    bool WindowHandle_unix::setScaleHint(const Vec2f& scale)
+    bool WindowHandleUnix::setScaleHint(const Vec2f& scale)
     {
         if (m_scale != scale)
         {
@@ -349,18 +349,18 @@ namespace pTK::Platform
         return true;
     }
 
-    void WindowHandle_unix::invalidate()
+    void WindowHandleUnix::invalidate()
     {
         handlePlatformEvent<PaintEvent>({{0, 0}, getSize()});
     }
 
-    std::size_t WindowHandle_unix::targetRefreshRate() const noexcept
+    std::size_t WindowHandleUnix::targetRefreshRate() const noexcept
     {
         // TODO(knobin): Read Monitor refresh rate here.
         return 60;
     }
 
-    std::pair<unsigned long, unsigned char*> WindowHandle_unix::getWindowProperty(Atom property, Atom type) const
+    std::pair<unsigned long, unsigned char*> WindowHandleUnix::getWindowProperty(Atom property, Atom type) const
     {
         Atom realType;
         int realFormat;
@@ -371,18 +371,18 @@ namespace pTK::Platform
         return data;
     }
 
-    ::Window WindowHandle_unix::xWindow() const
+    ::Window WindowHandleUnix::xWindow() const
     {
         return m_window;
     }
 
-    XVisualInfo WindowHandle_unix::xVisualInfo() const
+    XVisualInfo WindowHandleUnix::xVisualInfo() const
     {
         return m_info;
     }
 
-    Atom WindowHandle_unix::deleteAtom() const
+    Atom WindowHandleUnix::deleteAtom() const
     {
         return m_atomWmDeleteWindow;
     }
-} // namespace pTK
+} // namespace pTK::Platform
