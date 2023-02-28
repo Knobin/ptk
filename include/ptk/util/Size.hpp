@@ -36,6 +36,19 @@ namespace pTK
         static const Size Min;
 
     public:
+        /** Constructs Size from tx and ty.
+
+            Note: tx & ty will be casted to Size::value_type.
+
+            @return    size from tx and sy
+        */
+        template <typename T, typename U>
+        static constexpr Size MakeNarrow(T tx, U ty) noexcept
+        {
+            return {static_cast<Size::value_type>(tx), static_cast<Size::value_type>(ty)};
+        }
+
+    public:
         /** Constructs Size with default values.
 
             @return    default initialized Size

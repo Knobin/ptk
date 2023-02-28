@@ -118,8 +118,8 @@ namespace pTK
         m_handle->resize(size);
 
         auto scale = getDPIScale();
-        const Size scaledSize{static_cast<Size::value_type>(size.width * scale.x),
-                              static_cast<Size::value_type>(size.height * scale.y)};
+        const auto scaledSize{
+            Size::MakeNarrow(static_cast<float>(size.width) * scale.x, static_cast<float>(size.height) * scale.y)};
         if (scaledSize != m_context->getSize())
             m_context->resize(scaledSize);
 
