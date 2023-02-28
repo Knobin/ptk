@@ -1,5 +1,5 @@
 //
-//  src/platform/mac/WindowHandle_mac.hpp
+//  src/platform/mac/WindowHandleMac.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-08-20.
@@ -16,27 +16,27 @@
 
 namespace pTK::Platform
 {
-    /** WindowHandle_mac class implementation.
+    /** WindowHandleMac class implementation.
 
         This class handles the macOS Cocoa Window.
     */
-    class PTK_API WindowHandle_mac : public WindowHandle
+    class PTK_API WindowHandleMac : public WindowHandle
     {
     public:
-        /** Constructs WindowHandle_win with default values.
+        /** Constructs WindowHandleMac with values.
 
-            @param window   pointer to parent Window
+            @param window   valid pointer to window base
             @param name     name of the window
             @param size     size of the window
             @param flags    setup flags for the window
-            @return         default initialized MainWindow_mac
+            @return         initialized WindowHandleMac
         */
-        WindowHandle_mac(WindowBase* base, const std::string& name, const Size& size, const WindowInfo& flags);
+        WindowHandleMac(WindowBase* base, const std::string& name, const Size& size, const WindowInfo& flags);
 
-        /** Destructor for MainWindow_win.
+        /** Destructor for WindowHandleMac.
 
         */
-        virtual ~WindowHandle_mac();
+        virtual ~WindowHandleMac();
 
         /** Function for closing the window.
 

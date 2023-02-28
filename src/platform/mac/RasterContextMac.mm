@@ -1,19 +1,19 @@
 //
-//  src/platform/mac/RasterContext_mac.mm
+//  src/platform/mac/RasterContextMac.mm
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-10-10.
 //
 
 // Local Headers
-#include "RasterContext_mac.hpp"
+#include "RasterContextMac.hpp"
 
 // macOS Headers
 #import <Cocoa/Cocoa.h>
 
 namespace pTK::Platform
 {
-    RasterContext_mac::RasterContext_mac(NSWindow* window, const Size& size)
+    RasterContextMac::RasterContextMac(NSWindow* window, const Size& size)
         : RasterContext(kN32_SkColorType, size),
           m_window{window}
     {
@@ -21,7 +21,7 @@ namespace pTK::Platform
         resize(size);
     }
 
-    RasterContext_mac::~RasterContext_mac()
+    RasterContextMac::~RasterContextMac()
     {
         @autoreleasepool
         {
@@ -31,7 +31,7 @@ namespace pTK::Platform
         }
     }
 
-    void* RasterContext_mac::onResize(const Size& size)
+    void* RasterContextMac::onResize(const Size& size)
     {
         @autoreleasepool
         {
@@ -60,7 +60,7 @@ namespace pTK::Platform
         }
     }
 
-    void RasterContext_mac::swapBuffers()
+    void RasterContextMac::swapBuffers()
     {
         @autoreleasepool
         {

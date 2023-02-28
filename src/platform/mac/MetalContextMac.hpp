@@ -1,5 +1,5 @@
 //
-//  src/platform/mac/MetalContext_mac.hpp
+//  src/platform/mac/MetalContextMac.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-09-12.
@@ -17,6 +17,7 @@ PTK_DISABLE_WARN_BEGIN()
 #include "include/ports/SkCFObject.h"
 PTK_DISABLE_WARN_END()
 
+// macOS Headers
 #import <Metal/Metal.h>
 #import <QuartzCore/CAMetalLayer.h>
 
@@ -24,29 +25,31 @@ PTK_DISABLE_WARN_END()
 
 namespace pTK::Platform
 {
-    /** GLContext_win class implementation.
+    /** MetalContextMac class implementation.
 
-        Context for a hardware based OpenGL Windows backend.
+        Context for a hardware based Metal macOS backend.
         All drawings will be done using the GPU.
     */
-    class PTK_API MetalContext_mac : public ContextBase
+    class PTK_API MetalContextMac : public ContextBase
     {
     public:
-        /** Constructs GLContext_win with default values.
+        /** Constructs MetalContextMac with view and size.
 
-            @return    default initialized GLContext_win
+            @param mainView     valid pointer to main view
+            @param size         size of the context
+            @param scale        scale of the context
+            @return             initialized MetalContextMac with view and size
         */
-        MetalContext_mac(void* mainView, const Size& size, const Vec2f& scale);
+        MetalContextMac(void* mainView, const Size& size, const Vec2f& scale);
 
         /** Win32RasterCanvas for GLCanvas.
 
         */
-        virtual ~MetalContext_mac();
+        virtual ~MetalContextMac();
 
         /** Function for resizing the context.
 
-            @param width   New width of canvas
-            @param width   New height of canvas
+            @param size     new size
         */
         void resize(const Size& size) override;
 
@@ -75,6 +78,6 @@ namespace pTK::Platform
         GrContextOptions m_GrContextOptions;
         mutable GrMTLHandle m_drawableHandle = nil;
     };
-} // namespace pTK
+} // namespace pTK::Platform
 
 #endif // PTK_PLATFORM_MAC_METALCONTEXT_HPP

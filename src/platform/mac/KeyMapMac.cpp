@@ -1,5 +1,5 @@
 //
-//  src/platform/mac/KeyMap_mac.cpp
+//  src/platform/mac/KeyMapMac.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2021-01-19.
@@ -16,6 +16,9 @@ namespace pTK::Platform::KeyMapFactoryImpl
     std::map<int32_t, KeyCode> Make()
     {
         std::map<int32_t, KeyCode> map{};
+
+        // clang-format off
+        
         map[0x31] = Key::Space;
         map[0x1D] = Key::D0; map[0x12] = Key::D1; map[0x13] = Key::D2; map[0x14] = Key::D3;
         map[0x15] = Key::D4; map[0x17] = Key::D5; map[0x16] = Key::D6; map[0x1A] = Key::D7;
@@ -43,7 +46,9 @@ namespace pTK::Platform::KeyMapFactoryImpl
         map[0x3C] = Key::LeftShift; map[0x3E] = Key::LeftControl;
         map[0x3D] = Key::LeftAlt; map[0x36] = Key::LeftSuper;
 
+        // clang-format on
+
         return map;
     }
 
-} // namespace pTK
+} // namespace pTK::Platform::KeyMapFactoryImpl

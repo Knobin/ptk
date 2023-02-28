@@ -1,5 +1,5 @@
 //
-//  src/platform/mac/RasterContext_mac.hpp
+//  src/platform/mac/RasterContextMac.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-10-10.
@@ -21,30 +21,30 @@ PTK_DISABLE_WARN_END()
 
 namespace pTK::Platform
 {
-    /** RasterContext_mac class implementation.
+    /** RasterContextMac class implementation.
 
         Raster Context for the macOS backend.
     */
-    class PTK_API RasterContext_mac : public RasterContext
+    class PTK_API RasterContextMac : public RasterContext
     {
     public:
-        /** Deleted constructor for RasterContext_mac
+        /** Deleted constructor for RasterContextMac
 
         */
-        RasterContext_mac() = delete;
+        RasterContextMac() = delete;
 
-        /** Constructs RasterContext_mac with default values.
+        /** Constructs RasterContextMac with default values.
 
-            @param window   NSWindow pointer
-            @param size     context size
-            @return         default initialized RasterContext_mac
+            @param window   valid pointer to NSWindow
+            @param size     size of the context
+            @return         default initialized RasterContextMac with window and size
         */
-        RasterContext_mac(NSWindow* window, const Size& size);
+        RasterContextMac(NSWindow* window, const Size& size);
 
-        /** Destructor for RasterContext_mac.
+        /** Destructor for RasterContextMac.
 
         */
-        virtual ~RasterContext_mac();
+        virtual ~RasterContextMac();
 
         /** Function for resizing.
 

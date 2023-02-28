@@ -1,12 +1,12 @@
 //
-//  src/platform/mac/ApplicationHandle_mac.hpp
+//  src/platform/mac/ApplicationHandleMac.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-08-21.
 //
 
-#ifndef PTK_PLATFORM_MAC_APPLICATION_HPP
-#define PTK_PLATFORM_MAC_APPLICATION_HPP
+#ifndef PTK_PLATFORM_MAC_APPLICATIONHANDLE_HPP
+#define PTK_PLATFORM_MAC_APPLICATIONHANDLE_HPP
 
 // pTK Headers
 #include "ptk/menu/MenuBar.hpp"
@@ -14,24 +14,26 @@
 
 namespace pTK::Platform
 {
-    /** ApplicationHandle_mac class implementation.
+    /** ApplicationHandleMac class implementation.
 
         Base application implementation for macOS.
         This class will be instantiated when the Application is created.
     */
-    class PTK_API ApplicationHandle_mac : public ApplicationHandle
+    class PTK_API ApplicationHandleMac : public ApplicationHandle
     {
     public:
-        /** Constructs ApplicationHandle_mac with name.
+        /** Constructs ApplicationHandleMac with base and name.
 
-            @return        default initialized ApplicationHandle_mac with name
+            @param base     valid pointer to application base
+            @param name     name of the application
+            @return         default initialized ApplicationHandleMac with base and name
         */
-        ApplicationHandle_mac(ApplicationBase* appBase, std::string_view name);
+        ApplicationHandleMac(ApplicationBase* base, std::string_view name);
 
-        /** Destructor for ApplicationHandle_mac
+        /** Destructor for ApplicationHandleMac
 
         */
-        virtual ~ApplicationHandle_mac();
+        virtual ~ApplicationHandleMac();
 
         /** Function for polling all the window events.
 
@@ -68,4 +70,4 @@ namespace pTK::Platform
     };
 } // namespace pTK::Platform
 
-#endif // PTK_PLATFORM_MAC_APPLICATION_HPP
+#endif // PTK_PLATFORM_MAC_APPLICATIONHANDLE_HPP

@@ -16,9 +16,6 @@
 // Enable Logging
 #ifdef PTK_DEBUG
 
-    // pTK Headers
-    #include "ptk/core/Defines.hpp"
-
     // spdlog Headers
     PTK_DISABLE_WARN_BEGIN()
     #include "spdlog/spdlog.h"

@@ -11,15 +11,15 @@ set(PTK_PLATFORM_CORE_FILES Platform.cpp
     RasterContext.cpp)
 
 # MacOS files
-set(PTK_PLATFORM_FILES_MAC mac/ApplicationHandle_mac.hpp
-    mac/ApplicationHandle_mac.mm
-    mac/WindowHandle_mac.hpp
-    mac/WindowHandle_mac.mm
-    mac/KeyMap_mac.cpp
-    mac/RasterContext_mac.hpp
-    mac/RasterContext_mac.mm
-    mac/ContextFactory_mac.mm)
-set(PTK_PLATFORM_FILES_MAC_METAL mac/MetalContext_mac.hpp mac/MetalContext_mac.mm)
+set(PTK_PLATFORM_FILES_MAC mac/ApplicationHandleMac.hpp
+    mac/ApplicationHandleMac.mm
+    mac/WindowHandleMac.hpp
+    mac/WindowHandleMac.mm
+    mac/KeyMapMac.cpp
+    mac/RasterContextMac.hpp
+    mac/RasterContextMac.mm
+    mac/ContextFactoryMac.mm)
+set(PTK_PLATFORM_FILES_MAC_METAL mac/MetalContextMac.hpp mac/MetalContextMac.mm)
 
 # Windows files
 set(PTK_PLATFORM_FILES_WIN win/ApplicationHandle_win.hpp

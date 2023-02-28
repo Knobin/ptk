@@ -1,5 +1,5 @@
 //
-//  src/platform/mac/ContextFactory_mac.mm
+//  src/platform/mac/ContextFactoryMac.mm
 //  pTK
 //
 //  Created by Robin Gustafsson on 2023-02-11.
@@ -8,12 +8,12 @@
 // Local Headers
 #include "../../Log.hpp"
 #include "../../core/Assert.hpp"
-#include "RasterContext_mac.hpp"
-#include "WindowHandle_mac.hpp"
+#include "RasterContextMac.hpp"
+#include "WindowHandleMac.hpp"
 
 // Include Metal backend.
 #ifdef PTK_METAL
-    #include "MetalContext_mac.hpp"
+    #include "MetalContextMac.hpp"
 #endif
 
 // pTK Headers
@@ -40,7 +40,7 @@ namespace pTK::Platform::ContextFactoryImpl
 
     static NSWindow* GetNSWindow(Window* window)
     {
-        if (auto platformHandle = dynamic_cast<WindowHandle_mac*>(window->platformHandle()))
+        if (auto platformHandle = dynamic_cast<WindowHandleMac*>(window->platformHandle()))
             return static_cast<NSWindow*>(platformHandle->nswindow());
 
         PTK_ASSERT(nullptr, "Window ptr is not of type WindowHandle_mac");
@@ -52,14 +52,14 @@ namespace pTK::Platform::ContextFactoryImpl
         // Software backend is always available.
         // Altough, it is slow on macOS and should be avoided.
         PTK_WARN("Software rendering on macOS is slow and should not be used");
-        return std::make_unique<RasterContext_mac>(GetNSWindow(window), ScaleSize(size, scale));
+        return std::make_unique<RasterContextMac>(GetNSWindow(window), ScaleSize(size, scale));
     }
 
     std::unique_ptr<ContextBase> MakeMetalContext(Window* window, const Size& size, const Vec2f& scale)
     {
 #ifdef PTK_METAL
         auto view = static_cast<void*>([GetNSWindow(window) contentView]);
-        return std::make_unique<MetalContext_mac>(view, ScaleSize(size, scale), scale);
+        return std::make_unique<MetalContextMac>(view, ScaleSize(size, scale), scale);
 #endif
         return nullptr;
     }
@@ -95,4 +95,4 @@ namespace pTK::Platform::ContextFactoryImpl
         return false;
     }
 
-} // namespace pTK::Platform
+} // namespace pTK::Platform::ContextFactoryImpl
