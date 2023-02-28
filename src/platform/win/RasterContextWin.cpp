@@ -1,32 +1,32 @@
 //
-//  platform/win/RasterContext_win.cpp
+//  platform/win/RasterContextWin.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-10-07.
 //
 
 // Local Headers
-#include "RasterContext_win.hpp"
+#include "RasterContextWin.hpp"
 #include "../../Log.hpp"
 
 namespace pTK::Platform
 {
-    RasterContext_win::RasterContext_win(HWND hwnd, const Size& size)
+    RasterContextWin::RasterContextWin(HWND hwnd, const Size& size)
         : RasterContext(kN32_SkColorType, size),
           m_hwnd{hwnd}
     {
         resize(size);
-        PTK_INFO("Initialized RasterContext_win");
+        PTK_INFO("Initialized RasterContextWin");
     }
 
-    RasterContext_win::~RasterContext_win()
+    RasterContextWin::~RasterContextWin()
     {
         if (m_bmpInfo != nullptr)
             std::free(m_bmpInfo);
-        PTK_INFO("Destroyed RasterContext_win");
+        PTK_INFO("Destroyed RasterContextWin");
     }
 
-    void* RasterContext_win::onResize(const Size& nSize)
+    void* RasterContextWin::onResize(const Size& nSize)
     {
         std::free(m_bmpInfo);
         m_bmpInfo = nullptr;
@@ -48,11 +48,11 @@ namespace pTK::Platform
         m_bmpInfo->bmiHeader.biBitCount = 32;
         m_bmpInfo->bmiHeader.biCompression = BI_RGB;
 
-        PTK_INFO("Sized RasterContext_win to {}x{}", width, height);
+        PTK_INFO("Sized RasterContextWin to {}x{}", width, height);
         return m_bmpInfo->bmiColors;
     }
 
-    void RasterContext_win::swapBuffers()
+    void RasterContextWin::swapBuffers()
     {
         const auto size{getSize()};
         const auto width{static_cast<int>(size.width)};

@@ -1,5 +1,5 @@
 //
-//  platform/win/GLContext_win.hpp
+//  platform/win/GLContextWin.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-04-20.
@@ -23,26 +23,26 @@ PTK_DISABLE_WARN_END()
 
 namespace pTK::Platform
 {
-    /** GLContext_win class implementation.
+    /** GLContextWin class implementation.
 
         Context for a hardware based OpenGL Windows backend.
         All drawings will be done using the GPU.
     */
-    class PTK_API GLContext_win : public ContextBase
+    class PTK_API GLContextWin : public ContextBase
     {
     public:
-        /** Constructs GLContext_win with hwnd and size.
+        /** Constructs GLContextWin with hwnd and size.
 
             @param hwnd     win32 window handle
             @param size     size of the context
-            @return         initialized GLContext_win
+            @return         initialized GLContextWin
         */
-        GLContext_win(HWND hwnd, const Size& size);
+        GLContextWin(HWND hwnd, const Size& size);
 
         /** Win32RasterCanvas for GLCanvas.
 
         */
-        virtual ~GLContext_win();
+        virtual ~GLContextWin();
 
         /** Function for resizing the context.
 

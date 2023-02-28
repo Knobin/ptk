@@ -1,5 +1,5 @@
 //
-//  platform/win/ApplicationHandle_win.hpp
+//  platform/win/ApplicationHandleWin.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-04-26.
@@ -13,26 +13,26 @@
 
 namespace pTK::Platform
 {
-    /** ApplicationHandle_win class implementation.
+    /** ApplicationHandleWin class implementation.
 
         Base application implementation for Windows.
         This class will be instantiated when the Application is created.
     */
-    class PTK_API ApplicationHandle_win : public ApplicationHandle
+    class PTK_API ApplicationHandleWin : public ApplicationHandle
     {
     public:
-        /** Constructs ApplicationHandle_win with name.
+        /** Constructs ApplicationHandleWin with name.
 
             @param base     valid pointer to application base
             @param name     name of the application
-            @return         default initialized ApplicationHandle_win with base and name
+            @return         default initialized ApplicationHandleWin with base and name
         */
-        ApplicationHandle_win(ApplicationBase* base, std::string_view name);
+        ApplicationHandleWin(ApplicationBase* base, std::string_view name);
 
-        /** Destructor for ApplicationHandle_win
+        /** Destructor for ApplicationHandleWin
 
         */
-        virtual ~ApplicationHandle_win();
+        virtual ~ApplicationHandleWin();
 
         /** Function for polling all the window events.
 

@@ -1,5 +1,5 @@
 //
-//  platform/win/RasterContext_win.hpp
+//  platform/win/RasterContextWin.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-10-07.
@@ -22,30 +22,30 @@ PTK_DISABLE_WARN_END()
 
 namespace pTK::Platform
 {
-    /** RasterContext_win class implementation.
+    /** RasterContextWin class implementation.
 
         Raster Context for the Windows backend.
     */
-    class PTK_API RasterContext_win : public RasterContext
+    class PTK_API RasterContextWin : public RasterContext
     {
     public:
-        /** Deleted constructor for RasterContext_win
+        /** Deleted constructor for RasterContextWin
 
         */
-        RasterContext_win() = delete;
+        RasterContextWin() = delete;
 
-        /** Constructs RasterContext_win with hwnd and size.
+        /** Constructs RasterContextWin with hwnd and size.
 
             @param hwnd     win32 window handle
             @param size     size of the context
-            @return         initialized RasterContext_win
+            @return         initialized RasterContextWin
         */
-        RasterContext_win(HWND hwnd, const Size& size);
+        RasterContextWin(HWND hwnd, const Size& size);
 
-        /** Destructor for RasterContext_win.
+        /** Destructor for RasterContextWin.
 
         */
-        virtual ~RasterContext_win();
+        virtual ~RasterContextWin();
 
         /** Function for resizing.
 

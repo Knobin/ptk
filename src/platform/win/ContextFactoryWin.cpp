@@ -1,5 +1,5 @@
 //
-//  platform/win/ContextFactory_win.cpp
+//  platform/win/ContextFactoryWin.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2023-02-12.
@@ -8,12 +8,12 @@
 // Local Headers
 #include "../../Log.hpp"
 #include "../../core/Assert.hpp"
-#include "RasterContext_win.hpp"
-#include "WindowHandle_win.hpp"
+#include "RasterContextWin.hpp"
+#include "WindowHandleWin.hpp"
 
 // Include GL backend.
 #ifdef PTK_OPENGL
-    #include "GLContext_win.hpp"
+    #include "GLContextWin.hpp"
 #endif
 
 // pTK Headers
@@ -37,23 +37,23 @@ namespace pTK::Platform::ContextFactoryImpl
 
     static HWND GetHWND(Window* window)
     {
-        if (auto platformHandle = dynamic_cast<WindowHandle_win*>(window->platformHandle()))
+        if (auto platformHandle = dynamic_cast<WindowHandleWin*>(window->platformHandle()))
             return platformHandle->hwnd();
 
-        PTK_ASSERT(nullptr, "Window ptr is not of type WindowHandle_win");
+        PTK_ASSERT(nullptr, "Window ptr is not of type WindowHandleWin");
         return nullptr;
     }
 
     std::unique_ptr<ContextBase> MakeRasterContext(Window* window, const Size& size, const Vec2f& scale)
     {
         // Software backend is always available.
-        return std::make_unique<RasterContext_win>(GetHWND(window), ScaleSize(size, scale));
+        return std::make_unique<RasterContextWin>(GetHWND(window), ScaleSize(size, scale));
     }
 
     std::unique_ptr<ContextBase> MakeGLContext(Window* window, const Size& size, const Vec2f& scale)
     {
 #ifdef PTK_OPENGL
-        return std::make_unique<GLContext_win>(GetHWND(window), ScaleSize(size, scale));
+        return std::make_unique<GLContextWin>(GetHWND(window), ScaleSize(size, scale));
 #else
         return nullptr;
 #endif

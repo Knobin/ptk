@@ -1,5 +1,5 @@
 //
-//  platform/win/KeyMap_win.cpp
+//  platform/win/KeyMapWin.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2021-01-18.
@@ -52,4 +52,4 @@ namespace pTK::Platform::KeyMapFactoryImpl
 
         return map;
     }
-} // namespace pTK
+} // namespace pTK::Platform::KeyMapFactoryImpl

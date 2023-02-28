@@ -1,12 +1,12 @@
 //
-//  platform/win/MenuBarUtil_win.cpp
+//  platform/win/MenuBarUtilWin.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2021-01-16.
 //
 
 // Local Headers
-#include "MenuBarUtil_win.hpp"
+#include "MenuBarUtilWin.hpp"
 #include "../../Log.hpp"
 
 // pTK Headers
@@ -16,7 +16,7 @@
 // C++ Headers
 #include <array>
 
-namespace pTK::Platform::MenuBarUtil_win
+namespace pTK::Platform::MenuBarUtilWin
 {
     void SetNamedOrCheckboxItem(HMENU hmenu, MenuMap& menus, const Ref<MenuItem>& item, uint32_t menuId,
                                 std::vector<ACCEL>& keys, bool isCheckbox)
@@ -25,25 +25,25 @@ namespace pTK::Platform::MenuBarUtil_win
         if (!nItem)
             return;
 
-        uint32_t id = MenuBarUtil_win::InsertMenuItemToMap(menus, item, menuId, false, nullptr);
+        uint32_t id = MenuBarUtilWin::InsertMenuItemToMap(menus, item, menuId, false, nullptr);
         std::string menuStr{nItem->name()};
 
-        if (auto accelData = MenuBarUtil_win::GetShortcutACCEL(nItem->shortcut()))
+        if (auto accelData = MenuBarUtilWin::GetShortcutACCEL(nItem->shortcut()))
         {
             accelData->first.cmd = static_cast<WORD>(id);
             keys.push_back(accelData->first);
             menuStr += "\t" + accelData->second;
         }
 
-        UINT statusFlag = MenuBarUtil_win::MenuItemStatusToFlag(nItem->status());
+        UINT statusFlag = MenuBarUtilWin::MenuItemStatusToFlag(nItem->status());
         if (isCheckbox)
         {
             nItem->onUpdate("Win32::Update", [nItem, id, hmenu]() {
                 UINT checked = (nItem->status() == MenuItemStatus::Checked) ? MF_CHECKED : MF_UNCHECKED;
-                UINT statusFlag = MenuBarUtil_win::MenuItemStatusToFlag(nItem->status());
+                UINT statusFlag = MenuBarUtilWin::MenuItemStatusToFlag(nItem->status());
                 // CheckMenuItem(m_parent, m_id, MF_BYCOMMAND | checked | statusFlag);
                 const std::string str =
-                    nItem->name() + "\t" + MenuBarUtil_win::TranslateKeyCodesToShortcutStr(nItem->shortcut());
+                    nItem->name() + "\t" + MenuBarUtilWin::TranslateKeyCodesToShortcutStr(nItem->shortcut());
                 ModifyMenu(hmenu, id, MF_BYCOMMAND | MF_STRING | checked | statusFlag, id, str.c_str());
                 PTK_INFO("Win32::Update, id {}", id);
             });
@@ -53,9 +53,9 @@ namespace pTK::Platform::MenuBarUtil_win
         else
         {
             nItem->onUpdate("Win32::Update", [nItem, id, hmenu]() {
-                UINT statusFlag = MenuBarUtil_win::MenuItemStatusToFlag(nItem->status());
+                UINT statusFlag = MenuBarUtilWin::MenuItemStatusToFlag(nItem->status());
                 const std::string str =
-                    nItem->name() + "\t" + MenuBarUtil_win::TranslateKeyCodesToShortcutStr(nItem->shortcut());
+                    nItem->name() + "\t" + MenuBarUtilWin::TranslateKeyCodesToShortcutStr(nItem->shortcut());
                 ModifyMenu(hmenu, id, MF_BYCOMMAND | MF_STRING | statusFlag, id, str.c_str());
                 PTK_INFO("Win32::Update, id {}", id);
             });
@@ -69,7 +69,7 @@ namespace pTK::Platform::MenuBarUtil_win
     {
         HMENU currentMenu = ::CreateMenu();
         AppendMenu(parent, MF_POPUP, reinterpret_cast<UINT_PTR>(currentMenu), menu->name().c_str());
-        uint32_t currentMenuId = MenuBarUtil_win::InsertMenuItemToMap(menus, menu, parentId, true, currentMenu);
+        uint32_t currentMenuId = MenuBarUtilWin::InsertMenuItemToMap(menus, menu, parentId, true, currentMenu);
 
         for (auto menuItemIt{menu->cbegin()}; menuItemIt != menu->cend(); ++menuItemIt)
         {
@@ -88,7 +88,7 @@ namespace pTK::Platform::MenuBarUtil_win
                 case MenuItemType::Separator:
                 {
                     uint32_t id =
-                        MenuBarUtil_win::InsertMenuItemToMap(menus, *menuItemIt, currentMenuId, false, nullptr);
+                        MenuBarUtilWin::InsertMenuItemToMap(menus, *menuItemIt, currentMenuId, false, nullptr);
                     InsertMenu(currentMenu, id, MF_SEPARATOR | MF_BYPOSITION, 0, nullptr);
                     // TODO: Check if separator is enabled and add a callback as well.
                     break;
@@ -221,4 +221,4 @@ namespace pTK::Platform::MenuBarUtil_win
         return str + (!str.empty() ? "+" : "") + key;
     }
 
-} // namespace pTK::MenuBarUtil_win
+} // namespace pTK::Platform::MenuBarUtilWin

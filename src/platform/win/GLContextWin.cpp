@@ -1,12 +1,12 @@
 //
-//  platform/win/GLContext_win.cpp
+//  platform/win/GLContextWin.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-04-20.
 //
 
 // Local Headers
-#include "GLContext_win.hpp"
+#include "GLContextWin.hpp"
 #include "../../Log.hpp"
 #include "../../core/Assert.hpp"
 
@@ -26,7 +26,7 @@ PTK_DISABLE_WARN_END()
 
 namespace pTK::Platform
 {
-    GLContext_win::GLContext_win(HWND hwnd, const Size& size)
+    GLContextWin::GLContextWin(HWND hwnd, const Size& size)
         : ContextBase(ContextBackendType::GL, size),
           m_hwnd{hwnd},
           m_hglrc{},
@@ -36,16 +36,16 @@ namespace pTK::Platform
           m_props{0, kRGB_H_SkPixelGeometry}
     {
         createContext(size);
-        PTK_INFO("Initialized GLContext_win");
+        PTK_INFO("Initialized GLContextWin");
     }
 
-    GLContext_win::~GLContext_win()
+    GLContextWin::~GLContextWin()
     {
         destroyContext();
-        PTK_INFO("Destroyed GLContext_win");
+        PTK_INFO("Destroyed GLContextWin");
     }
 
-    void GLContext_win::resize(const Size& size)
+    void GLContextWin::resize(const Size& size)
     {
         if (m_context && m_backendContext)
         {
@@ -67,22 +67,22 @@ namespace pTK::Platform
 
             // clear(Color{0xFFFFFFFF});
             setSize(size);
-            PTK_INFO("Sized GLContext_win to {}x{}", size.width, size.height);
+            PTK_INFO("Sized GLContextWin to {}x{}", size.width, size.height);
         }
 #ifdef PTK_DEBUG
         else
         {
-            PTK_ASSERT(false, "Failed to resize GLContext_win, context is nullptr!");
+            PTK_ASSERT(false, "Failed to resize GLContextWin, context is nullptr!");
         }
 #endif
     }
 
-    sk_sp<SkSurface> GLContext_win::surface() const
+    sk_sp<SkSurface> GLContextWin::surface() const
     {
         return m_surface;
     }
 
-    void GLContext_win::swapBuffers()
+    void GLContextWin::swapBuffers()
     {
         // PTK_INFO("swapBuffers");
         HDC dc = GetDC((HWND)m_hwnd);
@@ -90,7 +90,7 @@ namespace pTK::Platform
         ReleaseDC((HWND)m_hwnd, dc);
     }
 
-    void GLContext_win::createContext(const Size& size)
+    void GLContextWin::createContext(const Size& size)
     {
         HDC dc{GetDC(m_hwnd)};
         m_hglrc = SkCreateWGLContext(dc, 1, false, kGLPreferCompatibilityProfile_SkWGLContextRequest);
@@ -141,7 +141,7 @@ namespace pTK::Platform
 #endif
     }
 
-    void GLContext_win::destroyContext()
+    void GLContextWin::destroyContext()
     {
         m_surface.reset(nullptr);
         if (m_context)
@@ -155,4 +155,4 @@ namespace pTK::Platform
         wglDeleteContext(m_hglrc);
         m_hglrc = nullptr;
     }
-} // namespace pTK
+} // namespace pTK::Platform

@@ -1,5 +1,5 @@
 //
-//  platform/win/WindowHandle_win.hpp
+//  platform/win/WindowHandleWin.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-02-07.
@@ -9,7 +9,7 @@
 #define PTK_PlATFORM_WIN_WINDOWHANDLE_HPP
 
 // Local Headers
-#include "MenuBarUtil_win.hpp"
+#include "MenuBarUtilWin.hpp"
 
 // pTK Headers
 #include "ptk/platform/WindowHandle.hpp"
@@ -20,27 +20,27 @@
 
 namespace pTK::Platform
 {
-    /** WindowHandle_win class implementation.
+    /** WindowHandleWin class implementation.
 
         This class handles the win32 Window.
     */
-    class PTK_API WindowHandle_win : public WindowHandle
+    class PTK_API WindowHandleWin : public WindowHandle
     {
     public:
-        /** Constructs WindowHandle_win with values.
+        /** Constructs WindowHandleWin with values.
 
             @param base     valid pointer to window base
             @param name     name of the window
             @param size     size of the window
             @param flags    initial window settings
-            @return         initialized WindowHandle_win
+            @return         initialized WindowHandleWin with values
         */
-        WindowHandle_win(WindowBase* base, const std::string& name, const Size& size, const WindowInfo& flags);
+        WindowHandleWin(WindowBase* base, const std::string& name, const Size& size, const WindowInfo& flags);
 
-        /** Destructor for WindowHandle_win.
+        /** Destructor for WindowHandleWin.
 
         */
-        virtual ~WindowHandle_win();
+        virtual ~WindowHandleWin();
 
         /** Function for closing the window.
 
@@ -200,10 +200,10 @@ namespace pTK::Platform
         // Data struct that the static Win32 functions can manipulate freely.
         struct Data
         {
-            WindowHandle_win* window{nullptr};
+            WindowHandleWin* window{nullptr};
             bool minimized{false};
             uint32_t wait{0};
-            MenuBarUtil_win::MenuMap menuItems{};
+            MenuBarUtilWin::MenuMap menuItems{};
             bool ignoreSize{false};
             bool hasMenu{false};
             DWORD style{WS_OVERLAPPEDWINDOW};

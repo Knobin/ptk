@@ -1,14 +1,14 @@
 //
-//  platform/win/ApplicationHandle_win.cpp
+//  platform/win/ApplicationHandleWin.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2020-04-26.
 //
 
 // Local Headers
-#include "ApplicationHandle_win.hpp"
+#include "ApplicationHandleWin.hpp"
 #include "../../Log.hpp"
-#include "WindowHandle_win.hpp"
+#include "WindowHandleWin.hpp"
 
 // pTK Headers
 #include "ptk/Application.hpp"
@@ -20,7 +20,7 @@ namespace pTK::Platform
     {
         std::unique_ptr<ApplicationHandle> Make(ApplicationBase* base, std::string_view name)
         {
-            return std::make_unique<ApplicationHandle_win>(base, name);
+            return std::make_unique<ApplicationHandleWin>(base, name);
         }
     } // namespace AppFactoryImpl
 
@@ -30,7 +30,7 @@ namespace pTK::Platform
         wcx.cbSize = sizeof(wcx);
         wcx.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
         wcx.hInstance = ::GetModuleHandleW(nullptr);
-        wcx.lpfnWndProc = WindowHandle_win::WndPro;
+        wcx.lpfnWndProc = WindowHandleWin::WndPro;
         wcx.cbClsExtra = 0;
         wcx.cbWndExtra = 0;
         wcx.lpszMenuName = nullptr;
@@ -41,17 +41,17 @@ namespace pTK::Platform
         return ::RegisterClassExW(&wcx) != 0;
     }
 
-    // Internal map for keeping WindowHandle_win pointers.
+    // Internal map for keeping WindowHandleWin pointers.
     // By doing this we can skip the dynamic_cast step in pollEvents().
     // It is a vector because it should be faster to traverse (no random pointers).
     // Since Windows also can be removed when in the loop, the iterator can be invalidated...
     // Might look into this later since Windows and the App is supposed to run on the same
     // thread, it works and is acceptable behaviour for now.
-    static std::vector<std::pair<int32_t, WindowHandle_win*>> s_windows{};
-    static std::vector<std::pair<int32_t, WindowHandle_win*>>::iterator s_windowIter{};
+    static std::vector<std::pair<int32_t, WindowHandleWin*>> s_windows{};
+    static std::vector<std::pair<int32_t, WindowHandleWin*>>::iterator s_windowIter{};
     static bool s_erased{false};
 
-    ApplicationHandle_win::ApplicationHandle_win(ApplicationBase* base, std::string_view)
+    ApplicationHandleWin::ApplicationHandleWin(ApplicationBase* base, std::string_view)
         : ApplicationHandle(base)
     {
         ::SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
@@ -59,17 +59,17 @@ namespace pTK::Platform
         if (!RegisterWndClass())
             throw PlatformError("Failed to register class!");
 
-        PTK_INFO("Initialized ApplicationHandle_win");
+        PTK_INFO("Initialized ApplicationHandleWin");
     }
 
-    ApplicationHandle_win::~ApplicationHandle_win()
+    ApplicationHandleWin::~ApplicationHandleWin()
     {
         ::UnregisterClassW(L"PTK", GetModuleHandleW(nullptr));
 
-        PTK_INFO("Destroyed ApplicationHandle_win");
+        PTK_INFO("Destroyed ApplicationHandleWin");
     }
 
-    void ApplicationHandle_win::pollEvents()
+    void ApplicationHandleWin::pollEvents()
     {
         MSG msg{};
         while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -77,7 +77,7 @@ namespace pTK::Platform
             s_windowIter = s_windows.begin();
             for (auto it = s_windowIter; it != s_windows.end();)
             {
-                WindowHandle_win* window = it->second;
+                WindowHandleWin* window = it->second;
                 if (HACCEL accel = window->accelTable())
                 {
                     if (TranslateAccelerator(window->hwnd(), accel, &msg))
@@ -105,19 +105,19 @@ namespace pTK::Platform
         }
     }
 
-    void ApplicationHandle_win::waitEvents()
+    void ApplicationHandleWin::waitEvents()
     {
         WaitMessage();
         pollEvents();
     }
 
-    void ApplicationHandle_win::waitEventsTimeout(uint32_t ms)
+    void ApplicationHandleWin::waitEventsTimeout(uint32_t ms)
     {
         MsgWaitForMultipleObjects(0, nullptr, FALSE, static_cast<DWORD>(ms), QS_ALLEVENTS);
         pollEvents();
     }
 
-    std::wstring ApplicationHandle_win::stringToUTF16(const std::string& str)
+    std::wstring ApplicationHandleWin::stringToUTF16(const std::string& str)
     {
         if (str.empty())
             return {};
@@ -127,17 +127,17 @@ namespace pTK::Platform
         return res;
     }
 
-    void ApplicationHandle_win::onWindowAdd(int32_t key, Window* window)
+    void ApplicationHandleWin::onWindowAdd(int32_t key, Window* window)
     {
-        if (auto handle = dynamic_cast<WindowHandle_win*>(window->platformHandle()))
+        if (auto handle = dynamic_cast<WindowHandleWin*>(window->platformHandle()))
             s_windows.emplace_back(key, handle);
     }
 
-    void ApplicationHandle_win::onWindowRemove(int32_t key, Window* window)
+    void ApplicationHandleWin::onWindowRemove(int32_t key, Window* window)
     {
         auto it = std::find_if(s_windows.begin(), s_windows.end(), [key, window](const auto& pair) {
             const auto handle = window->platformHandle();
-            return pair.first == key || pair.second == static_cast<WindowHandle_win*>(handle);
+            return pair.first == key || pair.second == static_cast<WindowHandleWin*>(handle);
         });
         if (it != s_windows.end())
         {
@@ -145,4 +145,4 @@ namespace pTK::Platform
             s_erased = true;
         }
     }
-} // namespace pTK
+} // namespace pTK::Platform
