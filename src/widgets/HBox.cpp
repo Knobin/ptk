@@ -7,6 +7,7 @@
 
 // pTK Headers
 #include "ptk/widgets/HBox.hpp"
+#include "ptk/util/Math.hpp"
 
 // C++ Headers
 #include <limits>
@@ -279,7 +280,7 @@ namespace pTK
 
         // Offset position.
         // Maybe remove "AddWithoutOverflow" since it is highly unlikely that it overflows int32.
-        posy = AddWithoutOverflow(posy, static_cast<Point::value_type>(child->getMargin().top));
+        posy = Math::AddWithoutOverflow(posy, static_cast<Point::value_type>(child->getMargin().top));
 
         return posy;
     }
@@ -293,7 +294,7 @@ namespace pTK
             const Size minSize{(*it)->calcOuterFromSize(limits.min)};
 
             contMinSize.height = (minSize.height > contMinSize.height) ? minSize.height : contMinSize.height;
-            contMinSize.width = AddWithoutOverflow(contMinSize.width, minSize.width);
+            contMinSize.width = Math::AddWithoutOverflow(contMinSize.width, minSize.width);
         }
 
         return calcOuterFromSize(contMinSize);
@@ -308,7 +309,7 @@ namespace pTK
             const Size maxSize{(*it)->calcOuterFromSize(limits.max)};
 
             contMaxSize.height = (maxSize.height > contMaxSize.height) ? maxSize.height : contMaxSize.height;
-            contMaxSize.width = AddWithoutOverflow(contMaxSize.width, maxSize.width);
+            contMaxSize.width = Math::AddWithoutOverflow(contMaxSize.width, maxSize.width);
         }
 
         return calcOuterFromSize(contMaxSize);

@@ -9,10 +9,10 @@
 #define PTK_CORE_TEXT_HPP
 
 // pTK Headers
-#include "ptk/Core.hpp"
 #include "ptk/core/Drawable.hpp"
 #include "ptk/util/Color.hpp"
 #include "ptk/util/Size.hpp"
+#include "ptk/util/Vec2.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()

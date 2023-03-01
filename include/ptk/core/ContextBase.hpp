@@ -9,7 +9,7 @@
 #define PTK_CORE_CONTEXTBASE_HPP
 
 // pTK Headers
-#include "ptk/Core.hpp"
+#include "ptk/core/Defines.hpp"
 #include "ptk/util/Color.hpp"
 #include "ptk/util/Point.hpp"
 #include "ptk/util/SingleObject.hpp"

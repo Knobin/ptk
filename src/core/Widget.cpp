@@ -7,6 +7,7 @@
 
 // pTK Headers
 #include "ptk/core/Widget.hpp"
+#include "ptk/util/Math.hpp"
 
 namespace pTK
 {
@@ -109,10 +110,10 @@ namespace pTK
     Size Widget::calcOuterFromSize(const Size& size) const
     {
         const Margin margin{getMargin()};
-        const Margin::value_type hMargin{AddWithoutOverflow(margin.left, margin.right)};
-        const Margin::value_type vMargin{AddWithoutOverflow(margin.top, margin.bottom)};
+        const Margin::value_type hMargin{Math::AddWithoutOverflow(margin.left, margin.right)};
+        const Margin::value_type vMargin{Math::AddWithoutOverflow(margin.top, margin.bottom)};
 
-        return {AddWithoutOverflow(size.width, hMargin), AddWithoutOverflow(size.height, vMargin)};
+        return {Math::AddWithoutOverflow(size.width, hMargin), Math::AddWithoutOverflow(size.height, vMargin)};
     }
 
     SizePolicy Widget::getSizePolicy() const noexcept

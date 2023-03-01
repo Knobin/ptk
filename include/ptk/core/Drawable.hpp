@@ -9,7 +9,7 @@
 #define PTK_CORE_DRAWABLE_HPP
 
 // pTK Headers
-#include "ptk/Core.hpp"
+#include "ptk/core/Defines.hpp"
 
 // Forward declarations
 class SkCanvas;

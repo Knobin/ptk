@@ -8,9 +8,6 @@
 #ifndef PTK_KEYCODES_HPP
 #define PTK_KEYCODES_HPP
 
-// pTK Headers
-#include "ptk/Core.hpp"
-
 // C++ Header
 #include <cstdint>
 

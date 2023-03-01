@@ -9,9 +9,8 @@
 #include "../core/Assert.hpp"
 
 // pTK Headers
-#include "ptk/widgets/Button.hpp"
-#include "ptk/Core.hpp"
 #include "ptk/util/Math.hpp"
+#include "ptk/widgets/Button.hpp"
 
 namespace pTK
 {
@@ -299,8 +298,10 @@ namespace pTK
         Vec2f textBounds{m_text->getBoundsFromStr(getText())};
         textBounds.y += 2.0f * static_cast<float>(m_borderSize);
         textBounds.x += 2.0f * static_cast<float>(m_borderSize);
+        textBounds.x = Math::ceilf(textBounds.x);
+        textBounds.y = Math::ceilf(textBounds.y);
 
-        const Size sizeBounds = Vec2ToSize(textBounds, Math::ceilf);
+        const Size sizeBounds{Size::MakeNarrow(textBounds.x, textBounds.y)};
         setMinSize(sizeBounds);
 
         Size cSize{getSize()};

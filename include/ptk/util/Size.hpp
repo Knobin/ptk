@@ -38,14 +38,31 @@ namespace pTK
     public:
         /** Constructs Size from tx and ty.
 
-            Note: tx & ty will be casted to Size::value_type.
+            Note: w & h will be casted to Size::value_type.
 
-            @return    size from tx and sy
+            @param w    width
+            @param h    height
+            @return     size from w and h
         */
         template <typename T, typename U>
-        static constexpr Size MakeNarrow(T tx, U ty) noexcept
+        static constexpr Size MakeNarrow(T w, U h) noexcept
         {
-            return {static_cast<Size::value_type>(tx), static_cast<Size::value_type>(ty)};
+            return {static_cast<value_type>(w), static_cast<value_type>(h)};
+        }
+
+        /** Constructs Size from tx and ty.
+
+            @param w        width
+            @param h        height
+            @param x        width scaling factor
+            @param h        height scaling factor
+            @param func     rounding function to use
+            @return     size from w and h scaled with x and y
+        */
+        template <typename T, typename U, typename Rounding>
+        constexpr Size MakeScaled(value_type w, value_type h, T x, U y, Rounding func) noexcept
+        {
+            return {static_cast<value_type>(func(w * x)), static_cast<value_type>(func(h * y))};
         }
 
     public:

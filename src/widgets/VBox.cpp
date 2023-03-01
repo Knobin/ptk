@@ -7,6 +7,7 @@
 
 // pTK Headers
 #include "ptk/widgets/VBox.hpp"
+#include "ptk/util/Math.hpp"
 
 // C++ Headers
 #include <cmath>
@@ -279,7 +280,7 @@ namespace pTK
 
         // Offset position.
         // Maybe remove "AddWithoutOverflow" since it is highly unlikely that it overflows int32.
-        posx = AddWithoutOverflow(posx, static_cast<Point::value_type>(child->getMargin().left));
+        posx = Math::AddWithoutOverflow(posx, static_cast<Point::value_type>(child->getMargin().left));
 
         return posx;
     }
@@ -292,7 +293,7 @@ namespace pTK
             const Limits limits{(*it)->getLimitsWithSizePolicy()};
             const Size minSize{(*it)->calcOuterFromSize(limits.min)};
 
-            contMinSize.height = AddWithoutOverflow(contMinSize.height, minSize.height);
+            contMinSize.height = Math::AddWithoutOverflow(contMinSize.height, minSize.height);
             contMinSize.width = (minSize.width > contMinSize.width) ? minSize.width : contMinSize.width;
         }
 
@@ -307,7 +308,7 @@ namespace pTK
             const Limits limits{(*it)->getLimitsWithSizePolicy()};
             const Size maxSize{(*it)->calcOuterFromSize(limits.max)};
 
-            contMaxSize.height = AddWithoutOverflow(contMaxSize.height, maxSize.height);
+            contMaxSize.height = Math::AddWithoutOverflow(contMaxSize.height, maxSize.height);
             contMaxSize.width = (maxSize.width > contMaxSize.width) ? maxSize.width : contMaxSize.width;
         }
 

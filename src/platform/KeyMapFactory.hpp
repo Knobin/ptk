@@ -9,6 +9,7 @@
 #define PTK_PLATFORM_KEYMAPINIT_HPP
 
 // pTK Headers
+#include "ptk/core/Defines.hpp"
 #include "ptk/events/KeyCodes.hpp"
 
 // C++ Headers

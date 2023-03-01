@@ -9,7 +9,7 @@
 #define PTK_CORE_WINDOWBASE_HPP
 
 // pTK Headers
-#include "ptk/Core.hpp"
+#include "ptk/core/Defines.hpp"
 #include "ptk/core/Event.hpp"
 #include "ptk/core/WindowInfo.hpp"
 #include "ptk/widgets/VBox.hpp"

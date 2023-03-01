@@ -9,6 +9,7 @@
 #define PTK_MENU_MENUITEM_HPP
 
 // pTK Headers
+#include "ptk/core/Defines.hpp"
 #include "ptk/events/KeyCodes.hpp"
 #include "ptk/menu/MenuItemType.hpp"
 

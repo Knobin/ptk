@@ -9,8 +9,9 @@
 #include "../core/Assert.hpp"
 
 // pTK Headers
-#include "ptk/core/WidgetContainer.hpp"
 #include "ptk/core/ContextBase.hpp"
+#include "ptk/core/WidgetContainer.hpp"
+#include "ptk/util/Math.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
@@ -84,8 +85,8 @@ namespace pTK
 
             const Point startPos{item->getPosition()};
             const Size wSize{item->getSize()};
-            const Point endPos{AddWithoutOverflow(startPos.x, static_cast<Point::value_type>(wSize.width)),
-                               AddWithoutOverflow(startPos.y, static_cast<Point::value_type>(wSize.height))};
+            const Point endPos{Math::AddWithoutOverflow(startPos.x, static_cast<Point::value_type>(wSize.width)),
+                               Math::AddWithoutOverflow(startPos.y, static_cast<Point::value_type>(wSize.height))};
 
             if ((startPos.x <= pos.x) && (endPos.x >= pos.x))
                 if ((startPos.y <= pos.y) && (endPos.y >= pos.y))
