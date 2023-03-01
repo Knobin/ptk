@@ -8,9 +8,6 @@
 #ifndef PTK_MENU_MENUITEMTYPE_HPP
 #define PTK_MENU_MENUITEMTYPE_HPP
 
-// pTK Headers
-#include "ptk/Log.hpp"
-
 // C++ Headers
 #include <cstdint>
 #include <string_view>
@@ -54,7 +51,6 @@ namespace pTK
         }
 
         // All paths are covered, but MSVC complains anyways.
-        PTK_ASSERT(false, "");
         return "";
     }
 

@@ -5,9 +5,13 @@
 //  Created by Robin Gustafsson on 2020-03-04.
 //
 
+// Local Headers
+#include "Log.hpp"
+
 // pTK Headers
-#include "ptk/Window.hpp"
 #include "ptk/Application.hpp"
+#include "ptk/Window.hpp"
+#include "ptk/platform/ContextFactory.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
@@ -17,14 +21,32 @@ PTK_DISABLE_WARN_END()
 namespace pTK
 {
     Window::Window(const std::string& name, const Size& size, const WindowInfo& flags)
-        : PTK_WINDOW_HANDLE_T(name, size, flags),
+        : WindowBase(),
           SingleObject(),
           m_threadID{std::this_thread::get_id()}
     {
+        // Create handle and context for platform.
+        m_handle = Platform::WindowHandle::Make(this, name, size, flags);
+
+        PTK_INFO("ContextBackendType Available:");
+        PTK_INFO("\tRaster: {}", (Platform::ContextFactory::IsAvailable(ContextBackendType::Raster)) ? "Yes" : "No");
+        PTK_INFO("\tGL:     {}", (Platform::ContextFactory::IsAvailable(ContextBackendType::GL)) ? "Yes" : "No");
+        PTK_INFO("\tMetal:  {}", (Platform::ContextFactory::IsAvailable(ContextBackendType::Metal)) ? "Yes" : "No");
+
+        m_context = Platform::ContextFactory::Make(this, size, getDPIScale(), flags);
+
+        // Size policy.
+        setSizePolicy(flags.sizePolicy);
+        updateSize(size);
+
         // Set Widget properties.
         setName(name);
 
-        // m_handle = std::make_unique<PTK_WINDOW_HANDLE_T>(this, name, size, flags);
+        // Show/Hide Window depending on flag.
+        // Window should be created hidden by default!
+        if (flags.visibility == WindowInfo::Visibility::Windowed)
+            m_handle->show();
+
         PTK_INFO("Initialized Window");
     }
 
@@ -34,49 +56,28 @@ namespace pTK
         if (auto app = Application::Get())
             app->removeWindow(this);
 
+        m_context.reset();
+        m_handle.reset();
+
         PTK_INFO("Destroyed Window");
     }
 
     void Window::onChildDraw([[maybe_unused]] size_type index)
     {
-        // onChildDraw is not a thread safe function...
-        postEvent<PaintEvent>(Point{0, 0}, getSize());
+        invalidate();
     }
 
-    void Window::handleEvents()
+    void Window::runCommands()
     {
-        m_eventQueue.lock();
-        std::size_t eventCount{m_eventQueue.size()};
-        m_eventQueue.unlock();
+        // Switch buffer.
+        const std::size_t currentIndex = m_activeCmdBufferIndex;
+        if (m_activeCmdBufferIndex == 0)
+            m_activeCmdBufferIndex = 1;
+        else
+            m_activeCmdBufferIndex = 0;
 
-        while (eventCount > 0)
-        {
-            m_eventQueue.lock();
-            std::unique_ptr<Event> event = std::move(m_eventQueue.front());
-            m_eventQueue.pop();
-            m_eventQueue.unlock();
-
-            handleEvent(event.get());
-
-            --eventCount;
-            if (eventCount == 0)
-            {
-                m_eventQueue.lock();
-                eventCount = m_eventQueue.size();
-                m_eventQueue.unlock();
-            }
-        }
-
-        if (m_draw && !m_close)
-        {
-            paint();
-            m_draw = false;
-        }
-    }
-
-    void Window::sendEvent(Event* event)
-    {
-        handleEvent(event);
+        // Run commands.
+        m_commandBuffers[currentIndex].batchInvoke();
     }
 
     bool Window::shouldClose() const
@@ -84,193 +85,155 @@ namespace pTK
         return m_close;
     }
 
-    void Window::onSizeChange(const Size& size)
+    void Window::invalidate()
     {
-        resize(size);
-        refitContent(size);
-
-        paint();
-        // postEvent<PaintEvent>(Point{0, 0}, getSize());
+        if (!m_contentInvalidated)
+        {
+            // Check time since last draw here.
+            m_contentInvalidated = true;
+            m_handle->notifyEvent();
+        }
     }
 
-    /*void Window::onLimitChange(const Size& min, const Size& max)
+    bool Window::drawContent()
     {
-        setLimits(min, max);
-        // m_handle.setLimits(min, max);
-        // setLimits(min, max);
-    }*/
+        if (!isContentValid())
+        {
+            m_handle->invalidate();
+            return true;
+        }
+
+        return false;
+    }
+
+    std::size_t Window::timeSinceLastDraw() const
+    {
+        using namespace std::chrono;
+        const time_point<steady_clock> now = steady_clock::now();
+        return static_cast<std::size_t>(duration_cast<milliseconds>(now - m_lastDrawTime).count());
+    }
+
+    void Window::onSizeChange(const Size& size)
+    {
+        m_handle->resize(size);
+
+        auto scale = getDPIScale();
+        const auto scaledSize{
+            Size::MakeNarrow(static_cast<float>(size.width) * scale.x, static_cast<float>(size.height) * scale.y)};
+        if (scaledSize != m_context->getSize())
+            m_context->resize(scaledSize);
+
+        refitContent(size);
+        invalidate();
+    }
+
+    void Window::regionInvalidated(const PaintEvent&)
+    {
+        // Just assume that the entire window needs to be painted here (for now).
+        // Another (better) solution would be to find what children needs to be
+        // painted and just paint those. But currently there isn't any support
+        // for rendering individual widgets anyway.
+        paint();
+    }
+
+    void Window::onLimitChange(const Size&, const Size&)
+    {
+        setLimitsWithSizePolicy();
+    }
+
+    void Window::setLimitsWithSizePolicy()
+    {
+        Limits limits{getLimitsWithSizePolicy()};
+        m_handle->setLimits(limits.min, limits.max);
+    }
 
     void Window::paint()
     {
-        beginPaint();
-        
         ContextBase* context{getContext()};
         sk_sp<SkSurface> surface = context->surface();
         SkCanvas* canvas{surface->getCanvas()};
-
-        inval();
 
         // Apply monitor scale.
         SkMatrix matrix{};
         Vec2f scale{getDPIScale()};
         matrix.setScale(scale.x, scale.y);
         canvas->setMatrix(matrix);
-        
+
         // Will paint background and then children.
         onDraw(canvas);
-        
+
         surface->flushAndSubmit();
-        swapBuffers();
-        
-        endPaint();
+        m_context->swapBuffers();
+
+        // Painting is done, enable invalidation again.
+        markContentValid();
     }
 
-    void Window::handleEvent(Event* event)
+    void Window::markContentValid()
     {
-        PTK_ASSERT(event, "Undefined Event");
+        m_contentInvalidated = false;
+        m_lastDrawTime = std::chrono::steady_clock::now();
 
-        if (event->category == Event::Category::Window)
-            handleWindowEvent(event);
-        else if (event->category == Event::Category::Keyboard)
-            handleKeyboardEvent(event);
-        else if (event->category == Event::Category::Mouse)
-            handleMouseEvent(event);
-#ifdef PTK_DEBUG
+#if 1
+        using namespace std::chrono;
+        static time_point<steady_clock> last = steady_clock::now();
+        time_point<steady_clock> now = std::chrono::steady_clock::now();
+
+        auto elapsed = duration_cast<milliseconds>(now - last).count();
+        static int fps = 1;
+        if (elapsed >= 1000)
+        {
+            PTK_INFO("Window: \"{}\" [DRAWING] FPS = {}", getName(), fps);
+            last = m_lastDrawTime;
+            fps = 1;
+        }
         else
-            PTK_WARN("Unknown event");
+            ++fps;
 #endif
     }
 
-    void Window::handleKeyboardEvent(Event* event)
+    void Window::setSizePolicy(SizePolicy policy)
     {
-        PTK_ASSERT(event, "Undefined Event");
-
-        if (event->type == Event::Type::KeyPressed || event->type == Event::Type::KeyReleased)
-        {
-            KeyEvent* kEvent{static_cast<KeyEvent*>(event)};
-            triggerEvent<KeyEvent>(*kEvent);
-        }
-        else if (event->type == Event::Type::KeyInput)
-        {
-            InputEvent* iEvent{static_cast<InputEvent*>(event)};
-            triggerEvent<InputEvent>(*iEvent);
-        }
+        Widget::setSizePolicy(policy);
+        setLimitsWithSizePolicy();
     }
 
-    void Window::handleMouseEvent(Event* event)
+    void Window::show()
     {
-        PTK_ASSERT(event, "Undefined Event");
-        Event::Type type{event->type};
-        if (type == Event::Type::MouseMoved)
-        {
-            MotionEvent* mEvent{static_cast<MotionEvent*>(event)};
-            triggerEvent<MotionEvent>(*mEvent);
-        }
-        else if (type == Event::Type::MouseButtonPressed || type == Event::Type::MouseButtonReleased)
-        {
-            ButtonEvent* bEvent{static_cast<ButtonEvent*>(event)};
-            const Point pos{bEvent->pos};
-            const int32_t value{bEvent->value};
-            const Mouse::Button btn{bEvent->button};
-            if (type == Event::Type::MouseButtonPressed)
-            {
-                ClickEvent cEvt{btn, value, pos};
-                triggerEvent<ClickEvent>(cEvt);
-            }
-            else if (type == Event::Type::MouseButtonReleased)
-            {
-                ReleaseEvent rEvt{btn, value, pos};
-                triggerEvent<ReleaseEvent>(rEvt);
-            }
-        }
-        else if (type == Event::Type::MouseScrolled)
-        {
-            ScrollEvent* sEvent{static_cast<ScrollEvent*>(event)};
-            triggerEvent<ScrollEvent>(*sEvent);
-        }
+        if (isHidden())
+            m_handle->show();
     }
 
-    void Window::handleWindowEvent(Event* event)
-    {
-        PTK_ASSERT(event, "Undefined Event");
-        Event::Type type{event->type};
-        switch (type)
-        {
-            case Event::Type::WindowPaint:
-            {
-                m_draw = true;
-                break;
-            }
-            case Event::Type::WindowResize:
-            {
-                ResizeEvent* rEvent{static_cast<ResizeEvent*>(event)};
-                setSize(rEvent->size);
-                m_draw = true;
-                break;
-            }
-            case Event::Type::WindowMove:
-            {
-                MoveEvent* mEvent{static_cast<MoveEvent*>(event)};
-                setPosHint(mEvent->pos);
-                break;
-            }
-            case Event::Type::WindowScale:
-            {
-                ScaleEvent* sEvent{static_cast<ScaleEvent*>(event)};
-                // m_handle.setScaleHint(sEvent->scale);
-                setScaleHint(sEvent->scale);
-                m_draw = true;
-                break;
-            }
-            case Event::Type::WindowClose:
-            {
-                close();
-                break;
-            }
-            case Event::Type::WindowFocus:
-            {
-                // if (m_onFocus) // Nullptr for some reason.
-                // m_onFocus();
-                break;
-            }
-            case Event::Type::WindowLostFocus:
-            {
-                // if (m_onLostFocus)
-                // m_onLostFocus();
-                // handleLeaveClickEvent();
-                //  TODO: Fix handleLeaveClickEvent()
-                break;
-            }
-            case Event::Type::WindowMinimize:
-            {
-                minimize();
-                break;
-            }
-            case Event::Type::WindowRestore:
-            {
-                restore();
-                break;
-            }
-            default:
-            {
-                PTK_WARN("Unknown Window event");
-                break;
-            }
-        }
-    }
-
-    /*
     void Window::close()
     {
-        if (!m_close)
+        if (!isClosed())
         {
-            m_close = true;
-            m_handle.close();
-            if (m_onClose)
-                m_onClose();
+            m_handle->close();
+            m_closed = true;
         }
     }
-    */
+
+    void Window::hide()
+    {
+        if (!isHidden())
+            m_handle->hide();
+    }
+
+    bool Window::minimize()
+    {
+        if (!isMinimized())
+            return m_handle->minimize();
+
+        return false;
+    }
+
+    bool Window::restore()
+    {
+        if (isMinimized())
+            return m_handle->restore();
+
+        return false;
+    }
 
     bool Window::setIconFromFile(const std::string& path)
     {
@@ -288,8 +251,8 @@ namespace pTK
                 std::unique_ptr<uint8_t[]> pixelData{std::make_unique<uint8_t[]>(storageSize)};
 
                 if (image->readPixels(imageInfo, pixelData.get(), imageInfo.minRowBytes(), 0, 0))
-                    return setIcon(static_cast<int32_t>(image->width()), static_cast<int32_t>(image->height()),
-                                   pixelData.get());
+                    return m_handle->setIcon(static_cast<int32_t>(image->width()),
+                                             static_cast<int32_t>(image->height()), pixelData.get());
 #ifdef PTK_DEBUG
                 else
                 {

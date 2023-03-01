@@ -1,5 +1,5 @@
 //
-//  events/CallbackStorage.hpp
+//  core/CallbackStorage.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2021-12-27.
@@ -9,22 +9,15 @@
 #define PTK_CORE_CALLBACKSTORAGE_HPP
 
 // pTK Headers
-#include "ptk/Log.hpp"
 #include "ptk/core/Defines.hpp"
 
 // C++ Headers
 #include <algorithm>
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <unordered_map>
 #include <vector>
-
-// Defines for logging in this file.
-#if defined(PTK_CB_STORAGE_DEBUG) && defined(PTK_DEBUG)
-#define PTK_CB_STORAGE_LOG(...) PTK_INFO(__VA_ARGS__)
-#else
-#define PTK_CB_STORAGE_LOG(...)
-#endif
 
 namespace pTK
 {
@@ -71,16 +64,7 @@ namespace pTK
         /** Destructor for CallbackContainer.
 
         */
-
-        ~CallbackContainer()
-        {
-#ifdef PTK_CB_STORAGE_DEBUG
-            for (const Node& node : m_storage)
-            {
-                PTK_CB_STORAGE_LOG("Callback {} removed (destruction)", node.id);
-            }
-#endif
-        }
+        ~CallbackContainer() = default;
 
         /** Move Constructor for CallbackContainer.
 
@@ -138,11 +122,7 @@ namespace pTK
             @param id           unique identifier
             @param callback     function callback
         */
-        void addCallback(uint64_t id, const callback_type& callback)
-        {
-            m_storage.emplace_back(id, callback);
-            PTK_CB_STORAGE_LOG("CallbackContainer: added callback with id: {}", id);
-        }
+        void addCallback(uint64_t id, const callback_type& callback) { m_storage.emplace_back(id, callback); }
 
         /** Function for removing a callback.
 
@@ -156,7 +136,6 @@ namespace pTK
 
             if (it != m_storage.cend())
             {
-                PTK_CB_STORAGE_LOG("CallbackContainer: removed callback with id: {}", id);
                 m_storage.erase(it);
                 return true;
             }
@@ -185,10 +164,7 @@ namespace pTK
             for (auto it = m_storage.begin(); it != m_storage.end();)
             {
                 if (p(*it))
-                {
-                    PTK_CB_STORAGE_LOG("CallbackContainer: auto-removed callback with id: {}", it->id);
                     it = m_storage.erase(it);
-                }
                 else
                     ++it;
             }

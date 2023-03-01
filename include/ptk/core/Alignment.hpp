@@ -116,13 +116,21 @@ namespace pTK
 
             @return    initialized Alignment from value
         */
-        Alignment(Alignment&& other) = default;
+        Alignment(Alignment&& other) noexcept
+            : m_margin{std::move(other.m_margin)},
+              m_align{std::move(other.m_align)}
+        {}
 
         /** Move Assignment operator for Alignment.
 
             @return    Alignment with value
         */
-        Alignment& operator=(Alignment&& other) = default;
+        Alignment& operator=(Alignment&& other) noexcept
+        {
+            m_margin = std::move(other.m_margin);
+            m_align = std::move(other.m_align);
+            return *this;
+        }
 
         /** Function for setting the align property of the Widget.
 

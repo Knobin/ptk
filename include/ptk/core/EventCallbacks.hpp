@@ -1,5 +1,5 @@
 //
-//  events/EventCallbacks.hpp
+//  core/EventCallbacks.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2019-06-12.
@@ -18,6 +18,17 @@
 namespace pTK
 {
     /** EventCallbackInterface class implementation.
+
+        IMPORTANT: Be careful when implementing move semantics!
+        Since this class is intended to be implemented with virtual inheritance,
+        the move operation may be called multiple times and result in a loss of
+        all the data. Therefore, make sure to only move this class ONCE, or let
+        a "super" or main class inherit the EventCallbackMainInterface and have
+        that class provide the necessary move operation. This will also mean that
+        all classes that inherits the EventCallbackInterface class will have to
+        implement the move constructor and assignment operator if move semantics
+        is desired (defaulting those will result in a "defaulted move assignment"
+        warning from the compiler, or GCC at least).
 
         This class contains functions that are used to add callbacks events
         that are triggered / handled.
@@ -46,24 +57,12 @@ namespace pTK
         */
         EventCallbackInterface() = default;
 
-        /** Move Constructor for EventCallbackInterface.
-
-            @return    initialized EventCallbackInterface from value
-        */
-        EventCallbackInterface(EventCallbackInterface&&) = default;
-
         /** Deleted Copy Constructor.
 
             Copying of callbacks can return undesired results, especially implicit copying.
             To get a deep copy of CallbackStorage, use the getter and then use the clone() function.
         */
         EventCallbackInterface(const EventCallbackInterface&) = delete;
-
-        /** Move Assignment operator for EventCallbackInterface.
-
-            @return    EventCallbackInterface with value
-        */
-        EventCallbackInterface& operator=(EventCallbackInterface&&) = default;
 
         /** Deleted Copy Assignment operator.
 
@@ -135,8 +134,62 @@ namespace pTK
         */
         [[nodiscard]] CallbackStorage& callbackStorage() noexcept { return m_callbackStorage; }
 
+    protected:
+        /** Move Constructor for EventCallbackInterface.
+
+            @return    initialized EventCallbackInterface from value
+        */
+        EventCallbackInterface(EventCallbackInterface&&) = default;
+
+        /** Move Assignment operator for EventCallbackInterface.
+
+            @return    EventCallbackInterface with value
+        */
+        EventCallbackInterface& operator=(EventCallbackInterface&&) = default;
+
     private:
         CallbackStorage m_callbackStorage{};
+    };
+
+    /** EventCallbackMainInterface class implementation.
+
+        Implements the proper move semantics for EventCallbackInterface.
+
+        Refer to the explanation in EventCallbackInterface for the usage of this
+        class and why it exists.
+    */
+    class PTK_API EventCallbackMainInterface : public virtual EventCallbackInterface
+    {
+    public:
+        /** Constructs EventCallbackMainInterface with default values.
+
+            @return    initialized EventCallbackMainInterface
+        */
+        EventCallbackMainInterface() = default;
+
+        /** Destructor for EventCallbackMainInterface.
+
+        */
+        virtual ~EventCallbackMainInterface() = default;
+
+        /** Move Constructor for EventCallbackMainInterface.
+
+            @return    initialized EventCallbackMainInterface from value
+        */
+        EventCallbackMainInterface(EventCallbackMainInterface&& other) noexcept
+        {
+            callbackStorage() = std::move(other.callbackStorage());
+        }
+
+        /** Move Assignment operator for EventCallbackMainInterface.
+
+            @return    EventCallbackMainInterface with value
+        */
+        EventCallbackMainInterface& operator=(EventCallbackMainInterface&& other) noexcept
+        {
+            callbackStorage() = std::move(other.callbackStorage());
+            return *this;
+        }
     };
 
     /** EventCallbacks class implementation.
@@ -144,7 +197,7 @@ namespace pTK
         This class contains helper functions for adding callbacks into
         storage for common events.
     */
-    class PTK_API EventCallbacks : public virtual EventCallbackInterface
+    class PTK_API EventCallbacks : public EventCallbackMainInterface
     {
     public:
         /** Constructs EventCallbacks with default values.

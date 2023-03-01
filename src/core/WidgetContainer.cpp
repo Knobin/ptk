@@ -5,8 +5,17 @@
 //  Created by Robin Gustafsson on 2019-11-18.
 //
 
+// Local Headers
+#include "../core/Assert.hpp"
+
 // pTK Headers
 #include "ptk/core/WidgetContainer.hpp"
+#include "ptk/core/ContextBase.hpp"
+
+// Skia Headers
+PTK_DISABLE_WARN_BEGIN()
+#include "include/core/SkCanvas.h"
+PTK_DISABLE_WARN_END()
 
 namespace pTK
 {

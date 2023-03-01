@@ -25,6 +25,16 @@ TEST_CASE("Constructors")
         REQUIRE(size.width == width);
         REQUIRE(size.height == height);
     }
+
+    SECTION("MakeNarrow")
+    {
+        constexpr unsigned int tx{1};
+        constexpr float ty{1.0f};
+
+        constexpr auto size{pTK::Size::MakeNarrow(tx, ty)};
+        REQUIRE(size.width == tx);
+        REQUIRE(size.height == ty);
+    }
 }
 
 TEST_CASE("Getters and Setters")

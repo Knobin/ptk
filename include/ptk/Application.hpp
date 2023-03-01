@@ -10,36 +10,20 @@
 
 // pTK Headers
 #include "ptk/Window.hpp"
-#include "ptk/util/SingleObject.hpp"
+#include "ptk/core/ApplicationBase.hpp"
 
-// C++ Headers
-#include <cstdint>
-#include <map>
-#include <utility>
+// Temp.
+#include "ptk/platform/ApplicationHandle.hpp"
 
 namespace pTK
 {
     /** Application class implementation.
 
-        This class is to manage windows and handle the whole
-        application.
-
+        This class is for adding/removing windows and to
+        setup the Application and its runtime environment.
     */
-    class PTK_API Application : public SingleObject
+    class PTK_API Application : public ApplicationBase
     {
-    public:
-        using key_type = int32_t;
-        using mapped_type = Window*;
-        using value_type = std::pair<key_type, mapped_type>;
-        using container_type = std::map<key_type, mapped_type>;
-        using reference = value_type&;
-        using const_reference = const value_type&;
-        using iterator = typename container_type::iterator;
-        using reverse_iterator = typename container_type::reverse_iterator;
-        using const_iterator = typename container_type::const_iterator;
-        using const_reverse_iterator = typename container_type::const_reverse_iterator;
-        using size_type = typename container_type::size_type;
-
     public:
         /** Constructs Application with default values.
 
@@ -52,7 +36,7 @@ namespace pTK
             @param name    application name
             @return        default initialized Application
         */
-        Application(const std::string& name);
+        explicit Application(std::string_view name);
 
         /** Constructs Event with default values.
 
@@ -61,14 +45,16 @@ namespace pTK
             @param argv    arguments
             @return        default initialized Transformable
         */
-        Application(const std::string& name, int argc, char* argv[]);
+        Application(std::string_view name, int argc, char* argv[]);
 
         /** Destructor for Application
 
         */
         virtual ~Application();
 
-        /** Function for executing the application.
+        /** Function for executing the application with a single window.
+
+            The Window should not have been added with addWindow() before this call.
 
             @param window  start window
         */
@@ -95,152 +81,184 @@ namespace pTK
         */
         bool removeWindow(key_type key);
 
-        // TODO(knobin): Add docs.
-        void removeAllWindows();
+        /** Function for removing all windows in the application.
 
-        // TODO(knobin): Add docs.
-        [[nodiscard]] Window* findByKey(key_type key) const;
+            Internally calls removeWindow() on all windows.
+        */
+        void clearWindows();
+
+        /** Function for closing all windows in the application.
+
+            Will close all windows, they might be removed from the application.
+            It is up to the Window implementation.
+        */
+        void closeWindows();
 
         /** Function for executing the application.
 
+            Runs the application with the already added windows.
+            Note: Windowless application is not currently supported.
+
+            @return     status
         */
         int run();
 
-        // TODO(knobin): Add docs.
-        void close();
+        /** Function for closing the application.
 
-        /** Function for retrieving the an iterator that points to the first
-           value in the Application.
+            Note: Should only be called if the application should be
+                  stopped but not destructed yet.
 
-           The iterator may be equal to end iterator if the Application is empty.
-
-           @return    iterator
-       */
-        [[nodiscard]] iterator begin() noexcept { return m_holder.begin(); }
-
-        /** Function for retrieving the an iterator that points to the first
-            value in the Application.
-
-            The iterator may be equal to end iterator if the Application is empty.
-
-            @return    const iterator
+            @return     closing status, true if closing, false if halted
         */
-        [[nodiscard]] const_iterator begin() const noexcept { return m_holder.begin(); }
+        bool close();
 
-        /** Function for retrieving the an const iterator that points to the first
-            value in the Application.
+        /** Function for terminating the application.
 
-            The iterator may be equal to end iterator if the Application is empty.
+            Application will close and exit.
+            Use this function to terminate the whole applicaion.
 
-            @return    const iterator
+            Further execution beyond this function may or may not be
+            possible depending on the platform implementation.
         */
-        [[nodiscard]] const_iterator cbegin() const noexcept { return m_holder.cbegin(); }
+        void terminate();
 
-        /** Function for retrieving the special iterator referring to
-            the past-the-end of the Application.
+        /** Function for retrieving if the application is closed.
 
-            The iterator should never be de-referenced, due to the fact that the iterator
-            does not point to a value and should therefore only be used for checking.
-
-            @return    iterator
+            @return     closed status
         */
-        [[nodiscard]] iterator end() noexcept { return m_holder.end(); }
+        [[nodiscard]] bool isClosed() const noexcept { return m_closed; }
 
-        /** Function for retrieving the special iterator referring to
-            the past-the-end of the Application.
+        /** Function for allowing the application to run in headless mode.
 
-            The iterator should never be de-referenced, due to the fact that the iterator
-            does not point to a value and should therefore only be used for checking.
-
-            @return    const iterator
+            @param value    allowed to run in headless mode
         */
-        [[nodiscard]] const_iterator end() const noexcept { return m_holder.end(); }
+        void allowHeadless(bool value) noexcept { m_allowHeadless = value; }
 
-        /** Function for retrieving the special const iterator referring to
-            the past-the-end of the Application.
+        /** Function for retrieving if the application is allowed to run in headless mode.
 
-            The iterator should never be dereferenced, due to the fact that the iterator
-            does not point to a value and should therefore only be used for checking.
-
-            @return    const iterator
+            @return     status
         */
-        [[nodiscard]] const_iterator cend() const noexcept { return m_holder.cend(); }
+        [[nodiscard]] bool isHeadlessAllowed() const noexcept { return m_allowHeadless; }
 
-        /** Function for retrieving the an iterator that points to the last
-            value in the Application.
+        /** Function for retrieving if the application is running in headless mode.
 
-            This iterator is working in reverse. Meaning that is starts at the end
-            and is moving to the beginning.
-
-            The iterator may be equal to rend iterator if the Application is empty.
-
-            @return    reverse iterator
+            @return     status
         */
-        [[nodiscard]] reverse_iterator rbegin() noexcept { return m_holder.rbegin(); }
+        [[nodiscard]] bool isRunningHeadless() const noexcept { return m_runningHeadless; }
 
-        /** Function for retrieving the an iterator that points to the last
-            value in the Application.
+        /** Function for allowing the application to terminate in destructor.
 
-            This iterator is working in reverse. Meaning that is starts at the end
-            and is moving to the beginning.
-
-            The iterator may be equal to rend iterator if the Application is empty.
-
-            @return    const reverse begin iterator
+            @param value    allowed to terminate in destructor
         */
-        [[nodiscard]] const_reverse_iterator rbegin() const noexcept { return m_holder.rbegin(); }
+        void allowAutoTermination(bool value) noexcept { m_allowAutoTermination = value; }
 
-        /** Function for retrieving the an iterator that points to the last
-            value in the Application.
+        /** Function for retrieving if the application is allowed to terminate in destructor.
 
-            This iterator is working in reverse. Meaning that is starts at the end
-            and is moving to the beginning.
-
-            The iterator may be equal to rend iterator if the Application is empty.
-
-            @return    const reverse begin iterator
+            @return     status
         */
-        [[nodiscard]] const_reverse_iterator crbegin() const noexcept { return m_holder.crbegin(); }
+        [[nodiscard]] bool isAutoTerminationAllowed() const noexcept { return m_allowAutoTermination; }
 
-        /** Function for retrieving the special const iterator referring to
-            the past-the-end of the Application.
+        /** Function for retrieving if the application is terminated.
 
-            The iterator should never be de-referenced, due to the fact that the iterator
-            does not point to a value and should therefore only be used for checking.
-
-            @return    reverse reverse end iterator
+            @return     terminated status
         */
-        [[nodiscard]] reverse_iterator rend() noexcept { return m_holder.rend(); }
-
-        /** Function for retrieving the special const iterator referring to
-            the past-the-end of the Application.
-
-            The iterator should never be de-referenced, due to the fact that the iterator
-            does not point to a value and should therefore only be used for checking.
-
-            @return    const reverse end iterator
-        */
-        [[nodiscard]] const_reverse_iterator rend() const noexcept { return m_holder.rend(); }
-
-        /** Function for retrieving the special const iterator referring to
-             the past-the-end of the Application.
-
-             The iterator should never be de-referenced, due to the fact that the iterator
-             does not point to a value and should therefore only be used for checking.
-
-             @return    const reverse end iterator
-         */
-        [[nodiscard]] const_reverse_iterator crend() const noexcept { return m_holder.crend(); }
+        [[nodiscard]] bool isTerminated() const noexcept { return m_terminated; }
 
     public:
+        /** Function for retrieving a pointer to the Application.
+
+            Should only be called after the Application has been created.
+            Otherwise, no instance exists and is nullptr.
+
+            @return     pointer to application instance
+        */
         static Application* Get();
+
+    private:
+        /** Callback for when the application will begin to close.
+
+            If the closing of the application should be halted for whatever
+            reason (some confirmation "are you sure?" for example) return
+            false in this function.
+
+            Note: This function must eventually return true for the application
+                  to be able to close.
+
+            @return     if the application should close
+        */
+        virtual bool onCloseRequest() { return true; }
+
+        /** Callback for when the application is closing.
+
+            Application is closing here, to halt the stopping use the
+            onCloseRequest callback.
+        */
+        virtual void onClose() {}
+
+    private:
+        /** Function for initializing the Application.
+
+            Should only be called once when the Application has been created.
+            More than one call to this function will result in a ApplicationError
+            exception being thrown.
+
+            @param name     application name
+            @return         status
+        */
+        bool init(std::string_view name);
+
+        /** Helper function for removing a window from the Application.
+
+            Calls the callback for removing a window and the removes it.
+
+            @param it   iterator to be erased
+        */
+        void eraseWindow(const_iterator it);
+
+        /** Message Loop for Headless mode.
+
+            - Requires headless mode be allowed.
+            - Windows should not be present in the application.
+                - Debug will assert, Release will work but Windows wont handle events.
+
+            @return     status
+        */
+        int headlessMessageLoop();
+
+        /** Message Loop for standard mode.
+
+            - Requires that at least one window has been added.
+
+            @return     status
+        */
+        int standardMessageLoop();
+
+        /** Function for selecting the function for event polling.
+
+            Will select between pollEvents, waitEvents & waitEventsTimeout
+            depending on certain conditions.
+
+            For example:
+                - pollEvents: if we need to check for an event and cannot wait.
+                - waitEvents: if we can wait for an event indefinitely.
+                - waitEventsTimeout: if we have some work that must run every x time
+                                     but fine waiting before running that work again.
+
+            @param allowedTime  time allotted for the function (-1 = infinite).
+        */
+        void fetchEvents(int allowedTime);
+
+        // Calls all closing functions.
+        void closeHelper();
+
+    private:
         static Application* s_Instance;
-
-    private:
-        bool init(const std::string& name);
-
-    private:
-        container_type m_holder{};
+        Platform::ApplicationHandle* m_handle{nullptr};
+        bool m_allowHeadless{false};
+        bool m_runningHeadless{false};
+        bool m_closed{false};
+        bool m_terminated{false};
+        bool m_allowAutoTermination{true};
     };
 } // namespace pTK
 

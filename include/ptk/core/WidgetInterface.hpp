@@ -48,7 +48,7 @@ namespace pTK
 
             @return    initialized WidgetInterface from value
         */
-        WidgetInterface(WidgetInterface&&) = default;
+        WidgetInterface(WidgetInterface&&) noexcept {}
 
         /** Deleted Copy Constructor.
 
@@ -60,7 +60,7 @@ namespace pTK
 
             @return    WidgetInterface with value
         */
-        WidgetInterface& operator=(WidgetInterface&&) = default;
+        WidgetInterface& operator=(WidgetInterface&&) noexcept { return *this; }
 
         /** Deleted Copy Assignment operator.
 

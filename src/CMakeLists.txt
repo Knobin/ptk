@@ -3,7 +3,9 @@
 #
 
 set(PTK_CORE_FILES core/Alignment.cpp
+        core/ApplicationBase.cpp
         core/CallbackStorage.cpp
+        core/ContextBase.cpp
         core/EventCallbacks.cpp
         core/Shape.cpp
         core/Sizable.cpp
@@ -34,7 +36,7 @@ set(PTK_WIDGET_FILES widgets/Button.cpp
         widgets/VBox.cpp)
 
 if (PTK_BUILD_TYPE MATCHES Debug)
-    set(PTK_LOG_FILES Log.cpp)
+    set(PTK_LOG_FILES Log.hpp Log.cpp)
 endif()
 
 # Get platform files
@@ -50,6 +52,6 @@ set(PTK_SOURCE_FILES Application.cpp Window.cpp
         ${PTK_LOG_FILES})
 list(TRANSFORM PTK_SOURCE_FILES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
 set(PTK_SOURCE_FILES ${PTK_SOURCE_FILES} ${PTK_PLATFORM_FILES} PARENT_SCOPE)
-        
+
 # All source files (including all platform files)
 set(PTK_SOURCE_FILES_ALL ${PTK_SOURCE_FILES} ${PTK_PLATFORM_FILES_ALL} PARENT_SCOPE)

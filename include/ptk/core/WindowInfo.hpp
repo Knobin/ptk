@@ -55,7 +55,7 @@ namespace pTK
 
         Backend backend{Backend::Hardware};
         Point position{100, 100};
-        Visibility visibility{Visibility::Windowed};
+        Visibility visibility{Visibility::Hidden};
         Ref<MenuBar> menus{nullptr};
         SizePolicy sizePolicy{SizePolicy::Policy::Expanding, SizePolicy::Policy::Expanding};
     };

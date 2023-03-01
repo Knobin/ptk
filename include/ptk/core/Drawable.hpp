@@ -11,10 +11,8 @@
 // pTK Headers
 #include "ptk/Core.hpp"
 
-// Skia Headers
-PTK_DISABLE_WARN_BEGIN()
-#include "ptk/platform/base/ContextBase.hpp"
-PTK_DISABLE_WARN_END()
+// Forward declarations
+class SkCanvas;
 
 namespace pTK
 {

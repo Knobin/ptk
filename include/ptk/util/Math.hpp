@@ -10,7 +10,6 @@
 
 // C++ Headers
 #include <cmath>
-#include <string>
 
 //
 // This file is purely for the need of math functions.
