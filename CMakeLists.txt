@@ -10,7 +10,6 @@ set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 # General options
 option(PTK_BUILD_TESTS "Build test programs" OFF)
 option(PTK_BUILD_EXAMPLES "Build example programs" ON)
-option(PTK_BUILD_SANDBOX "Build sandbox application" ON)
 
 # Hardware acceleration options.
 option(PTK_ENABLE_OPENGL "Enable OpenGL backend" ON)
@@ -219,13 +218,7 @@ if (PTK_BUILD_TESTS)
     add_subdirectory(${CMAKE_SOURCE_DIR}/tests)
 endif (PTK_BUILD_TESTS)
 
-# Sandbox
-if (PTK_BUILD_SANDBOX)
-    add_subdirectory(${CMAKE_SOURCE_DIR}/sandbox)
-endif(PTK_BUILD_SANDBOX)
-
 # Print options
 message(STATUS "Build Tests: ${PTK_BUILD_TESTS}")
 message(STATUS "Build Examples: ${PTK_BUILD_EXAMPLES}")
-message(STATUS "Build Sandbox: ${PTK_BUILD_SANDBOX}")
 message(STATUS "AddressSanitizer is enabled: ${PTK_ENABLE_SANITIZE}")

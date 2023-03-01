@@ -23,7 +23,6 @@ int main(int argc, char *argv[]) {
 
 For more sample applications see:
 * [Examples](example)
-* [SandboxApp](sandbox)
 
 ## Build
 Start by cloning the repository:
