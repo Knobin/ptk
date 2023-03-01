@@ -15,6 +15,7 @@
 
 // C++ Headers
 #include <cstdint>
+#include <memory>
 
 namespace pTK
 {
@@ -56,7 +57,7 @@ namespace pTK
         Backend backend{Backend::Hardware};
         Point position{100, 100};
         Visibility visibility{Visibility::Hidden};
-        Ref<MenuBar> menus{nullptr};
+        std::shared_ptr<MenuBar> menus{nullptr};
         SizePolicy sizePolicy{SizePolicy::Policy::Expanding, SizePolicy::Policy::Expanding};
     };
 } // namespace pTK

@@ -10,7 +10,7 @@
 
 namespace pTK
 {
-    Menu::Menu(const std::string& name, const std::initializer_list<Ref<MenuItem>>& items)
+    Menu::Menu(const std::string& name, const std::initializer_list<value_type>& items)
         : MenuItem(MenuItemType::Menu, MenuItemStatus::Enabled),
           m_holder{items},
           m_name{name}
@@ -27,12 +27,12 @@ namespace pTK
         handleEvent<MenuItemEvent::Update>();
     }
 
-    void Menu::addItem(const Ref<MenuItem>& item)
+    void Menu::addItem(const value_type& item)
     {
         m_holder.push_back(item);
     }
 
-    void Menu::removeItem(const Ref<MenuItem>& item)
+    void Menu::removeItem(const value_type& item)
     {
         for (auto it = cbegin(); it != cend(); ++it)
             if (item == (*it))

@@ -314,7 +314,7 @@ namespace pTK::Platform
         return std::nullopt;
     }
 
-    void SetNamedOrCheckboxItem(NSMenu* submenu, const Ref<MenuItem>& item, bool isCheckbox)
+    void SetNamedOrCheckboxItem(NSMenu* submenu, const std::shared_ptr<MenuItem>& item, bool isCheckbox)
     {
         if (NamedMenuItem* nmItem = dynamic_cast<NamedMenuItem*>(item.get()))
         {
@@ -403,7 +403,7 @@ namespace pTK::Platform
         [parent setSubmenu:submenu forItem:menuItem];
     }
 
-    void ApplicationHandleMac::SetMenuBar(const Ref<MenuBar>& menuBar)
+    void ApplicationHandleMac::SetMenuBar(const std::shared_ptr<MenuBar>& menuBar)
     {
         [s_appData.menuBar removeAllItems];
         s_appData.menuItemMap.clear();

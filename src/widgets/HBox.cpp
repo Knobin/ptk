@@ -19,7 +19,7 @@ namespace pTK
         setMaxSize(Size::Max);
     }
 
-    void HBox::onAdd(const Ref<Widget>&)
+    void HBox::onAdd(const value_type&)
     {
         const Size minLayoutSize{calcMinSize()};
         setMinSize(minLayoutSize);
@@ -43,7 +43,7 @@ namespace pTK
         }
     }
 
-    void HBox::onRemove(const Ref<Widget>&)
+    void HBox::onRemove(const value_type&)
     {
         refitContent(getSize());
     }

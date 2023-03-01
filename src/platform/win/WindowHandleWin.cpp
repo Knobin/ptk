@@ -821,7 +821,7 @@ namespace pTK::Platform
             case WM_COMMAND:
             {
                 uint32_t wmId{LOWORD(wParam)};
-                const Ref<MenuItem> item{MenuBarUtilWin::FindMenuItemById(data->menuItems, wmId)};
+                const std::shared_ptr<MenuItem> item{MenuBarUtilWin::FindMenuItemById(data->menuItems, wmId)};
 
                 if (item)
                 {

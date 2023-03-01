@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
     pTK::Window window("LabelExample Window", {960, 540});
 
     // Create label.
-    pTK::Ref<pTK::Label> label = pTK::Create<pTK::Label>();
+    std::shared_ptr<pTK::Label> label = std::make_shared<pTK::Label>();
 
     // Name is NOT the displayed text.
     // This is something optional to set, it can be used to identify the label.

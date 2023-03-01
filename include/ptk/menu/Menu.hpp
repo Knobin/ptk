@@ -9,10 +9,10 @@
 #define PTK_MENU_MENU_HPP
 
 // pTK Headers
-#include "ptk/Core.hpp"
 #include "ptk/menu/MenuItem.hpp"
 
 // C++ Headers
+#include <memory>
 #include <vector>
 
 namespace pTK
@@ -24,7 +24,7 @@ namespace pTK
     class PTK_API Menu : public MenuItem
     {
     public:
-        using value_type = Ref<MenuItem>;
+        using value_type = std::shared_ptr<MenuItem>;
         using container_type = std::vector<value_type>;
         using reference = value_type&;
         using const_reference = const value_type&;
@@ -41,7 +41,7 @@ namespace pTK
             @param items        optional list with menu items
             @return             initialized Menu
         */
-        explicit Menu(const std::string& name, const std::initializer_list<Ref<MenuItem>>& items = {});
+        explicit Menu(const std::string& name, const std::initializer_list<value_type>& items = {});
 
         /** Destructor.
 
@@ -64,13 +64,13 @@ namespace pTK
 
             @param item     menu item to add
         */
-        void addItem(const Ref<MenuItem>& item);
+        void addItem(const value_type& item);
 
         /** Function for removing a menu item.
 
             @param item     menu item to remove
         */
-        void removeItem(const Ref<MenuItem>& item);
+        void removeItem(const value_type& item);
 
         /** Function for retrieving the an iterator that points to the first
             value in the Menu.

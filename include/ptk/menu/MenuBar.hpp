@@ -13,6 +13,7 @@
 #include "ptk/menu/MenuItem.hpp"
 
 // C++ Headers
+#include <memory>
 #include <vector>
 
 namespace pTK
@@ -24,7 +25,7 @@ namespace pTK
     class PTK_API MenuBar
     {
     public:
-        using value_type = Ref<Menu>;
+        using value_type = std::shared_ptr<Menu>;
         using container_type = std::vector<value_type>;
         using reference = value_type&;
         using const_reference = const value_type&;
@@ -46,7 +47,7 @@ namespace pTK
             @param menus    collection of menus to add
             @return         initialized Menu
         */
-        MenuBar(const std::initializer_list<Ref<Menu>>& menus);
+        MenuBar(const std::initializer_list<value_type>& menus);
 
         /** Destructor.
 
@@ -57,13 +58,13 @@ namespace pTK
 
             @param menu     menu to add
         */
-        void addMenu(const Ref<Menu>& menu);
+        void addMenu(const value_type& menu);
 
         /** Function for removing a menu.
 
             @param menu     menu to remove
         */
-        void removeMenu(const Ref<Menu>& menu);
+        void removeMenu(const value_type& menu);
 
         /** Function for checking if the menu bar is empty.
 

@@ -12,6 +12,7 @@
 #include "ptk/core/Widget.hpp"
 
 // C++ Headers
+#include <memory>
 #include <stdexcept>
 #include <utility>
 #include <vector>
@@ -28,7 +29,7 @@ namespace pTK
     class PTK_API WidgetContainer : public Widget
     {
     public:
-        using value_type = Ref<Widget>;
+        using value_type = std::shared_ptr<Widget>;
         using reference = value_type&;
         using const_reference = const value_type&;
         using container_type = std::vector<value_type>;
@@ -72,7 +73,7 @@ namespace pTK
 
             @param widget   widget to add
         */
-        void add(const Ref<Widget>& widget);
+        void add(const value_type& widget);
 
         /** Function for removing a Widget from the WidgetContainer.
 
@@ -84,7 +85,7 @@ namespace pTK
 
             @param widget   widget to remove
         */
-        void remove(const Ref<Widget>& widget);
+        void remove(const value_type& widget);
 
         /** Function for setting the position of the VBox and its children.
 
@@ -358,7 +359,7 @@ namespace pTK
 
             @param widget   child that has been added
         */
-        virtual void onAdd(const Ref<Widget>& UNUSED(widget)) {}
+        virtual void onAdd(const value_type& UNUSED(widget)) {}
 
         /** Callback to use when a Widget has been removed.
 
@@ -367,7 +368,7 @@ namespace pTK
 
             @param widget   child that has been removed
         */
-        virtual void onRemove(const Ref<Widget>& UNUSED(widget)) {}
+        virtual void onRemove(const value_type& UNUSED(widget)) {}
 
         /** Callback to use when the WidgetContainer is cleared.
 

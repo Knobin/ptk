@@ -82,9 +82,9 @@ public:
 
 struct BtnManager
 {
-    std::vector<pTK::Ref<CustomBtn>> buttons{};
+    std::vector<std::shared_ptr<CustomBtn>> buttons{};
 
-    void setActive(const pTK::Ref<CustomBtn>& set)
+    void setActive(const std::shared_ptr<CustomBtn>& set)
     {
         for (auto& btn : buttons)
         {
@@ -97,9 +97,10 @@ struct BtnManager
     }
 };
 
-pTK::Ref<CustomBtn> CreateCustomBtn(const std::string& text, const pTK::Margin& margin, pTK::Size::value_type maxWidth)
+std::shared_ptr<CustomBtn> CreateCustomBtn(const std::string& text, const pTK::Margin& margin,
+                                           pTK::Size::value_type maxWidth)
 {
-    pTK::Ref<CustomBtn> btn = pTK::Create<CustomBtn>(text);
+    std::shared_ptr<CustomBtn> btn = std::make_shared<CustomBtn>(text);
     btn->setSizePolicy(pTK::SizePolicy::Type::Expanding);
     btn->setMargin(margin);
     btn->setCornerRadius(2.5f);
@@ -190,15 +191,15 @@ int main(int argc, char *argv[])
     pTK::Application app{"SandboxApp", argc, argv};
 
     // Menu bar.
-    pTK::Ref<pTK::MenuBar> menuBar = pTK::Create<pTK::MenuBar>();
+    std::shared_ptr<pTK::MenuBar> menuBar = std::make_shared<pTK::MenuBar>();
 
     // First menu in menu bar.
-    pTK::Ref<pTK::Menu> menu = pTK::Create<pTK::Menu>("File");
+    std::shared_ptr<pTK::Menu> menu = std::make_shared<pTK::Menu>("File");
     menuBar->addMenu(menu);
 
     // NamedMenuItem with shortcut in menu.
     pTK::Shortcut shortcut{{pTK::KeyCode::LeftControl}, pTK::KeyCode::Q};
-    pTK::Ref<pTK::NamedMenuItem> quitItem = pTK::Create<pTK::NamedMenuItem>("Quit", shortcut);
+    std::shared_ptr<pTK::NamedMenuItem> quitItem = std::make_shared<pTK::NamedMenuItem>("Quit", shortcut);
     menu->addItem(quitItem);
 
     pTK::WindowInfo flags{};
@@ -263,12 +264,12 @@ int main(int argc, char *argv[])
         sRun = false;
     });
 
-    pTK::Ref<pTK::HBox> hbox = pTK::Create<pTK::HBox>();
+    std::shared_ptr<pTK::HBox> hbox = std::make_shared<pTK::HBox>();
     hbox->setMaxSize(pTK::Size::Max);
     hbox->setBackground(pTK::Color(0x1E1E1EFF));
 
     // VBox as sidebar.
-    pTK::Ref<pTK::VBox> sidebar = pTK::Create<pTK::VBox>();
+    std::shared_ptr<pTK::VBox> sidebar = std::make_shared<pTK::VBox>();
     sidebar->setMaxSize({static_cast<int>(SCR_WIDTH*0.225f), pTK::Size::Limits::Max});
     sidebar->setAlign(pTK::Align::Left);
     sidebar->setBackground(pTK::Color(0x1B1B1BFF));
@@ -279,7 +280,7 @@ int main(int argc, char *argv[])
     pTK::Margin marginF{marginLR + marginLR/2, marginTB*4, marginLR, marginLR};
     pTK::Margin margin{marginTB, marginTB, marginLR, marginLR};
 
-    pTK::Ref<pTK::Label> navTitle = pTK::Create<pTK::Label>();
+    std::shared_ptr<pTK::Label> navTitle = std::make_shared<pTK::Label>();
     navTitle->setText("Navigation");
     navTitle->setFontSize(12);
     navTitle->setMargin(marginF);
@@ -287,12 +288,12 @@ int main(int argc, char *argv[])
     navTitle->setAlign(pTK::Align::Left, pTK::Align::Top);
 
     // Buttons.
-    pTK::Ref<CustomBtn> home = CreateCustomBtn("Home", margin, maxWidth);
+    std::shared_ptr<CustomBtn> home = CreateCustomBtn("Home", margin, maxWidth);
     home->colorCopy = pTK::Color{0x272727FF};
     home->setColor(pTK::Color{0x272727FF});
-    pTK::Ref<CustomBtn> projects = CreateCustomBtn("Projects", margin, maxWidth);
-    pTK::Ref<CustomBtn> about = CreateCustomBtn("About", margin, maxWidth);
-    pTK::Ref<CustomBtn> contact = CreateCustomBtn("Contact", margin, maxWidth);
+    std::shared_ptr<CustomBtn> projects = CreateCustomBtn("Projects", margin, maxWidth);
+    std::shared_ptr<CustomBtn> about = CreateCustomBtn("About", margin, maxWidth);
+    std::shared_ptr<CustomBtn> contact = CreateCustomBtn("Contact", margin, maxWidth);
 
     BtnManager btnManager{};
     btnManager.buttons.push_back(home);
@@ -318,7 +319,7 @@ int main(int argc, char *argv[])
     });
 
     pTK::Margin marginL{ marginTB * 4, marginLR + marginLR / 2, marginLR, marginLR };
-    pTK::Ref<CustomBtn> close = CreateCustomBtn("Close", marginL, maxWidth);
+    std::shared_ptr<CustomBtn> close = CreateCustomBtn("Close", marginL, maxWidth);
     close->hoverColor = pTK::Color{0xDE2A33FF};
     close->clickColor = pTK::Color{0xB8232AFF};
     close->setAlign(pTK::Align::HCenter, pTK::Align::Bottom);
@@ -327,7 +328,7 @@ int main(int argc, char *argv[])
         return false;
     });
 
-    pTK::Ref<pTK::Rectangle> vline = pTK::Create<pTK::Rectangle>();
+    std::shared_ptr<pTK::Rectangle> vline = std::make_shared<pTK::Rectangle>();
     vline->setColor(pTK::Color{0x161616FF});
     vline->setMaxSize({1, pTK::Size::Limits::Max});
     vline->setAlign(pTK::Align::Left);
@@ -343,18 +344,18 @@ int main(int argc, char *argv[])
     hbox->add(vline);
 
     // VBox as right side content. (TODO: should be a scrollable area).
-    pTK::Ref<pTK::VBox> content = pTK::Create<pTK::VBox>();
+    std::shared_ptr<pTK::VBox> content = std::make_shared<pTK::VBox>();
     content->setAlign(pTK::Align::Left);
     content->setBackground(pTK::Color{0x1E1E1EFF});
 
-    pTK::Ref<pTK::Label> cTitle = pTK::Create<pTK::Label>();
+    std::shared_ptr<pTK::Label> cTitle = std::make_shared<pTK::Label>();
     cTitle->setText("Home");
     cTitle->setFontSize(26);
     cTitle->setMargin({18, 9, 18, 18});
     cTitle->setColor(pTK::Color{0xFEFEFEFF});
     cTitle->setAlign(pTK::Align::Left, pTK::Align::Top);
 
-    pTK::Ref<pTK::Rectangle> hline = pTK::Create<pTK::Rectangle>();
+    std::shared_ptr<pTK::Rectangle> hline = std::make_shared<pTK::Rectangle>();
     //hline->setColor(pTK::Color{0xF0F0F0FF});
     hline->setColor(RandomColor());
     hline->setSizePolicy(pTK::SizePolicy::Type::Expanding);
@@ -362,7 +363,7 @@ int main(int argc, char *argv[])
     hline->setMargin({0, 0, 18, 18});
     hline->setAlign(pTK::Align::Left, pTK::Align::Top);
 
-    pTK::Ref<pTK::Button> btn = pTK::Create<pTK::Button>(pTK::Button::Style::Default);
+    std::shared_ptr<pTK::Button> btn = std::make_shared<pTK::Button>(pTK::Button::Style::Default);
     btn->setAlign(pTK::Align::Left, pTK::Align::Top);
     btn->setText("Random Color!");
     btn->setMargin({ 18, 18, 18, 18 });
@@ -371,7 +372,7 @@ int main(int argc, char *argv[])
         return false;
     });
 
-    pTK::Ref<pTK::TextField> textField = pTK::Create<pTK::TextField>();
+    std::shared_ptr<pTK::TextField> textField = std::make_shared<pTK::TextField>();
     textField->setSize({400, 38});
     pTK::SizePolicy policy{pTK::SizePolicy::Policy::Expanding, pTK::SizePolicy::Policy::Fixed};
     textField->setSizePolicy(policy);
@@ -395,7 +396,7 @@ int main(int argc, char *argv[])
         return false;
     });
 
-    pTK::Ref<SpinningRect> sRect = pTK::Create<SpinningRect>();
+    std::shared_ptr<SpinningRect> sRect = std::make_shared<SpinningRect>();
     sRect->setSize({250, 250});
 
     std::thread sThread{[&](){

@@ -59,7 +59,7 @@ namespace pTK::Platform
 
             @param menuBar      MenuBar to set
         */
-        static void SetMenuBar(const Ref<MenuBar>& menuBar);
+        static void SetMenuBar(const std::shared_ptr<MenuBar>& menuBar);
 
         /** Callback for when the application is terminating.
 

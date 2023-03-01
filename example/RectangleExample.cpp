@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
     pTK::Window window("RectangleExample Window", {960, 540});
 
     // Create rectangle.
-    pTK::Ref<pTK::Rectangle> rect = pTK::Create<pTK::Rectangle>();
+    std::shared_ptr<pTK::Rectangle> rect = std::make_shared<pTK::Rectangle>();
 
     // This is something optional to set, it can be used to identify the rectangle.
     rect->setName("My Rectangle");

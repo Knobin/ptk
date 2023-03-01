@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     pTK::Application app{"Sample Application", argc, argv};
     pTK::Window window{"Sample Window", {960, 540}};
 
-    pTK::Ref<pTK::Label> label = pTK::Create<pTK::Label>();
+    std::shared_ptr<pTK::Label> label = std::make_shared<pTK::Label>();
     label->setText("Sample Label");
     window.add(label);
     

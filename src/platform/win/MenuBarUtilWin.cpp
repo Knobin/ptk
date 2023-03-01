@@ -18,7 +18,7 @@
 
 namespace pTK::Platform::MenuBarUtilWin
 {
-    void SetNamedOrCheckboxItem(HMENU hmenu, MenuMap& menus, const Ref<MenuItem>& item, uint32_t menuId,
+    void SetNamedOrCheckboxItem(HMENU hmenu, MenuMap& menus, const std::shared_ptr<MenuItem>& item, uint32_t menuId,
                                 std::vector<ACCEL>& keys, bool isCheckbox)
     {
         auto* nItem = dynamic_cast<NamedMenuItem*>(item.get());
@@ -64,7 +64,7 @@ namespace pTK::Platform::MenuBarUtilWin
         }
     }
 
-    void CreateMenuStructure(HMENU parent, MenuMap& menus, const pTK::Ref<pTK::Menu>& menu, uint32_t parentId,
+    void CreateMenuStructure(HMENU parent, MenuMap& menus, const std::shared_ptr<pTK::Menu>& menu, uint32_t parentId,
                              std::vector<ACCEL>& keys)
     {
         HMENU currentMenu = ::CreateMenu();
@@ -95,7 +95,7 @@ namespace pTK::Platform::MenuBarUtilWin
                 }
                 case MenuItemType::Menu:
                 {
-                    Ref<Menu> rMenu = std::dynamic_pointer_cast<Menu>(*menuItemIt);
+                    std::shared_ptr<Menu> rMenu = std::dynamic_pointer_cast<Menu>(*menuItemIt);
                     if (rMenu)
                         CreateMenuStructure(currentMenu, menus, rMenu, currentMenuId, keys);
 #ifdef PTK_DEBUG
@@ -108,8 +108,8 @@ namespace pTK::Platform::MenuBarUtilWin
         }
     }
 
-    uint32_t InsertMenuItemToMap(MenuMap& menus, const Ref<MenuItem>& menuItem, uint32_t parentId, bool isMenu,
-                                 HMENU hmenu)
+    uint32_t InsertMenuItemToMap(MenuMap& menus, const std::shared_ptr<MenuItem>& menuItem, uint32_t parentId,
+                                 bool isMenu, HMENU hmenu)
     {
         uint32_t uniqueId{1};
         for (const auto& it : menus)
@@ -122,7 +122,7 @@ namespace pTK::Platform::MenuBarUtilWin
         return uniqueId;
     }
 
-    Ref<MenuItem> FindMenuItemById(const MenuMap& menuItems, uint32_t id)
+    std::shared_ptr<MenuItem> FindMenuItemById(const MenuMap& menuItems, uint32_t id)
     {
         MenuMap::const_iterator it{menuItems.find(id)};
         if (it != menuItems.cend())

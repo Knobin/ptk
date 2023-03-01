@@ -10,16 +10,16 @@
 
 namespace pTK
 {
-    MenuBar::MenuBar(const std::initializer_list<Ref<Menu>>& menus)
+    MenuBar::MenuBar(const std::initializer_list<value_type>& menus)
         : m_holder{menus}
     {}
 
-    void MenuBar::addMenu(const Ref<Menu>& menu)
+    void MenuBar::addMenu(const value_type& menu)
     {
         m_holder.push_back(menu);
     }
 
-    void MenuBar::removeMenu(const Ref<Menu>& menu)
+    void MenuBar::removeMenu(const value_type& menu)
     {
         for (auto it = cbegin(); it != cend(); ++it)
             if (menu == (*it))

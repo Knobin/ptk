@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
     pTK::Application app("ButtonExample Application", argc, argv);
     pTK::Window window("ButtonExample Window", {SCR_WIDTH, SCR_HEIGHT});
 
-    pTK::Ref<pTK::Button> defaultBtn = pTK::Create<pTK::Button>(pTK::Button::Style::Default);
+    std::shared_ptr<pTK::Button> defaultBtn = std::make_shared<pTK::Button>(pTK::Button::Style::Default);
     defaultBtn->setText("Default Button");
     window.add(defaultBtn);
     defaultBtn->onClick([&defaultBtn](const pTK::ClickEvent&) {
@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
         return false;
     });
 
-    pTK::Ref<pTK::Button> successBtn = pTK::Create<pTK::Button>(pTK::Button::Style::Success);
+    std::shared_ptr<pTK::Button> successBtn = std::make_shared<pTK::Button>(pTK::Button::Style::Success);
     successBtn->setText("Success Button");
     window.add(successBtn);
     successBtn->onClick([&successBtn](const pTK::ClickEvent&) {
@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
         return false;
     });
 
-    pTK::Ref<pTK::Button> dangerBtn = pTK::Create<pTK::Button>(pTK::Button::Style::Danger);
+    std::shared_ptr<pTK::Button> dangerBtn = std::make_shared<pTK::Button>(pTK::Button::Style::Danger);
     dangerBtn->setText("Danger Button");
     window.add(dangerBtn);
     dangerBtn->onClick([&dangerBtn](const pTK::ClickEvent&) {
@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
         return false;
     });
 
-    pTK::Ref<pTK::Button> customBtn = pTK::Create<pTK::Button>();
+    std::shared_ptr<pTK::Button> customBtn = std::make_shared<pTK::Button>();
     customBtn->setText("Custom Button");
     customBtn->setColor(pTK::Color(0x808080FF));
     customBtn->setTextColor(pTK::Color(0xFFFFFFFF));
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
         return false;
     });
 
-    pTK::Ref<pTK::Button> customStyleBtn = pTK::Create<pTK::Button>();
+    std::shared_ptr<pTK::Button> customStyleBtn = std::make_shared<pTK::Button>();
     pTK::Button::Style style = pTK::Button::Style::Default;
     style.color = pTK::Color(0x808080FF);
     style.hoverColor = pTK::Color(0x707070FF);
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
         return false;
     });
 
-    pTK::Ref<pTK::Button> customSizeBtn = pTK::Create<pTK::Button>(style);
+    std::shared_ptr<pTK::Button> customSizeBtn = std::make_shared<pTK::Button>(style);
     customSizeBtn->setSize(pTK::Size(250, 100));
     customSizeBtn->setText("Custom Size Button");
     window.add(customSizeBtn);
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
         return false;
     });
 
-    pTK::Ref<pTK::Button> customLabelSizeBtn = pTK::Create<pTK::Button>(style);
+    std::shared_ptr<pTK::Button> customLabelSizeBtn = std::make_shared<pTK::Button>(style);
     customLabelSizeBtn->setFontSize(24);
     customLabelSizeBtn->setText("Custom Font Size Button");
     window.add(customLabelSizeBtn);

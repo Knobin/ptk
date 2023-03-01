@@ -24,7 +24,7 @@ namespace pTK
 
     Button::Button()
         : Rectangle(),
-          m_text{Create<Label>()},
+          m_text{std::make_shared<Label>()},
           m_labelPos{},
           m_borderSize{14},
           m_hoverColor{},
@@ -42,7 +42,7 @@ namespace pTK
 
     Button::Button(const Style& style)
         : Rectangle(),
-          m_text{Create<Label>()},
+          m_text{std::make_shared<Label>()},
           m_labelPos{},
           m_borderSize{14},
           m_hoverColor{},
@@ -194,7 +194,7 @@ namespace pTK
         return m_text->getColor();
     }
 
-    void Button::setLabel(const Ref<Label>& label)
+    void Button::setLabel(const std::shared_ptr<Label>& label)
     {
         PTK_ASSERT(label, "Label is nullptr");
         m_text->setParent(nullptr);
@@ -204,7 +204,7 @@ namespace pTK
         draw();
     }
 
-    Ref<Label> Button::getLabel() const
+    std::shared_ptr<Label> Button::getLabel() const
     {
         return m_text;
     }

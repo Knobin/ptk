@@ -34,15 +34,6 @@ namespace pTK
         virtual ~MenuItemSeparator() = default;
     };
 
-    /** Function for creating a MenuItemSeparator.
-
-        @return Ref of MenuItemSeparator
-    */
-    inline Ref<MenuItemSeparator> CreateSeparator()
-    {
-        return Create<MenuItemSeparator>();
-    }
-
 } // namespace pTK
 
 #endif // PTK_MENU_MENUITEMSEPARATOR_HPP

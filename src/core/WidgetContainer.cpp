@@ -32,7 +32,7 @@ namespace pTK
             item->setParent(nullptr);
     }
 
-    void WidgetContainer::add(const Ref<Widget>& widget)
+    void WidgetContainer::add(const value_type& widget)
     {
         auto it = std::find(m_holder.cbegin(), m_holder.cend(), widget);
 
@@ -45,7 +45,7 @@ namespace pTK
         }
     }
 
-    void WidgetContainer::remove(const Ref<Widget>& widget)
+    void WidgetContainer::remove(const value_type& widget)
     {
         auto it = std::find(m_holder.cbegin(), m_holder.cend(), widget);
 
@@ -96,10 +96,10 @@ namespace pTK
     }
 
     template <typename Func>
-    static void DelayDeleteZone(const Ref<Widget>& widget, Func func)
+    static void DelayDeleteZone(const WidgetContainer::value_type& widget, Func func)
     {
         // Ref might be deleted, hence the copy. Might be costly on performance though.
-        Ref<Widget> copy{nullptr};
+        WidgetContainer::value_type copy{nullptr};
         if (widget.use_count() == 1)
             copy = widget;
         func();
