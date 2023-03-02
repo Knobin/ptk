@@ -10,8 +10,8 @@
 
 // pTK Headers
 #include "ptk/core/Text.hpp"
+#include "ptk/core/Widget.hpp"
 #include "ptk/widgets/Label.hpp"
-#include "ptk/widgets/Rectangle.hpp"
 
 namespace pTK
 {
@@ -21,7 +21,7 @@ namespace pTK
         Unique elements is different colors depending on event.
         Such as hover and click colors.
     */
-    class PTK_API Button : public Rectangle
+    class PTK_API Button : public Widget
     {
     public:
         /** Style struct for Button styling implementation.
@@ -214,6 +214,54 @@ namespace pTK
         */
         [[nodiscard]] Style getStyle() const;
 
+        /** Function for setting the corner radius.
+
+            @param radius  corner radius
+        */
+        void setCornerRadius(float radius);
+
+        /** Function for retrieving the corner radius.
+
+            @return    corner radius
+        */
+        [[nodiscard]] float getCornerRadius() const;
+
+        /** Function for retrieving the Color of the Shape.
+
+            @return    Current Color
+        */
+        [[nodiscard]] const Color& getColor() const;
+
+        /** Function for setting the Color of the Shape.
+
+            @param Color   Shape Color
+        */
+        virtual void setColor(const Color& color);
+
+        /** Function for retrieving the Color of the Shape.
+
+            @return    Current Color
+        */
+        [[nodiscard]] const Color& getOutlineColor() const;
+
+        /** Function for setting the Color of the outline.
+
+            @param outline_color   outline Color
+        */
+        virtual void setOutlineColor(const Color& outlineColor);
+
+        /** Function for retrieving the thickness of the outline.
+
+            @return    outline thickness
+        */
+        [[nodiscard]] float getOutlineThickness() const;
+
+        /** Function for setting the thickness of the outline.
+
+            @param outline_thickness   thickness of outline
+        */
+        virtual void setOutlineThickness(float outlineThickness);
+
         /** Function for handling when mouse is entering.
 
             Derived from EventFunctions.
@@ -252,14 +300,18 @@ namespace pTK
         void initCallbacks();
 
     private:
-        std::shared_ptr<Label> m_text;
-        Point m_labelPos;
-        uint32_t m_borderSize;
-        Color m_hoverColor;
-        Color m_clickColor;
-        Color m_colorCopy;
-        bool m_hover;
-        bool m_click;
+        std::shared_ptr<Label> m_text{nullptr};
+        Point m_labelPos{};
+        uint32_t m_borderSize{10};
+        Color m_hoverColor{};
+        Color m_clickColor{};
+        Color m_colorCopy{};
+        bool m_hover{false};
+        bool m_click{false};
+        float m_cornerRadius{0.0f};
+        Color m_color{0x00000000};
+        Color m_outlineColor{0xf5f5f5ff};
+        float m_outlineThickness{0.0f};
     };
 } // namespace pTK
 

@@ -9,26 +9,24 @@
 #define PTK_WIDGETS_LABEL_HPP
 
 // pTK Headers
-#include "ptk/core/Shape.hpp"
 #include "ptk/core/Text.hpp"
+#include "ptk/core/Widget.hpp"
+#include "ptk/util/Color.hpp"
 
 namespace pTK
 {
     /** Label class implementation.
 
         This class is for drawing a Label.
-        Deriving from Shape instead of directly of Widget,
-        is for the unique properties that Shape has that Label
-        can also use. Such as Color and outline.
     */
-    class PTK_API Label : public Shape, public Text
+    class PTK_API Label : public Widget, public Text
     {
     public:
         /** Constructs Label with default values.
 
             @return    default initialized Label
         */
-        Label();
+        Label() = default;
 
         /** Move Constructor for Label.
 
@@ -42,9 +40,8 @@ namespace pTK
         */
         Label& operator=(Label&& other) = default;
 
-        /** Move Constructor for Label.
+        /** Destructor for Label.
 
-            @return    initialized Label from value
         */
         virtual ~Label() = default;
 
@@ -55,8 +52,55 @@ namespace pTK
         */
         void onDraw(SkCanvas* canvas) override;
 
+        /** Function for setting the text.
+
+            Note: Will apply the new text bounds as size and min/max sizes.
+
+            @param str      new text
+        */
         void setText(const std::string& str);
-        const std::string& getText() const;
+
+        /** Function for retrieving current set text.
+
+            @return    text
+        */
+        [[nodiscard]] const std::string& getText() const noexcept;
+
+        /** Function for retrieving the Color of the Shape.
+
+            @return    Current Color
+        */
+        [[nodiscard]] const Color& getColor() const;
+
+        /** Function for setting the Color of the Shape.
+
+            @param Color   Shape Color
+        */
+        virtual void setColor(const Color& color);
+
+        /** Function for retrieving the Color of the Shape.
+
+            @return    Current Color
+        */
+        [[nodiscard]] const Color& getOutlineColor() const;
+
+        /** Function for setting the Color of the outline.
+
+            @param outline_color   outline Color
+        */
+        virtual void setOutlineColor(const Color& outlineColor);
+
+        /** Function for retrieving the thickness of the outline.
+
+            @return    outline thickness
+        */
+        [[nodiscard]] float getOutlineThickness() const;
+
+        /** Function for setting the thickness of the outline.
+
+            @param outline_thickness   thickness of outline
+        */
+        virtual void setOutlineThickness(float outlineThickness);
 
     private:
         // Label should only change size on setFontSize!
@@ -66,8 +110,11 @@ namespace pTK
 
         void onTextUpdate() override;
 
-        // Only supports UTF-8 for now.
-        std::string m_text{};
+    private:
+        std::string m_text{}; // Only supports UTF-8 for now.
+        Color m_color{0xf5f5f5ff};
+        Color m_outlineColor{0xf5f5f5ff};
+        float m_outlineThickness{0.0f};
     };
 } // namespace pTK
 

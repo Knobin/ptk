@@ -7,7 +7,6 @@ set(PTK_CORE_FILES core/Alignment.cpp
         core/CallbackStorage.cpp
         core/ContextBase.cpp
         core/EventCallbacks.cpp
-        core/Shape.cpp
         core/Sizable.cpp
         core/Text.cpp
         core/Widget.cpp
@@ -31,7 +30,6 @@ set(PTK_WIDGET_FILES widgets/Button.cpp
         widgets/HBox.cpp
         widgets/Image.cpp
         widgets/Label.cpp
-        widgets/Rectangle.cpp
         widgets/TextField.cpp
         widgets/VBox.cpp)
 

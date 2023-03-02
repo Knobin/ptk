@@ -10,15 +10,15 @@
 
 // pTK Headers
 #include "ptk/core/Text.hpp"
+#include "ptk/core/Widget.hpp"
 #include "ptk/util/Vec2.hpp"
-#include "ptk/widgets/Rectangle.hpp"
 
 namespace pTK
 {
     /** TextField class implementation.
 
     */
-    class PTK_API TextField : public Rectangle, public Text
+    class PTK_API TextField : public Widget, public Text
     {
     public:
         /** Constructs TextField with default values.
@@ -93,8 +93,67 @@ namespace pTK
         */
         void setPosHint(const Point& pos) override;
 
+        /** Function for setting the text.
+
+            Note: Will apply the new text bounds as size and min/max sizes.
+
+            @param str      new text
+        */
         void setText(const std::string& text);
+
+        /** Function for retrieving current set text.
+
+            @return    text
+        */
         [[nodiscard]] const std::string& getText() const;
+
+        /** Function for setting the corner radius.
+
+            @param radius  corner radius
+        */
+        void setCornerRadius(float radius);
+
+        /** Function for retrieving the corner radius.
+
+            @return    corner radius
+        */
+        [[nodiscard]] float getCornerRadius() const;
+
+        /** Function for retrieving the Color of the Shape.
+
+            @return    Current Color
+        */
+        [[nodiscard]] const Color& getColor() const;
+
+        /** Function for setting the Color of the Shape.
+
+            @param Color   Shape Color
+        */
+        virtual void setColor(const Color& color);
+
+        /** Function for retrieving the Color of the Shape.
+
+            @return    Current Color
+        */
+        [[nodiscard]] const Color& getOutlineColor() const;
+
+        /** Function for setting the Color of the outline.
+
+            @param outline_color   outline Color
+        */
+        virtual void setOutlineColor(const Color& outlineColor);
+
+        /** Function for retrieving the thickness of the outline.
+
+            @return    outline thickness
+        */
+        [[nodiscard]] float getOutlineThickness() const;
+
+        /** Function for setting the thickness of the outline.
+
+            @param outline_thickness   thickness of outline
+        */
+        virtual void setOutlineThickness(float outlineThickness);
 
     private:
         // Callback function from Text.
@@ -119,6 +178,11 @@ namespace pTK
         float m_cursorHeight{0.0f};
         std::size_t m_cursorLocation{0};
         bool m_drawCursor{false};
+
+        float m_cornerRadius{0.0f};
+        Color m_color{0xf5f5f5ff};
+        Color m_outlineColor{0xf5f5f5ff};
+        float m_outlineThickness{0.0f};
 
         // Only supports UTF-8 for now.
         std::string m_text{};

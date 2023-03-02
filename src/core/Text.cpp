@@ -9,9 +9,8 @@
 #include "../Log.hpp"
 
 // pTK Headers
-#include "ptk/core/Text.hpp"
 #include "ptk/core/ContextBase.hpp"
-#include "ptk/widgets/Rectangle.hpp"
+#include "ptk/core/Text.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()

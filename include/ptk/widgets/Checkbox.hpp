@@ -9,7 +9,7 @@
 #define PTK_WIDGETS_CHECKBOX_HPP
 
 // pTK Headers
-#include "ptk/widgets/Rectangle.hpp"
+#include "ptk/core/Widget.hpp"
 
 namespace pTK
 {
@@ -27,7 +27,7 @@ namespace pTK
         An extra callback is also present for overriding when
         the checkbox is toggled.
     */
-    class PTK_API Checkbox : public Rectangle
+    class PTK_API Checkbox : public Widget
     {
     public:
         /** Checkbox with default values.
@@ -66,7 +66,7 @@ namespace pTK
 
             @return    status
         */
-        bool status() const;
+        [[nodiscard]] bool status() const;
 
         /** Function for setting the status.
 
@@ -79,6 +79,54 @@ namespace pTK
             @return    the status toggled to.
         */
         bool toggle();
+
+        /** Function for setting the corner radius.
+
+            @param radius  corner radius
+        */
+        void setCornerRadius(float radius);
+
+        /** Function for retrieving the corner radius.
+
+            @return    corner radius
+        */
+        [[nodiscard]] float getCornerRadius() const;
+
+        /** Function for retrieving the Color of the Shape.
+
+            @return    Current Color
+        */
+        [[nodiscard]] const Color& getColor() const;
+
+        /** Function for setting the Color of the Shape.
+
+            @param Color   Shape Color
+        */
+        virtual void setColor(const Color& color);
+
+        /** Function for retrieving the Color of the Shape.
+
+            @return    Current Color
+        */
+        [[nodiscard]] const Color& getOutlineColor() const;
+
+        /** Function for setting the Color of the outline.
+
+            @param outline_color   outline Color
+        */
+        virtual void setOutlineColor(const Color& outlineColor);
+
+        /** Function for retrieving the thickness of the outline.
+
+            @return    outline thickness
+        */
+        [[nodiscard]] float getOutlineThickness() const;
+
+        /** Function for setting the thickness of the outline.
+
+            @param outline_thickness   thickness of outline
+        */
+        virtual void setOutlineThickness(float outlineThickness);
 
         /** Function for handling when mouse is entering.
 
@@ -126,12 +174,16 @@ namespace pTK
         void initCallbacks();
 
     private:
-        bool m_checked = false;
-        bool m_hover = false;
-        bool m_click = false;
+        bool m_checked{false};
+        bool m_hover{false};
+        bool m_click{false};
         uint8_t m_state = 0;
-        Color m_checkColor;
-        std::function<bool(bool status)> m_toggleCallback;
+        Color m_checkColor{0x007BFFFF};
+        std::function<bool(bool status)> m_toggleCallback{nullptr};
+        float m_cornerRadius{0.0f};
+        Color m_color{0x00000000};
+        Color m_outlineColor{0xf5f5f5ff};
+        float m_outlineThickness{0.0f};
 
         void drawChecked(SkCanvas* canvas);
         void drawStates(SkCanvas* canvas);

@@ -9,6 +9,7 @@
 #include "../core/Assert.hpp"
 
 // pTK Headers
+#include "ptk/core/ContextBase.hpp"
 #include "ptk/util/Math.hpp"
 #include "ptk/widgets/Button.hpp"
 
@@ -22,15 +23,8 @@ namespace pTK
                                               Color(0xFFFFFFFF), 5.0f};
 
     Button::Button()
-        : Rectangle(),
-          m_text{std::make_shared<Label>()},
-          m_labelPos{},
-          m_borderSize{14},
-          m_hoverColor{},
-          m_clickColor{},
-          m_colorCopy{},
-          m_hover{false},
-          m_click{false}
+        : Widget(),
+          m_text{std::make_shared<Label>()}
     {
         initCallbacks();
 
@@ -40,15 +34,8 @@ namespace pTK
     }
 
     Button::Button(const Style& style)
-        : Rectangle(),
-          m_text{std::make_shared<Label>()},
-          m_labelPos{},
-          m_borderSize{14},
-          m_hoverColor{},
-          m_clickColor{},
-          m_colorCopy{},
-          m_hover{false},
-          m_click{false}
+        : Widget(),
+          m_text{std::make_shared<Label>()}
     {
         initCallbacks();
 
@@ -97,9 +84,50 @@ namespace pTK
         setBounds();
     }
 
+    static void DrawRect(SkCanvas* canvas, Point pos, Size size, Color color, Color outlineColor,
+                         float outlineThickness, float cornerRadius)
+    {
+        // Set Size and Position.
+        SkPoint skPos{convertToSkPoint(pos)};
+        SkPoint skSize{convertToSkPoint(size)};
+        skSize += skPos; // skia needs the size to be pos+size.
+
+        // Outline.
+        const float halfOutlineThickness{outlineThickness / 2.0f};
+        skPos.fX += halfOutlineThickness;
+        skPos.fY += halfOutlineThickness;
+        skSize.fX -= halfOutlineThickness;
+        skSize.fY -= halfOutlineThickness;
+
+        // Set Color.
+        SkPaint paint{};
+        paint.setAntiAlias(true);
+        paint.setARGB(color.a, color.r, color.g, color.b);
+
+        // Draw Rect.
+        SkRect rect{};
+        rect.set(skPos, skSize);
+        paint.setStrokeWidth(outlineThickness);
+        if (outlineThickness > 0.0f)
+            paint.setStyle(SkPaint::kFill_Style);
+        else
+            paint.setStyle(SkPaint::kStrokeAndFill_Style);
+
+        canvas->drawRoundRect(rect, cornerRadius, cornerRadius, paint);
+
+        if (outlineThickness > 0.0f)
+        {
+            // Draw Outline.
+            paint.setARGB(outlineColor.a, outlineColor.r, outlineColor.g, outlineColor.b);
+            paint.setStyle(SkPaint::kStroke_Style);
+            canvas->drawRoundRect(rect, cornerRadius, cornerRadius, paint);
+        }
+    }
+
     void Button::onDraw(SkCanvas* canvas)
     {
-        Rectangle::onDraw(canvas);
+        DrawRect(canvas, getPosition(), getSize(), getColor(), getOutlineColor(), getOutlineThickness(),
+                 getCornerRadius());
         m_text->onDraw(canvas);
     }
 
@@ -243,21 +271,66 @@ namespace pTK
     {
         m_hoverColor = style.hoverColor;
         m_clickColor = style.clickColor;
+        m_cornerRadius = style.cornerRadius;
+        m_color = style.color;
         m_text->setColor(style.textColor);
-        setCornerRadius(style.cornerRadius);
-        setColor(style.color); // Will call draw.
         setBounds();
+        draw();
     }
 
     Button::Style Button::getStyle() const
     {
         Style style{};
-        style.color = getColor();
+        style.color = m_color;
         style.hoverColor = m_hoverColor;
         style.clickColor = m_clickColor;
         style.textColor = m_text->getColor();
-        style.cornerRadius = getCornerRadius();
+        style.cornerRadius = m_cornerRadius;
         return style;
+    }
+
+    void Button::setCornerRadius(float radius)
+    {
+        if (radius >= 0)
+            m_cornerRadius = radius;
+    }
+
+    float Button::getCornerRadius() const
+    {
+        return m_cornerRadius;
+    }
+
+    const Color& Button::getColor() const
+    {
+        return m_color;
+    }
+
+    void Button::setColor(const Color& color)
+    {
+        m_color = color;
+        draw();
+    }
+
+    const Color& Button::getOutlineColor() const
+    {
+        return m_outlineColor;
+    }
+
+    void Button::setOutlineColor(const Color& outline_color)
+    {
+        m_outlineColor = outline_color;
+        draw();
+    }
+
+    float Button::getOutlineThickness() const
+    {
+        return m_outlineThickness;
+    }
+
+    void Button::setOutlineThickness(float outlineThickness)
+    {
+        m_outlineThickness = outlineThickness;
+        draw();
     }
 
     void Button::onEnterCallback(const EnterEvent&)

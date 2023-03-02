@@ -25,7 +25,6 @@
 #include "ptk/core/EventFunctions.hpp"
 #include "ptk/core/EventHandling.hpp"
 #include "ptk/core/Exception.hpp"
-#include "ptk/core/Shape.hpp"
 #include "ptk/core/Sizable.hpp"
 #include "ptk/core/Text.hpp"
 #include "ptk/core/Widget.hpp"
@@ -71,7 +70,6 @@
 #include "ptk/widgets/HBox.hpp"
 #include "ptk/widgets/Image.hpp"
 #include "ptk/widgets/Label.hpp"
-#include "ptk/widgets/Rectangle.hpp"
 #include "ptk/widgets/TextField.hpp"
 #include "ptk/widgets/VBox.hpp"
 

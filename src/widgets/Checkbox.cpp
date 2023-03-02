@@ -21,10 +21,9 @@ PTK_DISABLE_WARN_END()
 namespace pTK
 {
     Checkbox::Checkbox()
-        : Rectangle(),
-          m_checkColor{0x007BFFFF}
+        : Widget()
     {
-        Shape::setColor(Color(0x00000000));
+        initCallbacks();
     }
 
     void Checkbox::initCallbacks()
@@ -52,6 +51,46 @@ namespace pTK
         drawStates(canvas);
     }
 
+    static void DrawRect(SkCanvas* canvas, Point pos, Size size, Color color, Color outlineColor,
+                         float outlineThickness, float cornerRadius)
+    {
+        // Set Size and Position.
+        SkPoint skPos{convertToSkPoint(pos)};
+        SkPoint skSize{convertToSkPoint(size)};
+        skSize += skPos; // skia needs the size to be pos+size.
+
+        // Outline.
+        const float halfOutlineThickness{outlineThickness / 2.0f};
+        skPos.fX += halfOutlineThickness;
+        skPos.fY += halfOutlineThickness;
+        skSize.fX -= halfOutlineThickness;
+        skSize.fY -= halfOutlineThickness;
+
+        // Set Color.
+        SkPaint paint{};
+        paint.setAntiAlias(true);
+        paint.setARGB(color.a, color.r, color.g, color.b);
+
+        // Draw Rect.
+        SkRect rect{};
+        rect.set(skPos, skSize);
+        paint.setStrokeWidth(outlineThickness);
+        if (outlineThickness > 0.0f)
+            paint.setStyle(SkPaint::kFill_Style);
+        else
+            paint.setStyle(SkPaint::kStrokeAndFill_Style);
+
+        canvas->drawRoundRect(rect, cornerRadius, cornerRadius, paint);
+
+        if (outlineThickness > 0.0f)
+        {
+            // Draw Outline.
+            paint.setARGB(outlineColor.a, outlineColor.r, outlineColor.g, outlineColor.b);
+            paint.setStyle(SkPaint::kStroke_Style);
+            canvas->drawRoundRect(rect, cornerRadius, cornerRadius, paint);
+        }
+    }
+
     void Checkbox::drawStates(SkCanvas* canvas)
     {
         Widget* parent = getParent();
@@ -62,7 +101,8 @@ namespace pTK
             Color temp = getColor();
 
             setColor(Color(0, 0, 0, 0));
-            Rectangle::onDraw(canvas);
+            DrawRect(canvas, getPosition(), getSize(), getColor(), getOutlineColor(), getOutlineThickness(),
+                     getCornerRadius());
 
             setColor(temp);
         }
@@ -73,7 +113,8 @@ namespace pTK
             if (!status()) // State 1
             {
                 setOutlineColor(getColor());
-                Rectangle::onDraw(canvas);
+                DrawRect(canvas, getPosition(), getSize(), getColor(), getOutlineColor(), getOutlineThickness(),
+                         getCornerRadius());
             }
             else // State 2 and 3
             {
@@ -126,7 +167,8 @@ namespace pTK
         // Add clip to canvas and draw underlaying Rectangle.
         canvas->save();
         canvas->clipPath(path, SkClipOp::kDifference, true);
-        Rectangle::onDraw(canvas);
+        DrawRect(canvas, getPosition(), getSize(), getColor(), getOutlineColor(), getOutlineThickness(),
+                 getCornerRadius());
         canvas->restore();
     }
 
@@ -159,6 +201,50 @@ namespace pTK
 
         set(true);
         return true;
+    }
+
+    void Checkbox::setCornerRadius(float radius)
+    {
+        if (radius >= 0)
+            m_cornerRadius = radius;
+    }
+
+    float Checkbox::getCornerRadius() const
+    {
+        return m_cornerRadius;
+    }
+
+    const Color& Checkbox::getColor() const
+    {
+        return m_color;
+    }
+
+    void Checkbox::setColor(const Color& color)
+    {
+        m_color = color;
+        draw();
+    }
+
+    const Color& Checkbox::getOutlineColor() const
+    {
+        return m_outlineColor;
+    }
+
+    void Checkbox::setOutlineColor(const Color& outline_color)
+    {
+        m_outlineColor = outline_color;
+        draw();
+    }
+
+    float Checkbox::getOutlineThickness() const
+    {
+        return m_outlineThickness;
+    }
+
+    void Checkbox::setOutlineThickness(float outlineThickness)
+    {
+        m_outlineThickness = outlineThickness;
+        draw();
     }
 
     void Checkbox::onEnterCallback(const EnterEvent&)

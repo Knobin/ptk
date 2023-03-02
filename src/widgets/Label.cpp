@@ -17,11 +17,6 @@ PTK_DISABLE_WARN_END()
 
 namespace pTK
 {
-    Label::Label()
-        : Shape(),
-          Text()
-    {}
-
     void Label::onDraw(SkCanvas* canvas)
     {
         const Vec2f pos{static_cast<float>(getPosition().x), static_cast<float>(getPosition().y)};
@@ -45,10 +40,44 @@ namespace pTK
     {
         m_text = str;
         onTextUpdate();
+        draw();
     }
 
-    const std::string& Label::getText() const
+    const std::string& Label::getText() const noexcept
     {
         return m_text;
+    }
+
+    const Color& Label::getColor() const
+    {
+        return m_color;
+    }
+
+    void Label::setColor(const Color& color)
+    {
+        m_color = color;
+        draw();
+    }
+
+    const Color& Label::getOutlineColor() const
+    {
+        return m_outlineColor;
+    }
+
+    void Label::setOutlineColor(const Color& outline_color)
+    {
+        m_outlineColor = outline_color;
+        draw();
+    }
+
+    float Label::getOutlineThickness() const
+    {
+        return m_outlineThickness;
+    }
+
+    void Label::setOutlineThickness(float outlineThickness)
+    {
+        m_outlineThickness = outlineThickness;
+        draw();
     }
 } // namespace pTK

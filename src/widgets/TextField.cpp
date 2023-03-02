@@ -22,7 +22,7 @@ PTK_DISABLE_WARN_END()
 namespace pTK
 {
     TextField::TextField()
-        : Rectangle(),
+        : Widget(),
           Text()
     {
         onKey([this](const KeyEvent& evt) {
@@ -149,9 +149,50 @@ namespace pTK
         }
     }
 
+    static void DrawRect(SkCanvas* canvas, Point pos, Size size, Color color, Color outlineColor,
+                         float outlineThickness, float cornerRadius)
+    {
+        // Set Size and Position.
+        SkPoint skPos{convertToSkPoint(pos)};
+        SkPoint skSize{convertToSkPoint(size)};
+        skSize += skPos; // skia needs the size to be pos+size.
+
+        // Outline.
+        const float halfOutlineThickness{outlineThickness / 2.0f};
+        skPos.fX += halfOutlineThickness;
+        skPos.fY += halfOutlineThickness;
+        skSize.fX -= halfOutlineThickness;
+        skSize.fY -= halfOutlineThickness;
+
+        // Set Color.
+        SkPaint paint{};
+        paint.setAntiAlias(true);
+        paint.setARGB(color.a, color.r, color.g, color.b);
+
+        // Draw Rect.
+        SkRect rect{};
+        rect.set(skPos, skSize);
+        paint.setStrokeWidth(outlineThickness);
+        if (outlineThickness > 0.0f)
+            paint.setStyle(SkPaint::kFill_Style);
+        else
+            paint.setStyle(SkPaint::kStrokeAndFill_Style);
+
+        canvas->drawRoundRect(rect, cornerRadius, cornerRadius, paint);
+
+        if (outlineThickness > 0.0f)
+        {
+            // Draw Outline.
+            paint.setARGB(outlineColor.a, outlineColor.r, outlineColor.g, outlineColor.b);
+            paint.setStyle(SkPaint::kStroke_Style);
+            canvas->drawRoundRect(rect, cornerRadius, cornerRadius, paint);
+        }
+    }
+
     void TextField::onDraw(SkCanvas* canvas)
     {
-        Rectangle::onDraw(canvas);
+        DrawRect(canvas, getPosition(), getSize(), getColor(), getOutlineColor(), getOutlineThickness(),
+                 getCornerRadius());
         const Size rectSize{getSize()};
 
         const Text::StrData textData{getText().c_str(), getText().size(), Text::Encoding::UTF8};
@@ -202,11 +243,56 @@ namespace pTK
     {
         m_text = text;
         onTextUpdate();
+        draw();
     }
 
     const std::string& TextField::getText() const
     {
         return m_text;
+    }
+
+    void TextField::setCornerRadius(float radius)
+    {
+        if (radius >= 0)
+            m_cornerRadius = radius;
+    }
+
+    float TextField::getCornerRadius() const
+    {
+        return m_cornerRadius;
+    }
+
+    const Color& TextField::getColor() const
+    {
+        return m_color;
+    }
+
+    void TextField::setColor(const Color& color)
+    {
+        m_color = color;
+        draw();
+    }
+
+    const Color& TextField::getOutlineColor() const
+    {
+        return m_outlineColor;
+    }
+
+    void TextField::setOutlineColor(const Color& outline_color)
+    {
+        m_outlineColor = outline_color;
+        draw();
+    }
+
+    float TextField::getOutlineThickness() const
+    {
+        return m_outlineThickness;
+    }
+
+    void TextField::setOutlineThickness(float outlineThickness)
+    {
+        m_outlineThickness = outlineThickness;
+        draw();
     }
 
     void TextField::updateBounds()
