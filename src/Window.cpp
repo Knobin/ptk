@@ -151,15 +151,16 @@ namespace pTK
     {
         ContextBase* context{getContext()};
         sk_sp<SkSurface> surface = context->surface();
-        SkCanvas* canvas{surface->getCanvas()};
+        SkCanvas* skCanvas{surface->getCanvas()};
 
         // Apply monitor scale.
         SkMatrix matrix{};
         Vec2f scale{getDPIScale()};
         matrix.setScale(scale.x, scale.y);
-        canvas->setMatrix(matrix);
+        skCanvas->setMatrix(matrix);
 
         // Will paint background and then children.
+        Canvas canvas{skCanvas};
         onDraw(canvas);
 
         surface->flushAndSubmit();

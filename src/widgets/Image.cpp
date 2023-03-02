@@ -65,19 +65,10 @@ namespace pTK
         return false;
     }
 
-    void Image::onDraw(SkCanvas* canvas)
+    void Image::onDraw(Canvas& canvas)
     {
         if (m_image)
-        {
-            // Set Size and Position
-            const SkPoint pos{convertToSkPoint(getPosition())};
-            SkPoint size{convertToSkPoint(getSize())};
-            size += pos; // skia needs the size to be pos+size.
-
-            SkRect dst{};
-            dst.set(pos, size);
-            canvas->drawImageRect(m_image, dst, SkSamplingOptions(), nullptr);
-        }
+            canvas.drawImage(getPosition(), getSize(), m_image.get());
     }
 
     const Vec2f& Image::getScale() const

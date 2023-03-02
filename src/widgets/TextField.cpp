@@ -149,60 +149,22 @@ namespace pTK
         }
     }
 
-    static void DrawRect(SkCanvas* canvas, Point pos, Size size, Color color, Color outlineColor,
-                         float outlineThickness, float cornerRadius)
+    void TextField::onDraw(Canvas& canvas)
     {
-        // Set Size and Position.
-        SkPoint skPos{convertToSkPoint(pos)};
-        SkPoint skSize{convertToSkPoint(size)};
-        skSize += skPos; // skia needs the size to be pos+size.
+        canvas.drawRoundRect(getPosition(), getSize(), getColor(), getCornerRadius(), getOutlineColor(),
+                             getOutlineThickness());
 
-        // Outline.
-        const float halfOutlineThickness{outlineThickness / 2.0f};
-        skPos.fX += halfOutlineThickness;
-        skPos.fY += halfOutlineThickness;
-        skSize.fX -= halfOutlineThickness;
-        skSize.fY -= halfOutlineThickness;
-
-        // Set Color.
-        SkPaint paint{};
-        paint.setAntiAlias(true);
-        paint.setARGB(color.a, color.r, color.g, color.b);
-
-        // Draw Rect.
-        SkRect rect{};
-        rect.set(skPos, skSize);
-        paint.setStrokeWidth(outlineThickness);
-        if (outlineThickness > 0.0f)
-            paint.setStyle(SkPaint::kFill_Style);
-        else
-            paint.setStyle(SkPaint::kStrokeAndFill_Style);
-
-        canvas->drawRoundRect(rect, cornerRadius, cornerRadius, paint);
-
-        if (outlineThickness > 0.0f)
-        {
-            // Draw Outline.
-            paint.setARGB(outlineColor.a, outlineColor.r, outlineColor.g, outlineColor.b);
-            paint.setStyle(SkPaint::kStroke_Style);
-            canvas->drawRoundRect(rect, cornerRadius, cornerRadius, paint);
-        }
-    }
-
-    void TextField::onDraw(SkCanvas* canvas)
-    {
-        DrawRect(canvas, getPosition(), getSize(), getColor(), getOutlineColor(), getOutlineThickness(),
-                 getCornerRadius());
         const Size rectSize{getSize()};
+        const SkFont* font = &skFont();
 
         const Text::StrData textData{getText().c_str(), getText().size(), Text::Encoding::UTF8};
-        float advance = (!getText().empty()) ? drawTextLine(canvas, textData, m_textColor, m_textPos) : 0.0f;
+        float advance = (!getText().empty()) ? canvas.drawTextLine(textData, m_textColor, m_textPos, font) : 0.0f;
 
         if (getText().empty())
         {
             const Text::StrData placeholderStrData{m_placeholderText.c_str(), m_placeholderText.size(),
                                                    Text::Encoding::UTF8};
-            drawTextLine(canvas, placeholderStrData, m_placeholderColor, m_textPos);
+            canvas.drawTextLine(placeholderStrData, m_placeholderColor, m_textPos, font);
         }
 
         if (m_drawCursor)
@@ -221,7 +183,7 @@ namespace pTK
             float startY =
                 static_cast<float>(getPosition().y) + ((static_cast<float>(rectSize.height) - m_cursorHeight) / 2);
             float endY = startY + m_cursorHeight;
-            canvas->drawLine({posX, startY}, {posX, endY}, paint);
+            canvas.skCanvas->drawLine({posX, startY}, {posX, endY}, paint);
         }
     }
 

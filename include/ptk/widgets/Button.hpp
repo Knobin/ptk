@@ -84,13 +84,11 @@ namespace pTK
         */
         void setPosHint(const Point& pos) override;
 
-        /** Draw function.
-            Function is called when it is time to draw.
+        /** Function is called when it is time to draw.
 
-            Derived from Drawable.
-            @param canvas  canvas to draw to
+            @param canvas   Canvas to draw to.
         */
-        void onDraw(SkCanvas* canvas) override;
+        void onDraw(Canvas& canvas) override;
 
         /** Function for a child Widget to call the Parent when it
             need to be drawn.

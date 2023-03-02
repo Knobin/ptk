@@ -5,6 +5,7 @@
 set(PTK_CORE_FILES core/Alignment.cpp
         core/ApplicationBase.cpp
         core/CallbackStorage.cpp
+        core/Canvas.cpp
         core/ContextBase.cpp
         core/EventCallbacks.cpp
         core/Sizable.cpp

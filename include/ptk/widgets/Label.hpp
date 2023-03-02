@@ -45,12 +45,11 @@ namespace pTK
         */
         virtual ~Label() = default;
 
-        /** Draw function.
-            Function is called when it is time to draw.
+        /** Function is called when it is time to draw.
 
-            Derived from Drawable.
+            @param canvas   Canvas to draw to.
         */
-        void onDraw(SkCanvas* canvas) override;
+        void onDraw(Canvas& canvas) override;
 
         /** Function for setting the text.
 

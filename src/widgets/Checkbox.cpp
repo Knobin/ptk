@@ -46,52 +46,12 @@ namespace pTK
         });
     }
 
-    void Checkbox::onDraw(SkCanvas* canvas)
+    void Checkbox::onDraw(Canvas& canvas)
     {
         drawStates(canvas);
     }
 
-    static void DrawRect(SkCanvas* canvas, Point pos, Size size, Color color, Color outlineColor,
-                         float outlineThickness, float cornerRadius)
-    {
-        // Set Size and Position.
-        SkPoint skPos{convertToSkPoint(pos)};
-        SkPoint skSize{convertToSkPoint(size)};
-        skSize += skPos; // skia needs the size to be pos+size.
-
-        // Outline.
-        const float halfOutlineThickness{outlineThickness / 2.0f};
-        skPos.fX += halfOutlineThickness;
-        skPos.fY += halfOutlineThickness;
-        skSize.fX -= halfOutlineThickness;
-        skSize.fY -= halfOutlineThickness;
-
-        // Set Color.
-        SkPaint paint{};
-        paint.setAntiAlias(true);
-        paint.setARGB(color.a, color.r, color.g, color.b);
-
-        // Draw Rect.
-        SkRect rect{};
-        rect.set(skPos, skSize);
-        paint.setStrokeWidth(outlineThickness);
-        if (outlineThickness > 0.0f)
-            paint.setStyle(SkPaint::kFill_Style);
-        else
-            paint.setStyle(SkPaint::kStrokeAndFill_Style);
-
-        canvas->drawRoundRect(rect, cornerRadius, cornerRadius, paint);
-
-        if (outlineThickness > 0.0f)
-        {
-            // Draw Outline.
-            paint.setARGB(outlineColor.a, outlineColor.r, outlineColor.g, outlineColor.b);
-            paint.setStyle(SkPaint::kStroke_Style);
-            canvas->drawRoundRect(rect, cornerRadius, cornerRadius, paint);
-        }
-    }
-
-    void Checkbox::drawStates(SkCanvas* canvas)
+    void Checkbox::drawStates(Canvas& canvas)
     {
         Widget* parent = getParent();
         setParent(nullptr);
@@ -101,8 +61,8 @@ namespace pTK
             Color temp = getColor();
 
             setColor(Color(0, 0, 0, 0));
-            DrawRect(canvas, getPosition(), getSize(), getColor(), getOutlineColor(), getOutlineThickness(),
-                     getCornerRadius());
+            canvas.drawRoundRect(getPosition(), getSize(), getColor(), getCornerRadius(), getOutlineColor(),
+                                 getOutlineThickness());
 
             setColor(temp);
         }
@@ -113,8 +73,8 @@ namespace pTK
             if (!status()) // State 1
             {
                 setOutlineColor(getColor());
-                DrawRect(canvas, getPosition(), getSize(), getColor(), getOutlineColor(), getOutlineThickness(),
-                         getCornerRadius());
+                canvas.drawRoundRect(getPosition(), getSize(), getColor(), getCornerRadius(), getOutlineColor(),
+                                     getOutlineThickness());
             }
             else // State 2 and 3
             {
@@ -134,7 +94,7 @@ namespace pTK
         setParent(parent);
     }
 
-    void Checkbox::drawChecked(SkCanvas* canvas)
+    void Checkbox::drawChecked(Canvas& canvas)
     {
         Size size = getSize();
         Point pos = getPosition();
@@ -165,11 +125,12 @@ namespace pTK
         path.transform(matrix);
 
         // Add clip to canvas and draw underlaying Rectangle.
-        canvas->save();
-        canvas->clipPath(path, SkClipOp::kDifference, true);
-        DrawRect(canvas, getPosition(), getSize(), getColor(), getOutlineColor(), getOutlineThickness(),
-                 getCornerRadius());
-        canvas->restore();
+
+        canvas.skCanvas->save();
+        canvas.skCanvas->clipPath(path, SkClipOp::kDifference, true);
+        canvas.drawRoundRect(getPosition(), getSize(), getColor(), getCornerRadius(), getOutlineColor(),
+                             getOutlineThickness());
+        canvas.skCanvas->restore();
     }
 
     bool Checkbox::status() const

@@ -53,14 +53,11 @@ namespace pTK
         */
         virtual ~Checkbox() = default;
 
-        /** Draw function.
-            Function is called when it is time to draw.
+        /** Function is called when it is time to draw.
 
-            Derived from Drawable.
-
-            @param canvas  Canvas to draw to
+            @param canvas   Canvas to draw to.
         */
-        void onDraw(SkCanvas* canvas) override;
+        void onDraw(Canvas& canvas) override;
 
         /** Function for retrieving the status.
 
@@ -185,8 +182,8 @@ namespace pTK
         Color m_outlineColor{0xf5f5f5ff};
         float m_outlineThickness{0.0f};
 
-        void drawChecked(SkCanvas* canvas);
-        void drawStates(SkCanvas* canvas);
+        void drawChecked(Canvas& canvas);
+        void drawStates(Canvas& canvas);
 
         void internalToggle();
     };

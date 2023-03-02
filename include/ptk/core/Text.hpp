@@ -9,7 +9,6 @@
 #define PTK_CORE_TEXT_HPP
 
 // pTK Headers
-#include "ptk/core/Drawable.hpp"
 #include "ptk/util/Color.hpp"
 #include "ptk/util/Size.hpp"
 #include "ptk/util/Vec2.hpp"
@@ -111,40 +110,6 @@ namespace pTK
             @return  raw SkFont
          */
         [[nodiscard]] const SkFont& skFont() const;
-
-        /** Function for drawing a line of text.
-
-            @param canvas   pointer to SkCanvas
-            @param data     str to draw, size of the ptr and encoding
-            @param color    color of the text
-            @param pos      draw text at
-            @return         advance
-         */
-        float drawTextLine(SkCanvas* canvas, const StrData& data, const Color& color, const Vec2f& pos);
-
-        /** Function for drawing a line of text.
-
-            @param canvas       pointer to SkCanvas
-            @param data         str to draw, size of the ptr and encoding
-            @param color        color of the text
-            @param pos          draw text at
-            @param outlineSize  outline size
-            @param outColor     outline color
-            @return             advance
-         */
-        float drawTextLine(SkCanvas* canvas, const StrData& data, const Color& color, const Vec2f& pos,
-                           float outlineSize, const Color& outColor);
-
-        /** Function for drawing a line of text.
-
-            @param canvas       pointer to SkCanvas
-            @param data         str to draw, size of the ptr and encoding
-            @param color        color of the text
-            @param pos          draw text at
-            @param paint        use custom SkPaint
-            @return             advance
-         */
-        float drawTextLineWithPaint(SkCanvas* canvas, const StrData& data, const Vec2f& pos, const SkPaint& paint);
 
     private:
         // Callback for when the text updates.

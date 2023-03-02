@@ -17,11 +17,11 @@ PTK_DISABLE_WARN_END()
 
 namespace pTK
 {
-    void Label::onDraw(SkCanvas* canvas)
+    void Label::onDraw(Canvas& canvas)
     {
         const Vec2f pos{static_cast<float>(getPosition().x), static_cast<float>(getPosition().y)};
         const Text::StrData data{m_text.c_str(), m_text.size(), Text::Encoding::UTF8};
-        drawTextLine(canvas, data, getColor(), pos, getOutlineThickness(), getOutlineColor());
+        canvas.drawTextLine(data, getColor(), pos, &skFont(), getOutlineThickness(), getOutlineColor());
     }
 
     void Label::onTextUpdate()

@@ -84,50 +84,10 @@ namespace pTK
         setBounds();
     }
 
-    static void DrawRect(SkCanvas* canvas, Point pos, Size size, Color color, Color outlineColor,
-                         float outlineThickness, float cornerRadius)
+    void Button::onDraw(Canvas& canvas)
     {
-        // Set Size and Position.
-        SkPoint skPos{convertToSkPoint(pos)};
-        SkPoint skSize{convertToSkPoint(size)};
-        skSize += skPos; // skia needs the size to be pos+size.
-
-        // Outline.
-        const float halfOutlineThickness{outlineThickness / 2.0f};
-        skPos.fX += halfOutlineThickness;
-        skPos.fY += halfOutlineThickness;
-        skSize.fX -= halfOutlineThickness;
-        skSize.fY -= halfOutlineThickness;
-
-        // Set Color.
-        SkPaint paint{};
-        paint.setAntiAlias(true);
-        paint.setARGB(color.a, color.r, color.g, color.b);
-
-        // Draw Rect.
-        SkRect rect{};
-        rect.set(skPos, skSize);
-        paint.setStrokeWidth(outlineThickness);
-        if (outlineThickness > 0.0f)
-            paint.setStyle(SkPaint::kFill_Style);
-        else
-            paint.setStyle(SkPaint::kStrokeAndFill_Style);
-
-        canvas->drawRoundRect(rect, cornerRadius, cornerRadius, paint);
-
-        if (outlineThickness > 0.0f)
-        {
-            // Draw Outline.
-            paint.setARGB(outlineColor.a, outlineColor.r, outlineColor.g, outlineColor.b);
-            paint.setStyle(SkPaint::kStroke_Style);
-            canvas->drawRoundRect(rect, cornerRadius, cornerRadius, paint);
-        }
-    }
-
-    void Button::onDraw(SkCanvas* canvas)
-    {
-        DrawRect(canvas, getPosition(), getSize(), getColor(), getOutlineColor(), getOutlineThickness(),
-                 getCornerRadius());
+        canvas.drawRoundRect(getPosition(), getSize(), getColor(), getCornerRadius(), getOutlineColor(),
+                             getOutlineThickness());
         m_text->onDraw(canvas);
     }
 

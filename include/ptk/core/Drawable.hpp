@@ -9,10 +9,8 @@
 #define PTK_CORE_DRAWABLE_HPP
 
 // pTK Headers
+#include "ptk/core/Canvas.hpp"
 #include "ptk/core/Defines.hpp"
-
-// Forward declarations
-class SkCanvas;
 
 namespace pTK
 {
@@ -39,9 +37,9 @@ namespace pTK
 
             Function is called when it is time to draw.
 
-            @param canvas   SkCanvas to draw to.
+            @param canvas   Canvas to draw to.
         */
-        virtual void onDraw(SkCanvas*) {}
+        virtual void onDraw(Canvas& UNUSED(canvas)) {}
 
         /** Function to enable drawing.
 
