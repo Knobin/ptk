@@ -164,6 +164,12 @@ set_target_properties(skia PROPERTIES
 # Threads
 find_package(Threads REQUIRED)
 
+# spdlog (if debug build)
+if (PTK_BUILD_TYPE MATCHES Debug)
+    add_subdirectory("${CMAKE_SOURCE_DIR}/third_party/spdlog")
+    set(PTK_DEPENDENCIES ${PTK_DEPENDENCIES} spdlog::spdlog)
+endif()
+
 # Header files
 file(GLOB_RECURSE PTK_HEADER_FILES ${CMAKE_SOURCE_DIR}/include/ptk/*.hpp)
 source_group(TREE "${CMAKE_SOURCE_DIR}/include/ptk" PREFIX "pTK Header Files" FILES ${PTK_HEADER_FILES})
@@ -191,11 +197,6 @@ if (ENABLE_OPENGL)
     target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIRS})
     target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES})
 endif (ENABLE_OPENGL)
-
-# spdlog
-if (PTK_BUILD_TYPE MATCHES Debug)
-    target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/third_party/spdlog/include)
-endif()
 
 # Compiler flags for ptk
 if (MSVC)

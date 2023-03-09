@@ -8,6 +8,11 @@
 // Local Headers
 #include "Log.hpp"
 
+// spdlog Headers
+PTK_DISABLE_WARN_BEGIN()
+#include "spdlog/sinks/stdout_color_sinks.h"
+PTK_DISABLE_WARN_END()
+
 namespace pTK
 {
     std::shared_ptr<spdlog::logger> Log::s_logger;
