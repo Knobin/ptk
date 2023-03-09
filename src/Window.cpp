@@ -70,14 +70,14 @@ namespace pTK
     void Window::runCommands()
     {
         // Switch buffer.
-        const std::size_t currentIndex = m_activeCmdBufferIndex;
-        if (m_activeCmdBufferIndex == 0)
-            m_activeCmdBufferIndex = 1;
-        else
-            m_activeCmdBufferIndex = 0;
+        CommandBuffer<void()> buffer{};
+        {
+            std::lock_guard<std::mutex> lock{m_commandBufferMutex};
+            buffer = std::move(m_commandBuffer);
+        }
 
         // Run commands.
-        m_commandBuffers[currentIndex].batchInvoke();
+        buffer.batchInvoke();
     }
 
     bool Window::shouldClose() const

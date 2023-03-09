@@ -20,6 +20,7 @@
 // C++ Headers
 #include <chrono>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <thread>
 #include <type_traits>
@@ -243,11 +244,11 @@ namespace pTK
         void setLimitsWithSizePolicy();
 
     private:
-        std::array<CommandBuffer<void()>, 2> m_commandBuffers{};
-        std::chrono::time_point<std::chrono::steady_clock> m_lastDrawTime;
+        mutable std::mutex m_commandBufferMutex{};
+        CommandBuffer<void()> m_commandBuffer{};
         std::unique_ptr<Platform::WindowHandle> m_handle;
         std::unique_ptr<ContextBase> m_context;
-        std::atomic<std::size_t> m_activeCmdBufferIndex{0};
+        std::chrono::time_point<std::chrono::steady_clock> m_lastDrawTime;
         std::thread::id m_threadID;
         std::atomic<bool> m_contentInvalidated{false};
         bool m_close{false};
@@ -257,7 +258,11 @@ namespace pTK
     template <typename Command>
     void Window::postCommand(Command cmd)
     {
-        m_commandBuffers[m_activeCmdBufferIndex].add(std::move(cmd));
+        {
+            std::lock_guard<std::mutex> lock{m_commandBufferMutex};
+            m_commandBuffer.add(std::move(cmd));
+        }
+
         if (std::this_thread::get_id() != m_threadID)
             m_handle->notifyEvent();
     }
