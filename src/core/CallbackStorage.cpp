@@ -10,9 +10,6 @@
 
 namespace pTK
 {
-    // CallbackIndexGen class static definitions.
-    std::size_t CallbackIndexGen::s_counter{0};
-
     // CallbackStorage class static definitions.
     uint64_t CallbackStorage::s_idCounter{1};
 } // namespace pTK

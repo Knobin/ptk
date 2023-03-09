@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <typeindex>
 #include <unordered_map>
 #include <vector>
 
@@ -180,13 +181,16 @@ namespace pTK
         container_type m_storage;
     };
 
+    // Unique type for T & Callback.
+    template <typename T, typename Callback>
+    struct CallbackIndexType
+    {
+    };
+
     /** CallbackIndexGen class implementation.
 
         This class generates unique identifiers for every type T and
         type Callback.
-
-        The identifier starts at 0 and counts up for every new specialization
-        generated of the GetIndex function.
     */
     struct PTK_API CallbackIndexGen
     {
@@ -195,14 +199,10 @@ namespace pTK
             @return     unique identifier
         */
         template <typename T, typename Callback>
-        static std::size_t GetIndex()
+        static std::type_index GetIndex()
         {
-            static std::size_t index{s_counter++};
-            return index;
+            return std::type_index(typeid(CallbackIndexType<T, Callback>));
         }
-
-        // Counter variable used for counting.
-        static std::size_t s_counter;
     };
 
     /** CallbackStorageNodeInterface struct implementation.
@@ -252,8 +252,9 @@ namespace pTK
     class PTK_API CallbackStorage
     {
     public:
+        using index_type = std::type_index;
         using node_type = std::unique_ptr<CallbackStorageNodeInterface>;
-        using container_type = std::unordered_map<std::size_t, node_type>;
+        using container_type = std::unordered_map<index_type, node_type>;
 
     public:
         /** Constructs CallbackStorage with default values.
@@ -493,7 +494,7 @@ namespace pTK
         [[nodiscard]] const CallbackContainer<Callback>* getCallbackContainer() const
         {
             // Get index based on T and Callback types.
-            const std::size_t index = CallbackIndexGen::GetIndex<T, Callback>();
+            const index_type index = CallbackIndexGen::GetIndex<T, Callback>();
 
             // Get key/value pair count.
             const auto count = m_storage.count(index);
@@ -515,7 +516,7 @@ namespace pTK
         [[nodiscard]] CallbackContainer<Callback>* getCallbackContainer()
         {
             // Get index based on T and Callback types.
-            const std::size_t index = CallbackIndexGen::GetIndex<T, Callback>();
+            const index_type index = CallbackIndexGen::GetIndex<T, Callback>();
 
             // Get key/value pair count.
             const auto count = m_storage.count(index);
@@ -537,7 +538,7 @@ namespace pTK
         [[nodiscard]] CallbackContainer<Callback>* createNode()
         {
             // Get index based on T and Callback types.
-            const std::size_t index = CallbackIndexGen::GetIndex<T, Callback>();
+            const index_type index = CallbackIndexGen::GetIndex<T, Callback>();
 
             // Get key/value pair count.
             auto count = m_storage.count(index);
@@ -562,7 +563,7 @@ namespace pTK
         void removeNode()
         {
             // Get index based on T and Callback types.
-            const std::size_t index = CallbackIndexGen::GetIndex<T, Callback>();
+            const index_type index = CallbackIndexGen::GetIndex<T, Callback>();
 
             // Get key/value pair count.
             const auto count = m_storage.count(index);
