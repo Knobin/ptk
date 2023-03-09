@@ -149,22 +149,22 @@ namespace pTK
         }
     }
 
-    void TextField::onDraw(Canvas& canvas)
+    void TextField::onDraw(Canvas* canvas)
     {
-        canvas.drawRoundRect(getPosition(), getSize(), getColor(), getCornerRadius(), getOutlineColor(),
-                             getOutlineThickness());
+        canvas->drawRoundRect(getPosition(), getSize(), getColor(), getCornerRadius(), getOutlineColor(),
+                              getOutlineThickness());
 
         const Size rectSize{getSize()};
         const SkFont* font = &skFont();
 
         const Text::StrData textData{getText().c_str(), getText().size(), Text::Encoding::UTF8};
-        float advance = (!getText().empty()) ? canvas.drawTextLine(textData, m_textColor, m_textPos, font) : 0.0f;
+        float advance = (!getText().empty()) ? canvas->drawTextLine(textData, m_textColor, m_textPos, font) : 0.0f;
 
         if (getText().empty())
         {
             const Text::StrData placeholderStrData{m_placeholderText.c_str(), m_placeholderText.size(),
                                                    Text::Encoding::UTF8};
-            canvas.drawTextLine(placeholderStrData, m_placeholderColor, m_textPos, font);
+            canvas->drawTextLine(placeholderStrData, m_placeholderColor, m_textPos, font);
         }
 
         if (m_drawCursor)
@@ -183,7 +183,7 @@ namespace pTK
             float startY =
                 static_cast<float>(getPosition().y) + ((static_cast<float>(rectSize.height) - m_cursorHeight) / 2);
             float endY = startY + m_cursorHeight;
-            canvas.skCanvas->drawLine({posX, startY}, {posX, endY}, paint);
+            canvas->skCanvas->drawLine({posX, startY}, {posX, endY}, paint);
         }
     }
 

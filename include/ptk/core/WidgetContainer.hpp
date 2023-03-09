@@ -95,9 +95,9 @@ namespace pTK
 
         /** Function is called when it is time to draw.
 
-            @param canvas   Canvas to draw to.
+            @param canvas   valid Canvas pointer to draw to
         */
-        void onDraw(Canvas& canvas) override;
+        void onDraw(Canvas* canvas) override;
 
         /** Function for a child Widget to call the Parent when it need to be drawn.
 
@@ -338,15 +338,15 @@ namespace pTK
 
         /** Function that paints the background.
 
-            @param canvas   Canvas to draw to.
+            @param canvas   valid Canvas pointer to draw to
         */
-        void drawBackground(Canvas& canvas) const;
+        void drawBackground(Canvas* canvas) const;
 
         /** Function that paints all the children in the WidgetContainer.
 
-            @param canvas   Canvas to draw to.
+            @param canvas   valid Canvas pointer to draw to
         */
-        void drawChildren(Canvas& canvas)
+        void drawChildren(Canvas* canvas)
         {
             for (auto it = m_holder.begin(); it != m_holder.end(); ++it)
                 (*it)->onDraw(canvas);

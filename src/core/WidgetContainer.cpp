@@ -119,7 +119,7 @@ namespace pTK
         Widget::setPosHint(pos);
     }
 
-    void WidgetContainer::onDraw(Canvas& canvas)
+    void WidgetContainer::onDraw(Canvas* canvas)
     {
         drawBackground(canvas);
         drawChildren(canvas);
@@ -340,9 +340,9 @@ namespace pTK
         return m_busy;
     }
 
-    void WidgetContainer::drawBackground(Canvas& canvas) const
+    void WidgetContainer::drawBackground(Canvas* canvas) const
     {
-        canvas.drawRect(getPosition(), getSize(), m_background);
+        canvas->drawRect(getPosition(), getSize(), m_background);
     }
 
     void WidgetContainer::initCallbacks()

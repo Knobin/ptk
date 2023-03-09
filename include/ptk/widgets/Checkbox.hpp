@@ -55,9 +55,9 @@ namespace pTK
 
         /** Function is called when it is time to draw.
 
-            @param canvas   Canvas to draw to.
+            @param canvas   valid Canvas pointer to draw to
         */
-        void onDraw(Canvas& canvas) override;
+        void onDraw(Canvas* canvas) override;
 
         /** Function for retrieving the status.
 
@@ -182,8 +182,8 @@ namespace pTK
         Color m_outlineColor{0xf5f5f5ff};
         float m_outlineThickness{0.0f};
 
-        void drawChecked(Canvas& canvas);
-        void drawStates(Canvas& canvas);
+        void drawChecked(Canvas* canvas);
+        void drawStates(Canvas* canvas);
 
         void internalToggle();
     };

@@ -14,22 +14,30 @@
 #include "ptk/util/Point.hpp"
 #include "ptk/util/Size.hpp"
 
-// Forward declarations
+// Skia Forward Declarations
 class SkCanvas;
 class SkFont;
 class SkImage;
 
 namespace pTK
 {
+    /** Canvas class.
+
+        Wrapper that contains convenience functions for SkCanvas.
+    */
     class Canvas
     {
     public:
-        Canvas() = delete;
-        Canvas(SkCanvas* canvas)
+        /** Constructs Canvas with SkCanvas.
+
+            @param canvas   valid pointer to SkCanvas
+            @return         initialized Canvas with SkCanvas
+        */
+        explicit Canvas(SkCanvas* canvas)
             : skCanvas{canvas}
         {}
-        ~Canvas() = default;
 
+        // SkCanvas member variable.
         SkCanvas* skCanvas{nullptr};
 
         /** Function for drawing a rectangle.
@@ -112,6 +120,73 @@ namespace pTK
             @param image    valid pointer to SkImage
         */
         void drawImage(Point pos, Size size, const SkImage* image) const;
+
+        /** Function for saving the current matrix and clip on the stack.
+
+        */
+        void save() const;
+
+        /** Function for saving the current matrix and clip on the stack.
+
+            Applies graphics state (paint) to the new layer.
+
+            @param paint        valid pointer to SkPaint
+        */
+        void saveLayer(SkPaint* paint) const;
+
+        /** Function for removing changes to matrix and clip from the stack.
+
+        */
+        void restore() const;
+
+        /** Function for adding a translation transformation to the current matrix.
+
+            @param x    units to move horizontally
+            @param y    units to move vertically
+        */
+        void translate(float x, float y) const;
+
+        /** Function for adding a scaling transformation to the current matrix.
+
+            @param x    scaling factor in the horizontal direction
+            @param y    scaling factor in the vertical direction
+        */
+        void scale(float x, float y) const;
+
+        /** Function for adding a rotation transformation to the current matrix.
+
+            Positive degrees rotates clockwise.
+
+            @param degrees    degrees to rotate
+        */
+        void rotate(float degrees) const;
+
+        /** Function for adding a rotation transformation to the current matrix.
+
+            Positive degrees rotates clockwise.
+
+            @param degrees      degrees to rotate
+            @param x            point on horizontal axis to rotate about.
+            @param y            point on vertical axis to rotate about.
+        */
+        void rotate(float degrees, float x, float y) const;
+
+        /** Function for adding a rotation transformation to the current matrix.
+
+            Transformation matrix described by:
+
+            | a | c | e |
+            | b | d | f |
+            | 0 | 0 | 1 |
+
+            @param a    horizontal scaling (m11)
+            @param b    vertical skewing (m12)
+            @param c    horizontal skewing (m21)
+            @param d    vertical scaling (m22)
+            @param e    horizontal translation (dx)
+            @param f    vertical translation (dy)
+        */
+        void transform(float a, float b, float c, float d, float e, float f) const;
     };
 } // namespace pTK
 

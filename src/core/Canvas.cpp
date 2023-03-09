@@ -182,6 +182,8 @@ namespace pTK
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////////
+
     float Canvas::drawTextLine(const Text::StrData& data, const Color& color, const Vec2f& pos,
                                const SkFont* font) const
     {
@@ -241,6 +243,51 @@ namespace pTK
         SkRect dst{};
         dst.set(skPos, skSize);
         skCanvas->drawImageRect(image, dst, SkSamplingOptions(), nullptr);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+    void Canvas::save() const
+    {
+        skCanvas->save();
+    }
+
+    void Canvas::saveLayer(SkPaint* paint) const
+    {
+        skCanvas->saveLayer(nullptr, paint);
+    }
+
+    void Canvas::restore() const
+    {
+        skCanvas->restore();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+    void Canvas::translate(float x, float y) const
+    {
+        skCanvas->translate(x, y);
+    }
+
+    void Canvas::scale(float x, float y) const
+    {
+        skCanvas->scale(x, y);
+    }
+
+    void Canvas::rotate(float degrees) const
+    {
+        skCanvas->rotate(degrees);
+    }
+
+    void Canvas::rotate(float degrees, float x, float y) const
+    {
+        skCanvas->rotate(degrees, x, y);
+    }
+
+    void Canvas::transform(float a, float b, float c, float d, float e, float f) const
+    {
+        const SkMatrix transform{SkMatrix::MakeAll(a, b, c, d, e, f, 0, 0, 1)};
+        skCanvas->concat(transform);
     }
 
 } // namespace pTK

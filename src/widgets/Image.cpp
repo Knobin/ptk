@@ -65,10 +65,10 @@ namespace pTK
         return false;
     }
 
-    void Image::onDraw(Canvas& canvas)
+    void Image::onDraw(Canvas* canvas)
     {
         if (m_image)
-            canvas.drawImage(getPosition(), getSize(), m_image.get());
+            canvas->drawImage(getPosition(), getSize(), m_image.get());
     }
 
     const Vec2f& Image::getScale() const

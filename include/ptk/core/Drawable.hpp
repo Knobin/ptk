@@ -37,9 +37,9 @@ namespace pTK
 
             Function is called when it is time to draw.
 
-            @param canvas   Canvas to draw to.
+            @param canvas   valid Canvas pointer to draw to
         */
-        virtual void onDraw(Canvas& UNUSED(canvas)) {}
+        virtual void onDraw(Canvas* UNUSED(canvas)) {}
 
         /** Function to enable drawing.
 

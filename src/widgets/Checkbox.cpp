@@ -46,12 +46,12 @@ namespace pTK
         });
     }
 
-    void Checkbox::onDraw(Canvas& canvas)
+    void Checkbox::onDraw(Canvas* canvas)
     {
         drawStates(canvas);
     }
 
-    void Checkbox::drawStates(Canvas& canvas)
+    void Checkbox::drawStates(Canvas* canvas)
     {
         Widget* parent = getParent();
         setParent(nullptr);
@@ -61,8 +61,8 @@ namespace pTK
             Color temp = getColor();
 
             setColor(Color(0, 0, 0, 0));
-            canvas.drawRoundRect(getPosition(), getSize(), getColor(), getCornerRadius(), getOutlineColor(),
-                                 getOutlineThickness());
+            canvas->drawRoundRect(getPosition(), getSize(), getColor(), getCornerRadius(), getOutlineColor(),
+                                  getOutlineThickness());
 
             setColor(temp);
         }
@@ -73,8 +73,8 @@ namespace pTK
             if (!status()) // State 1
             {
                 setOutlineColor(getColor());
-                canvas.drawRoundRect(getPosition(), getSize(), getColor(), getCornerRadius(), getOutlineColor(),
-                                     getOutlineThickness());
+                canvas->drawRoundRect(getPosition(), getSize(), getColor(), getCornerRadius(), getOutlineColor(),
+                                      getOutlineThickness());
             }
             else // State 2 and 3
             {
@@ -94,7 +94,7 @@ namespace pTK
         setParent(parent);
     }
 
-    void Checkbox::drawChecked(Canvas& canvas)
+    void Checkbox::drawChecked(Canvas* canvas)
     {
         Size size = getSize();
         Point pos = getPosition();
@@ -126,11 +126,11 @@ namespace pTK
 
         // Add clip to canvas and draw underlaying Rectangle.
 
-        canvas.skCanvas->save();
-        canvas.skCanvas->clipPath(path, SkClipOp::kDifference, true);
-        canvas.drawRoundRect(getPosition(), getSize(), getColor(), getCornerRadius(), getOutlineColor(),
-                             getOutlineThickness());
-        canvas.skCanvas->restore();
+        canvas->skCanvas->save();
+        canvas->skCanvas->clipPath(path, SkClipOp::kDifference, true);
+        canvas->drawRoundRect(getPosition(), getSize(), getColor(), getCornerRadius(), getOutlineColor(),
+                              getOutlineThickness());
+        canvas->skCanvas->restore();
     }
 
     bool Checkbox::status() const

@@ -86,9 +86,9 @@ namespace pTK
 
         /** Function is called when it is time to draw.
 
-            @param canvas   Canvas to draw to.
+            @param canvas   valid Canvas pointer to draw to
         */
-        void onDraw(Canvas& canvas) override;
+        void onDraw(Canvas* canvas) override;
 
         /** Function for a child Widget to call the Parent when it
             need to be drawn.

@@ -84,10 +84,10 @@ namespace pTK
         setBounds();
     }
 
-    void Button::onDraw(Canvas& canvas)
+    void Button::onDraw(Canvas* canvas)
     {
-        canvas.drawRoundRect(getPosition(), getSize(), getColor(), getCornerRadius(), getOutlineColor(),
-                             getOutlineThickness());
+        canvas->drawRoundRect(getPosition(), getSize(), getColor(), getCornerRadius(), getOutlineColor(),
+                              getOutlineThickness());
         m_text->onDraw(canvas);
     }
 
