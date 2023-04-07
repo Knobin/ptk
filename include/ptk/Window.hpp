@@ -217,8 +217,12 @@ namespace pTK
         [[nodiscard]] bool isClosed() const noexcept { return m_closed; }
 
     private:
+        void onAdd(const value_type&) override;
+        void onRemove(const value_type&) override;
         void onChildDraw(size_type) override;
+        void onChildUpdate(size_type) override;
         void onSizeChange(const Size& size) override;
+        void onLayoutChange() override;
 
         // getPosition should not be used outside this class.
         using VBox::getPosition;

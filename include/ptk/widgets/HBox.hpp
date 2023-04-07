@@ -9,10 +9,7 @@
 #define PTK_WIDGETS_HBOX_HPP
 
 // pTK Headers
-#include "ptk/core/WidgetContainer.hpp"
-
-// C++ Headers
-#include <utility>
+#include "ptk/widgets/BoxLayout.hpp"
 
 namespace pTK
 {
@@ -21,48 +18,29 @@ namespace pTK
         Derived from Box, this class for holding Cells in
         order of displaying them in a vertical style.
     */
-    class PTK_API HBox : public WidgetContainer
+    class PTK_API HBox : public BoxLayout
     {
     public:
         /** Constructs HBox with default values.
 
             @return    default initialized HBox
         */
-        HBox();
+        HBox()
+            : BoxLayout(BoxLayout::Direction::LeftToRight)
+        {}
 
-        /** Move Constructor for HBox.
-
-            @return    initialized HBox from value
-        */
-        HBox(HBox&& other) = default;
-
-        /** Move Assignment operator for HBox.
-
-            @return    HBox with value
-        */
-        HBox& operator=(HBox&& other) = default;
+        // TODO(knobin): docs.
+        explicit HBox(Direction direction)
+            : BoxLayout(direction)
+        {}
 
         /** De-constructor for HBox.
 
         */
-        virtual ~HBox() = default;
-
-    protected:
-        void refitContent(const Size& size);
+        ~HBox() override = default;
 
     private:
-        void onAdd(const value_type&) override;
-        void onRemove(const value_type&) override;
-        void onChildUpdate(size_type) override;
-        void onSizeChange(const Size& size) override;
-
-    private:
-        void expandOnAdd(const Size& newSize);
-        Size calcMinSize() const;
-        Size calcMaxSize() const;
-
-        std::vector<Size::value_type> calcSpaces(Size::value_type width);
-        Point::value_type alignChildV(Widget* child, const Size& parentSize, const Size& childSize);
+        [[nodiscard]] bool onLayoutRequest(Direction direction) override { return IsHorizontalDirection(direction); }
     };
 } // namespace pTK
 
