@@ -70,7 +70,6 @@ namespace pTK
     template <typename Func>
     static void LoopBasedOnDirection(const BoxLayout& box, BoxLayout::Direction direction, Func func)
     {
-        using BLD = BoxLayout::Direction;
         if (IsForwardOrdering(direction))
             for (auto it = box.cbegin(); it != box.cend(); ++it)
                 func(it);
@@ -82,7 +81,6 @@ namespace pTK
     template <typename Func>
     static void LoopBasedOnDirection(BoxLayout& box, BoxLayout::Direction direction, Func func)
     {
-        using BLD = BoxLayout::Direction;
         if (IsForwardOrdering(direction))
             for (auto it = box.begin(); it != box.end(); ++it)
                 func(it);
@@ -631,7 +629,7 @@ namespace pTK
         constexpr auto lookup = std::array{ForwardDraw, ReverseDraw, ForwardDraw, ReverseDraw};
 
         using dir_utype = std::underlying_type_t<Direction>;
-        lookup[static_cast<dir_utype>(direction())](this, canvas);
+        lookup[static_cast<decltype(lookup)::size_type>(static_cast<dir_utype>(direction()))](this, canvas);
     }
 
     void BoxLayout::onDraw(Canvas* canvas)

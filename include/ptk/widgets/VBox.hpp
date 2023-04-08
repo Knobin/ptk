@@ -49,6 +49,18 @@ namespace pTK
         */
         ~VBox() override = default;
 
+        /** Move Constructor for VBox.
+
+            @return    initialized VBox from value
+        */
+        VBox(VBox&& other) = default;
+
+        /** Move Assignment operator for VBox.
+
+            @return    VBox with value
+        */
+        VBox& operator=(VBox&& other) = default;
+
     private:
         [[nodiscard]] bool onLayoutRequest(Direction direction) override { return IsVerticalOrdering(direction); }
     };

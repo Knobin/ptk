@@ -66,7 +66,7 @@ constexpr std::string_view DirectionToStr(pTK::BoxLayout::Direction direction) n
     constexpr auto lookup = std::array{"LeftToRight", "RightToLeft", "TopToBottom", "BottomToTop"};
 
     using dir_utype = std::underlying_type_t<pTK::BoxLayout::Direction>;
-    return lookup[static_cast<dir_utype>(direction)];
+    return lookup[static_cast<decltype(lookup)::size_type>(static_cast<dir_utype>(direction))];
 }
 
 static pTK::Size ScaleSize(const pTK::Size& size, float x, float y)
@@ -89,13 +89,13 @@ public:
 
 public:
     Arrow(Direction direction, pTK::Color bg, pTK::Color color, pTK::Color hover, pTK::Color click)
-        : m_direction{direction},
-          m_hoverColor{hover},
+        : m_color{color},
           m_backgroundColor{bg},
-          m_color{color},
-          m_activeColor{0},
+          m_hoverColor{hover},
           m_clickColor{click},
-          m_activeArrowColor{pTK::Color::MakeRGB(120, 120, 120)}
+          m_activeColor{0},
+          m_activeArrowColor{pTK::Color::MakeRGB(120, 120, 120)},
+          m_direction{direction}
     {
         setSizePolicy(pTK::SizePolicy::Type::Fixed);
     }
