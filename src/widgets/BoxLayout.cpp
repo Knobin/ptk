@@ -163,7 +163,6 @@ namespace pTK
             for (auto it{start}; it != end; ++it)
             {
                 const auto& child = *it;
-                spaces.at(i) = 0;
                 const std::underlying_type<Align>::type cAlign{child->getAlign()};
 
                 if (IsAlignSet(cAlign, Align::Top))
@@ -388,7 +387,6 @@ namespace pTK
             for (auto it{start}; it != end; ++it)
             {
                 const auto& child = *it;
-                spaces.at(i) = 0;
                 const std::underlying_type<Align>::type cAlign{child->getAlign()};
 
                 if (IsAlignSet(cAlign, Align::Left))

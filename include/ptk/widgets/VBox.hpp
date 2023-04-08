@@ -16,7 +16,10 @@ namespace pTK
 {
     /** VBox class implementation.
 
-
+        Specialization of BoxLayout for Vertical ordering.
+        Does not allow Horizontal ordering and only allowed directions are:
+            - TopToBottom
+            - BottomToTop
     */
     class PTK_API VBox : public BoxLayout
     {

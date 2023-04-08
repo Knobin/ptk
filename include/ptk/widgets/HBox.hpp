@@ -15,7 +15,10 @@ namespace pTK
 {
     /** HBox class implementation.
 
-
+        Specialization of BoxLayout for Horizontal ordering.
+        Does not allow Vertical ordering and only allowed directions are:
+            - LeftToRight
+            - RightToLeft
     */
     class PTK_API HBox : public BoxLayout
     {
