@@ -10,13 +10,13 @@
 
 // pTK Headers
 #include "ptk/widgets/BoxLayout.hpp"
+#include <type_traits>
 
 namespace pTK
 {
     /** VBox class implementation.
 
-        Derived from Box, this class for holding Cells in
-        order of displaying them in a vertical style.
+
     */
     class PTK_API VBox : public BoxLayout
     {
@@ -29,10 +29,17 @@ namespace pTK
             : BoxLayout(BoxLayout::Direction::TopToBottom)
         {}
 
-        // TODO(knobin): docs.
+        /** Constructs VBox with direction.
+
+            @param direction    ordering of widgets that must satisfy IsVerticalOrdering()
+            @return             initialized VBox
+        */
         explicit VBox(Direction direction)
-            : BoxLayout(direction)
-        {}
+            : BoxLayout(Direction::TopToBottom)
+        {
+            if (IsVerticalOrdering(direction))
+                updateDirection(direction);
+        }
 
         /** Destructor for VBox.
 
@@ -40,7 +47,7 @@ namespace pTK
         ~VBox() override = default;
 
     private:
-        [[nodiscard]] bool onLayoutRequest(Direction direction) override { return IsVerticalDirection(direction); }
+        [[nodiscard]] bool onLayoutRequest(Direction direction) override { return IsVerticalOrdering(direction); }
     };
 } // namespace pTK
 

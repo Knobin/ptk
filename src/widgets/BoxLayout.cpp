@@ -71,7 +71,7 @@ namespace pTK
     static void LoopBasedOnDirection(const BoxLayout& box, BoxLayout::Direction direction, Func func)
     {
         using BLD = BoxLayout::Direction;
-        if (IsForwardLayout(direction))
+        if (IsForwardOrdering(direction))
             for (auto it = box.cbegin(); it != box.cend(); ++it)
                 func(it);
         else
@@ -83,7 +83,7 @@ namespace pTK
     static void LoopBasedOnDirection(BoxLayout& box, BoxLayout::Direction direction, Func func)
     {
         using BLD = BoxLayout::Direction;
-        if (IsForwardLayout(direction))
+        if (IsForwardOrdering(direction))
             for (auto it = box.begin(); it != box.end(); ++it)
                 func(it);
         else
@@ -101,7 +101,7 @@ namespace pTK
 
         if (total != 0)
         {
-            if (IsForwardLayout(box.direction()))
+            if (IsForwardOrdering(box.direction()))
                 fInfo(spaces, box.cbegin(), box.cend());
             else
                 rInfo(spaces, box.crbegin(), box.crend());
@@ -587,7 +587,7 @@ namespace pTK
         if (childrenCount == 0)
             return;
 
-        if (IsVerticalDirection(direction()))
+        if (IsVerticalOrdering(direction()))
             VerticalLayout::RefitContent(size, pos, direction(), *this);
         else
             HorizontalLayout::RefitContent(size, pos, direction(), *this);
@@ -600,7 +600,7 @@ namespace pTK
         layoutSize.width = (size.width > layoutSize.width) ? size.width : layoutSize.width;
         setSize(layoutSize); // this will generate a Resize event.
 
-        if (IsVerticalDirection(direction()))
+        if (IsVerticalOrdering(direction()))
             VerticalLayout::ExpandOnAdd(size, pos, direction(), *this);
         else
             HorizontalLayout::ExpandOnAdd(size, pos, direction(), *this);
@@ -652,6 +652,11 @@ namespace pTK
         }
     }
 
+    void BoxLayout::updateDirection(Direction direction)
+    {
+        m_direction = direction;
+    }
+
     void BoxLayout::onAdd(const value_type&)
     {
         const Size minLayoutSize{calcMinSize()};
@@ -689,7 +694,7 @@ namespace pTK
 
     Size BoxLayout::calcMinSize() const
     {
-        if (IsVerticalDirection(direction()))
+        if (IsVerticalOrdering(direction()))
             return calcOuterFromSize(VerticalLayout::ContentMinSize(cbegin(), cend()));
 
         return calcOuterFromSize(HorizontalLayout::ContentMinSize(cbegin(), cend()));
@@ -697,7 +702,7 @@ namespace pTK
 
     Size BoxLayout::calcMaxSize() const
     {
-        if (IsVerticalDirection(direction()))
+        if (IsVerticalOrdering(direction()))
             return calcOuterFromSize(VerticalLayout::ContentMaxSize(cbegin(), cend()));
 
         return calcOuterFromSize(HorizontalLayout::ContentMaxSize(cbegin(), cend()));

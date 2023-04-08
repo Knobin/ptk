@@ -13,11 +13,26 @@
 
 namespace pTK
 {
-    // TODO(knobin): docs.
+    /** BoxLayout class implementation.
+
+        * Container for Widgets that implements ordering based on a direction.
+            - LeftToRight
+            - RightToLeft
+            - TopToBottom
+            - BottomToTop
+
+        * Widgets can only be ordered in either a column or row as in HBox or VBox.
+        * No grids or other types of ordering.
+
+        * All Widgets must fit inside the container.
+    */
     class PTK_API BoxLayout : public WidgetContainer
     {
     public:
-        // TODO(knobin): docs.
+        /** Direction enum class.
+
+            Contains possible ways for ordering Widgets in BoxLayout.
+        */
         enum class Direction
         {
             LeftToRight,
@@ -33,7 +48,11 @@ namespace pTK
         */
         BoxLayout() = delete;
 
-        // TODO(knobin): docs.
+        /** Constructs BoxLayout with direction.
+
+            @param direction    ordering of widgets
+            @return             initialized BoxLayout
+        */
         explicit BoxLayout(Direction direction);
 
         /** Destructor for BoxLayout.
@@ -65,10 +84,16 @@ namespace pTK
         */
         BoxLayout& operator=(const BoxLayout&) = delete;
 
-        // TODO(knobin): docs.
+        /** Function for retrieving the ordering direction of the BoxLayout.
+
+            @return  ordering direction
+        */
         [[nodiscard]] Direction direction() const noexcept { return m_direction; }
 
-        // TODO(knobin): docs.
+        /** Function for setting the ordering direction of the BoxLayout.
+
+            @param direction    ordering direction
+        */
         void setDirection(Direction direction);
 
         /** Draw function.
@@ -80,10 +105,43 @@ namespace pTK
         void onDraw(Canvas* canvas) override;
 
     protected:
+        /** Function for ordering the children inside size at pos.
+
+            @param size     content size
+            @param pos      content position
+        */
         virtual void refitContent(Size size, Point pos);
+
+        /** Function for ordering the children inside size at pos with minimal size.
+
+            Children will just barely fit with minimal sizes.
+
+            @param size     content size
+            @param pos      content position
+        */
         virtual void expandOnAdd(Size size, Point pos);
+
+        /** Function for checking if the direction is allowed.
+
+            @param direction    new direction
+            @return             allowed status
+        */
         [[nodiscard]] virtual bool onLayoutRequest(Direction direction);
+
+        // Ordering changed callback.
         virtual void onLayoutChange();
+
+        /** Function for retrieving the minimal size based on all children.
+
+            @return     minimal bounds
+        */
+        [[nodiscard]] virtual Size calcMinSize() const;
+
+        /** Function for retrieving the maximum size based on all children.
+
+            @return     maximum bounds
+        */
+        [[nodiscard]] virtual Size calcMaxSize() const;
 
         /** Function that paints all the children in the BoxLayout with respect to set direction.
 
@@ -91,8 +149,14 @@ namespace pTK
         */
         void drawChildrenWithDir(Canvas* canvas);
 
-        [[nodiscard]] virtual Size calcMinSize() const;
-        [[nodiscard]] virtual Size calcMaxSize() const;
+        /** Function for setting the ordering direction of the BoxLayout.
+
+            In contrast to setDirection, this function will not call the callbacks
+            after setting the new ordering direction and will not check onLayoutRequest.
+
+            @param direction    ordering direction
+        */
+        void updateDirection(Direction direction);
 
     private:
         void onAdd(const value_type&) override;
@@ -104,22 +168,22 @@ namespace pTK
         Direction m_direction{Direction::LeftToRight};
     };
 
-    constexpr bool IsHorizontalDirection(BoxLayout::Direction direction) noexcept
+    constexpr bool IsHorizontalOrdering(BoxLayout::Direction direction) noexcept
     {
         return ((direction == BoxLayout::Direction::LeftToRight) || (direction == BoxLayout::Direction::RightToLeft));
     }
 
-    constexpr bool IsVerticalDirection(BoxLayout::Direction direction) noexcept
+    constexpr bool IsVerticalOrdering(BoxLayout::Direction direction) noexcept
     {
         return ((direction == BoxLayout::Direction::TopToBottom) || (direction == BoxLayout::Direction::BottomToTop));
     }
 
-    constexpr bool IsForwardLayout(BoxLayout::Direction direction) noexcept
+    constexpr bool IsForwardOrdering(BoxLayout::Direction direction) noexcept
     {
         return ((direction == BoxLayout::Direction::LeftToRight) || (direction == BoxLayout::Direction::TopToBottom));
     }
 
-    constexpr bool IsReverseLayout(BoxLayout::Direction direction) noexcept
+    constexpr bool IsReverseOrdering(BoxLayout::Direction direction) noexcept
     {
         return ((direction == BoxLayout::Direction::RightToLeft) || (direction == BoxLayout::Direction::BottomToTop));
     }

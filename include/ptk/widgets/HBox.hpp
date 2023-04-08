@@ -15,8 +15,7 @@ namespace pTK
 {
     /** HBox class implementation.
 
-        Derived from Box, this class for holding Cells in
-        order of displaying them in a vertical style.
+
     */
     class PTK_API HBox : public BoxLayout
     {
@@ -29,10 +28,17 @@ namespace pTK
             : BoxLayout(BoxLayout::Direction::LeftToRight)
         {}
 
-        // TODO(knobin): docs.
+        /** Constructs HBox with direction.
+
+            @param direction    ordering of widgets that must satisfy IsHorizontalOrdering()
+            @return             initialized HBox
+        */
         explicit HBox(Direction direction)
-            : BoxLayout(direction)
-        {}
+            : BoxLayout(BoxLayout::Direction::LeftToRight)
+        {
+            if (IsHorizontalOrdering(direction))
+                updateDirection(direction);
+        }
 
         /** De-constructor for HBox.
 
@@ -40,7 +46,7 @@ namespace pTK
         ~HBox() override = default;
 
     private:
-        [[nodiscard]] bool onLayoutRequest(Direction direction) override { return IsHorizontalDirection(direction); }
+        [[nodiscard]] bool onLayoutRequest(Direction direction) override { return IsHorizontalOrdering(direction); }
     };
 } // namespace pTK
 
