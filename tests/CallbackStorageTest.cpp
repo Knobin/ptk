@@ -135,14 +135,18 @@ TEST_CASE("CallbackContainer")
 
 TEST_CASE("CallbackIndexGen")
 {
-    REQUIRE(pTK::CallbackIndexGen::GetIndex<int8_t, bool()>() == 0);
-    REQUIRE(pTK::CallbackIndexGen::GetIndex<int8_t, bool()>() == 0); // Same as the above.
+    const auto index1 = std::type_index(typeid(pTK::CallbackIndexType<int8_t, bool()>));
+    REQUIRE(pTK::CallbackIndexGen::GetIndex<int8_t, bool()>() == index1);
+    REQUIRE(pTK::CallbackIndexGen::GetIndex<int8_t, bool()>() == index1); // Same as the above.
 
-    REQUIRE(pTK::CallbackIndexGen::GetIndex<int8_t, bool(int)>() == 1);
-    REQUIRE(pTK::CallbackIndexGen::GetIndex<int8_t, bool(unsigned int)>() == 2);
+    const auto index2 = std::type_index(typeid(pTK::CallbackIndexType<int8_t, bool(int)>));
+    const auto index3 = std::type_index(typeid(pTK::CallbackIndexType<int8_t, bool(unsigned int)>));
+    REQUIRE(pTK::CallbackIndexGen::GetIndex<int8_t, bool(int)>() == index2);
+    REQUIRE(pTK::CallbackIndexGen::GetIndex<int8_t, bool(unsigned int)>() == index3);
 
-    REQUIRE(pTK::CallbackIndexGen::GetIndex<int8_t, bool()>() == 0); // Same as the first.
-    REQUIRE(pTK::CallbackIndexGen::GetIndex<uint8_t, bool()>() == 3);
+    const auto index4 = std::type_index(typeid(pTK::CallbackIndexType<uint8_t, bool()>));
+    REQUIRE(pTK::CallbackIndexGen::GetIndex<int8_t, bool()>() == index1); // Same as the first.
+    REQUIRE(pTK::CallbackIndexGen::GetIndex<uint8_t, bool()>() == index4);
 }
 
 TEST_CASE("CallbackStorage")
