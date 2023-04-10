@@ -49,7 +49,68 @@ namespace pTK
         /** Destructor for WindowBase.
 
         */
-        virtual ~WindowBase() = default;
+        ~WindowBase() override = default;
+
+        /** Function for adding a callback that is invoked when window is closed.
+
+            @param callback    function to call
+            @return            callback id
+        */
+        uint64_t onClose(const std::function<bool()>& callback) { return addListener<CloseEvent>(callback); }
+
+        /** Function for adding a callback that is invoked when window is moved.
+
+            @param callback    function to call
+            @return            callback id
+        */
+        uint64_t onMove(const std::function<bool(const MoveEvent&)>& callback)
+        {
+            return addListener<MoveEvent>(callback);
+        }
+
+        /** Function for adding a callback that is invoked when window is resized.
+
+            @param callback    function to call
+            @return            callback id
+        */
+        uint64_t onResize(const std::function<bool(const ResizeEvent&)>& callback)
+        {
+            return addListener<ResizeEvent>(callback);
+        }
+
+        /** Function for adding a callback that is invoked when window is focused.
+
+            @param callback    function to call
+            @return            callback id
+        */
+        uint64_t onFocus(const std::function<bool(const FocusEvent&)>& callback)
+        {
+            return addListener<FocusEvent>(callback);
+        }
+
+        /** Function for adding a callback that is invoked when window is not focused.
+
+            @param callback    function to call
+            @return            callback id
+        */
+        uint64_t onLostFocus(const std::function<bool(const LostFocusEvent&)>& callback)
+        {
+            return addListener<LostFocusEvent>(callback);
+        }
+
+        /** Function for adding a callback that is invoked when window is minimized.
+
+            @param callback    function to call
+            @return            callback id
+        */
+        uint64_t onMinimize(const std::function<bool()>& callback) { return addListener<MinimizeEvent>(callback); }
+
+        /** Function for adding a callback that is invoked when window is restored.
+
+            @param callback    function to call
+            @return            callback id
+        */
+        uint64_t onRestore(const std::function<bool()>& callback) { return addListener<RestoreEvent>(callback); }
 
     protected:
         // Use this function to send events.

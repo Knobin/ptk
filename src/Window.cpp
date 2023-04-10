@@ -110,11 +110,6 @@ namespace pTK
         buffer.batchInvoke();
     }
 
-    bool Window::shouldClose() const
-    {
-        return m_close;
-    }
-
     void Window::invalidate()
     {
         if (!m_contentInvalidated)
