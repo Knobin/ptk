@@ -171,6 +171,12 @@ namespace pTK
         */
         virtual bool drawChild(Widget*);
 
+        /** Function for setting the position of the Widget without callback.
+
+            @param pos  position of the Widget.
+        */
+        void updatePosition(Point pos) noexcept { m_pos = pos; }
+
     private:
         // Size functions derived from Sizable.
         void onSizeChange(const Size& size) override;

@@ -26,13 +26,12 @@ set(PTK_UTIL_FILES util/Color.cpp
         util/Semaphore.cpp
         util/Size.cpp)
 
-set(PTK_WIDGET_FILES widgets/Button.cpp
+set(PTK_WIDGET_FILES widgets/BoxLayout.cpp
+        widgets/Button.cpp
         widgets/Checkbox.cpp
-        widgets/HBox.cpp
         widgets/Image.cpp
         widgets/Label.cpp
-        widgets/TextField.cpp
-        widgets/VBox.cpp)
+        widgets/TextField.cpp)
 
 if (PTK_BUILD_TYPE MATCHES Debug)
     set(PTK_LOG_FILES Log.hpp Log.cpp)

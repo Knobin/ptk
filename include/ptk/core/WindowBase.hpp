@@ -49,20 +49,68 @@ namespace pTK
         /** Destructor for WindowBase.
 
         */
-        virtual ~WindowBase() = default;
+        ~WindowBase() override = default;
 
-        /** Function for setting the position of the window.
+        /** Function for adding a callback that is invoked when window is closed.
 
-            This will result in Widget::setPosHint not getting called
-            and for VBox to not change children positioning.
-            VBox (when inherited by Window) will always have pos {0,0}
-            in drawing space.
-
-            TODO(knobin): Remove getPosition dependancy in VBox.
-
-            @param pos  position to set
+            @param callback    function to call
+            @return            callback id
         */
-        void setPosHint(const Point& UNUSED(pos)) override {}
+        uint64_t onClose(const std::function<bool()>& callback) { return addListener<CloseEvent>(callback); }
+
+        /** Function for adding a callback that is invoked when window is moved.
+
+            @param callback    function to call
+            @return            callback id
+        */
+        uint64_t onMove(const std::function<bool(const MoveEvent&)>& callback)
+        {
+            return addListener<MoveEvent>(callback);
+        }
+
+        /** Function for adding a callback that is invoked when window is resized.
+
+            @param callback    function to call
+            @return            callback id
+        */
+        uint64_t onResize(const std::function<bool(const ResizeEvent&)>& callback)
+        {
+            return addListener<ResizeEvent>(callback);
+        }
+
+        /** Function for adding a callback that is invoked when window is focused.
+
+            @param callback    function to call
+            @return            callback id
+        */
+        uint64_t onFocus(const std::function<bool(const FocusEvent&)>& callback)
+        {
+            return addListener<FocusEvent>(callback);
+        }
+
+        /** Function for adding a callback that is invoked when window is not focused.
+
+            @param callback    function to call
+            @return            callback id
+        */
+        uint64_t onLostFocus(const std::function<bool(const LostFocusEvent&)>& callback)
+        {
+            return addListener<LostFocusEvent>(callback);
+        }
+
+        /** Function for adding a callback that is invoked when window is minimized.
+
+            @param callback    function to call
+            @return            callback id
+        */
+        uint64_t onMinimize(const std::function<bool()>& callback) { return addListener<MinimizeEvent>(callback); }
+
+        /** Function for adding a callback that is invoked when window is restored.
+
+            @param callback    function to call
+            @return            callback id
+        */
+        uint64_t onRestore(const std::function<bool()>& callback) { return addListener<RestoreEvent>(callback); }
 
     protected:
         // Use this function to send events.
@@ -116,7 +164,7 @@ namespace pTK
     template <>
     inline void WindowBase::handlePlatformEvent<MoveEvent>(const MoveEvent& evt)
     {
-        setPosHint(evt.pos);
+        updatePosition(evt.pos);
         onMoveEvent(evt.pos);
         handleEvent<MoveEvent>(evt);
     }

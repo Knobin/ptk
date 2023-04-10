@@ -9,26 +9,44 @@
 #define PTK_WIDGETS_VBOX_HPP
 
 // pTK Headers
-#include "ptk/core/WidgetContainer.hpp"
-
-// C++ Headers
-#include <utility>
+#include "ptk/widgets/BoxLayout.hpp"
 
 namespace pTK
 {
     /** VBox class implementation.
 
-        Derived from Box, this class for holding Cells in
-        order of displaying them in a vertical style.
+        Specialization of BoxLayout for Vertical ordering.
+        Does not allow Horizontal ordering and only allowed directions are:
+            - TopToBottom
+            - BottomToTop
     */
-    class PTK_API VBox : public WidgetContainer
+    class PTK_API VBox : public BoxLayout
     {
     public:
         /** Constructs VBox with default values.
 
             @return    default initialized VBox
         */
-        VBox();
+        VBox()
+            : BoxLayout(BoxLayout::Direction::TopToBottom)
+        {}
+
+        /** Constructs VBox with direction.
+
+            @param direction    ordering of widgets that must satisfy IsVerticalOrdering()
+            @return             initialized VBox
+        */
+        explicit VBox(Direction direction)
+            : BoxLayout(Direction::TopToBottom)
+        {
+            if (IsVerticalOrdering(direction))
+                updateDirection(direction);
+        }
+
+        /** Destructor for VBox.
+
+        */
+        ~VBox() override = default;
 
         /** Move Constructor for VBox.
 
@@ -42,27 +60,8 @@ namespace pTK
         */
         VBox& operator=(VBox&& other) = default;
 
-        /** Destructor for VBox.
-
-        */
-        virtual ~VBox() = default;
-
-    protected:
-        void refitContent(const Size& size);
-
     private:
-        void onAdd(const value_type&) override;
-        void onRemove(const value_type&) override;
-        void onChildUpdate(size_type) override;
-        void onSizeChange(const Size& size) override;
-
-    private:
-        void expandOnAdd(const Size& newSize);
-        Size calcMinSize() const;
-        Size calcMaxSize() const;
-
-        std::vector<Size::value_type> calcSpaces(Size::value_type height);
-        Point::value_type alignChildH(Widget* child, const Size& parentSize, const Size& childSize);
+        [[nodiscard]] bool onLayoutRequest(Direction direction) override { return IsVerticalOrdering(direction); }
     };
 } // namespace pTK
 

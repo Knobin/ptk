@@ -65,6 +65,7 @@
 #include "ptk/util/Vec2.hpp"
 
 // --- Widgets -----------------------
+#include "ptk/widgets/BoxLayout.hpp"
 #include "ptk/widgets/Button.hpp"
 #include "ptk/widgets/Checkbox.hpp"
 #include "ptk/widgets/HBox.hpp"

@@ -46,13 +46,7 @@ namespace pTK
         /** Destructor for Window.
 
         */
-        virtual ~Window();
-
-        /** Function for checking if the window should close.
-
-            @return     closing status
-        */
-        bool shouldClose() const;
+        ~Window() override;
 
         /** Function for executing the commands sent to the window.
 
@@ -206,7 +200,7 @@ namespace pTK
 
             @param pos  position to set
         */
-        void setPosHint(const Point& pos) override { m_handle->setPosHint(pos); }
+        void setPosHint(const Point& pos) override;
 
         /** Function for retrieving the closed status of the window.
 
@@ -216,12 +210,22 @@ namespace pTK
         */
         [[nodiscard]] bool isClosed() const noexcept { return m_closed; }
 
-    private:
-        void onChildDraw(size_type) override;
-        void onSizeChange(const Size& size) override;
+        /** Function for retrieving the content size of the Window.
 
-        // getPosition should not be used outside this class.
-        using VBox::getPosition;
+            Note: Will return the size of the context, which is window size multiplied
+            with the scaling factor of the window (getSize() * getDPIScale).
+
+            @return     content size
+        */
+        [[nodiscard]] Size getContentSize() const { return m_context->getSize(); }
+
+    private:
+        void onAdd(const value_type&) override;
+        void onRemove(const value_type&) override;
+        void onChildDraw(size_type) override;
+        void onChildUpdate(size_type) override;
+        void onSizeChange(const Size& size) override;
+        void onLayoutChange() override;
 
     private:
         // This draw function gets called from the backend.
@@ -251,7 +255,6 @@ namespace pTK
         std::chrono::time_point<std::chrono::steady_clock> m_lastDrawTime;
         std::thread::id m_threadID;
         std::atomic<bool> m_contentInvalidated{false};
-        bool m_close{false};
         bool m_closed{false};
     };
 
