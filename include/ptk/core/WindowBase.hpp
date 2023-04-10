@@ -51,19 +51,6 @@ namespace pTK
         */
         virtual ~WindowBase() = default;
 
-        /** Function for setting the position of the window.
-
-            This will result in Widget::setPosHint not getting called
-            and for VBox to not change children positioning.
-            VBox (when inherited by Window) will always have pos {0,0}
-            in drawing space.
-
-            TODO(knobin): Remove getPosition dependancy in VBox.
-
-            @param pos  position to set
-        */
-        void setPosHint(const Point& UNUSED(pos)) override {}
-
     protected:
         // Use this function to send events.
         template <typename Event>
@@ -116,7 +103,7 @@ namespace pTK
     template <>
     inline void WindowBase::handlePlatformEvent<MoveEvent>(const MoveEvent& evt)
     {
-        setPosHint(evt.pos);
+        updatePosition(evt.pos);
         onMoveEvent(evt.pos);
         handleEvent<MoveEvent>(evt);
     }

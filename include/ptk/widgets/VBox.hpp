@@ -10,7 +10,6 @@
 
 // pTK Headers
 #include "ptk/widgets/BoxLayout.hpp"
-#include <type_traits>
 
 namespace pTK
 {

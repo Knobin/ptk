@@ -206,7 +206,7 @@ namespace pTK
 
             @param pos  position to set
         */
-        void setPosHint(const Point& pos) override { m_handle->setPosHint(pos); }
+        void setPosHint(const Point& pos) override;
 
         /** Function for retrieving the closed status of the window.
 
@@ -223,9 +223,6 @@ namespace pTK
         void onChildUpdate(size_type) override;
         void onSizeChange(const Size& size) override;
         void onLayoutChange() override;
-
-        // getPosition should not be used outside this class.
-        using VBox::getPosition;
 
     private:
         // This draw function gets called from the backend.

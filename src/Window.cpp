@@ -234,6 +234,12 @@ namespace pTK
         setLimitsWithSizePolicy();
     }
 
+    void Window::setPosHint(const Point& pos)
+    {
+        if (m_handle->getPosition() != pos)
+            m_handle->setPosHint(pos);
+    }
+
     void Window::show()
     {
         if (isHidden())
