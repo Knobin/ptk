@@ -7,6 +7,7 @@
 
 // pTK Headers
 #include "ptk/core/Canvas.hpp"
+#include "ptk/util/Vec2.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
@@ -18,16 +19,6 @@ PTK_DISABLE_WARN_END()
 
 namespace pTK
 {
-    static SkPoint ToSkPoint(const Point& pos, const Vec2f& scale = {1.0f, 1.0f})
-    {
-        return SkPoint{static_cast<float>(pos.x) * scale.x, static_cast<float>(pos.y) * scale.y};
-    }
-
-    static SkPoint ToSkPoint(const Size& size, const Vec2f& scale = {1.0f, 1.0f})
-    {
-        return SkPoint{static_cast<float>(size.width) * scale.x, static_cast<float>(size.height) * scale.y};
-    }
-
     static SkPaint ToSkPaint(const Color& color)
     {
         SkPaint paint{};
@@ -123,18 +114,34 @@ namespace pTK
 
     void Canvas::drawRect(Point pos, Size size, Color color) const
     {
-        drawRoundRect(pos, size, color, 0.0f);
+        const Vec2f fPos{static_cast<float>(pos.x), static_cast<float>(pos.y)};
+        const Vec2f fSize{static_cast<float>(size.width), static_cast<float>(size.height)};
+        drawRoundRect(fPos, fSize, color, 0.0f);
     }
 
     void Canvas::drawRect(Point pos, Size size, Color color, Color outlineColor, float outlineThickness) const
+    {
+        const Vec2f fPos{static_cast<float>(pos.x), static_cast<float>(pos.y)};
+        const Vec2f fSize{static_cast<float>(size.width), static_cast<float>(size.height)};
+        drawRoundRect(fPos, fSize, color, 0.0f, outlineColor, outlineThickness);
+    }
+
+    void Canvas::drawRect(Vec2f pos, Vec2f size, Color color, Color outlineColor, float outlineThickness) const
     {
         drawRoundRect(pos, size, color, 0.0f, outlineColor, outlineThickness);
     }
 
     void Canvas::drawRoundRect(Point pos, Size size, Color color, float cornerRadius) const
     {
-        SkPoint skPos{ToSkPoint(pos)};
-        SkPoint skSize{ToSkPoint(size)};
+        const Vec2f fPos{static_cast<float>(pos.x), static_cast<float>(pos.y)};
+        const Vec2f fSize{static_cast<float>(size.width), static_cast<float>(size.height)};
+        drawRoundRect(fPos, fSize, color, cornerRadius);
+    }
+
+    void Canvas::drawRoundRect(Vec2f pos, Vec2f size, Color color, float cornerRadius) const
+    {
+        SkPoint skPos{pos.x, pos.y};
+        SkPoint skSize{size.x, size.y};
         skSize += skPos; // skia needs the size to be pos+size.
 
         SkPaint paint{ToSkPaint(color)};
@@ -149,8 +156,16 @@ namespace pTK
     void Canvas::drawRoundRect(Point pos, Size size, Color color, float cornerRadius, Color outlineColor,
                                float outlineThickness) const
     {
-        SkPoint skPos{ToSkPoint(pos)};
-        SkPoint skSize{ToSkPoint(size)};
+        const Vec2f fPos{static_cast<float>(pos.x), static_cast<float>(pos.y)};
+        const Vec2f fSize{static_cast<float>(size.width), static_cast<float>(size.height)};
+        drawRoundRect(fPos, fSize, color, cornerRadius, outlineColor, outlineThickness);
+    }
+
+    void Canvas::drawRoundRect(Vec2f pos, Vec2f size, Color color, float cornerRadius, Color outlineColor,
+                       float outlineThickness) const
+    {
+        SkPoint skPos{pos.x, pos.y};
+        SkPoint skSize{size.x, size.y};
         skSize += skPos; // skia needs the size to be pos+size.
 
         // Outline.
@@ -236,8 +251,15 @@ namespace pTK
 
     void Canvas::drawImage(Point pos, Size size, const SkImage* image) const
     {
-        SkPoint skPos{ToSkPoint(pos)};
-        SkPoint skSize{ToSkPoint(size)};
+        const Vec2f fPos{static_cast<float>(pos.x), static_cast<float>(pos.y)};
+        const Vec2f fSize{static_cast<float>(size.width), static_cast<float>(size.height)};
+        drawImage(fPos, fSize, image);
+    }
+
+    void Canvas::drawImage(Vec2f pos, Vec2f size, const SkImage* image) const
+    {
+        SkPoint skPos{pos.x, pos.y};
+        SkPoint skSize{size.x, size.y};
         skSize += skPos; // skia needs the size to be pos+size.
 
         SkRect dst{};

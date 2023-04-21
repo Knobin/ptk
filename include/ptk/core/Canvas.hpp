@@ -13,6 +13,7 @@
 #include "ptk/util/Color.hpp"
 #include "ptk/util/Point.hpp"
 #include "ptk/util/Size.hpp"
+#include "ptk/util/Vec2.hpp"
 
 // Skia Forward Declarations
 class SkCanvas;
@@ -58,6 +59,16 @@ namespace pTK
         */
         void drawRect(Point pos, Size size, Color color, Color outlineColor, float outlineThickness) const;
 
+        /** Function for drawing a rectangle with outline.
+
+            @param pos                  draw rectangle at
+            @param size                 size of the rectangle
+            @param color                color of the rectangle
+            @param outlineColor         color of the outline
+            @param outlineThickness     thickness of the outline (>0)
+        */
+        void drawRect(Vec2f pos, Vec2f size, Color color, Color outlineColor, float outlineThickness) const;
+
         /** Function for drawing a rectangle with rounded edges.
 
             @param pos              draw rectangle at
@@ -66,6 +77,15 @@ namespace pTK
             @param cornerRadius     radius
         */
         void drawRoundRect(Point pos, Size size, Color color, float cornerRadius) const;
+
+        /** Function for drawing a rectangle with rounded edges.
+
+            @param pos              draw rectangle at
+            @param size             size of the rectangle
+            @param color            color of the rectangle
+            @param cornerRadius     radius
+        */
+        void drawRoundRect(Vec2f pos, Vec2f size, Color color, float cornerRadius) const;
 
         /** Function for drawing a rectangle with rounded edges and outline.
 
@@ -78,6 +98,18 @@ namespace pTK
         */
         void drawRoundRect(Point pos, Size size, Color color, float cornerRadius, Color outlineColor,
                            float outlineThickness) const;
+
+        /** Function for drawing a rectangle with rounded edges and outline.
+
+            @param pos                  draw rectangle at
+            @param size                 size of the rectangle
+            @param color                color of the rectangle
+            @param cornerRadius         radius
+            @param outlineColor         color of the outline
+            @param outlineThickness     thickness of the outline (>0)
+        */
+        void drawRoundRect(Vec2f pos, Vec2f size, Color color, float cornerRadius, Color outlineColor,
+                               float outlineThickness) const;
 
         /** Function for drawing a line of text.
 
@@ -120,6 +152,14 @@ namespace pTK
             @param image    valid pointer to SkImage
         */
         void drawImage(Point pos, Size size, const SkImage* image) const;
+
+        /** Function for drawing a SkImage.
+
+            @param pos      draw rectangle at
+            @param size     size of the rectangle
+            @param image    valid pointer to SkImage
+        */
+        void drawImage(Vec2f pos, Vec2f size, const SkImage* image) const;
 
         /** Function for saving the current matrix and clip on the stack.
 
