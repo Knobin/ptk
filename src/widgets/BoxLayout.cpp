@@ -609,7 +609,22 @@ namespace pTK
 
     void BoxLayout::onLayoutChange()
     {
-        refitContent(getSize(), getPosition());
+        const Size minLayoutSize{calcMinSize()};
+        setMinSize(minLayoutSize);
+        const Size vbSize{getSize()};
+
+        if ((minLayoutSize.width > vbSize.width) || (minLayoutSize.height > vbSize.height))
+        {
+            // Children will not fit in the current size.
+            // Set minimal size to HBox and set minimal size to each child.
+            expandOnAdd(minLayoutSize, getPosition());
+        }
+        else
+        {
+            // Children will fit in the current size.
+            // Only need to resize and position children.
+            refitContent(vbSize, getPosition());
+        }
     }
 
     static void ForwardDraw(BoxLayout* box, Canvas* canvas)
