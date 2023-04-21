@@ -54,6 +54,3 @@ define_test(NAME SizeTest FILES ${PTK_INCLUDE}/ptk/util/Size.hpp ${PTK_SRC}/util
 define_test(NAME SizePolicyTest FILES ${PTK_INCLUDE}/ptk/util/SizePolicy.hpp SizePolicyTest.cpp)
 define_test(NAME Vec2Test FILES ${PTK_INCLUDE}/ptk/util/Vec2.hpp Vec2Test.cpp)
 define_test(NAME WidgetTest FILES ${PTK_HEADER_FILES} WidgetTest.cpp LINKS ptk DEFINITIONS ${PTK_DEFINITIONS})
-
-# subdirectories goes here!
-add_subdirectory(${CMAKE_SOURCE_DIR}/tests/box_layout)

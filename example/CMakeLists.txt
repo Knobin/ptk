@@ -17,3 +17,6 @@ foreach(FILE ${TEST_SOURCE_FILES})
     target_link_libraries(${EXECUTABLE} ${PTK_DEPENDENCIES} skia ptk)
     set(EXAMPLE_LIST "${EXAMPLE_LIST}${EXECUTABLE};")
 endforeach()
+
+# subdirectories goes here!
+add_subdirectory(${CMAKE_SOURCE_DIR}/example/box_layout)

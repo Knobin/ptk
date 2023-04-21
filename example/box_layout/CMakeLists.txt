@@ -1,6 +1,6 @@
-project(BoxLayoutTest)
+project(BoxLayoutExample)
 
-add_executable(${PROJECT_NAME} BoxLayoutTest.cpp)
+add_executable(${PROJECT_NAME} BoxLayoutExample.cpp)
 
 set_target_properties(${PROJECT_NAME}
     PROPERTIES
