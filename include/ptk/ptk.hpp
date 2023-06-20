@@ -25,6 +25,7 @@
 #include "ptk/core/EventFunctions.hpp"
 #include "ptk/core/EventHandling.hpp"
 #include "ptk/core/Exception.hpp"
+#include "ptk/core/ImmutableBuffer.hpp"
 #include "ptk/core/Sizable.hpp"
 #include "ptk/core/Text.hpp"
 #include "ptk/core/Widget.hpp"

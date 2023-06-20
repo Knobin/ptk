@@ -8,6 +8,7 @@ set(PTK_CORE_FILES core/Alignment.cpp
         core/Canvas.cpp
         core/ContextBase.cpp
         core/EventCallbacks.cpp
+        core/ImmutableBuffer.cpp
         core/Sizable.cpp
         core/Text.cpp
         core/Widget.cpp
