@@ -208,7 +208,8 @@ namespace pTK
 
         // Will paint background and then children.
         Canvas canvas{skCanvas};
-        onDraw(&canvas);
+        canvas.drawRect(getPosition(), getSize(), getBackground());
+        drawChildrenWithDir(&canvas);
 
         surface->flushAndSubmit();
         m_context->swapBuffers();
