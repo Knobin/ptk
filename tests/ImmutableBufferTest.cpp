@@ -182,7 +182,7 @@ TEST_CASE("MakeFromStream (count)")
     }
 }
 
-#include "../src/Log.hpp"
+#include "../src/include/Log.hpp"
 #include <catch2/catch_session.hpp>
 
 int main(int argc, char* argv[])

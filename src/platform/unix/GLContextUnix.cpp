@@ -7,8 +7,8 @@
 
 // Local Headers
 #include "GLContextUnix.hpp"
-#include "../../Log.hpp"
-#include "../../core/Assert.hpp"
+#include "../../include/Log.hpp"
+#include "../../include/Assert.hpp"
 #include "ApplicationHandleUnix.hpp"
 
 // pTK Headers

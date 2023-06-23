@@ -7,7 +7,7 @@
 
 // Local Headers
 #include "WindowHandleMac.hpp"
-#include "../../Log.hpp"
+#include "../../include/Log.hpp"
 #include "ApplicationHandleMac.hpp"
 
 // pTK Headers

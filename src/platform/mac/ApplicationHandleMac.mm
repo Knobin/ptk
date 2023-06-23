@@ -7,7 +7,7 @@
 
 // Local Headers
 #include "ApplicationHandleMac.hpp"
-#include "../../Log.hpp"
+#include "../../include/Log.hpp"
 #include "UtilityMac.hpp"
 #include "WindowHandleMac.hpp"
 

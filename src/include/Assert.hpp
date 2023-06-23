@@ -11,7 +11,7 @@
 #define PTK_SRC_CORE_ASSERT_HPP
 
 // Local Headers
-#include "../Log.hpp"
+#include "../include/Log.hpp"
 
 // Enable Asserts
 #if defined(PTK_ENABLE_ASSERT)

@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "../core/PointerOverlapDefine.hpp"
+#include "../include/PointerOverlapDefine.hpp"
 
 // pTK Headers
 #include "ptk/util/ColorType.hpp"

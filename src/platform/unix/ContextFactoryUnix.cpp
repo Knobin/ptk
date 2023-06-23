@@ -6,8 +6,8 @@
 //
 
 // Local Headers
-#include "../../Log.hpp"
-#include "../../core/Assert.hpp"
+#include "../../include/Log.hpp"
+#include "../../include/Assert.hpp"
 #include "RasterContextUnix.hpp"
 #include "WindowHandleUnix.hpp"
 
