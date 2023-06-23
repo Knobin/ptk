@@ -95,6 +95,10 @@ namespace pTK
         }
     }
 
+    // This destructor must be here (and not defaulted) to be able to properly delete SkImage.
+    // Otherwise, the user must include the SkImage header for its destructor to be available.
+    Texture::~Texture() {}
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     bool Texture::isValid() const

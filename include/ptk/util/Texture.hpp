@@ -11,7 +11,6 @@
 #define PTK_UTIL_TEXTURE_HPP
 
 // pTK Headers
-#include "ptk/core/Canvas.hpp"
 #include "ptk/core/Defines.hpp"
 #include "ptk/util/ImmutableBuffer.hpp"
 #include "ptk/util/Pixmap.hpp"
@@ -36,7 +35,7 @@ namespace pTK
         Texture() = default;
         explicit Texture(const ImmutableBuffer& buffer);
         explicit Texture(const Pixmap& pixmap);
-        ~Texture() override = default;
+        ~Texture() override;
 
         [[nodiscard]] bool isValid() const;
 

@@ -11,11 +11,6 @@
 // pTK Headers
 #include "ptk/widgets/Image.hpp"
 
-// Skia Headers
-PTK_DISABLE_WARN_BEGIN()
-#include "include/core/SkImage.h" // Needed for clang-format...
-PTK_DISABLE_WARN_END()
-
 namespace pTK
 {
     Image::Image(std::shared_ptr<Texture> texture)
