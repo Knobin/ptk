@@ -1,15 +1,15 @@
 //
-//  core/ImmutableBuffer.cpp
+//  util/ImmutableBuffer.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2023-06-20.
 //
 
 // Local Headers
-#include "PointerOverlapDefine.hpp"
+#include "../core/PointerOverlapDefine.hpp"
 
 // pTK Headers
-#include "ptk/core/ImmutableBuffer.hpp"
+#include "ptk/util/ImmutableBuffer.hpp"
 
 // C++ Headers
 #include <fstream>

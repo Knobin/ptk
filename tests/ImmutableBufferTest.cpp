@@ -2,16 +2,17 @@
 #include "catch2/catch_test_macros.hpp"
 
 // pTK Headers
-#include "ptk/core/ImmutableBuffer.hpp"
+#include "ptk/util/ImmutableBuffer.hpp"
 
 // C++ Headers
+#include <cstdint>
 #include <initializer_list>
 #include <sstream>
 
 // TODO(knobin): Add more checks to copyRange() with varying offset, count and destination.
 // TODO(knobin): Add tests for MakeFromFileName and MakeFromPath.
 
-static bool CheckSame(const std::byte* d1, const std::byte* d2, std::size_t count)
+static bool CheckSame(const uint8_t* d1, const uint8_t* d2, std::size_t count)
 {
     for (std::size_t i{0}; i < count; ++i)
         if (d1[i] != d2[i])
@@ -20,10 +21,10 @@ static bool CheckSame(const std::byte* d1, const std::byte* d2, std::size_t coun
     return true;
 }
 
-static bool CheckBytesContent(const std::byte* data, std::initializer_list<std::byte> values)
+static bool CheckBytesContent(const uint8_t* data, std::initializer_list<uint8_t> values)
 {
     std::size_t i{0};
-    for (const std::byte byte : values)
+    for (const uint8_t byte : values)
     {
         if (data[i] != byte)
             return false;
@@ -33,10 +34,10 @@ static bool CheckBytesContent(const std::byte* data, std::initializer_list<std::
     return true;
 }
 
-static bool CopyRequire(const pTK::ImmutableBuffer& buffer, std::initializer_list<std::byte> values)
+static bool CopyRequire(const pTK::ImmutableBuffer& buffer, std::initializer_list<uint8_t> values)
 {
-    std::byte d1[]{std::byte{0}, std::byte{0}, std::byte{0}};
-    REQUIRE(CheckBytesContent(d1, {std::byte{0}, std::byte{0}, std::byte{0}}));
+    uint8_t d1[]{uint8_t{0}, uint8_t{0}, uint8_t{0}};
+    REQUIRE(CheckBytesContent(d1, {uint8_t{0}, uint8_t{0}, uint8_t{0}}));
 
     std::size_t copied = buffer.copy(d1);
     REQUIRE(copied == 3);
@@ -44,8 +45,8 @@ static bool CopyRequire(const pTK::ImmutableBuffer& buffer, std::initializer_lis
     REQUIRE(CheckBytesContent(d1, values));
     REQUIRE(CheckSame(d1, buffer.bytes(), buffer.size()));
 
-    std::byte d2[]{std::byte{0}, std::byte{0}, std::byte{0}};
-    REQUIRE(CheckBytesContent(d2, {std::byte{0}, std::byte{0}, std::byte{0}}));
+    uint8_t d2[]{uint8_t{0}, uint8_t{0}, uint8_t{0}};
+    REQUIRE(CheckBytesContent(d2, {uint8_t{0}, uint8_t{0}, uint8_t{0}}));
 
     copied = buffer.copyRange(0, 3, d2);
     REQUIRE(copied == 3);
@@ -53,11 +54,11 @@ static bool CopyRequire(const pTK::ImmutableBuffer& buffer, std::initializer_lis
     REQUIRE(CheckBytesContent(d2, values));
     REQUIRE(CheckSame(d2, buffer.bytes(), buffer.size()));
 
-    std::byte d3[]{std::byte{0}, std::byte{0}, std::byte{0}};
-    std::byte d3_expected[]{std::byte{0}, std::byte{0}, std::byte{0}};
+    uint8_t d3[]{uint8_t{0}, uint8_t{0}, uint8_t{0}};
+    uint8_t d3_expected[]{uint8_t{0}, uint8_t{0}, uint8_t{0}};
     std::size_t i{0};
     std::size_t j{0};
-    for (const std::byte byte : values)
+    for (const uint8_t byte : values)
         if (i++ != 0)
             d3_expected[j++] = byte;
 
@@ -85,21 +86,21 @@ TEST_CASE("MakeEmpty")
 
     SECTION("Copy")
     {
-        std::byte destination[]{std::byte{1}, std::byte{2}, std::byte{3}};
+        uint8_t destination[]{uint8_t{1}, uint8_t{2}, uint8_t{3}};
 
         std::size_t copied = buffer.copy(destination);
         REQUIRE(copied == 0);
-        REQUIRE(CheckBytesContent(destination, {std::byte{1}, std::byte{2}, std::byte{3}}));
+        REQUIRE(CheckBytesContent(destination, {uint8_t{1}, uint8_t{2}, uint8_t{3}}));
 
         copied = buffer.copyRange(0, 3, destination);
         REQUIRE(copied == 0);
-        REQUIRE(CheckBytesContent(destination, {std::byte{1}, std::byte{2}, std::byte{3}}));
+        REQUIRE(CheckBytesContent(destination, {uint8_t{1}, uint8_t{2}, uint8_t{3}}));
     }
 }
 
 TEST_CASE("MakeWithCopy")
 {
-    std::byte data[]{std::byte{1}, std::byte{2}, std::byte{3}};
+    uint8_t data[]{uint8_t{1}, uint8_t{2}, uint8_t{3}};
     const auto buffer{pTK::ImmutableBuffer::MakeWithCopy(&data[0], 3)};
 
     SECTION("Get")
@@ -114,13 +115,13 @@ TEST_CASE("MakeWithCopy")
 
     SECTION("Copy")
     {
-        CopyRequire(buffer, {std::byte{1}, std::byte{2}, std::byte{3}});
+        CopyRequire(buffer, {uint8_t{1}, uint8_t{2}, uint8_t{3}});
     }
 }
 
 TEST_CASE("MakeWithoutCopy")
 {
-    std::byte data[]{std::byte{1}, std::byte{2}, std::byte{3}};
+    uint8_t data[]{uint8_t{1}, uint8_t{2}, uint8_t{3}};
     const auto buffer{pTK::ImmutableBuffer::MakeWithoutCopy(&data[0], 3)};
 
     SECTION("Get")
@@ -135,7 +136,7 @@ TEST_CASE("MakeWithoutCopy")
 
     SECTION("Copy")
     {
-        CopyRequire(buffer, {std::byte{1}, std::byte{2}, std::byte{3}});
+        CopyRequire(buffer, {uint8_t{1}, uint8_t{2}, uint8_t{3}});
     }
 }
 
@@ -156,7 +157,7 @@ TEST_CASE("MakeFromStream")
 
     SECTION("Copy")
     {
-        CopyRequire(buffer, {std::byte{49}, std::byte{50}, std::byte{51}});
+        CopyRequire(buffer, {uint8_t{49}, uint8_t{50}, uint8_t{51}});
     }
 }
 
@@ -177,12 +178,12 @@ TEST_CASE("MakeFromStream (count)")
 
     SECTION("Copy")
     {
-        CopyRequire(buffer, {std::byte{49}, std::byte{50}, std::byte{51}});
+        CopyRequire(buffer, {uint8_t{49}, uint8_t{50}, uint8_t{51}});
     }
 }
 
-#include <catch2/catch_session.hpp>
 #include "../src/Log.hpp"
+#include <catch2/catch_session.hpp>
 
 int main(int argc, char* argv[])
 {

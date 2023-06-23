@@ -25,7 +25,6 @@
 #include "ptk/core/EventFunctions.hpp"
 #include "ptk/core/EventHandling.hpp"
 #include "ptk/core/Exception.hpp"
-#include "ptk/core/ImmutableBuffer.hpp"
 #include "ptk/core/Sizable.hpp"
 #include "ptk/core/Text.hpp"
 #include "ptk/core/Widget.hpp"
@@ -54,6 +53,8 @@
 
 // --- Util --------------------------
 #include "ptk/util/Color.hpp"
+#include "ptk/util/ColorType.hpp"
+#include "ptk/util/ImmutableBuffer.hpp"
 #include "ptk/util/Math.hpp"
 #include "ptk/util/NonCopyable.hpp"
 #include "ptk/util/NonMovable.hpp"

@@ -8,7 +8,6 @@ set(PTK_CORE_FILES core/Alignment.cpp
         core/Canvas.cpp
         core/ContextBase.cpp
         core/EventCallbacks.cpp
-        core/ImmutableBuffer.cpp
         core/Sizable.cpp
         core/Text.cpp
         core/Widget.cpp
@@ -23,6 +22,7 @@ set(PTK_MENU_FILES menu/CheckboxMenuItem.cpp
         menu/NamedMenuItem.cpp)
 
 set(PTK_UTIL_FILES util/Color.cpp
+        util/ImmutableBuffer.cpp
         util/Pixmap.cpp
         util/Point.cpp
         util/Semaphore.cpp

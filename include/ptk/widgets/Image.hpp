@@ -9,8 +9,8 @@
 #define PTK_WIDGETS_IMAGE_HPP
 
 // pTK Headers
-#include "ptk/core/ImmutableBuffer.hpp"
 #include "ptk/core/Widget.hpp"
+#include "ptk/util/ImmutableBuffer.hpp"
 #include "ptk/util/Pixmap.hpp"
 #include "ptk/util/Vec2.hpp"
 

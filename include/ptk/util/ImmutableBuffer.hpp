@@ -1,5 +1,5 @@
 //
-//  core/ImmutableBuffer.hpp
+//  util/ImmutableBuffer.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2023-06-20.
@@ -7,8 +7,8 @@
 
 // TODO(knobin): Add documentation.
 
-#ifndef PTK_CORE_IMMUTABLE_BUFFER_HPP
-#define PTK_CORE_IMMUTABLE_BUFFER_HPP
+#ifndef PTK_UTIL_IMMUTABLE_BUFFER_HPP
+#define PTK_UTIL_IMMUTABLE_BUFFER_HPP
 
 // pTK Headers
 #include "ptk/core/Defines.hpp"
@@ -68,4 +68,4 @@ namespace pTK
     };
 } // namespace pTK
 
-#endif // PTK_CORE_IMMUTABLE_BUFFER_HPP
+#endif // PTK_UTIL_IMMUTABLE_BUFFER_HPP
