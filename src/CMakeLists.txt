@@ -15,6 +15,9 @@ set(PTK_CORE_FILES core/Alignment.cpp
 
 set(PTK_EVENT_FILES events/KeyMap.cpp)
 
+set(PTK_SRC_INCLUDE_FILES include/Assert.hpp
+        include/PointerOverlapDefine.hpp)
+
 set(PTK_MENU_FILES menu/CheckboxMenuItem.cpp
         menu/Menu.cpp
         menu/MenuBar.cpp
@@ -36,7 +39,7 @@ set(PTK_WIDGET_FILES widgets/BoxLayout.cpp
         widgets/TextField.cpp)
 
 if (PTK_BUILD_TYPE MATCHES Debug)
-    set(PTK_LOG_FILES Log.hpp Log.cpp)
+    set(PTK_LOG_FILES include/Log.hpp Log.cpp)
 endif()
 
 # Get platform files
@@ -46,6 +49,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/platform)
 set(PTK_SOURCE_FILES Application.cpp Window.cpp
         ${PTK_CORE_FILES}
         ${PTK_EVENT_FILES}
+        ${PTK_SRC_INCLUDE_FILES}
         ${PTK_MENU_FILES}
         ${PTK_UTIL_FILES}
         ${PTK_WIDGET_FILES}
