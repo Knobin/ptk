@@ -12,15 +12,11 @@
 #include "ptk/core/Widget.hpp"
 #include "ptk/util/ImmutableBuffer.hpp"
 #include "ptk/util/Pixmap.hpp"
+#include "ptk/util/Texture.hpp"
 #include "ptk/util/Vec2.hpp"
 
 // C++ Headers
 #include <memory>
-
-// Skia forward declarations.
-template <typename T>
-class sk_sp;
-class SkImage;
 
 namespace pTK
 {
@@ -35,26 +31,15 @@ namespace pTK
 
             @return    default initialized Image
         */
-        Image();
+        Image() = default;
 
-        /** Constructs Image with default values with style.
+        // TODO(knobin): Add documentation.
+        explicit Image(std::shared_ptr<Texture> texture);
 
-            Note: Buffer will be copied to appropriate location (raster or GPU) and
-                  is safe to delete after this call.
-
-            @param buffer   buffer of constant data
-            @return         default initialized Image
-        */
+        // TODO(knobin): Add documentation.
         explicit Image(const ImmutableBuffer& buffer);
 
-        /** Constructs Image with default values with style.
-
-            Note: Pixmap will be copied to appropriate location (raster or GPU) and
-                  is safe to delete after this call.
-
-            @param pixmap   array of pixels in Pixmap format
-            @return         default initialized Image
-        */
+        // TODO(knobin): Add documentation.
         explicit Image(const Pixmap& pixmap);
 
         /** Move Constructor for Image.
@@ -109,8 +94,8 @@ namespace pTK
         void applyScale(float x, float y);
 
     private:
-        std::unique_ptr<sk_sp<SkImage>> m_image;
-        Vec2f m_scale;
+        std::shared_ptr<Texture> m_texture{};
+        Vec2f m_scale{1.0f, 1.0f};
     };
 } // namespace pTK
 

@@ -13,111 +13,39 @@
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
-#include "include/core/SkCanvas.h"
-#include "include/core/SkData.h"
-#include "include/core/SkImage.h"
-#include "include/core/SkPixmap.h"
+#include "include/core/SkImage.h" // Needed for clang-format...
 PTK_DISABLE_WARN_END()
 
 namespace pTK
 {
-    Image::Image()
+    Image::Image(std::shared_ptr<Texture> texture)
         : Widget(),
-          m_image{nullptr},
-          m_scale{1.0f, 1.0f}
-    {}
+          m_texture{std::move(texture)}
+    {
+        applyScale(m_scale.x, m_scale.y);
+    }
 
     Image::Image(const ImmutableBuffer& buffer)
         : Widget(),
-          m_image{nullptr},
-          m_scale{1.0f, 1.0f}
+          m_texture{std::make_shared<Texture>(buffer)}
     {
-        sk_sp<SkData> data{SkData::MakeWithoutCopy(buffer.data(), buffer.size())};
-        if (data)
-        {
-            m_image = std::make_unique<sk_sp<SkImage>>(SkImage::MakeFromEncoded(data));
-            if (m_image && m_image->get())
-            {
-                const float w = static_cast<float>(m_image->get()->width()) * m_scale.x;
-                const float h = static_cast<float>(m_image->get()->height()) * m_scale.y;
-                setSize(Size(static_cast<Size::value_type>(w), static_cast<Size::value_type>(h)));
-            }
-        }
-    }
-
-    [[nodiscard]] static constexpr SkColorType GetSkColorType(ColorType colorType) noexcept
-    {
-        struct LookupItem
-        {
-            ColorType type{};
-            SkColorType skType{};
-        };
-        constexpr std::array<LookupItem, 4> lookup{
-            LookupItem{ColorType::Unknown, SkColorType::kUnknown_SkColorType},
-            LookupItem{ColorType::RBGA_8888, SkColorType::kRGBA_8888_SkColorType},
-            LookupItem{ColorType::RGB_888x, SkColorType::kRGB_888x_SkColorType},
-            LookupItem{ColorType::BGRA_8888, SkColorType::kBGRA_8888_SkColorType}};
-
-        constexpr auto size{static_cast<std::ptrdiff_t>(lookup.size())};
-        for (std::ptrdiff_t i{1}; i < size; ++i)
-            if (colorType == lookup[i].type)
-                return lookup[i].skType;
-
-        return lookup[0].skType;
-    }
-
-    [[nodiscard]] static constexpr bool IsColorTypeOpaque(ColorType colorType) noexcept
-    {
-        return GetColorTypeInfo(colorType).channelBits.a == 255;
-    }
-
-    [[nodiscard]] static constexpr SkAlphaType GetSkAlphaType(ColorType colorType) noexcept
-    {
-        if (colorType == ColorType::Unknown)
-            return SkAlphaType::kUnknown_SkAlphaType;
-        if (IsColorTypeOpaque(colorType))
-            return SkAlphaType::kOpaque_SkAlphaType;
-        return SkAlphaType::kUnpremul_SkAlphaType;
-    }
-
-    [[nodiscard]] static SkPixmap GetSkPixmap(const Pixmap& pixmap) noexcept
-    {
-        const auto width{static_cast<int>(pixmap.width())};
-        const auto height{static_cast<int>(pixmap.height())};
-
-        const auto ct{pixmap.colorType()};
-        const auto info{SkImageInfo::Make(width, height, GetSkColorType(ct), GetSkAlphaType(ct))};
-        const auto rowBytes{static_cast<std::size_t>(pixmap.width() * (GetColorTypeInfo(ct).totalBits / 8))};
-        return SkPixmap{info, pixmap.data(), rowBytes};
+        applyScale(m_scale.x, m_scale.y);
     }
 
     Image::Image(const Pixmap& pixmap)
         : Widget(),
-          m_image{nullptr},
-          m_scale{1.0f, 1.0f}
-    {
-        if (pixmap.isValid())
-        {
-            SkPixmap data{GetSkPixmap(pixmap)};
-            m_image = std::make_unique<sk_sp<SkImage>>(SkImage::MakeRasterCopy(data));
-            if (m_image && m_image->get())
-            {
-                const float w = static_cast<float>(m_image->get()->width()) * m_scale.x;
-                const float h = static_cast<float>(m_image->get()->height()) * m_scale.y;
-                setSize(Size(static_cast<Size::value_type>(w), static_cast<Size::value_type>(h)));
-            }
-        }
-    }
+          m_texture{std::make_shared<Texture>(pixmap)}
+    {}
 
     bool Image::isValid() const
     {
-        return ((m_image && m_image->get()) ? m_image->get()->isValid(nullptr) : false);
+        return (m_texture) ? m_texture->isValid() : false;
     }
 
     void Image::onDraw(Canvas* canvas)
     {
-        if (m_image && m_image->get())
-            canvas->drawImage(getPosition(), getSize(), m_image->get());
+        if (m_texture)
+            canvas->drawImage(getPosition(), getSize(), m_texture->skImage());
     }
 
     const Vec2f& Image::getScale() const
@@ -142,11 +70,7 @@ namespace pTK
         if (y > 0.0f)
             m_scale.y = y;
 
-        if (m_image && m_image->get())
-        {
-            const float w = static_cast<float>(m_image->get()->width()) * m_scale.x;
-            const float h = static_cast<float>(m_image->get()->height()) * m_scale.y;
-            setSize(Size{static_cast<Size::value_type>(w), static_cast<Size::value_type>(h)});
-        }
+        if (m_texture)
+            setSize(Size::MakeScaled(m_texture->width(), m_texture->height(), m_scale.x, m_scale.y, std::ceilf));
     }
 } // namespace pTK

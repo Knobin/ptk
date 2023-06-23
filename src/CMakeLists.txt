@@ -29,7 +29,8 @@ set(PTK_UTIL_FILES util/Color.cpp
         util/Pixmap.cpp
         util/Point.cpp
         util/Semaphore.cpp
-        util/Size.cpp)
+        util/Size.cpp
+        util/Texture.cpp)
 
 set(PTK_WIDGET_FILES widgets/BoxLayout.cpp
         widgets/Button.cpp

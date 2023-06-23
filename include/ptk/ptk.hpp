@@ -16,6 +16,7 @@
 #include "ptk/core/Alignment.hpp"
 #include "ptk/core/ApplicationBase.hpp"
 #include "ptk/core/CallbackStorage.hpp"
+#include "ptk/core/Canvas.hpp"
 #include "ptk/core/CommandBuffer.hpp"
 #include "ptk/core/ContextBase.hpp"
 #include "ptk/core/Defines.hpp"
@@ -58,12 +59,14 @@
 #include "ptk/util/Math.hpp"
 #include "ptk/util/NonCopyable.hpp"
 #include "ptk/util/NonMovable.hpp"
+#include "ptk/util/Pixmap.hpp"
 #include "ptk/util/Point.hpp"
 #include "ptk/util/SafeQueue.hpp"
 #include "ptk/util/Semaphore.hpp"
 #include "ptk/util/SingleObject.hpp"
 #include "ptk/util/Size.hpp"
 #include "ptk/util/SizePolicy.hpp"
+#include "ptk/util/Texture.hpp"
 #include "ptk/util/Vec2.hpp"
 
 // --- Widgets -----------------------
