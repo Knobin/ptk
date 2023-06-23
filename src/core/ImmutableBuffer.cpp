@@ -14,21 +14,25 @@
 // C++ Headers
 #include <fstream>
 
-// TODO(knobin): Add separation lines (############).
-
 namespace pTK
 {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
     static void ByteArrayReleaseProcedure(const void* ptr)
     {
         const auto bytes = static_cast<const uint8_t*>(ptr);
         delete[] bytes;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
     ImmutableBuffer::~ImmutableBuffer()
     {
         if (m_deleter)
             m_deleter(static_cast<const void*>(m_bytes));
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     ImmutableBuffer ImmutableBuffer::MakeWithCopy(const uint8_t* source, std::size_t length)
     {
@@ -123,6 +127,8 @@ namespace pTK
 
         return MakeEmpty();
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     std::size_t ImmutableBuffer::copy(uint8_t* destination) const
     {

@@ -14,7 +14,6 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
-#include <vcruntime.h>
 
 namespace pTK
 {

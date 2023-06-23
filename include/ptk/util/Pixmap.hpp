@@ -26,11 +26,11 @@ namespace pTK
     class PTK_API Pixmap : public NonCopyable, public NonMovable
     {
     public:
-        Pixmap() = delete;
+        Pixmap() = default;
         Pixmap(uint32_t width, uint32_t height, ColorType colorType);
         ~Pixmap() override = default;
 
-        [[nodiscard]] bool isValid() const noexcept { return m_bytes && m_size.width > 0 && m_size.height > 0; }
+        [[nodiscard]] bool isValid() const noexcept;
 
         [[nodiscard]] Size size() const noexcept { return m_size; }
         [[nodiscard]] uint32_t width() const noexcept { return m_size.width; }

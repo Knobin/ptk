@@ -9,12 +9,6 @@
 #include "../Log.hpp"
 
 // pTK Headers
-#include "include/core/SkAlphaType.h"
-#include "include/core/SkColorType.h"
-#include "include/core/SkRefCnt.h"
-#include "ptk/core/ContextBase.hpp"
-#include "ptk/core/ImmutableBuffer.hpp"
-#include "ptk/util/ColorType.hpp"
 #include "ptk/widgets/Image.hpp"
 
 // Skia Headers
@@ -22,6 +16,7 @@ PTK_DISABLE_WARN_BEGIN()
 #include "include/core/SkCanvas.h"
 #include "include/core/SkData.h"
 #include "include/core/SkImage.h"
+#include "include/core/SkPixmap.h"
 PTK_DISABLE_WARN_END()
 
 namespace pTK

@@ -23,6 +23,11 @@ namespace pTK
         m_bytes = std::make_unique<uint8_t[]>(byteCount);
     }
 
+    bool Pixmap::isValid() const noexcept
+    {
+        return m_bytes && m_colorType != ColorType::Unknown && m_size.width > 0 && m_size.height > 0;
+    }
+
     uint8_t* Pixmap::internal_at(std::ptrdiff_t x, std::ptrdiff_t y) const
     {
         const auto width{static_cast<std::ptrdiff_t>(m_size.width)};
@@ -51,12 +56,12 @@ namespace pTK
             return 0;
 
         uint8_t* bytes{m_bytes.get()};
-        const auto pixelCount{static_cast<std::size_t>(m_size.width * m_size.height)};
-        const auto byteCount{pixelCount * GetColorTypeInfo(colorType()).totalBits};
 
-        PTK_DEBUG_POINTER_OVERLAP_CHECK(bytes, byteCount, destination);
+        PTK_DEBUG_POINTER_OVERLAP_CHECK(
+            bytes, static_cast<std::size_t>(m_size.width * m_size.height) * GetColorTypeInfo(colorType()).totalBits,
+            destination);
 
         std::memcpy(destination, bytes + offset, count);
         return count;
     }
-}
+} // namespace pTK

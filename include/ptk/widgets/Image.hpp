@@ -16,7 +16,6 @@
 
 // C++ Headers
 #include <memory>
-#include <string>
 
 // Skia forward declarations.
 template <typename T>
