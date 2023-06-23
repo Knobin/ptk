@@ -23,6 +23,7 @@ set(PTK_MENU_FILES menu/CheckboxMenuItem.cpp
         menu/NamedMenuItem.cpp)
 
 set(PTK_UTIL_FILES util/Color.cpp
+        util/Pixmap.cpp
         util/Point.cpp
         util/Semaphore.cpp
         util/Size.cpp)

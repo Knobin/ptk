@@ -9,16 +9,19 @@
 #define PTK_WIDGETS_IMAGE_HPP
 
 // pTK Headers
+#include "ptk/core/ImmutableBuffer.hpp"
 #include "ptk/core/Widget.hpp"
+#include "ptk/util/Pixmap.hpp"
 #include "ptk/util/Vec2.hpp"
 
 // C++ Headers
+#include <memory>
 #include <string>
 
-// Skia Headers
-PTK_DISABLE_WARN_BEGIN()
-#include "include/core/SkImage.h"
-PTK_DISABLE_WARN_END()
+// Skia forward declarations.
+template <typename T>
+class sk_sp;
+class SkImage;
 
 namespace pTK
 {
@@ -37,9 +40,23 @@ namespace pTK
 
         /** Constructs Image with default values with style.
 
-            @return    default initialized Image
+            Note: Buffer will be copied to appropriate location (raster or GPU) and
+                  is safe to delete after this call.
+
+            @param buffer   buffer of constant data
+            @return         default initialized Image
         */
-        Image(const std::string& path);
+        explicit Image(const ImmutableBuffer& buffer);
+
+        /** Constructs Image with default values with style.
+
+            Note: Pixmap will be copied to appropriate location (raster or GPU) and
+                  is safe to delete after this call.
+
+            @param pixmap   array of pixels in Pixmap format
+            @return         default initialized Image
+        */
+        explicit Image(const Pixmap& pixmap);
 
         /** Move Constructor for Image.
 
@@ -56,20 +73,13 @@ namespace pTK
         /** Destructor for Image.
 
         */
-        virtual ~Image() = default;
+        ~Image() override = default;
 
-        /** Function for loading an image from disk.
-
-            @param path    file path
-            @return        status
-        */
-        bool loadFromFile(const std::string& path);
-
-        /** Function for checking if an image is loaded.
+        /** Function for checking if the image is valid and can be displayed.
 
             @return        status
         */
-        bool isLoaded() const;
+        [[nodiscard]] bool isValid() const;
 
         /** Function is called when it is time to draw.
 
@@ -100,8 +110,7 @@ namespace pTK
         void applyScale(float x, float y);
 
     private:
-        std::string m_path;
-        sk_sp<SkImage> m_image;
+        std::unique_ptr<sk_sp<SkImage>> m_image;
         Vec2f m_scale;
     };
 } // namespace pTK
