@@ -23,7 +23,7 @@ namespace pTK
     enum class ColorType
     {
         Unknown,   // Uninitialized.
-        RBGA_8888, // 8 bits per channel totaling 32 bits per pixel.
+        RGBA_8888, // 8 bits per channel totaling 32 bits per pixel.
         RGB_888x,  // 8 bits per channel with blank alpha totaling 32 bits per pixel.
         BGRA_8888  // 8 bits per channel totaling 32 bits per pixel.
     };
@@ -34,7 +34,9 @@ namespace pTK
         they have in the pixel, how many bits they individually use how many bits in total in
         the pixels.
 
-        Note: Channels not used by the pixel has a size of 0 and channel index of -1.
+        Note: Channels not used by the pixel has a size of 0 and not used has channel index of 0.
+
+        Use the size of the channel to determine if the channel is used or not.
     */
     struct ColorTypeInfo
     {
@@ -64,8 +66,8 @@ namespace pTK
         struct LookupItem {ColorType type{}; ColorTypeInfo info{};};
         constexpr std::array<LookupItem, 4> lookup{
             LookupItem{ColorType::Unknown, ColorTypeInfo{}},
-            LookupItem{ColorType::RBGA_8888, ColorTypeInfo{{3, 0, 1, 2}, {8, 8, 8, 8}, 8 * 4}},
-            LookupItem{ColorType::RGB_888x, ColorTypeInfo{{-1, 0, 1, 2}, {0, 8, 8, 8}, 8 * 4}},
+            LookupItem{ColorType::RGBA_8888, ColorTypeInfo{{3, 0, 1, 2}, {8, 8, 8, 8}, 8 * 4}},
+            LookupItem{ColorType::RGB_888x, ColorTypeInfo{{3, 0, 1, 2}, {0, 8, 8, 8}, 8 * 4}},
             LookupItem{ColorType::BGRA_8888, ColorTypeInfo{{3, 2, 1, 0}, {8, 8, 8, 8}, 8 * 4}}
         };
 

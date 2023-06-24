@@ -28,7 +28,7 @@ namespace pTK
         };
         constexpr std::array<LookupItem, 4> lookup{
             LookupItem{ColorType::Unknown, SkColorType::kUnknown_SkColorType},
-            LookupItem{ColorType::RBGA_8888, SkColorType::kRGBA_8888_SkColorType},
+            LookupItem{ColorType::RGBA_8888, SkColorType::kRGBA_8888_SkColorType},
             LookupItem{ColorType::RGB_888x, SkColorType::kRGB_888x_SkColorType},
             LookupItem{ColorType::BGRA_8888, SkColorType::kBGRA_8888_SkColorType}};
 
