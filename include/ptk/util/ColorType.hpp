@@ -30,11 +30,21 @@ namespace pTK
 
     /** ColorTypeInfo struct implementation.
 
-        Represents the ColorType in a better format with channel information on how
-        many bits they individually use and how many bits in total in the pixels.
+        Represents the ColorType in a better format with channel information on what position
+        they have in the pixel, how many bits they individually use how many bits in total in
+        the pixels.
+
+        Note: Channels not used by the pixel has a size of 0 and channel index of -1.
     */
     struct ColorTypeInfo
     {
+        struct ChannelIndex
+        {
+            std::ptrdiff_t a{};
+            std::ptrdiff_t r{};
+            std::ptrdiff_t g{};
+            std::ptrdiff_t b{};
+        } channelIndex{};
         struct ChannelBits
         {
             uint8_t a{};
@@ -54,9 +64,9 @@ namespace pTK
         struct LookupItem {ColorType type{}; ColorTypeInfo info{};};
         constexpr std::array<LookupItem, 4> lookup{
             LookupItem{ColorType::Unknown, ColorTypeInfo{}},
-            LookupItem{ColorType::RBGA_8888, ColorTypeInfo{{8, 8, 8, 8}, 8 * 4}},
-            LookupItem{ColorType::RGB_888x, ColorTypeInfo{{0, 8, 8, 8}, 8 * 4}},
-            LookupItem{ColorType::BGRA_8888, ColorTypeInfo{{8, 8, 8, 8}, 8 * 4}}
+            LookupItem{ColorType::RBGA_8888, ColorTypeInfo{{3, 0, 1, 2}, {8, 8, 8, 8}, 8 * 4}},
+            LookupItem{ColorType::RGB_888x, ColorTypeInfo{{-1, 0, 1, 2}, {0, 8, 8, 8}, 8 * 4}},
+            LookupItem{ColorType::BGRA_8888, ColorTypeInfo{{3, 2, 1, 0}, {8, 8, 8, 8}, 8 * 4}}
         };
 
         constexpr auto size{static_cast<std::ptrdiff_t>(lookup.size())};
