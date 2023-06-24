@@ -28,7 +28,7 @@ namespace pTK
 
     ImmutableBuffer::~ImmutableBuffer()
     {
-        if (m_deleter)
+        if (m_bytes && m_deleter)
             m_deleter(static_cast<const void*>(m_bytes));
     }
 

@@ -5,8 +5,6 @@
 //  Created by Robin Gustafsson on 2023-06-22.
 //
 
-// TODO(knobin): Add documentation.
-
 #ifndef PTK_UTIL_COLOR_TYPE_HPP
 #define PTK_UTIL_COLOR_TYPE_HPP
 
@@ -17,14 +15,24 @@
 
 namespace pTK
 {
+    /** ColorType enum class implementation.
+
+        Defines how pixels are stored and used, how many channels and channel
+        sizes the pixel have.
+    */
     enum class ColorType
     {
-        Unknown,
+        Unknown,   // Uninitialized.
         RBGA_8888, // 8 bits per channel totaling 32 bits per pixel.
         RGB_888x,  // 8 bits per channel with blank alpha totaling 32 bits per pixel.
         BGRA_8888  // 8 bits per channel totaling 32 bits per pixel.
     };
 
+    /** ColorTypeInfo struct implementation.
+
+        Represents the ColorType in a better format with channel information on how
+        many bits they individually use and how many bits in total in the pixels.
+    */
     struct ColorTypeInfo
     {
         struct ChannelBits
@@ -37,6 +45,10 @@ namespace pTK
         std::size_t totalBits{};
     };
 
+    /** Function for retrieving ColorTypeInfo from ColorType.
+
+        @return     color type information
+    */
     [[nodiscard]] constexpr ColorTypeInfo GetColorTypeInfo(ColorType colorType) noexcept
     {
         struct LookupItem {ColorType type{}; ColorTypeInfo info{};};

@@ -16,7 +16,7 @@
 #ifdef PTK_DEBUG
     #include "Assert.hpp"
 // PTK_DEBUG_OVERLAP_CHECK(m_bytes, m_size, destination);
-static bool CheckPointerOverlap(const uint8_t* source, std::size_t length, const uint8_t* destination)
+constexpr bool CheckPointerOverlap(const uint8_t* source, std::size_t length, const uint8_t* destination) noexcept
 {
     const uint8_t* start = source;
     const uint8_t* end = start + static_cast<std::ptrdiff_t>(length);

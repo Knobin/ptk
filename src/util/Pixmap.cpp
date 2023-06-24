@@ -19,8 +19,7 @@ namespace pTK
           m_colorType{colorType}
     {
         const auto pixelCount{static_cast<std::size_t>(m_size.width * m_size.height)};
-        const auto byteCount{pixelCount * GetColorTypeInfo(colorType).totalBits};
-        m_bytes = std::make_unique<uint8_t[]>(byteCount);
+        m_bytes = std::make_unique<uint8_t[]>(pixelCount * bytesPerPixel());
     }
 
     bool Pixmap::isValid() const noexcept
@@ -28,10 +27,31 @@ namespace pTK
         return m_bytes && m_colorType != ColorType::Unknown && m_size.width > 0 && m_size.height > 0;
     }
 
+    uint32_t Pixmap::length() const noexcept
+    {
+        const auto pixelCount{static_cast<uint32_t>(m_size.width * m_size.height)};
+        return pixelCount * bytesPerPixel();
+    }
+
+    uint32_t Pixmap::bytesPerPixel() const noexcept
+    {
+        return static_cast<uint32_t>(GetColorTypeInfo(m_colorType).totalBits / 8);
+    }
+
     uint8_t* Pixmap::internal_at(std::ptrdiff_t x, std::ptrdiff_t y) const
     {
-        const auto width{static_cast<std::ptrdiff_t>(m_size.width)};
-        const auto index{(y * width) + x};
+        PTK_ASSERT(m_bytes, "pointer is nullptr");
+
+        if (!m_bytes)
+            return nullptr;
+
+        PTK_ASSERT(x < width(), "x outside of range");
+        PTK_ASSERT(y < height(), "y outside of range");
+
+        const auto bpp{static_cast<std::ptrdiff_t>(bytesPerPixel())};
+        const auto width{static_cast<std::ptrdiff_t>(m_size.width) * bpp};
+        const auto index{(y * width) + (x * bpp)};
+
         return m_bytes.get() + index;
     }
 
@@ -42,7 +62,7 @@ namespace pTK
 
         uint8_t* bytes{m_bytes.get()};
         const auto pixelCount{static_cast<std::size_t>(m_size.width * m_size.height)};
-        const auto byteCount{pixelCount * GetColorTypeInfo(colorType()).totalBits};
+        const auto byteCount{pixelCount * bytesPerPixel()};
 
         PTK_DEBUG_POINTER_OVERLAP_CHECK(bytes, byteCount, destination);
 
@@ -57,9 +77,7 @@ namespace pTK
 
         uint8_t* bytes{m_bytes.get()};
 
-        PTK_DEBUG_POINTER_OVERLAP_CHECK(
-            bytes, static_cast<std::size_t>(m_size.width * m_size.height) * GetColorTypeInfo(colorType()).totalBits,
-            destination);
+        PTK_DEBUG_POINTER_OVERLAP_CHECK(bytes, static_cast<std::size_t>(length()), destination);
 
         std::memcpy(destination, bytes + offset, count);
         return count;
