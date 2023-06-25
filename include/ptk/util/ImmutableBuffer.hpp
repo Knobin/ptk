@@ -33,11 +33,28 @@ namespace pTK
         using ReleaseProcedure = void (*)(const void* ptr);
 
     public:
-        /** Deleted constructor.
+        /** Constructs empty ImmutableBuffer.
 
-            Note: This may change in the future, for now, use MakeEmpty() function.
+            @return    empty initialized Pixmap
         */
-        ImmutableBuffer() = delete;
+        ImmutableBuffer() = default;
+
+        /** Constructs Pixmap with size and color type.
+
+            If a ReleaseProcedure is passed to the constructor it will be called when
+            destructing the this object. User can decide if they need it or what to do
+            in the callback when it is called, however, pointer to byte array should be
+            freed in the callback if procedure is not nullptr to avoid memory leaks.
+
+            User is responsible for assuring that the pointer and size are correct when
+            passed to the constructor as no checks are performed.
+
+            @param bytes    pointer to byte array
+            @param height   number of bytes in array
+            @param deleter  callback for releasing the byte pointer if necessary
+            @return         initialized ImmutableBuffer with pointer, size and deleter
+        */
+        ImmutableBuffer(const uint8_t* bytes, std::size_t size, ReleaseProcedure deleter = nullptr);
 
         /** Destructor for ImmutableBuffer.
 
@@ -184,13 +201,6 @@ namespace pTK
             @return  status
         */
         explicit operator bool() const noexcept { return !isEmpty(); }
-
-    private:
-        ImmutableBuffer(const uint8_t* bytes, std::size_t size, ReleaseProcedure deleter = nullptr)
-            : m_size{size},
-              m_deleter{deleter},
-              m_bytes{bytes}
-        {}
 
     private:
         std::size_t m_size{};

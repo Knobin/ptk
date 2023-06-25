@@ -9,22 +9,34 @@
 #include "../include/PointerOverlapDefine.hpp"
 
 // pTK Headers
-#include "ptk/util/ColorType.hpp"
 #include "ptk/util/Pixmap.hpp"
 
 namespace pTK
 {
+    static constexpr bool IsValidPixmapArgs(uint32_t width, uint32_t height, ColorType colorType) noexcept
+    {
+        return colorType != ColorType::Unknown && width > 0 && height > 0;
+    }
+
     Pixmap::Pixmap(uint32_t width, uint32_t height, ColorType colorType)
         : m_size{width, height},
           m_colorType{colorType}
     {
-        const auto pixelCount{static_cast<std::size_t>(m_size.width * m_size.height)};
-        m_bytes = std::make_unique<uint8_t[]>(pixelCount * bytesPerPixel());
+        if (IsValidPixmapArgs(width, height, colorType))
+        {
+            const auto pixelCount{static_cast<std::size_t>(m_size.width * m_size.height)};
+            const std::size_t byteCount{pixelCount * bytesPerPixel()};
+            m_bytes = std::unique_ptr<uint8_t[]>(new (std::nothrow) uint8_t[byteCount]);
+        }
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     bool Pixmap::isValid() const noexcept
     {
-        return m_bytes && m_colorType != ColorType::Unknown && m_size.width > 0 && m_size.height > 0;
+        const auto width{static_cast<uint32_t>(m_size.width)};
+        const auto height{static_cast<uint32_t>(m_size.height)};
+        return m_bytes && IsValidPixmapArgs(width, height, m_colorType);
     }
 
     uint32_t Pixmap::length() const noexcept
@@ -55,12 +67,14 @@ namespace pTK
         return m_bytes.get() + index;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
     std::size_t Pixmap::copy(uint8_t* destination) const
     {
         if (!m_bytes || !destination)
             return 0;
 
-        uint8_t* bytes{m_bytes.get()};
+        const uint8_t* bytes{m_bytes.get()};
         const auto pixelCount{static_cast<std::size_t>(m_size.width * m_size.height)};
         const auto byteCount{pixelCount * bytesPerPixel()};
 

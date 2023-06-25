@@ -26,6 +26,12 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+    ImmutableBuffer::ImmutableBuffer(const uint8_t* bytes, std::size_t size, ReleaseProcedure deleter)
+        : m_size{size},
+          m_deleter{deleter},
+          m_bytes{bytes}
+    {}
+
     ImmutableBuffer::~ImmutableBuffer()
     {
         if (m_bytes && m_deleter)

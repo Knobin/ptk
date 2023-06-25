@@ -1,5 +1,5 @@
 //
-//  tests/ColorTypeType.hpp
+//  tests/ColorTypeTest.cpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2023-06-24.

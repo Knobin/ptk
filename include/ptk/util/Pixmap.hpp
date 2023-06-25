@@ -41,7 +41,12 @@ namespace pTK
             Where bytesPerPixel is the amount of bytes required per pixel by the
             provided color type.
 
-            @return    initialized Pixmap with width, height and color type
+            Note: Pixmap will not throw if allocation failed.
+
+            @param width        width in pixels
+            @param height       height in pixels
+            @param colorType    pixel channel information
+            @return             initialized Pixmap with width, height and color type
         */
         Pixmap(uint32_t width, uint32_t height, ColorType colorType);
 
@@ -51,6 +56,12 @@ namespace pTK
         ~Pixmap() override = default;
 
         /** Function for checking if the Pixmap has been created successfully.
+
+            Requirements for valid:
+                - pointer is not nullptr.
+                - color type is not ColorType::Unknown.
+                - width > 0
+                - height > 0
 
             @return     status
         */

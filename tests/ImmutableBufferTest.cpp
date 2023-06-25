@@ -12,7 +12,7 @@
 // TODO(knobin): Add more checks to copyRange() with varying offset, count and destination.
 // TODO(knobin): Add tests for MakeFromFileName and MakeFromPath.
 
-static bool CheckSame(const uint8_t* d1, const uint8_t* d2, std::size_t count)
+static bool CheckEqual(const uint8_t* d1, const uint8_t* d2, std::size_t count)
 {
     for (std::size_t i{0}; i < count; ++i)
         if (d1[i] != d2[i])
@@ -43,7 +43,7 @@ static bool CopyRequire(const pTK::ImmutableBuffer& buffer, std::initializer_lis
     REQUIRE(copied == 3);
     REQUIRE(CheckBytesContent(buffer.bytes(), values));
     REQUIRE(CheckBytesContent(d1, values));
-    REQUIRE(CheckSame(d1, buffer.bytes(), buffer.size()));
+    REQUIRE(CheckEqual(d1, buffer.bytes(), buffer.size()));
 
     uint8_t d2[]{uint8_t{0}, uint8_t{0}, uint8_t{0}};
     REQUIRE(CheckBytesContent(d2, {uint8_t{0}, uint8_t{0}, uint8_t{0}}));
@@ -52,7 +52,7 @@ static bool CopyRequire(const pTK::ImmutableBuffer& buffer, std::initializer_lis
     REQUIRE(copied == 3);
     REQUIRE(CheckBytesContent(buffer.bytes(), values));
     REQUIRE(CheckBytesContent(d2, values));
-    REQUIRE(CheckSame(d2, buffer.bytes(), buffer.size()));
+    REQUIRE(CheckEqual(d2, buffer.bytes(), buffer.size()));
 
     uint8_t d3[]{uint8_t{0}, uint8_t{0}, uint8_t{0}};
     uint8_t d3_expected[]{uint8_t{0}, uint8_t{0}, uint8_t{0}};

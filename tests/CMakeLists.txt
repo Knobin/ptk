@@ -46,6 +46,7 @@ define_test(NAME CallbackStorageTest FILES ${PTK_HEADER_FILES} CallbackStorageTe
 define_test(NAME ColorTest FILES ${PTK_INCLUDE}/ptk/util/Color.hpp ${PTK_SRC}/util/Color.cpp ColorTest.cpp LINKS Catch2::Catch2WithMain)
 define_test(NAME ColorTypeTest FILES ${PTK_INCLUDE}/ptk/util/ColorType.hpp ColorTypeTest.cpp LINKS Catch2::Catch2WithMain)
 define_test(NAME ImmutableBufferTest FILES ${PTK_HEADER_FILES} ImmutableBufferTest.cpp LINKS ptk Catch2::Catch2 DEFINITIONS ${PTK_DEFINITIONS})
+define_test(NAME PixmapTest FILES ${PTK_HEADER_FILES} PixmapTest.cpp LINKS ptk Catch2::Catch2 DEFINITIONS ${PTK_DEFINITIONS})
 define_test(NAME PointTest FILES ${PTK_INCLUDE}/ptk/util/Point.hpp ${PTK_SRC}/util/Point.cpp PointTest.cpp LINKS Catch2::Catch2WithMain)
 define_test(NAME SafeQueueTest FILES ${PTK_INCLUDE}/ptk/util/SafeQueue.hpp SafeQueueTest.cpp LINKS Catch2::Catch2WithMain)
 define_test(NAME SemaphoreTest FILES ${PTK_INCLUDE}/ptk/util/Semaphore.hpp ${PTK_SRC}/util/Semaphore.cpp SemaphoreTest.cpp LINKS Threads::Threads Catch2::Catch2WithMain)
