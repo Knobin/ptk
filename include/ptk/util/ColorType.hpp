@@ -72,7 +72,7 @@ namespace pTK
         };
 
         constexpr auto size{static_cast<std::ptrdiff_t>(lookup.size())};
-        for (std::ptrdiff_t i{1}; i < size; ++i)
+        for (std::size_t i{1}; i < size; ++i)
             if (colorType == lookup[i].type)
                 return lookup[i].info;
 
