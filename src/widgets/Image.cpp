@@ -30,7 +30,9 @@ namespace pTK
     Image::Image(const Pixmap& pixmap)
         : Widget(),
           m_texture{std::make_shared<Texture>(pixmap)}
-    {}
+    {
+        applyScale(m_scale.x, m_scale.y);
+    }
 
     bool Image::isValid() const
     {
