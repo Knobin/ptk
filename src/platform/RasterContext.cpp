@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "../Log.hpp"
+#include "../include/Log.hpp"
 
 // pTK Headers
 #include "ptk/platform/RasterContext.hpp"

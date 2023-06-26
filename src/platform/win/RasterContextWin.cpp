@@ -7,7 +7,7 @@
 
 // Local Headers
 #include "RasterContextWin.hpp"
-#include "../../Log.hpp"
+#include "../../include/Log.hpp"
 
 namespace pTK::Platform
 {

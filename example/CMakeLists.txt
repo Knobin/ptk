@@ -20,3 +20,4 @@ endforeach()
 
 # subdirectories goes here!
 add_subdirectory(${CMAKE_SOURCE_DIR}/example/box_layout)
+add_subdirectory(${CMAKE_SOURCE_DIR}/example/image)

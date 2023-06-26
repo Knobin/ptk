@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "Log.hpp"
+#include "include/Log.hpp"
 
 // pTK Headers
 #include "ptk/Application.hpp"
@@ -208,7 +208,8 @@ namespace pTK
 
         // Will paint background and then children.
         Canvas canvas{skCanvas};
-        onDraw(&canvas);
+        canvas.drawRect({}, getSize(), getBackground());
+        drawChildrenWithDir(&canvas);
 
         surface->flushAndSubmit();
         m_context->swapBuffers();

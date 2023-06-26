@@ -109,7 +109,7 @@ namespace pTK
             @param outlineThickness     thickness of the outline (>0)
         */
         void drawRoundRect(Vec2f pos, Vec2f size, Color color, float cornerRadius, Color outlineColor,
-                               float outlineThickness) const;
+                           float outlineThickness) const;
 
         /** Function for drawing a line of text.
 
