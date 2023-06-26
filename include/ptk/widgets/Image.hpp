@@ -10,21 +10,20 @@
 
 // pTK Headers
 #include "ptk/core/Widget.hpp"
+#include "ptk/util/ImmutableBuffer.hpp"
+#include "ptk/util/Pixmap.hpp"
+#include "ptk/util/Texture.hpp"
 #include "ptk/util/Vec2.hpp"
 
 // C++ Headers
-#include <string>
-
-// Skia Headers
-PTK_DISABLE_WARN_BEGIN()
-#include "include/core/SkImage.h"
-PTK_DISABLE_WARN_END()
+#include <memory>
 
 namespace pTK
 {
     /** Image class implementation.
 
-        This class is used for loading and displaying an image.
+        Takes a Texture and wraps it in a widget format for displaying
+        2D arrays of drawable data.
     */
     class PTK_API Image : public Widget
     {
@@ -33,13 +32,37 @@ namespace pTK
 
             @return    default initialized Image
         */
-        Image();
+        Image() = default;
 
-        /** Constructs Image with default values with style.
+        /** Constructs Image with texture.
 
-            @return    default initialized Image
+            Takes a copy of the shared pointer to a texture and tries to display
+            it if the texture is valid.
+
+            @param texture  texture to display
+            @return         initialized Image with texture
         */
-        Image(const std::string& path);
+        explicit Image(std::shared_ptr<Texture> texture);
+
+        /** Constructs Image with buffer.
+
+            Creates a texture from the buffer.
+            Look at Texture constructor that takes ImmutableBuffer for more info.
+
+            @param buffer   buffer to create texture from
+            @return         initialized Image with buffer
+        */
+        explicit Image(const ImmutableBuffer& buffer);
+
+        /** Constructs Image with pixmap.
+
+            Creates a texture from the pixmap.
+            Look at Texture constructor that takes Pixmap for more info.
+
+            @param pixmap   pixmap to create texture from
+            @return         initialized Image with pixmap
+        */
+        explicit Image(const Pixmap& pixmap);
 
         /** Move Constructor for Image.
 
@@ -56,20 +79,13 @@ namespace pTK
         /** Destructor for Image.
 
         */
-        virtual ~Image() = default;
+        ~Image() override = default;
 
-        /** Function for loading an image from disk.
-
-            @param path    file path
-            @return        status
-        */
-        bool loadFromFile(const std::string& path);
-
-        /** Function for checking if an image is loaded.
+        /** Function for checking if the image is valid and can be displayed.
 
             @return        status
         */
-        bool isLoaded() const;
+        [[nodiscard]] bool isValid() const;
 
         /** Function is called when it is time to draw.
 
@@ -100,9 +116,8 @@ namespace pTK
         void applyScale(float x, float y);
 
     private:
-        std::string m_path;
-        sk_sp<SkImage> m_image;
-        Vec2f m_scale;
+        std::shared_ptr<Texture> m_texture{};
+        Vec2f m_scale{1.0f, 1.0f};
     };
 } // namespace pTK
 

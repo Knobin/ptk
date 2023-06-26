@@ -79,10 +79,7 @@ namespace pTK
 
             @return    iterator
         */
-        [[nodiscard]] iterator begin() noexcept
-        {
-            return m_holder.begin();
-        }
+        [[nodiscard]] iterator begin() noexcept { return m_holder.begin(); }
 
         /** Function for retrieving the an iterator that points to the first
             value in the MenuBar.
@@ -91,10 +88,7 @@ namespace pTK
 
             @return    const iterator
         */
-        [[nodiscard]] const_iterator begin() const noexcept
-        {
-            return m_holder.begin();
-        }
+        [[nodiscard]] const_iterator begin() const noexcept { return m_holder.begin(); }
 
         /** Function for retrieving the an const iterator that points to the first
             value in the MenuBar.
@@ -103,10 +97,7 @@ namespace pTK
 
             @return    const iterator
         */
-        [[nodiscard]] const_iterator cbegin() const noexcept
-        {
-            return m_holder.cbegin();
-        }
+        [[nodiscard]] const_iterator cbegin() const noexcept { return m_holder.cbegin(); }
 
         /** Function for retrieving the special iterator referring to
             the past-the-end of the MenuBar.
@@ -116,10 +107,7 @@ namespace pTK
 
             @return    iterator
         */
-        [[nodiscard]] iterator end() noexcept
-        {
-            return m_holder.end();
-        }
+        [[nodiscard]] iterator end() noexcept { return m_holder.end(); }
 
         /** Function for retrieving the special iterator referring to
             the past-the-end of the MenuBar.
@@ -129,10 +117,7 @@ namespace pTK
 
             @return    const iterator
         */
-        [[nodiscard]] const_iterator end() const noexcept
-        {
-            return m_holder.end();
-        }
+        [[nodiscard]] const_iterator end() const noexcept { return m_holder.end(); }
 
         /** Function for retrieving the special const iterator referring to
             the past-the-end of the MenuBar.
@@ -142,10 +127,7 @@ namespace pTK
 
             @return    const iterator
         */
-        [[nodiscard]] const_iterator cend() const noexcept
-        {
-            return m_holder.cend();
-        }
+        [[nodiscard]] const_iterator cend() const noexcept { return m_holder.cend(); }
 
         /** Function for retrieving the an iterator that points to the last
             value in the MenuBar.
@@ -157,10 +139,7 @@ namespace pTK
 
             @return    reverse iterator
         */
-        [[nodiscard]] reverse_iterator rbegin() noexcept
-        {
-            return m_holder.rbegin();
-        }
+        [[nodiscard]] reverse_iterator rbegin() noexcept { return m_holder.rbegin(); }
 
         /** Function for retrieving the an iterator that points to the last
             value in the MenuBar.
@@ -172,10 +151,7 @@ namespace pTK
 
             @return    const reverse begin iterator
         */
-        [[nodiscard]] const_reverse_iterator rbegin() const noexcept
-        {
-            return m_holder.rbegin();
-        }
+        [[nodiscard]] const_reverse_iterator rbegin() const noexcept { return m_holder.rbegin(); }
 
         /** Function for retrieving the an iterator that points to the last
             value in the MenuBar.
@@ -187,10 +163,7 @@ namespace pTK
 
             @return    const reverse begin iterator
         */
-        [[nodiscard]] const_reverse_iterator crbegin() const noexcept
-        {
-            return m_holder.crbegin();
-        }
+        [[nodiscard]] const_reverse_iterator crbegin() const noexcept { return m_holder.crbegin(); }
 
         /** Function for retrieving the special const iterator referring to
             the past-the-end of the MenuBar.
@@ -200,10 +173,7 @@ namespace pTK
 
             @return    reverse reverse end iterator
         */
-        [[nodiscard]] reverse_iterator rend() noexcept
-        {
-            return m_holder.rend();
-        }
+        [[nodiscard]] reverse_iterator rend() noexcept { return m_holder.rend(); }
 
         /** Function for retrieving the special const iterator referring to
             the past-the-end of the MenuBar.
@@ -213,10 +183,7 @@ namespace pTK
 
             @return    const reverse end iterator
         */
-        [[nodiscard]] const_reverse_iterator rend() const noexcept
-        {
-            return m_holder.rend();
-        }
+        [[nodiscard]] const_reverse_iterator rend() const noexcept { return m_holder.rend(); }
 
         /** Function for retrieving the special const iterator referring to
              the past-the-end of the MenuBar.
@@ -226,14 +193,11 @@ namespace pTK
 
              @return    const reverse end iterator
          */
-        [[nodiscard]] const_reverse_iterator crend() const noexcept
-        {
-            return m_holder.crend();
-        }
+        [[nodiscard]] const_reverse_iterator crend() const noexcept { return m_holder.crend(); }
 
     private:
         container_type m_holder{};
     };
-}
+} // namespace pTK
 
 #endif // PTK_MENU_MENUBAR_HPP

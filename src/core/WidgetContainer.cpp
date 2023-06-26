@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "../core/Assert.hpp"
+#include "../include/Assert.hpp"
 
 // pTK Headers
 #include "ptk/core/ContextBase.hpp"

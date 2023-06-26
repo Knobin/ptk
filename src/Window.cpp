@@ -6,7 +6,7 @@
 //
 
 // Local Headers
-#include "Log.hpp"
+#include "include/Log.hpp"
 
 // pTK Headers
 #include "ptk/Application.hpp"
@@ -94,6 +94,8 @@ namespace pTK
 
     void Window::onChildUpdate(size_type)
     {
+        setMinSize(calcMinSize());
+        setMaxSize(calcMaxSize());
         refitContent(getSize(), {0, 0});
     }
 
@@ -154,7 +156,22 @@ namespace pTK
 
     void Window::onLayoutChange()
     {
-        refitContent(getSize(), {0, 0});
+        const Size minLayoutSize{calcMinSize()};
+        setMinSize(minLayoutSize);
+        const Size vbSize{getSize()};
+
+        if ((minLayoutSize.width > vbSize.width) || (minLayoutSize.height > vbSize.height))
+        {
+            // Children will not fit in the current size.
+            // Set minimal size to HBox and set minimal size to each child.
+            expandOnAdd(minLayoutSize, {0, 0});
+        }
+        else
+        {
+            // Children will fit in the current size.
+            // Only need to resize and position children.
+            refitContent(vbSize, {0, 0});
+        }
     }
 
     void Window::regionInvalidated(const PaintEvent&)
@@ -191,7 +208,8 @@ namespace pTK
 
         // Will paint background and then children.
         Canvas canvas{skCanvas};
-        onDraw(&canvas);
+        canvas.drawRect({}, getSize(), getBackground());
+        drawChildrenWithDir(&canvas);
 
         surface->flushAndSubmit();
         m_context->swapBuffers();

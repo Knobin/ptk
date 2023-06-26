@@ -7,8 +7,8 @@
 
 // Local Headers
 #include "WindowHandleWin.hpp"
-#include "../../Log.hpp"
-#include "../../core/Assert.hpp"
+#include "../../include/Assert.hpp"
+#include "../../include/Log.hpp"
 #include "ApplicationHandleWin.hpp"
 
 // pTK Headers

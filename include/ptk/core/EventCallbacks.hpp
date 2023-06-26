@@ -95,7 +95,9 @@ namespace pTK
         template <typename T>
         uint64_t addListener(const std::function<bool()>& callback)
         {
-            auto helper_func = [callback](const T&) { return callback(); };
+            auto helper_func = [callback](const T&) {
+                return callback();
+            };
             return m_callbackStorage.addCallback<T, bool(const T&)>(helper_func);
         }
 

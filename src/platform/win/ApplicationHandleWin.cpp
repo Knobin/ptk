@@ -7,7 +7,7 @@
 
 // Local Headers
 #include "ApplicationHandleWin.hpp"
-#include "../../Log.hpp"
+#include "../../include/Log.hpp"
 #include "WindowHandleWin.hpp"
 
 // pTK Headers

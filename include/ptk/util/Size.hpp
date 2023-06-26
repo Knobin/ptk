@@ -60,7 +60,7 @@ namespace pTK
             @return     size from w and h scaled with x and y
         */
         template <typename T, typename U, typename Rounding>
-        constexpr Size MakeScaled(value_type w, value_type h, T x, U y, Rounding func) noexcept
+        static constexpr Size MakeScaled(value_type w, value_type h, T x, U y, Rounding func) noexcept
         {
             return {static_cast<value_type>(func(w * x)), static_cast<value_type>(func(h * y))};
         }
