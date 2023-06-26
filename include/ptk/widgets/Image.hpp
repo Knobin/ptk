@@ -22,7 +22,8 @@ namespace pTK
 {
     /** Image class implementation.
 
-        This class is used for loading and displaying an image.
+        Takes a Texture and wraps it in a widget format for displaying
+        2D arrays of drawable data.
     */
     class PTK_API Image : public Widget
     {
@@ -33,13 +34,34 @@ namespace pTK
         */
         Image() = default;
 
-        // TODO(knobin): Add documentation.
+        /** Constructs Image with texture.
+
+            Takes a copy of the shared pointer to a texture and tries to display
+            it if the texture is valid.
+
+            @param texture  texture to display
+            @return         initialized Image with texture
+        */
         explicit Image(std::shared_ptr<Texture> texture);
 
-        // TODO(knobin): Add documentation.
+        /** Constructs Image with buffer.
+
+            Creates a texture from the buffer.
+            Look at Texture constructor that takes ImmutableBuffer for more info.
+
+            @param buffer   buffer to create texture from
+            @return         initialized Image with buffer
+        */
         explicit Image(const ImmutableBuffer& buffer);
 
-        // TODO(knobin): Add documentation.
+        /** Constructs Image with pixmap.
+
+            Creates a texture from the pixmap.
+            Look at Texture constructor that takes Pixmap for more info.
+
+            @param pixmap   pixmap to create texture from
+            @return         initialized Image with pixmap
+        */
         explicit Image(const Pixmap& pixmap);
 
         /** Move Constructor for Image.

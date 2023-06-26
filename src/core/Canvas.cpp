@@ -162,7 +162,7 @@ namespace pTK
     }
 
     void Canvas::drawRoundRect(Vec2f pos, Vec2f size, Color color, float cornerRadius, Color outlineColor,
-                       float outlineThickness) const
+                               float outlineThickness) const
     {
         SkPoint skPos{pos.x, pos.y};
         SkPoint skSize{size.x, size.y};

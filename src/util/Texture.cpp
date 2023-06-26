@@ -97,7 +97,8 @@ namespace pTK
 
     // This destructor must be here (and not defaulted) to be able to properly delete SkImage.
     // Otherwise, the user must include the SkImage header for its destructor to be available.
-    Texture::~Texture() {}
+    Texture::~Texture()
+    {}
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -106,8 +107,8 @@ namespace pTK
         return ((m_image && m_image->get()) ? m_image->get()->isValid(nullptr) : false);
     }
 
-    SkImage *Texture::skImage() const noexcept
+    SkImage* Texture::skImage() const noexcept
     {
         return (m_image) ? m_image->get() : nullptr;
     }
-}
+} // namespace pTK

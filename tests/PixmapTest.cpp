@@ -138,7 +138,7 @@ TEST_CASE("colorType()")
 TEST_CASE("at")
 {
     pTK::Pixmap pixmap{96, 54, pTK::ColorType::RGBA_8888};
-    const uint8_t *bytes{pixmap.bytes()};
+    const uint8_t* bytes{pixmap.bytes()};
     const auto bpp{static_cast<std::ptrdiff_t>(pixmap.bytesPerPixel())};
 
     REQUIRE(bytes == pixmap.at(0, 0));
@@ -155,7 +155,7 @@ TEST_CASE("at")
 TEST_CASE("row")
 {
     pTK::Pixmap pixmap{96, 54, pTK::ColorType::RGBA_8888};
-    const uint8_t *bytes{pixmap.bytes()};
+    const uint8_t* bytes{pixmap.bytes()};
     const auto bpp{static_cast<std::ptrdiff_t>(pixmap.bytesPerPixel())};
 
     REQUIRE(bytes == pixmap.row(0));

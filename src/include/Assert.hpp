@@ -1,5 +1,5 @@
 //
-//  core/Defines.hpp
+//  include/Assert.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2023-02-19.
@@ -7,8 +7,8 @@
 
 // clang-format off
 
-#ifndef PTK_SRC_CORE_ASSERT_HPP
-#define PTK_SRC_CORE_ASSERT_HPP
+#ifndef PTK_INCLUDE_ASSERT_HPP
+#define PTK_INCLUDE_ASSERT_HPP
 
 // Local Headers
 #include "../include/Log.hpp"
@@ -20,6 +20,6 @@
     #define PTK_ASSERT(...)
 #endif
 
-#endif // PTK_SRC_CORE_ASSERT_HPP
+#endif // PTK_INCLUDE_ASSERT_HPP
 
 // clang-format on

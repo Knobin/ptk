@@ -7,8 +7,8 @@
 //
 
 // Local Headers
-#include "include/Log.hpp"
 #include "include/Assert.hpp"
+#include "include/Log.hpp"
 
 // pTK Headers
 #include "ptk/Application.hpp"
@@ -293,7 +293,6 @@ namespace pTK
                 PTK_WARN("Application is not allowed to run in headless mode and contains no windows.");
                 break; // Can't run in headless and no Windows.
             }
-
 
             // If return value is non zero, indicate error and close application.
             // Otherwise check while condition again (window might have been added/removed).

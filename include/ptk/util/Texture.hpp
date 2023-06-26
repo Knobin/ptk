@@ -11,9 +11,9 @@
 // pTK Headers
 #include "ptk/core/Defines.hpp"
 #include "ptk/util/ImmutableBuffer.hpp"
-#include "ptk/util/Pixmap.hpp"
 #include "ptk/util/NonCopyable.hpp"
 #include "ptk/util/NonMovable.hpp"
+#include "ptk/util/Pixmap.hpp"
 #include "ptk/util/Size.hpp"
 
 // C++ Headers
@@ -107,7 +107,7 @@ namespace pTK
 
             @return     pointer to SkImage
         */
-        [[nodiscard]] SkImage *skImage() const noexcept;
+        [[nodiscard]] SkImage* skImage() const noexcept;
 
     private:
         std::unique_ptr<sk_sp<SkImage>> m_image{};

@@ -132,8 +132,9 @@ namespace pTK
         */
         bool removeCallback(uint64_t id)
         {
-            auto it =
-                std::find_if(m_storage.cbegin(), m_storage.cend(), [id](const Node& node) { return node.id == id; });
+            auto it = std::find_if(m_storage.cbegin(), m_storage.cend(), [id](const Node& node) {
+                return node.id == id;
+            });
 
             if (it != m_storage.cend())
             {

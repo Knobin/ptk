@@ -7,8 +7,8 @@
 
 // Local Headers
 #include "ApplicationHandleUnix.hpp"
-#include "../../include/Log.hpp"
 #include "../../include/Assert.hpp"
+#include "../../include/Log.hpp"
 #include "WindowHandleUnix.hpp"
 
 // pTK Headers

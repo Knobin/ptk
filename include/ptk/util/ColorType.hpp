@@ -63,13 +63,16 @@ namespace pTK
     */
     [[nodiscard]] constexpr ColorTypeInfo GetColorTypeInfo(ColorType colorType) noexcept
     {
-        struct LookupItem {ColorType type{}; ColorTypeInfo info{};};
+        struct LookupItem
+        {
+            ColorType type{};
+            ColorTypeInfo info{};
+        };
         constexpr std::array<LookupItem, 4> lookup{
             LookupItem{ColorType::Unknown, ColorTypeInfo{}},
             LookupItem{ColorType::RGBA_8888, ColorTypeInfo{{3, 0, 1, 2}, {8, 8, 8, 8}, 8 * 4}},
             LookupItem{ColorType::RGB_888x, ColorTypeInfo{{3, 0, 1, 2}, {0, 8, 8, 8}, 8 * 4}},
-            LookupItem{ColorType::BGRA_8888, ColorTypeInfo{{3, 2, 1, 0}, {8, 8, 8, 8}, 8 * 4}}
-        };
+            LookupItem{ColorType::BGRA_8888, ColorTypeInfo{{3, 2, 1, 0}, {8, 8, 8, 8}, 8 * 4}}};
 
         constexpr auto size{static_cast<std::ptrdiff_t>(lookup.size())};
         for (std::size_t i{1}; i < size; ++i)

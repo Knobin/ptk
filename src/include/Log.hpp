@@ -1,5 +1,5 @@
 //
-//  Log.hpp
+//  include/Log.hpp
 //  pTK
 //
 //  Created by Robin Gustafsson on 2019-06-16.
@@ -7,8 +7,8 @@
 
 // clang-format off
 
-#ifndef PTK_LOG_HPP
-#define PTK_LOG_HPP
+#ifndef PTK_INCLUDE_LOG_HPP
+#define PTK_INCLUDE_LOG_HPP
 
 // pTK Headers
 #include "ptk/core/Defines.hpp"
@@ -53,6 +53,6 @@
     #define PTK_FATAL(...)
 #endif
 
-#endif // PTK_LOG_HPP
+#endif // PTK_INCLUDE_LOG_HPP
 
 // clang-format on
