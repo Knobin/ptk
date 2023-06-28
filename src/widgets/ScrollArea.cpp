@@ -9,7 +9,6 @@
 #include "../include/Assert.hpp"
 
 // pTK Headers
-#include "ptk/core/Widget.hpp"
 #include "ptk/util/Math.hpp"
 #include "ptk/widgets/ScrollArea.hpp"
 
@@ -48,7 +47,7 @@ namespace pTK
 
         // Offset position.
         // Maybe remove "AddWithoutOverflow" since it is highly unlikely that it overflows int32.
-        posX = Math::AddWithoutOverflow(posX, static_cast<pTK::Point::value_type>(child->getMargin().left));
+        posX = Math::AddWithoutOverflow(posX, static_cast<Point::value_type>(child->getMargin().left));
 
         return posX;
     }
@@ -62,7 +61,128 @@ namespace pTK
 
     void ScrollArea::performScroll(const ScrollEvent& evt)
     {
-        // TODO(knobin): Add scrolling functionality (adding and removing from head and tail).
+        const float offset = getScrollOffset(evt);
+        PTK_INFO("OFFSET: {}", offset);
+        moveVisiblePositions(offset);
+
+        if (offset > 0)
+        {
+            removeFromTail();
+            addToHead();
+        }
+        else
+        {
+            removeFromHead();
+            addToTail();
+        }
+    }
+
+    float ScrollArea::getScrollOffset(const ScrollEvent& evt) const
+    {
+        if (count() == 0)
+            return 0; // Can not scroll if no children are present.
+
+        if (m_endIndex - m_startIndex == count())
+            return 0; // Can not scroll if all children are visible.
+
+        if (m_endIndex - m_startIndex == 0)
+            return 0; // Can not scroll if there are no children visible.
+
+        // Position of ScrollArea.
+        Point pos{getPosition()};
+
+        const float scrollMultiplier = 35.0f;
+        float offset = evt.offset.y * scrollMultiplier;
+
+        if (offset > 0)
+        {
+            // First visible widget.
+            Widget* first{getFirstVisible()};
+            if (first)
+            {
+                const auto top{first->getPosition().y - static_cast<Point::value_type>(first->getMarginTop())};
+
+                const auto start{pos.y};
+
+                if (m_startIndex == 0)
+                {
+                    if (top == start)
+                        return 0; // Can not scroll above first widget in container.
+
+                    const auto dist{static_cast<float>(start - top)};
+                    return std::min(offset, dist); // Normal scroll or scroll to top.
+                }
+
+                // Check remaining size here.
+                auto remaining{static_cast<float>(start - top)};
+                if (remaining > offset)
+                    return offset; // Offset is fine here, more size available.
+
+                // Check tail for remaining.
+                for (size_type i{m_startIndex}; i > 0; --i)
+                {
+                    const std::shared_ptr<Widget>& child{at(i - 1)};
+                    remaining += static_cast<float>(child->getOuterSize().height);
+                    if (remaining > offset)
+                        return offset; // Offset is fine here, more size available.
+                }
+
+                // Remaining size here does not fit the offset.
+                return remaining;
+            }
+        }
+        else
+        {
+            // Last visible widget.
+            Widget* last{getLastVisible()};
+            if (last)
+            {
+                auto bottom{last->getPosition().y};
+                bottom += static_cast<Point::value_type>(last->getSize().height + last->getMarginBottom());
+
+                const auto end{pos.y + static_cast<Point::value_type>(getSize().height)};
+
+                if (m_endIndex == count())
+                {
+                    if (bottom == end)
+                        return 0; // Can not scroll past last widget in container.
+
+                    const auto dist{static_cast<float>(end - bottom)};
+                    return std::max(offset, dist); // Normal scroll or scroll to end.
+                }
+
+                // Check remaining size here.
+                auto remaining{static_cast<float>(end - bottom)};
+                if (remaining > offset)
+                    return offset; // Offset is fine here, more size available.
+
+                // Check tail for remaining.
+                for (size_type i{m_endIndex}; i < count(); ++i)
+                {
+                    const std::shared_ptr<Widget>& child{at(i)};
+                    remaining += static_cast<float>(child->getOuterSize().height);
+                    if (remaining > offset)
+                        return offset; // Offset is fine here, more size available.
+                }
+
+                // Remaining size here does not fit the offset.
+                return remaining;
+            }
+        }
+
+        return offset;
+    }
+
+    void ScrollArea::moveVisiblePositions(float offset)
+    {
+        // Move currently displayed widgets by offset.
+        for (size_type i{m_startIndex}; i < m_endIndex; ++i)
+        {
+            std::shared_ptr<Widget>& child{at(i)};
+            Point cPos{child->getPosition()};
+            cPos.y += static_cast<Point::value_type>(offset);
+            child->setPosHint(cPos);
+        }
     }
 
     void ScrollArea::onDraw(Canvas* canvas)
@@ -89,12 +209,12 @@ namespace pTK
         skCanvas->restore();
     }
 
-    void ScrollArea::onAdd(const std::shared_ptr<pTK::Widget>& widget)
+    void ScrollArea::onAdd(const std::shared_ptr<Widget>& widget)
     {
         addToContent(widget);
     }
 
-    void ScrollArea::onRemove(const std::shared_ptr<pTK::Widget>& widget)
+    void ScrollArea::onRemove(const std::shared_ptr<Widget>& widget)
     {
         removeFromContent(widget);
     }
@@ -104,33 +224,33 @@ namespace pTK
         clearContent();
     }
 
-    void ScrollArea::addToContent(const std::shared_ptr<pTK::Widget>& widget)
+    void ScrollArea::addToContent(const std::shared_ptr<Widget>&)
     {
         // Widgets should already be positioned here.
-        addFromTail(); // Try to add widgets from tail.
+        addToTail(); // Try to add widgets from tail.
     }
 
-    void ScrollArea::removeFromContent(const std::shared_ptr<pTK::Widget>&)
+    void ScrollArea::removeFromContent(const std::shared_ptr<Widget>&)
     {
         adjustVisiblePositions(); // Re-adjust position of children.
-        addFromTail(); // Add any "hidden" children to content if possible.
+        addToTail();              // Add any "hidden" children to content if possible.
     }
 
-    void ScrollArea::addFromHead()
+    void ScrollArea::addToHead()
     {
         if (count() == 0)
             return; // No point trying to add widgets that does not exist.
 
         // Position of ScrollArea.
-        pTK::Point pos{getPosition()};
+        Point pos{getPosition()};
 
         // Last visible widget.
         Widget* first{getFirstVisible()};
-        const auto firstOffset{(first) ? static_cast<pTK::Point::value_type>(first->getOuterSize().height) : 0};
+        const auto offset{(first) ? first->getPosition().y - static_cast<Point::value_type>(first->getMarginTop()) : 0};
 
         // Range available for widgets to populate.
-        const auto min{pos.y - firstOffset};
-        auto max{pos.y};
+        const auto min{pos.y};
+        auto max{offset};
 
         // Check if any content is available.
         if (min > max)
@@ -139,16 +259,18 @@ namespace pTK
         for (size_type i{m_startIndex}; i > 0; --i)
         {
             std::shared_ptr<Widget>& child{at(i - 1)};
-            pTK::Point cPos{pos.x, max - static_cast<pTK::Point::value_type>(child->getMarginBottom())};
+            Point cPos{pos.x, max - static_cast<Point::value_type>(child->getMarginBottom())};
 
             if (IsInRange(cPos.y, min, max))
             {
                 cPos.x += AlignChildH(child.get(), getSize(), child->getSize());
+                cPos.y -= static_cast<Point::value_type>(child->getSize().height);
                 child->setPosHint(cPos);
                 child->show();
                 --m_startIndex;
 
                 // Remove child size from position.
+                PTK_INFO("Showing widget (addToHead), \"{}\"", child->getName());
                 max -= static_cast<Point::value_type>(child->getOuterSize().height);
                 if (max < min)
                     break; // Child is taking up all content, no more widgets will fit after this.
@@ -161,21 +283,26 @@ namespace pTK
         }
     }
 
-    void ScrollArea::addFromTail()
+    void ScrollArea::addToTail()
     {
         if (count() == 0)
             return; // No point trying to add widgets that does not exist.
 
         // Position of ScrollArea.
-        pTK::Point pos{getPosition()};
+        Point pos{getPosition()};
 
         // Last visible widget.
         Widget* last{getLastVisible()};
-        const auto lastOffset{(last) ? static_cast<pTK::Point::value_type>(last->getOuterSize().height) : 0};
+        Point::value_type offset{pos.y};
+        if (last)
+        {
+            offset = last->getPosition().y;
+            offset += static_cast<Point::value_type>(last->getSize().height + last->getMarginBottom());
+        }
 
         // Range available for widgets to populate.
-        auto min{pos.y + lastOffset};
-        const auto max{pos.y + static_cast<pTK::Point::value_type>(getSize().height)};
+        auto min{offset};
+        const auto max{pos.y + static_cast<Point::value_type>(getSize().height)};
 
         // Check if any content is available.
         if (min > max)
@@ -184,7 +311,7 @@ namespace pTK
         for (size_type i{m_endIndex}; i < count(); ++i)
         {
             std::shared_ptr<Widget>& child{at(i)};
-            pTK::Point cPos{pos.x, min + static_cast<pTK::Point::value_type>(child->getMarginTop())};
+            Point cPos{pos.x, min + static_cast<Point::value_type>(child->getMarginTop())};
 
             if (IsInRange(cPos.y, min, max))
             {
@@ -195,6 +322,7 @@ namespace pTK
 
                 // Add child size to position.
                 min += static_cast<Point::value_type>(child->getOuterSize().height);
+                PTK_INFO("Showing widget (addToTail), \"{}\"", child->getName());
                 if (min > max)
                     break; // Child is taking up all content, no more widgets will fit after this.
             }
@@ -206,13 +334,73 @@ namespace pTK
         }
     }
 
+    void ScrollArea::removeFromHead()
+    {
+        if (count() == 0)
+            return; // No point trying to add widgets that does not exist.
+
+        // Position of ScrollArea.
+        Point pos{getPosition()};
+
+        // Start of content.
+        const auto start{pos.y};
+
+        // Hide widgets if necessary.
+        for (size_type i{m_startIndex}; i < m_endIndex; ++i)
+        {
+            std::shared_ptr<Widget>& child{at(i)};
+            const auto end{child->getPosition().y + static_cast<Point::value_type>(child->getSize().height)};
+            if (start > end)
+            {
+                // Child is not visible here.
+                ++m_startIndex;
+                PTK_INFO("Hiding widget (removeFromHead), \"{}\"", child->getName());
+            }
+            else
+            {
+                // If this one is visible the others after it will also be.
+                break;
+            }
+        }
+    }
+
+    void ScrollArea::removeFromTail()
+    {
+        if (count() == 0)
+            return; // No point trying to add widgets that does not exist.
+
+        // Position of ScrollArea.
+        Point pos{getPosition()};
+
+        // End of content.
+        const auto end{pos.y + static_cast<Point::value_type>(getSize().height)};
+
+        // Hide widgets if necessary.
+        for (size_type i{m_endIndex}; i > m_startIndex; --i)
+        {
+            std::shared_ptr<Widget>& child{at(i - 1)};
+            const auto y{child->getPosition().y};
+            if (y > end)
+            {
+                // Child is not visible here.
+                --m_endIndex;
+                PTK_INFO("Hiding widget (removeFromTail), \"{}\"", child->getName());
+            }
+            else
+            {
+                // If this one is visible the others before it will also be.
+                break;
+            }
+        }
+    }
+
     Widget* ScrollArea::getFirstVisible() const
     {
         if (m_startIndex == m_endIndex)
             return nullptr; // No visible item.
 
         PTK_ASSERT(m_startIndex < m_endIndex, "Start index larger than end index");
-        PTK_ASSERT(count() > m_endIndex, "End index larger than count()");
+        PTK_ASSERT(count() >= m_endIndex, "End index larger than count()");
         PTK_ASSERT(m_startIndex < count(), "Start index larger than count()");
 
         return at(m_startIndex).get();
@@ -224,7 +412,7 @@ namespace pTK
             return nullptr; // No visible item.
 
         PTK_ASSERT(m_startIndex < m_endIndex, "Start index larger than end index");
-        PTK_ASSERT(count() > m_endIndex, "End index larger than count()");
+        PTK_ASSERT(count() >= m_endIndex, "End index larger than count()");
         PTK_ASSERT(m_startIndex < count(), "Start index larger than count()");
 
         return at(m_endIndex - 1).get();
@@ -233,12 +421,12 @@ namespace pTK
     void ScrollArea::adjustVisiblePositions()
     {
         // Re-position currently displayed widgets.
-        pTK::Point pos{getPosition()};
+        Point pos{getPosition()};
         for (size_type i{m_startIndex}; i < m_endIndex; ++i)
         {
             std::shared_ptr<Widget>& child{at(i)};
-            pTK::Point cPos{child->getPosition()};
-            cPos.y = pos.y;
+            Point cPos{child->getPosition()};
+            cPos.y = pos.y + static_cast<Point::value_type>(child->getMarginTop());
             child->setPosHint(cPos);
             pos.y += static_cast<Point::value_type>(child->getOuterSize().height);
         }
@@ -262,9 +450,44 @@ namespace pTK
         draw();
     }
 
-    void ScrollArea::onSizeChange(const pTK::Size&)
+    void ScrollArea::onSizeChange(const Size& size)
     {
-        adjustVisiblePositions(); // Re-adjust position of children.
-        addFromTail(); // Add any "hidden" children to content if possible.
+        performSizeChanged(size);
+    }
+
+    void ScrollArea::performSizeChanged(const Size&)
+    {
+        // "Stick" last child to the bottom when resizing.
+        if (m_startIndex != m_endIndex && m_endIndex == count())
+        {
+            if (m_startIndex != 0)
+            {
+                // Last visible widget.
+                Widget* last{getLastVisible()};
+                if (last)
+                {
+                    auto bottom{last->getPosition().y};
+                    bottom += static_cast<Point::value_type>(last->getSize().height + last->getMarginBottom());
+
+                    const auto end{getPosition().y + static_cast<Point::value_type>(getSize().height)};
+
+                    if (end > bottom)
+                    {
+                        const auto offset{static_cast<float>(end - bottom)};
+                        moveVisiblePositions(offset);
+                    }
+                }
+            }
+        }
+        else
+        {
+            adjustVisiblePositions(); // Re-adjust position of children.
+        }
+
+        removeFromTail();
+        addToHead();
+
+        removeFromHead();
+        addToTail();
     }
 } // namespace pTK

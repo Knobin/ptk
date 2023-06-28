@@ -9,7 +9,6 @@
 #define PTK_WIDGETS_SCROLL_AREA_HPP
 
 // pTK Headers
-#include "ptk/core/Widget.hpp"
 #include "ptk/core/WidgetContainer.hpp"
 
 //
@@ -21,6 +20,8 @@
 // container can use for laying out the ordering of widgets.
 //
 
+// TODO(knobin): Add documentation.
+
 namespace pTK
 {
     class PTK_API ScrollArea : public WidgetContainer
@@ -31,27 +32,34 @@ namespace pTK
 
     private:
         void onScrollEvent(const ScrollEvent& evt) override;
-        void performScroll(const ScrollEvent& evt);
         void onDraw(Canvas* canvas) override;
 
-        void onAdd(const std::shared_ptr<pTK::Widget>& widget) override;
-        void onRemove(const std::shared_ptr<pTK::Widget>& widget) override;
+        void performScroll(const ScrollEvent& evt);
+        void performSizeChanged(const Size&);
+
+        void onAdd(const std::shared_ptr<Widget>&) override;
+        void onRemove(const std::shared_ptr<Widget>&) override;
         void onClear() override;
 
-        void addToContent(const std::shared_ptr<pTK::Widget>& widget);
-        void removeFromContent(const std::shared_ptr<pTK::Widget>& widget);
+        void addToContent(const std::shared_ptr<Widget>&);
+        void removeFromContent(const std::shared_ptr<Widget>&);
         void clearContent();
 
-        void addFromHead();
-        void addFromTail();
+        void addToHead();
+        void addToTail();
         void adjustVisiblePositions();
+        void moveVisiblePositions(float offset);
+        void removeFromHead();
+        void removeFromTail();
+
+        [[nodiscard]] float getScrollOffset(const ScrollEvent& evt) const;
 
         [[nodiscard]] Widget* getFirstVisible() const;
         [[nodiscard]] Widget* getLastVisible() const;
 
         void onChildUpdate(size_type) override;
         void onChildDraw(size_type) override;
-        void onSizeChange(const pTK::Size&) override;
+        void onSizeChange(const Size& size) override;
 
     private:
         size_type m_startIndex{0};
