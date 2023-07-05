@@ -9,8 +9,11 @@
 #include "../include/Assert.hpp"
 
 // pTK Headers
+#include "ptk/events/KeyEvent.hpp"
+#include "ptk/events/WidgetEvents.hpp"
 #include "ptk/util/Math.hpp"
 #include "ptk/widgets/ScrollArea.hpp"
+#include "ptk/widgets/ScrollBar.hpp"
 
 // Skia Headers
 PTK_DISABLE_WARN_BEGIN()
@@ -24,9 +27,27 @@ PTK_DISABLE_WARN_END()
 namespace pTK
 {
     template <typename T>
-    [[nodiscard]] static bool IsInRange(T val, T min, T max) noexcept
+    [[nodiscard]] static constexpr bool IsInRange(T val, T min, T max) noexcept
     {
         return (val >= min && val <= max);
+    }
+
+    [[nodiscard]] static uint32_t GetPageStep(Size::value_type content, Size size, ScrollBar::Range range) noexcept
+    {
+        if (size.height > 0)
+        {
+            const auto fHeight{static_cast<float>(size.height)};
+            const auto scaling{static_cast<float>(content) / fHeight};
+            if (scaling > 0)
+            {
+                const auto height{fHeight / scaling};
+                const auto percentage{height / fHeight};
+                const uint32_t totalRange{range.end - range.start};
+                return static_cast<uint32_t>(static_cast<float>(totalRange) * percentage);
+            }
+        }
+
+        return 0;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -54,16 +75,31 @@ namespace pTK
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    void ScrollArea::onScrollEvent(const ScrollEvent& evt)
+    ScrollArea::ScrollArea()
+        : m_scrollBar{std::make_shared<ScrollBar>()}
     {
-        performScroll(evt);
+        m_scrollBarCallbackId = m_scrollBar->onValueChange([this](const ScrollBar::OnValueChange& evt) {
+            performScroll(evt.offset);
+            return false;
+        });
+        m_scrollBar->setParent(this);
     }
 
-    void ScrollArea::performScroll(const ScrollEvent& evt)
+    void ScrollArea::onScrollEvent(const ScrollEvent& evt)
     {
-        const float offset = getScrollOffset(evt);
+        const float offset = getScrollOffset(evt.offset.y);
         PTK_INFO("OFFSET: {}", offset);
-        moveVisiblePositions(offset);
+
+        const float value = static_cast<float>(m_scrollBar->value()) - offset;
+        m_scrollBar->setValue(static_cast<uint32_t>(value));
+    }
+
+    void ScrollArea::performScroll(int32_t offset)
+    {
+        static int32_t test = 0;
+        test += offset;
+        PTK_WARN("TOTAL SCROLLED: {}", test);
+        moveVisiblePositions(static_cast<float>(offset));
 
         if (offset > 0)
         {
@@ -77,7 +113,7 @@ namespace pTK
         }
     }
 
-    float ScrollArea::getScrollOffset(const ScrollEvent& evt) const
+    float ScrollArea::getScrollOffset(float eventOffset) const
     {
         if (count() == 0)
             return 0; // Can not scroll if no children are present.
@@ -92,7 +128,7 @@ namespace pTK
         Point pos{getPosition()};
 
         const float scrollMultiplier = 35.0f;
-        float offset = evt.offset.y * scrollMultiplier;
+        float offset = eventOffset * scrollMultiplier;
 
         if (offset > 0)
         {
@@ -207,16 +243,26 @@ namespace pTK
         for (size_type i{m_startIndex}; i < m_endIndex; ++i)
             at(i)->onDraw(canvas);
         skCanvas->restore();
+
+        const auto offsetX{getPosition().x + static_cast<Point::value_type>(size.width - 20)};
+        m_scrollBar->setPosHint({offsetX, getPosition().y});
+        m_scrollBar->onDraw(canvas);
     }
 
     void ScrollArea::onAdd(const std::shared_ptr<Widget>& widget)
     {
         addToContent(widget);
+        const ScrollBar::Range range{0, getContentHeight() - getSize().height};
+        m_scrollBar->setRange(range);
+        m_scrollBar->setPageStep(GetPageStep(getContentHeight(), getSize(), range));
     }
 
     void ScrollArea::onRemove(const std::shared_ptr<Widget>& widget)
     {
         removeFromContent(widget);
+        const ScrollBar::Range range{0, getContentHeight() - getSize().height};
+        m_scrollBar->setRange(range);
+        m_scrollBar->setPageStep(GetPageStep(getContentHeight(), getSize(), range));
     }
 
     void ScrollArea::onClear()
@@ -418,6 +464,26 @@ namespace pTK
         return at(m_endIndex - 1).get();
     }
 
+    uint32_t ScrollArea::getContentHeight() const
+    {
+        uint32_t height{};
+
+        for (std::size_t i{0}; i < count(); ++i)
+            height += static_cast<uint32_t>(at(i)->getOuterSize().height);
+
+        return height;
+    }
+
+    uint32_t ScrollArea::getContentWidth() const
+    {
+        uint32_t width{};
+
+        for (std::size_t i{0}; i < count(); ++i)
+            width += static_cast<uint32_t>(at(i)->getOuterSize().width);
+
+        return width;
+    }
+
     void ScrollArea::adjustVisiblePositions()
     {
         // Re-position currently displayed widgets.
@@ -453,6 +519,12 @@ namespace pTK
     void ScrollArea::onSizeChange(const Size& size)
     {
         performSizeChanged(size);
+        m_scrollBar->setSize({20, size.height});
+
+        const ScrollBar::Range range{0, getContentHeight() - getSize().height};
+        m_scrollBar->setRange(range);
+        m_scrollBar->setPageStep(GetPageStep(getContentHeight(), getSize(), range));
+        PTK_INFO("PAGE STEP: {}", m_scrollBar->pageStep());
     }
 
     void ScrollArea::performSizeChanged(const Size&)
@@ -490,4 +562,87 @@ namespace pTK
         removeFromHead();
         addToTail();
     }
+
+    void ScrollArea::onKeyEvent(const KeyEvent& evt)
+    {
+        if (m_scrollBarClicked)
+            m_scrollBar->handleEvent<KeyEvent>(evt);
+    }
+
+    static constexpr bool IsInsideScrollBar(Point pos, Size size, Point pointer) noexcept
+    {
+        const auto tx = pos.x + static_cast<Point::value_type>(size.width);
+        if (IsInRange(pointer.x, pos.x, tx))
+        {
+            const auto ty = pos.y + static_cast<Point::value_type>(size.height);
+            return IsInRange(pointer.y, pos.y, ty);
+        }
+        return false;
+    }
+
+    void ScrollArea::onHoverEvent(const MotionEvent& evt)
+    {
+        const bool scrollBarActive = IsInsideScrollBar(m_scrollBar->getPosition(), m_scrollBar->getSize(), evt.pos);
+        if (!m_scrollBarActive && scrollBarActive)
+        {
+            m_scrollBar->handleEvent<EnterEvent>(EnterEvent{evt.pos});
+            m_scrollBarActive = true;
+        }
+        else if (m_scrollBarActive && !scrollBarActive)
+        {
+            m_scrollBar->handleEvent<LeaveEvent>(LeaveEvent{evt.pos});
+            m_scrollBarActive = false;
+        }
+        else if (m_scrollBarActive || m_scrollBarClicked)
+            m_scrollBar->handleEvent<MotionEvent>(evt);
+    }
+
+    void ScrollArea::onEnterEvent(const EnterEvent& evt)
+    {
+        if (!m_scrollBarActive)
+        {
+            if (IsInsideScrollBar(m_scrollBar->getPosition(), m_scrollBar->getSize(), evt.pos))
+            {
+                m_scrollBarActive = true;
+                m_scrollBar->handleEvent<EnterEvent>(evt);
+            }
+        }
+    }
+
+    void ScrollArea::onLeaveEvent(const LeaveEvent& evt)
+    {
+        if (m_scrollBarActive)
+        {
+            m_scrollBarActive = false;
+            m_scrollBar->handleEvent<LeaveEvent>(evt);
+        }
+    }
+
+    void ScrollArea::onLeaveClickEvent(const LeaveClickEvent& evt)
+    {
+        if (m_scrollBarClicked)
+        {
+            m_scrollBarClicked = false;
+            m_scrollBar->handleEvent<LeaveClickEvent>(evt);
+        }
+    }
+
+    void ScrollArea::onClickEvent(const ClickEvent& evt)
+    {
+        if (m_scrollBarActive)
+        {
+            m_scrollBarClicked = true;
+            m_scrollBar->handleEvent<ClickEvent>(evt);
+        }
+    }
+
+    void ScrollArea::onReleaseEvent(const ReleaseEvent& evt)
+    {
+        if (m_scrollBarActive || m_scrollBarClicked)
+        {
+            m_scrollBarClicked = false;
+            m_scrollBar->handleEvent<ReleaseEvent>(evt);
+        }
+    }
+
 } // namespace pTK

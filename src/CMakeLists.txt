@@ -37,6 +37,7 @@ set(PTK_WIDGET_FILES widgets/BoxLayout.cpp
         widgets/Checkbox.cpp
         widgets/Image.cpp
         widgets/Label.cpp
+        widgets/ScrollBar.cpp
         widgets/ScrollArea.cpp
         widgets/TextField.cpp)
 
