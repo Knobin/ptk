@@ -707,6 +707,9 @@ namespace pTK::Platform
             case WM_LBUTTONDOWN:
             case WM_RBUTTONDOWN:
             {
+                if (msg == WM_LBUTTONDOWN)
+                    ::SetCapture(handle->hwnd());
+
                 const Vec2f scale = handle->getDPIScale();
                 const Mouse::Button btn = (msg == WM_LBUTTONDOWN) ? Mouse::Button::Left : Mouse::Button::Right;
                 const int32_t value = (msg == WM_LBUTTONDOWN) ? VK_LBUTTON : VK_RBUTTON;
@@ -716,6 +719,9 @@ namespace pTK::Platform
             case WM_LBUTTONUP:
             case WM_RBUTTONUP:
             {
+                if (msg == WM_LBUTTONUP)
+                    ::ReleaseCapture();
+
                 const Vec2f scale = handle->getDPIScale();
                 const Mouse::Button btn = (msg == WM_LBUTTONUP) ? Mouse::Button::Left : Mouse::Button::Right;
                 const int32_t value = (msg == WM_LBUTTONUP) ? VK_LBUTTON : VK_RBUTTON;

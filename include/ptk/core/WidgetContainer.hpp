@@ -61,7 +61,7 @@ namespace pTK
         /** Destructor for WidgetContainer.
 
         */
-        virtual ~WidgetContainer();
+        ~WidgetContainer() override;
 
         /** Function for adding a Widget to the WidgetContainer.
 

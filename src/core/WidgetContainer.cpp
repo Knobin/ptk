@@ -11,6 +11,7 @@
 // pTK Headers
 #include "ptk/core/ContextBase.hpp"
 #include "ptk/core/WidgetContainer.hpp"
+#include "ptk/events/MouseEvent.hpp"
 #include "ptk/util/Math.hpp"
 
 // Skia Headers
@@ -269,6 +270,18 @@ namespace pTK
             };
             DelayDeleteZone(*it, work);
             return;
+        }
+        else
+        {
+            // No child found, maybe pointer is outside of container?
+            if (this->validEntryPair(m_lastClickedWidget))
+            {
+                const auto work = [evt, ptr = m_lastClickedWidget.ptr]() {
+                    ptr->handleEvent<MotionEvent>(evt);
+                };
+                DelayDeleteZone(this->m_holder[m_lastClickedWidget.index], work);
+            }
+
         }
 
         if (this->validEntryPair(m_currentHoverWidget))
