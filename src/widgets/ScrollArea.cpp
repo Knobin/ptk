@@ -249,20 +249,25 @@ namespace pTK
         m_scrollBar->onDraw(canvas);
     }
 
+    void ScrollArea::setScrollBarAttributes()
+    {
+        const auto contentHeight{getContentHeight()};
+        const auto height{getSize().height};
+        const ScrollBar::Range range{0, (contentHeight > height) ? contentHeight - height : 0};
+        m_scrollBar->setRange(range);
+        m_scrollBar->setPageStep(GetPageStep(getContentHeight(), getSize(), range));
+    }
+
     void ScrollArea::onAdd(const std::shared_ptr<Widget>& widget)
     {
         addToContent(widget);
-        const ScrollBar::Range range{0, getContentHeight() - getSize().height};
-        m_scrollBar->setRange(range);
-        m_scrollBar->setPageStep(GetPageStep(getContentHeight(), getSize(), range));
+        setScrollBarAttributes();
     }
 
     void ScrollArea::onRemove(const std::shared_ptr<Widget>& widget)
     {
         removeFromContent(widget);
-        const ScrollBar::Range range{0, getContentHeight() - getSize().height};
-        m_scrollBar->setRange(range);
-        m_scrollBar->setPageStep(GetPageStep(getContentHeight(), getSize(), range));
+        setScrollBarAttributes();
     }
 
     void ScrollArea::onClear()
@@ -503,6 +508,10 @@ namespace pTK
         m_startIndex = 0;
         m_endIndex = 0;
 
+        const ScrollBar::Range range{0, 0};
+        m_scrollBar->setRange(range);
+        m_scrollBar->setPageStep(0);
+
         // TODO(knobin): Maybe set "visible" status on children to hidden if they are in the content?
     }
 
@@ -520,11 +529,7 @@ namespace pTK
     {
         performSizeChanged(size);
         m_scrollBar->setSize({20, size.height});
-
-        const ScrollBar::Range range{0, getContentHeight() - getSize().height};
-        m_scrollBar->setRange(range);
-        m_scrollBar->setPageStep(GetPageStep(getContentHeight(), getSize(), range));
-        PTK_INFO("PAGE STEP: {}", m_scrollBar->pageStep());
+        setScrollBarAttributes();
     }
 
     void ScrollArea::performSizeChanged(const Size&)

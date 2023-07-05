@@ -59,6 +59,7 @@ namespace pTK
         void removeFromTail();
 
         [[nodiscard]] float getScrollOffset(float eventOffset) const;
+        void setScrollBarAttributes();
 
         [[nodiscard]] Widget* getFirstVisible() const;
         [[nodiscard]] Widget* getLastVisible() const;
