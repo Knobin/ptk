@@ -47,6 +47,7 @@ namespace pTK
 
         [[nodiscard]] uint32_t value() const noexcept { return static_cast<uint32_t>(m_value); }
         void setValue(uint32_t value);
+        void updateValue(uint32_t value);
 
         [[nodiscard]] uint32_t pageStep() const noexcept { return m_pageStep; }
         void setPageStep(uint32_t step);
@@ -57,16 +58,12 @@ namespace pTK
 
     public:
         void onHoverEvent(const MotionEvent& evt) override;
-        void onEnterEvent(const EnterEvent& evt) override;
-        void onLeaveEvent(const LeaveEvent& evt) override;
-        void onLeaveClickEvent(const LeaveClickEvent& evt) override;
         void onClickEvent(const ClickEvent& evt) override;
         void onReleaseEvent(const ReleaseEvent& evt) override;
 
     private:
         void updateRange(Range range);
-        void updateValue(uint32_t value);
-        void setPreciseValue(float value);
+        void setPreciseValue(float value, bool trigger);
 
     private:
         Range m_range{};

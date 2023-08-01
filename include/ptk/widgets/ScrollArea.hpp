@@ -36,6 +36,8 @@ namespace pTK
 
         void onDraw(Canvas* canvas) override;
 
+        [[nodiscard]] bool isValidOffset(int32_t offset) const;
+
     private:
         void onScrollEvent(const ScrollEvent& evt) override;
 
@@ -58,7 +60,7 @@ namespace pTK
         void removeFromHead();
         void removeFromTail();
 
-        [[nodiscard]] float getScrollOffset(float eventOffset) const;
+        [[nodiscard]] float getScrollOffset(float eventOffset, float scrollMultiplier = 35.0f) const;
         void setScrollBarAttributes();
 
         [[nodiscard]] Widget* getFirstVisible() const;

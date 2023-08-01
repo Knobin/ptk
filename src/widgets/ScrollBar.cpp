@@ -52,7 +52,14 @@ namespace pTK
 
     void ScrollBar::setValue(uint32_t value)
     {
-        updateValue(value);
+        const auto fValue{static_cast<float>(value)};
+        setPreciseValue(fValue, true);
+    }
+
+    void ScrollBar::updateValue(uint32_t value)
+    {
+        const auto fValue{static_cast<float>(value)};
+        setPreciseValue(fValue, false);
     }
 
     void ScrollBar::setPageStep(uint32_t step)
@@ -70,23 +77,21 @@ namespace pTK
         m_range = range;
     }
 
-    void ScrollBar::updateValue(uint32_t value)
-    {
-        const auto fValue{static_cast<float>(value)};
-        setPreciseValue(fValue);
-    }
-
-    void ScrollBar::setPreciseValue(float value)
+    void ScrollBar::setPreciseValue(float value, bool trigger)
     {
         if (value != m_value)
         {
             const auto uValue{static_cast<uint32_t>(value)};
-            m_value = value;
-            if (m_lastValue != uValue)
+            const auto fStart{static_cast<float>(m_range.start)};
+            const auto fEnd{static_cast<float>(m_range.end)};
+            if ((value >= fStart) && (value <= fEnd))
+                m_value = value;
+            if ((m_lastValue != uValue) && (uValue >= m_range.start) && (uValue <= m_range.end))
             {
                 int32_t offset{static_cast<int32_t>(m_lastValue) - static_cast<int32_t>(uValue)};
                 m_lastValue = uValue;
-                triggerEvent<OnValueChange>(OnValueChange{uValue, offset});
+                if (trigger)
+                    triggerEvent<OnValueChange>(OnValueChange{uValue, offset});
             }
         }
     }
@@ -116,8 +121,10 @@ namespace pTK
 
     void ScrollBar::onDraw(Canvas* canvas)
     {
-        PTK_ASSERT(m_range.start <= m_value, "Value is out of range");
-        PTK_ASSERT(m_value <= m_range.end, "Value is out of range");
+        PTK_ASSERT(m_range.start <= m_lastValue, "Value is out of range");
+        PTK_ASSERT(m_lastValue <= m_range.end, "Value is out of range");
+        PTK_ASSERT(static_cast<float>(m_range.start) <= m_value, "Value is out of range");
+        PTK_ASSERT(static_cast<float>(m_lastValue) <= m_value, "Value is out of range");
 
         const auto size{getSize()};
         const auto rPos{getPosition()};
@@ -171,38 +178,21 @@ namespace pTK
             if (fValue > fEnd)
                 fValue = fEnd;
 
-            setPreciseValue(fValue);
+            setPreciseValue(fValue, true);
         }
-    }
-
-    void ScrollBar::onEnterEvent(const EnterEvent& evt)
-    {
-        PTK_INFO("ScrollBar::onEnterEvent");
-    }
-
-    void ScrollBar::onLeaveEvent(const LeaveEvent& evt)
-    {
-        PTK_INFO("ScrollBar::onLeaveEvent");
-    }
-
-    void ScrollBar::onLeaveClickEvent(const LeaveClickEvent& evt)
-    {
-        PTK_INFO("ScrollBar::onLeaveClickEvent");
     }
 
     void ScrollBar::onClickEvent(const ClickEvent& evt)
     {
-        PTK_INFO("ScrollBar::onClickEvent");
-
         Point::value_type pos{getPosition().y};
         pos += static_cast<Point::value_type>(BarOffsetY(getSize(), m_range, m_value, m_pageStep));
         const auto barHeight = BarHeight(getSize(), m_range, m_pageStep);
         const auto half = static_cast<Point::value_type>(barHeight / 2.0f);
         pos += half;
 
-        const auto dist = static_cast<uint32_t>(ToRangeScale(std::abs(evt.pos.y - pos), getSize(), m_range, m_pageStep));
+        const auto dist =
+            static_cast<uint32_t>(ToRangeScale(std::abs(evt.pos.y - pos), getSize(), m_range, m_pageStep));
         const auto offset = std::min(dist, m_pageStep);
-        PTK_INFO("dist: {}, pageStep: {}, offset: {}", dist, m_pageStep, offset);
 
         const auto value = static_cast<uint32_t>(m_value);
 
@@ -216,14 +206,14 @@ namespace pTK
         else
         {
             m_clicked = true;
-            const auto barPos{static_cast<float>(getPosition().y) + BarOffsetY(getSize(), m_range, m_value, m_pageStep)};
+            const auto barPos{static_cast<float>(getPosition().y) +
+                              BarOffsetY(getSize(), m_range, m_value, m_pageStep)};
             m_dragOffset = static_cast<float>(evt.pos.y) - barPos;
         }
     }
 
-    void ScrollBar::onReleaseEvent(const ReleaseEvent& evt)
+    void ScrollBar::onReleaseEvent(const ReleaseEvent&)
     {
-        PTK_INFO("ScrollBar::onReleaseEvent");
         m_clicked = false;
     }
-}
+} // namespace pTK

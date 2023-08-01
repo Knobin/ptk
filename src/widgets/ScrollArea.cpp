@@ -79,6 +79,7 @@ namespace pTK
         : m_scrollBar{std::make_shared<ScrollBar>()}
     {
         m_scrollBarCallbackId = m_scrollBar->onValueChange([this](const ScrollBar::OnValueChange& evt) {
+            PTK_INFO("ScrollBar Offset: {}", evt.offset);
             performScroll(evt.offset);
             return false;
         });
@@ -88,32 +89,55 @@ namespace pTK
     void ScrollArea::onScrollEvent(const ScrollEvent& evt)
     {
         const float offset = getScrollOffset(evt.offset.y);
-        PTK_INFO("OFFSET: {}", offset);
+        PTK_INFO("Mouse Wheel Scroll Offset: {}", offset);
 
         const float value = static_cast<float>(m_scrollBar->value()) - offset;
-        m_scrollBar->setValue(static_cast<uint32_t>(value));
+        m_scrollBar->updateValue(static_cast<uint32_t>(value));
+
+        performScroll(static_cast<int32_t>(offset));
+    }
+
+    bool ScrollArea::isValidOffset(int32_t offset) const
+    {
+        const auto fOffset{static_cast<float>(offset)};
+        return fOffset == getScrollOffset(fOffset, 1.0f);
     }
 
     void ScrollArea::performScroll(int32_t offset)
     {
-        static int32_t test = 0;
-        test += offset;
-        PTK_WARN("TOTAL SCROLLED: {}", test);
-        moveVisiblePositions(static_cast<float>(offset));
+        if (isValidOffset(offset))
+        {
+            moveVisiblePositions(static_cast<float>(offset));
 
-        if (offset > 0)
-        {
-            removeFromTail();
-            addToHead();
-        }
-        else
-        {
-            removeFromHead();
-            addToTail();
+            if (offset > 0)
+            {
+                removeFromTail();
+                addToHead();
+            }
+            else
+            {
+                removeFromHead();
+                addToTail();
+            }
+
+            if (m_startIndex == 0 && count() > 0)
+            {
+                const auto top{at(0)->getPosition().y - static_cast<Point::value_type>(at(0)->getMarginTop())};
+                const auto start{getPosition().y};
+                PTK_ASSERT(top <= start, "First child incorrectly placed");
+            }
+            if (m_endIndex == count() && count() > 0)
+            {
+                auto bottom{at(m_endIndex - 1)->getPosition().y};
+                bottom += static_cast<Point::value_type>(at(m_endIndex - 1)->getSize().height +
+                                                         at(m_endIndex - 1)->getMarginBottom());
+                const auto end{getPosition().y + static_cast<Point::value_type>(getSize().height)};
+                PTK_ASSERT(bottom >= end, "Last child incorrectly placed");
+            }
         }
     }
 
-    float ScrollArea::getScrollOffset(float eventOffset) const
+    float ScrollArea::getScrollOffset(float eventOffset, float scrollMultiplier) const
     {
         if (count() == 0)
             return 0; // Can not scroll if no children are present.
@@ -127,7 +151,6 @@ namespace pTK
         // Position of ScrollArea.
         Point pos{getPosition()};
 
-        const float scrollMultiplier = 35.0f;
         float offset = eventOffset * scrollMultiplier;
 
         if (offset > 0)
@@ -188,8 +211,11 @@ namespace pTK
                 }
 
                 // Check remaining size here.
-                auto remaining{static_cast<float>(end - bottom)};
-                if (remaining > offset)
+                auto remaining{static_cast<float>(bottom - end)};
+                if (end > bottom)
+                    remaining = static_cast<float>(end - bottom);
+
+                if (remaining > (-offset))
                     return offset; // Offset is fine here, more size available.
 
                 // Check tail for remaining.
@@ -197,7 +223,7 @@ namespace pTK
                 {
                     const std::shared_ptr<Widget>& child{at(i)};
                     remaining += static_cast<float>(child->getOuterSize().height);
-                    if (remaining > offset)
+                    if (remaining > (-offset))
                         return offset; // Offset is fine here, more size available.
                 }
 
@@ -256,6 +282,12 @@ namespace pTK
         const ScrollBar::Range range{0, (contentHeight > height) ? contentHeight - height : 0};
         m_scrollBar->setRange(range);
         m_scrollBar->setPageStep(GetPageStep(getContentHeight(), getSize(), range));
+
+        const auto value{m_scrollBar->value()};
+        if (value > range.end)
+            m_scrollBar->setValue(static_cast<uint32_t>(range.end));
+        if (value < range.start)
+            m_scrollBar->setValue(static_cast<uint32_t>(range.start));
     }
 
     void ScrollArea::onAdd(const std::shared_ptr<Widget>& widget)
@@ -511,6 +543,7 @@ namespace pTK
         const ScrollBar::Range range{0, 0};
         m_scrollBar->setRange(range);
         m_scrollBar->setPageStep(0);
+        m_scrollBar->setValue(0);
 
         // TODO(knobin): Maybe set "visible" status on children to hidden if they are in the content?
     }
